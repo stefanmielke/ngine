@@ -108,6 +108,13 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 			ProjectBuilder::Rebuild(project_settings);
 		}
+		if (ImGui::MenuItem("Regen Static Files", nullptr, false, project_settings.IsOpen())) {
+			console.AddLog("Regenerating static files...");
+
+			ProjectBuilder::GenerateStaticFiles(project_settings.project_directory);
+
+			console.AddLog("Files regenerated.");
+		}
 		if (ImGui::MenuItem("Open in VSCode", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Opening project in VSCode...");
 

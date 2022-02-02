@@ -7,4 +7,6 @@ class ProjectBuilder {
 	static void Create(std::string project_folder);
 	static void Build(ProjectSettings project_settings);
 	static void Rebuild(ProjectSettings project_settings);
+
+	static void GenerateStaticFiles(std::string project_folder);
 };

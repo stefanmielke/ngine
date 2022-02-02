@@ -3,11 +3,10 @@ const char *main_s_cpp =
 #include <stdio.h>
 #include <libdragon.h>
 
-int main(void) {
-	console_init();
+void setup();
 
-	debug_init_usblog();
-	console_set_debug(true);
+int main(void) {
+	setup();
 
 	printf("Hello world from NGine!\n");
 

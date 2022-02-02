@@ -37,12 +37,8 @@ void create_project_thread(std::string project_folder) {
 	if (!std::filesystem::exists(vscode_path)) {
 		std::filesystem::create_directories(vscode_path);
 	}
-	create_static_file(project_folder + "/.vscode/c_cpp_properties.json", vs_code_cpp_properties);
 
-	create_static_file(project_folder + "/.clang-format", clang_format);
-	create_static_file(project_folder + "/.gitignore", gitignore);
-
-	create_static_file(project_folder + "/src/main.s.c", main_s_cpp);
+	ProjectBuilder::GenerateStaticFiles(project_folder);
 
 	console.AddLog("Adding libdragon-extensions...");
 
@@ -70,6 +66,9 @@ void create_build_files(ProjectSettings &project_settings) {
 	std::string makefile_path(project_settings.project_directory + "/Makefile");
 	generate_makefile_gen_cpp(makefile_path, project_settings.rom_name.c_str(),
 							  project_settings.project_name.c_str());
+
+	std::string setup_path(project_settings.project_directory + "/src/setup.gen.c");
+	generate_setup_gen_c(setup_path, project_settings);
 }
 
 void ProjectBuilder::Build(ProjectSettings project_settings) {
@@ -82,4 +81,13 @@ void ProjectBuilder::Rebuild(ProjectSettings project_settings) {
 	create_build_files(project_settings);
 
 	Libdragon::Rebuild(project_settings.project_directory);
+}
+
+void ProjectBuilder::GenerateStaticFiles(std::string project_folder) {
+	create_static_file(project_folder + "/.vscode/c_cpp_properties.json", vs_code_cpp_properties);
+
+	create_static_file(project_folder + "/.clang-format", clang_format);
+	create_static_file(project_folder + "/.gitignore", gitignore);
+
+	create_static_file(project_folder + "/src/main.s.c", main_s_cpp);
 }
