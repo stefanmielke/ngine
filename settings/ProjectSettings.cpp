@@ -12,6 +12,7 @@ ProjectSettings::ProjectSettings()
 	  next_scene_id(0),
 	  project_name("Hello NGine"),
 	  rom_name("hello_ngine"),
+	  initial_screen_id(0),
 	  global_mem_alloc_size(1024),
 	  scene_mem_alloc_size(1024 * 2) {
 }
@@ -37,7 +38,8 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 		global_mem_alloc_size = json["project"]["global_mem_alloc_size"];
 	if (!json["project"]["scene_mem_alloc_size"].is_null())
 		scene_mem_alloc_size = json["project"]["scene_mem_alloc_size"];
-
+	if (!json["project"]["initial_screen_id"].is_null())
+		initial_screen_id = json["project"]["initial_screen_id"];
 
 	display.SetResolution(json["display"]["resolution"]);
 	display.SetBitDepth(json["display"]["bit_depth"]);
@@ -77,6 +79,7 @@ void ProjectSettings::SaveToDisk() {
 	json["project"]["rom"] = rom_name;
 	json["project"]["global_mem_alloc_size"] = global_mem_alloc_size;
 	json["project"]["scene_mem_alloc_size"] = scene_mem_alloc_size;
+	json["project"]["initial_screen_id"] = initial_screen_id;
 
 	json["display"]["resolution"] = display.GetResolution();
 	json["display"]["bit_depth"] = display.GetBitDepth();

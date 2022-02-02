@@ -15,6 +15,8 @@ class ProjectSettings {
 	std::string rom_name;
 	std::string project_directory;
 
+	int initial_screen_id;
+
 	int global_mem_alloc_size;
 	int scene_mem_alloc_size;
 
