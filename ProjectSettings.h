@@ -17,7 +17,7 @@ class ProjectSettings {
 
 	ProjectSettings();
 
-	void LoadFromFile(std::string &filepath);
+	bool LoadFromFile(std::string &filepath);
 	void SaveToFile(std::string &filepath);
 
 	void CloseProject();

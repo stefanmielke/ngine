@@ -145,12 +145,12 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				project_settings.project_directory = input_open_project;
 
 				std::string project_filepath = std::string(input_open_project);
-				project_settings.LoadFromFile(project_filepath);
+				if (project_settings.LoadFromFile(project_filepath)) {
+					window.setTitle("NGine - " + project_settings.project_directory);
+					open_project_window_open = false;
 
-				window.setTitle("NGine - " + project_settings.project_directory);
-				open_project_window_open = false;
-
-				console.AddLog("Project opened.");
+					console.AddLog("Project opened.");
+				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel", ImVec2(50, 20))) {

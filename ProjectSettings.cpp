@@ -2,14 +2,22 @@
 
 #include <fstream>
 
+#include "ConsoleApp.h"
 #include "json.hpp"
+
+extern ConsoleApp console;
 
 ProjectSettings::ProjectSettings()
 	: is_open(false), project_name("Hello NGine"), rom_name("hello_ngine") {
 }
 
-void ProjectSettings::LoadFromFile(std::string &folder) {
+bool ProjectSettings::LoadFromFile(std::string &folder) {
 	project_directory = folder;
+
+	if (!std::filesystem::exists(project_directory + "/ngine.project.json")) {
+		console.AddLog("Project file not found (is the project still being created?).");
+		return false;
+	}
 
 	std::ifstream project_file(project_directory + "/ngine.project.json");
 
@@ -25,6 +33,7 @@ void ProjectSettings::LoadFromFile(std::string &folder) {
 	project_file.close();
 
 	is_open = true;
+	return true;
 }
 
 void ProjectSettings::SaveToFile(std::string &filepath) {
