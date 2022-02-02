@@ -33,6 +33,8 @@ clean:
 	find . -name '*.raw' -delete
 	find . -name '*.z64' -delete
 	find . -name '*.n64' -delete
+	find . -name '*.gen.c' -delete
+	find . -name '*.gen.h' -delete
 	rm -rf build/
 -include $(DEPS)
 

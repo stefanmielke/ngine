@@ -45,9 +45,8 @@ void Libdragon::Build(std::string folder) {
 	run_command(command);
 }
 
-void Libdragon::Rebuild(std::string folder) {
+void Libdragon::CleanSync(std::string folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon exec make clean > build.log && libdragon make -j >> build.log", folder.c_str());
-	run_command(command);
-	//	libdragon make -j >> build.log
+	snprintf(command, 500, "cd %s\nlibdragon exec make clean > build.log", folder.c_str());
+	system(command);
 }

@@ -83,9 +83,11 @@ void ProjectBuilder::Build(ProjectSettings project_settings, Project &project) {
 }
 
 void ProjectBuilder::Rebuild(ProjectSettings project_settings, Project &project) {
+	Libdragon::CleanSync(project_settings.project_directory);
+
 	create_build_files(project_settings, project);
 
-	Libdragon::Rebuild(project_settings.project_directory);
+	Libdragon::Build(project_settings.project_directory);
 }
 
 void ProjectBuilder::GenerateStaticFiles(std::string project_folder) {
