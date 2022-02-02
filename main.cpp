@@ -272,7 +272,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Engine")) {
-				ImGui::InputText("Cen64 Path", mupen64_path, 255);
+				ImGui::InputText("Mupen64 Path", mupen64_path, 255);
 
 				if (ImGui::Button("Save")) {
 					engine_settings.SetMupen64Path(mupen64_path);
