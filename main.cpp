@@ -118,24 +118,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 			if (ImGui::Button("Create", ImVec2(50, 20))) {
 				std::string new_project_folder(input_new_project);
 
-				// create folder if it doesn't exist
-				const std::filesystem::path project_path(new_project_folder);
-				if (!std::filesystem::exists(project_path)) {
-					console.AddLog("Creating project folder...");
-					std::filesystem::create_directories(project_path);
-				}
-
-				// create initial project file
-				console.AddLog("Creating project settings file...");
-				std::string project_settings_filename(new_project_folder + "/ngine.project.json");
-
-				ProjectSettings default_project_settings;
-				default_project_settings.SaveToFile(project_settings_filename);
-
-				console.AddLog("Running 'libdragon init' at '%s'...", new_project_folder.c_str());
-				console.AddLog("Check output on the console.");
-
-				Libdragon::Init(new_project_folder);
+				ProjectBuilder::Create(new_project_folder);
 
 				new_project_window_open = false;
 			}

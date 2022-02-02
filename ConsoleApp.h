@@ -4,6 +4,9 @@
 #include <cctype>
 #include <cstdlib>
 #include <cstdio>
+
+#include <SFML/Graphics.hpp>
+
 #include "imgui.h"
 
 struct ConsoleApp {

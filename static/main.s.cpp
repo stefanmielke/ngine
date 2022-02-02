@@ -5,8 +5,6 @@ const char *main_s_cpp =
 	"\n"
 	"int main(void)\n"
 	"{\n"
-	"    init_interrupts();\n"
-	"\n"
 	"    console_init();\n"
 	"\n"
 	"    debug_init_usblog();\n"
