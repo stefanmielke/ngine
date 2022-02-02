@@ -8,7 +8,7 @@
 extern ConsoleApp console;
 
 ProjectSettings::ProjectSettings()
-	: is_open(false), project_name("Hello NGine"), rom_name("hello_ngine") {
+	: is_open(false), next_scene_id(0), project_name("Hello NGine"), rom_name("hello_ngine") {
 }
 
 bool ProjectSettings::LoadFromFile(std::string &folder) {
@@ -23,6 +23,11 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 
 	nlohmann::json json;
 	project_file >> json;
+	project_file.close();
+
+	project_name = json["project"]["name"];
+	next_scene_id = json["project"]["next_scene_id"];
+	rom_name = json["project"]["rom"];
 
 	display.SetResolution(json["display"]["resolution"]);
 	display.SetBitDepth(json["display"]["bit_depth"]);
@@ -47,18 +52,18 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	if (!json["modules"]["timer"].is_null())
 		modules.timer = json["modules"]["timer"];
 
-	project_file.close();
-
 	is_open = true;
 	return true;
 }
 
-void ProjectSettings::SaveToFile() {
+void ProjectSettings::SaveToDisk() {
 	if (project_directory.empty())
 		return;
 
 	nlohmann::json json;
+
 	json["project"]["name"] = project_name;
+	json["project"]["next_scene_id"] = next_scene_id;
 	json["project"]["rom"] = rom_name;
 
 	json["display"]["resolution"] = display.GetResolution();

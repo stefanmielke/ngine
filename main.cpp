@@ -13,12 +13,17 @@
 #include "ProjectBuilder.h"
 #include "VSCode.h"
 #include "settings/EngineSettings.h"
+#include "settings/Project.h"
 #include "settings/ProjectSettings.h"
 #include "settings/ProjectSettingsScreen.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
+Project project;
+Scene *current_scene = nullptr;
+char scene_name[100];
+
 ProjectSettings project_settings;
 EngineSettings engine_settings;
 
@@ -105,6 +110,14 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 			}
 			ImGui::EndMenu();
 		}
+		if (ImGui::MenuItem("Save Project", nullptr, false, project_settings.IsOpen())) {
+			console.AddLog("Saving project...");
+
+			project.SaveToDisk(project_settings.project_directory);
+			project_settings.SaveToDisk();
+
+			console.AddLog("Project saved.");
+		}
 		if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Building project...");
 
@@ -180,6 +193,8 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 				std::string project_filepath = std::string(input_open_project);
 				if (project_settings.LoadFromFile(project_filepath)) {
+					project.LoadFromDisk(project_settings.project_directory);
+
 					window.setTitle("NGine - " + project_settings.project_directory);
 					open_project_window_open = false;
 
@@ -204,37 +219,49 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 	ImGui::SetNextWindowSize(ImVec2(300, window.getSize().y - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-		if (ImGui::BeginTabBar("Properties")) {
-			if (ImGui::BeginTabItem("Nodes")) {
-				if (ImGui::TreeNodeEx("Root Node")) {
-					{
-						ImGui::SameLine();
-						if (ImGui::Selectable("Props")) {
-							// do whatever
+		if (current_scene) {
+			if (ImGui::BeginTabBar("Properties")) {
+				if (ImGui::BeginTabItem("Nodes")) {
+					if (ImGui::TreeNodeEx("Root Node")) {
+						{
+							ImGui::SameLine();
+							if (ImGui::Selectable("Props")) {
+								// do whatever
+							}
 						}
-					}
-					{
-						if (ImGui::Selectable("Test Node Press")) {
-							// do whatever
+						{
+							if (ImGui::Selectable("Test Node Press")) {
+								// do whatever
+							}
 						}
-					}
 
-					if (ImGui::TreeNode("Test Node")) {
+						if (ImGui::TreeNode("Test Node")) {
+							ImGui::TreePop();
+						}
+						if (ImGui::TreeNode("Test Node 2")) {
+							ImGui::TreePop();
+						}
 						ImGui::TreePop();
 					}
-					if (ImGui::TreeNode("Test Node 2")) {
-						ImGui::TreePop();
-					}
-					ImGui::TreePop();
+					ImGui::EndTabItem();
 				}
-				ImGui::EndTabItem();
+				if (ImGui::BeginTabItem("Settings")) {
+					ImGui::InputText("Name", scene_name, 100);
+
+					ImGui::Separator();
+
+					if (ImGui::Button("Save")) {
+						current_scene->name = scene_name;
+						project.SaveToDisk(project_settings.project_directory);
+						project_settings.SaveToDisk();
+					}
+					ImGui::EndTabItem();
+				}
 			}
-			if (ImGui::BeginTabItem("Settings")) {
-				ImGui::Text("Name");
-				ImGui::EndTabItem();
-			}
+			ImGui::EndTabBar();
+		} else {
+			ImGui::TextWrapped("Load a scene on the right side under 'Scenes' tab.");
 		}
-		ImGui::EndTabBar();
 	}
 	ImGui::End();
 
@@ -249,6 +276,20 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Scenes")) {
+				for (auto &scene : project.scenes) {
+					if (ImGui::Selectable(scene.name.c_str())) {
+						current_scene = &scene;
+						strcpy(scene_name, current_scene->name.c_str());
+					}
+				}
+
+				if (ImGui::Button("Create New Scene")) {
+					project.scenes.emplace_back();
+					current_scene = &project.scenes[project.scenes.size() - 1];
+					current_scene->id = project_settings.next_scene_id++;
+					current_scene->name = std::to_string(project.scenes.size());
+					strcpy(scene_name, current_scene->name.c_str());
+				}
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Project")) {
@@ -307,7 +348,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 						project_settings_screen.ToProjectSettings(project_settings);
 
-						project_settings.SaveToFile();
+						project_settings.SaveToDisk();
 
 						console.AddLog("Saved Project Settings.");
 					}

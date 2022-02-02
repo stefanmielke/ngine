@@ -50,7 +50,7 @@ void create_project_thread(std::string project_folder) {
 
 	ProjectSettings default_project_settings;
 	default_project_settings.project_directory = project_folder;
-	default_project_settings.SaveToFile();
+	default_project_settings.SaveToDisk();
 
 	console.AddLog("Project settings file created.");
 

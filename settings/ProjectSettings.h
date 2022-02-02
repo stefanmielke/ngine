@@ -10,6 +10,7 @@ class ProjectSettings {
 	bool is_open;
 
    public:
+	int next_scene_id;
 	std::string project_name;
 	std::string rom_name;
 	std::string project_directory;
@@ -20,7 +21,7 @@ class ProjectSettings {
 	ProjectSettings();
 
 	bool LoadFromFile(std::string &folder);
-	void SaveToFile();
+	void SaveToDisk();
 
 	void CloseProject();
 
