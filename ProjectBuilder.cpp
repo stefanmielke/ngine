@@ -1,8 +1,9 @@
+#include "ProjectBuilder.h"
+
 #include <filesystem>
 #include <fstream>
 
-#include "ProjectBuilder.h"
-
+#include "Libdragon.h"
 #include "static/static.h"
 
 void ProjectBuilder::Build(ProjectSettings project_settings) {
@@ -15,7 +16,5 @@ void ProjectBuilder::Build(ProjectSettings project_settings) {
 	main_s_cpp_file << main_s_cpp << std::endl;
 	main_s_cpp_file.close();
 
-	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon make", project_settings.project_directory.c_str());
-	system(command);
+	Libdragon::Build(project_settings.project_directory);
 }
