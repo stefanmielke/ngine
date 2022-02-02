@@ -1,5 +1,7 @@
-#include <sstream>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <thread>
 
 #include "imgui/imgui.h"
@@ -10,11 +12,14 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include "console_app.h"
+#include "ConsoleApp.h"
+#include "generated/generated.h"
+#include "ProjectSettings.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
+ProjectSettings project_settings;
 
 int main() {
 	std::string project_folder;
@@ -75,12 +80,27 @@ int main() {
 				ImGui::SameLine();
 				ImGui::InputText("##", input, 255);
 				if (ImGui::Button("Create", ImVec2(50, 20))) {
+					std::string new_project_folder(input);
+
+					// create folder if it doesn't exist
+					const std::filesystem::path project_path(new_project_folder);
+					if (!std::filesystem::exists(project_path)) {
+						console.AddLog("Creating project folder...");
+						std::filesystem::create_directories(project_path);
+					}
+
+					// create initial project file
+					console.AddLog("Creating project settings file...");
+					std::string project_settings_filename(new_project_folder +
+														  "/ngine.project.json");
+
+					ProjectSettings default_project_settings;
+					default_project_settings.SaveToFile(project_settings_filename);
+
 					console.AddLog("Running 'libdragon init' at '%s'...", input);
 					console.AddLog("Check output on the console.");
-
 					char command[500];
-					snprintf(command, 500, "cd %s\nlibdragon init", input);
-
+					snprintf(command, 500, "cd %s\nlibdragon init", new_project_folder.c_str());
 					std::thread(system, command).detach();
 
 					new_project_window_open = false;
