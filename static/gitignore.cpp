@@ -5,6 +5,7 @@ const char *gitignore =
 	"!.vscode/c_cpp_properties.json\n"
 	"\n"
 	"build/\n"
+	"build.log\n"
 	"\n"
 	"*.v64\n"
 	"*.z64\n"

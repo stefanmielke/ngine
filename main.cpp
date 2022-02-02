@@ -4,15 +4,14 @@
 #include "imgui/imgui.h"
 #include "imgui-SFML/imgui-SFML.h"
 
-#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
 #include "ConsoleApp.h"
+#include "Libdragon.h"
 #include "ProjectBuilder.h"
 #include "ProjectSettings.h"
-#include "Libdragon.h"
 #include "VSCode.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";

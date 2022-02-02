@@ -16,7 +16,7 @@ void command_thread(const char *command) {
 	if (result == 0)
 		console.AddLog("Finished successfully.");
 	else
-		console.AddLog("[error] Process returned %d. Check console output for more info.", result);
+		console.AddLog("[error] Process returned %d. Check 'build.log' inside the project folder for more info.", result);
 }
 
 void run_command(std::string command) {
@@ -30,23 +30,23 @@ void run_command(std::string command) {
 
 void Libdragon::Init(std::string folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon init", folder.c_str());
+	snprintf(command, 500, "cd %s\nlibdragon init > build.log", folder.c_str());
 	run_command(command);
 }
 void Libdragon::InitSync(std::string folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon init", folder.c_str());
+	snprintf(command, 500, "cd %s\nlibdragon init > build.log", folder.c_str());
 	system(command);
 }
 
 void Libdragon::Build(std::string folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon make -j", folder.c_str());
+	snprintf(command, 500, "cd %s\nlibdragon make -j > build.log", folder.c_str());
 	run_command(command);
 }
 
 void Libdragon::Rebuild(std::string folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon make clean\nlibdragon make -j", folder.c_str());
+	snprintf(command, 500, "cd %s\nlibdragon make clean\nlibdragon make -j > build.log", folder.c_str());
 	run_command(command);
 }
