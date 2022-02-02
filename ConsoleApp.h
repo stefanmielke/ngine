@@ -48,10 +48,13 @@ struct ConsoleApp {
 		Items.push_back(Strdup(buf));
 	}
 
-	void Draw(const char *title, sf::RenderWindow &window) {
+	void Draw(const char *title, sf::RenderWindow &window, bool &is_open) {
+		is_open = true;
+
 		ImGui::SetNextWindowSize(ImVec2(window.getSize().x, 200));
 		if (!ImGui::Begin(title, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
 			if (ImGui::IsWindowCollapsed()) {
+				is_open = false;
 				ImGui::SetWindowPos(ImVec2(0, window.getSize().y - 19));
 			}
 			ImGui::End();
