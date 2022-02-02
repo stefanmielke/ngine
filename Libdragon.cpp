@@ -30,12 +30,12 @@ void run_command(std::string command) {
 
 void Libdragon::Init(std::string folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon init > build.log", folder.c_str());
+	snprintf(command, 500, "cd %s\nlibdragon init", folder.c_str());
 	run_command(command);
 }
 void Libdragon::InitSync(std::string folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s\nlibdragon init > build.log", folder.c_str());
+	snprintf(command, 500, "cd %s\nlibdragon init", folder.c_str());
 	system(command);
 }
 

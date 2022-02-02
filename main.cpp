@@ -12,23 +12,13 @@
 #include "Libdragon.h"
 #include "ProjectBuilder.h"
 #include "ProjectSettings.h"
+#include "ProjectSettingsScreen.h"
 #include "VSCode.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
 ProjectSettings project_settings;
-
-struct ProjectSettingsScreen {
-	char project_name[100];
-	char rom_name[100];
-
-	char display_antialias[100];
-	char display_bit_depth[100];
-	int display_buffers;
-	char display_gamma[100];
-	char display_resolution[100];
-};
 
 char input_new_project[255];
 char input_open_project[255];
@@ -166,18 +156,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 					window.setTitle("NGine - " + project_settings.project_directory);
 					open_project_window_open = false;
 
-					strcpy(project_settings_screen.project_name,
-						   project_settings.project_name.c_str());
-					strcpy(project_settings_screen.rom_name, project_settings.rom_name.c_str());
-					strcpy(project_settings_screen.display_antialias,
-						   project_settings.display.GetAntialias());
-					strcpy(project_settings_screen.display_bit_depth,
-						   project_settings.display.GetBitDepth());
-					strcpy(project_settings_screen.display_gamma,
-						   project_settings.display.GetGamma());
-					strcpy(project_settings_screen.display_resolution,
-						   project_settings.display.GetResolution());
-					project_settings_screen.display_buffers = project_settings.display.buffers;
+					project_settings_screen.FromProjectSettings(project_settings);
 
 					console.AddLog("Project opened.");
 				}
@@ -206,36 +185,40 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 			ImGui::Separator();
 			ImGui::TextUnformatted("Display Settings:");
 
-			const char *antialias_items[] = { "ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE", "ANTIALIAS_RESAMPLE_FETCH_NEEDED", "ANTIALIAS_RESAMPLE_FETCH_ALWAYS" };
+			const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
+											 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
+											 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
 			static int antialias_current;
 			ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
 
-			const char *bit_depth_items[] = { "DEPTH_16_BPP", "DEPTH_32_BPP" };
+			const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
 			static int bit_depth_current;
 			ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
 
 			ImGui::SliderInt("Buffers", &project_settings_screen.display_buffers, 1, 3);
 
-			const char *gamma_items[] = { "GAMMA_NONE", "GAMMA_CORRECT", "GAMMA_CORRECT_DITHER" };
+			const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT", "GAMMA_CORRECT_DITHER"};
 			static int gamma_current;
 			ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
 
-			const char *resolution_items[] = { "RESOLUTION_320x240", "RESOLUTION_640x480", "RESOLUTION_256x240", "RESOLUTION_512x480", "RESOLUTION_512x240", "RESOLUTION_640x240" };
+			const char *resolution_items[] = {"RESOLUTION_320x240", "RESOLUTION_640x480",
+											  "RESOLUTION_256x240", "RESOLUTION_512x480",
+											  "RESOLUTION_512x240", "RESOLUTION_640x240"};
 			static int resolution_current;
 			ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
 
 			ImGui::Separator();
 			if (ImGui::Button("Save")) {
-				project_settings.project_name = project_settings_screen.project_name;
-				project_settings.rom_name = project_settings_screen.rom_name;
+				strcpy(project_settings_screen.display_antialias, antialias_items[antialias_current]);
+				strcpy(project_settings_screen.display_bit_depth, bit_depth_items[bit_depth_current]);
+				strcpy(project_settings_screen.display_gamma, gamma_items[gamma_current]);
+				strcpy(project_settings_screen.display_resolution, resolution_items[resolution_current]);
 
-				project_settings.display.buffers = project_settings_screen.display_buffers;
-				project_settings.display.SetAntialias(antialias_items[antialias_current]);
-				project_settings.display.SetBitDepth(bit_depth_items[bit_depth_current]);
-				project_settings.display.SetGamma(gamma_items[gamma_current]);
-				project_settings.display.SetResolution(resolution_items[resolution_current]);
+				project_settings_screen.ToProjectSettings(project_settings);
 
 				project_settings.SaveToFile();
+
+				console.AddLog("Saved Project Settings.");
 			}
 		}
 		ImGui::End();
