@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 extern const char *clang_format;
 extern const char *gitignore;
 extern const char *main_s_cpp;

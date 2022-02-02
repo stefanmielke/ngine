@@ -11,8 +11,8 @@
 #include "ConsoleApp.h"
 #include "Libdragon.h"
 #include "ProjectBuilder.h"
-#include "ProjectSettings.h"
-#include "ProjectSettingsScreen.h"
+#include "settings/ProjectSettings.h"
+#include "settings/ProjectSettingsScreen.h"
 #include "VSCode.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
@@ -39,8 +39,8 @@ int main() {
 		return -1;
 
 	sf::Clock deltaClock;
+	sf::Event event{};
 	while (window.isOpen()) {
-		sf::Event event;
 		while (window.pollEvent(event)) {
 			ImGui::SFML::ProcessEvent(window, event);
 
@@ -178,41 +178,53 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		ImGui::SetNextWindowPos(ImVec2(window.getSize().x - prop_x_size, 19));
 		if (ImGui::Begin("Properties", nullptr,
 						 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize)) {
-			ImGui::TextUnformatted("Project Settings:");
+			ImGui::TextUnformatted("Project:");
 			ImGui::InputText("Name", project_settings_screen.project_name, 100);
 			ImGui::InputText("Rom", project_settings_screen.rom_name, 100);
 
 			ImGui::Separator();
-			ImGui::TextUnformatted("Display Settings:");
 
+			ImGui::TextUnformatted("Modules:");
+			ImGui::Checkbox("Console", &project_settings.modules.console);
+			ImGui::Checkbox("Controller", &project_settings.modules.controller);
+			ImGui::Checkbox("Debug Is Viewer", &project_settings.modules.debug_is_viewer);
+			ImGui::Checkbox("Debug USB", &project_settings.modules.debug_usb);
+			ImGui::Checkbox("Display", &project_settings.modules.display);
+			ImGui::Checkbox("DFS", &project_settings.modules.dfs);
+			ImGui::Checkbox("RDP", &project_settings.modules.rdp);
+			ImGui::Checkbox("Timer", &project_settings.modules.timer);
+
+			ImGui::Separator();
+
+			static int antialias_current, bit_depth_current, gamma_current, resolution_current;
 			const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
 											 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
 											 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
-			static int antialias_current;
-			ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
-
 			const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
-			static int bit_depth_current;
-			ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
-
-			ImGui::SliderInt("Buffers", &project_settings_screen.display_buffers, 1, 3);
-
 			const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT", "GAMMA_CORRECT_DITHER"};
-			static int gamma_current;
-			ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
-
 			const char *resolution_items[] = {"RESOLUTION_320x240", "RESOLUTION_640x480",
 											  "RESOLUTION_256x240", "RESOLUTION_512x480",
 											  "RESOLUTION_512x240", "RESOLUTION_640x240"};
-			static int resolution_current;
-			ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
 
-			ImGui::Separator();
+			if (project_settings.modules.display) {
+				ImGui::TextUnformatted("Display Settings:");
+				ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
+				ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
+				ImGui::SliderInt("Buffers", &project_settings_screen.display_buffers, 1, 3);
+				ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
+				ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
+
+				ImGui::Separator();
+			}
+
 			if (ImGui::Button("Save")) {
-				strcpy(project_settings_screen.display_antialias, antialias_items[antialias_current]);
-				strcpy(project_settings_screen.display_bit_depth, bit_depth_items[bit_depth_current]);
+				strcpy(project_settings_screen.display_antialias,
+					   antialias_items[antialias_current]);
+				strcpy(project_settings_screen.display_bit_depth,
+					   bit_depth_items[bit_depth_current]);
 				strcpy(project_settings_screen.display_gamma, gamma_items[gamma_current]);
-				strcpy(project_settings_screen.display_resolution, resolution_items[resolution_current]);
+				strcpy(project_settings_screen.display_resolution,
+					   resolution_items[resolution_current]);
 
 				project_settings_screen.ToProjectSettings(project_settings);
 

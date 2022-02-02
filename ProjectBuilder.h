@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ProjectSettings.h"
+#include "settings/ProjectSettings.h"
 
 class ProjectBuilder {
    public:

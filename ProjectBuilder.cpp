@@ -2,7 +2,6 @@
 
 #include <cstdio>
 #include <filesystem>
-#include <fstream>
 #include <thread>
 
 #include "ConsoleApp.h"

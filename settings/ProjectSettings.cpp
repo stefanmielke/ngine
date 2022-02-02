@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-#include "ConsoleApp.h"
-#include "json.hpp"
+#include "../ConsoleApp.h"
+#include "../json.hpp"
 
 extern ConsoleApp console;
 
@@ -30,6 +30,23 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	display.SetGamma(json["display"]["gamma"]);
 	display.SetAntialias(json["display"]["antialias"]);
 
+	if (!json["modules"]["console"].is_null())
+		modules.console = json["modules"]["console"];
+	if (!json["modules"]["controller"].is_null())
+		modules.controller = json["modules"]["controller"];
+	if (!json["modules"]["debug_usb"].is_null())
+		modules.debug_usb = json["modules"]["debug_usb"];
+	if (!json["modules"]["debug_is_viewer"].is_null())
+		modules.debug_is_viewer = json["modules"]["debug_is_viewer"];
+	if (!json["modules"]["dfs"].is_null())
+		modules.dfs = json["modules"]["dfs"];
+	if (!json["modules"]["display"].is_null())
+		modules.display = json["modules"]["display"];
+	if (!json["modules"]["rdp"].is_null())
+		modules.rdp = json["modules"]["rdp"];
+	if (!json["modules"]["timer"].is_null())
+		modules.timer = json["modules"]["timer"];
+
 	project_file.close();
 
 	is_open = true;
@@ -49,6 +66,15 @@ void ProjectSettings::SaveToFile() {
 	json["display"]["buffers"] = display.buffers;
 	json["display"]["gamma"] = display.GetGamma();
 	json["display"]["antialias"] = display.GetAntialias();
+
+	json["modules"]["console"] = modules.console;
+	json["modules"]["controller"] = modules.controller;
+	json["modules"]["debug_usb"] = modules.debug_usb;
+	json["modules"]["debug_is_viewer"] = modules.debug_is_viewer;
+	json["modules"]["dfs"] = modules.dfs;
+	json["modules"]["display"] = modules.display;
+	json["modules"]["rdp"] = modules.rdp;
+	json["modules"]["timer"] = modules.timer;
 
 	std::ofstream project_file(project_directory + "/ngine.project.json");
 

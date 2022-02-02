@@ -3,6 +3,7 @@
 #include <string>
 
 #include "DisplaySettings.h"
+#include "ModulesSettings.h"
 
 class ProjectSettings {
    private:
@@ -14,6 +15,7 @@ class ProjectSettings {
 	std::string project_directory;
 
 	DisplaySettings display;
+	ModulesSettings modules;
 
 	ProjectSettings();
 
