@@ -5,14 +5,17 @@
 const char *setup_gen_c = R"(#include <libdragon.h>
 
 #include "game.s.h"
+#include "scenes/change_scene.s.h"
 
 void setup() {
 %s
 	mem_zone_init(&global_memory_pool, %d);
 	mem_zone_init(&scene_memory_pool, %d);
+
+	scene_manager_init(&global_memory_pool, &scene_memory_pool, change_scene);
 })";
 
-void generate_setup_gen_c(std::string setup_path, ProjectSettings settings) {
+void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	std::stringstream function_body;
 
 	if (settings.modules.display) {

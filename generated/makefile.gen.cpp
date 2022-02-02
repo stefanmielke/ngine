@@ -1,6 +1,6 @@
 #include "generated.h"
 
-const char *makefile_gen_cpp = R"(V=1
+const char *makefile_gen = R"(V=1
 SOURCE_DIR=src
 BUILD_DIR=build
 include $(N64_INST)/include/n64.mk
@@ -8,9 +8,10 @@ include $(N64_INST)/include/n64.mk
 N64_CFLAGS += -Ilibs/libdragon-extensions/include
 
 C_ROOT_FILES := $(wildcard src/*.c)
+C_SCENE_FILES := $(wildcard src/scenes/*.c)
 C_LIB_EXTENSIONS_FILES := $(wildcard libs/libdragon-extensions/src/*.c)
 
-SRC = $(C_ROOT_FILES) $(C_LIB_EXTENSIONS_FILES)
+SRC = $(C_ROOT_FILES) $(C_SCENE_FILES) $(C_LIB_EXTENSIONS_FILES)
 OBJS = $(SRC:%%.c=%%.o)
 DEPS = $(SRC:%%.c=%%.d)
 
@@ -37,11 +38,11 @@ clean:
 
 .PHONY: all clean)";
 
-void generate_makefile_gen_cpp(std::string makefile_path, const char *rom_filename,
+void generate_makefile_gen(std::string &makefile_path, const char *rom_filename,
 							   const char *rom_title) {
 	FILE *filestream = fopen(makefile_path.c_str(), "w");
 
-	fprintf(filestream, makefile_gen_cpp, rom_filename, rom_filename, rom_title, rom_filename,
+	fprintf(filestream, makefile_gen, rom_filename, rom_filename, rom_title, rom_filename,
 			rom_filename);
 
 	fclose(filestream);

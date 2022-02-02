@@ -121,13 +121,13 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Building project...");
 
-			ProjectBuilder::Build(project_settings);
+			ProjectBuilder::Build(project_settings, project);
 		}
 		if (ImGui::BeginMenu("Tasks", project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding project...");
 
-				ProjectBuilder::Rebuild(project_settings);
+				ProjectBuilder::Rebuild(project_settings, project);
 			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");

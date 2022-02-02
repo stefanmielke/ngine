@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+extern const char *change_scene_s_h;
 extern const char *clang_format;
 extern const char *game_s_h;
 extern const char *gitignore;
