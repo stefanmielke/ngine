@@ -200,14 +200,57 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 	console.Draw("Output", window, is_output_open);
 
+	const int prop_y_size = is_output_open ? 219 : 38;
+	ImGui::SetNextWindowSize(ImVec2(300, window.getSize().y - prop_y_size));
+	ImGui::SetNextWindowPos(ImVec2(0, 19));
+	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+		if (ImGui::BeginTabBar("Properties")) {
+			if (ImGui::BeginTabItem("Nodes")) {
+				if (ImGui::TreeNodeEx("Root Node")) {
+					{
+						ImGui::SameLine();
+						if (ImGui::Selectable("Props")) {
+							// do whatever
+						}
+					}
+					{
+						if (ImGui::Selectable("Test Node Press")) {
+							// do whatever
+						}
+					}
+
+					if (ImGui::TreeNode("Test Node")) {
+						ImGui::TreePop();
+					}
+					if (ImGui::TreeNode("Test Node 2")) {
+						ImGui::TreePop();
+					}
+					ImGui::TreePop();
+				}
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Settings")) {
+				ImGui::Text("Name");
+				ImGui::EndTabItem();
+			}
+		}
+		ImGui::EndTabBar();
+	}
+	ImGui::End();
+
 	const int prop_x_size = 300;
-	const int prop_y_size = is_output_open ? 219 : 19;
 	ImGui::SetNextWindowSize(ImVec2(prop_x_size, window.getSize().y - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(window.getSize().x - prop_x_size, 19));
 	if (ImGui::Begin("General Settings", nullptr,
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
 						 ImGuiWindowFlags_NoTitleBar)) {
 		if (ImGui::BeginTabBar("Properties")) {
+			if (ImGui::BeginTabItem("Node")) {
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Scenes")) {
+				ImGui::EndTabItem();
+			}
 			if (ImGui::BeginTabItem("Project")) {
 				if (project_settings.IsOpen()) {
 					ImGui::InputText("Name", project_settings_screen.project_name, 100);
