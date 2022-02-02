@@ -89,5 +89,6 @@ void ProjectBuilder::GenerateStaticFiles(std::string project_folder) {
 	create_static_file(project_folder + "/.clang-format", clang_format);
 	create_static_file(project_folder + "/.gitignore", gitignore);
 
-	create_static_file(project_folder + "/src/main.s.c", main_s_cpp);
+	create_static_file(project_folder + "/src/main.s.c", main_s_c);
+	create_static_file(project_folder + "/src/game.s.h", game_s_h);
 }

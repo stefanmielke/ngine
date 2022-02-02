@@ -34,9 +34,9 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	next_scene_id = json["project"]["next_scene_id"];
 	rom_name = json["project"]["rom"];
 	if (!json["project"]["global_mem_alloc_size"].is_null())
-		global_mem_alloc_size = json["modules"]["global_mem_alloc_size"];
+		global_mem_alloc_size = json["project"]["global_mem_alloc_size"];
 	if (!json["project"]["scene_mem_alloc_size"].is_null())
-		scene_mem_alloc_size = json["modules"]["scene_mem_alloc_size"];
+		scene_mem_alloc_size = json["project"]["scene_mem_alloc_size"];
 
 
 	display.SetResolution(json["display"]["resolution"]);

@@ -1,7 +1,11 @@
-const char *main_s_cpp =
-	R"(
-#include <stdio.h>
+const char *main_s_c =
+	R"(#include <stdio.h>
 #include <libdragon.h>
+
+#include <mem_pool.h>
+
+MemZone global_memory_pool;
+MemZone scene_memory_pool;
 
 void setup();
 
@@ -12,5 +16,4 @@ int main(void) {
 
 	while (1) {
 	}
-}
-)";
+})";
