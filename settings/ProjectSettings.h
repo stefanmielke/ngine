@@ -15,6 +15,9 @@ class ProjectSettings {
 	std::string rom_name;
 	std::string project_directory;
 
+	int global_mem_alloc_size;
+	int scene_mem_alloc_size;
+
 	DisplaySettings display;
 	ModulesSettings modules;
 

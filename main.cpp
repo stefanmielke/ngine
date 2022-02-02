@@ -299,6 +299,13 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 					ImGui::Separator();
 
+					ImGui::TextUnformatted("Global Memory Reserve (KB)");
+					ImGui::InputInt("##GlobalMem", &project_settings.global_mem_alloc_size, 1, 1024);
+					ImGui::TextUnformatted("Scene Memory Reserve (KB)");
+					ImGui::InputInt("##LocalMem", &project_settings.scene_mem_alloc_size, 1, 1024);
+
+					ImGui::Separator();
+
 					ImGui::TextUnformatted("Modules:");
 					ImGui::Checkbox("Console", &project_settings.modules.console);
 					ImGui::Checkbox("Controller", &project_settings.modules.controller);
