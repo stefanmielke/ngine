@@ -6,7 +6,7 @@ add_compile_options(-Wall -Wno-deprecated-enum-enum-conversion)
 
 set(SOURCES main.cpp ProjectSettings.cpp ProjectBuilder.cpp Libdragon.cpp VSCode.cpp VSCode.h DisplaySettings.cpp DisplaySettings.h)
 #set(SOURCES ${SOURCES} generated/project_settings.cpp)
-set(SOURCES ${SOURCES} static/main.s.cpp)
+set(SOURCES ${SOURCES} static/main.s.cpp generated/makefile.gen.cpp)
 
 set(SOURCES ${SOURCES} imgui-SFML/imgui-SFML.cpp)
 set(SOURCES ${SOURCES} imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp)
