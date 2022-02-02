@@ -12,7 +12,8 @@ void setup() {
 	mem_zone_init(&global_memory_pool, %d);
 	mem_zone_init(&scene_memory_pool, %d);
 
-	scene_manager_init(&global_memory_pool, &scene_memory_pool, change_scene);
+	scene_manager = scene_manager_init(&global_memory_pool, &scene_memory_pool, change_scene);
+	scene_manager_change_scene(scene_manager, %d);
 })";
 
 void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
@@ -49,6 +50,7 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 
 	FILE *filestream = fopen(setup_path.c_str(), "w");
 	fprintf(filestream, setup_gen_c, function_body.str().c_str(),
-			settings.global_mem_alloc_size * 1024, settings.scene_mem_alloc_size * 1024);
+			settings.global_mem_alloc_size * 1024, settings.scene_mem_alloc_size * 1024,
+			settings.initial_screen_id);
 	fclose(filestream);
 }
