@@ -73,7 +73,7 @@ void ProjectBuilder::Create(std::string project_folder) {
 	std::thread(create_project_thread, project_folder).detach();
 }
 
-void ProjectBuilder::Build(ProjectSettings project_settings) {
+void create_build_files(ProjectSettings &project_settings) {
 	std::ofstream main_s_cpp_file(project_settings.project_directory + "/src/main.s.c");
 	main_s_cpp_file << main_s_cpp << std::endl;
 	main_s_cpp_file.close();
@@ -83,6 +83,16 @@ void ProjectBuilder::Build(ProjectSettings project_settings) {
 	generate_makefile_gen_cpp(makefile, project_settings.rom_name.c_str(),
 							  project_settings.project_name.c_str());
 	fclose(makefile);
+}
+
+void ProjectBuilder::Build(ProjectSettings project_settings) {
+	create_build_files(project_settings);
 
 	Libdragon::Build(project_settings.project_directory);
+}
+
+void ProjectBuilder::Rebuild(ProjectSettings project_settings) {
+	create_build_files(project_settings);
+
+	Libdragon::Rebuild(project_settings.project_directory);
 }

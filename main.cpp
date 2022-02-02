@@ -97,9 +97,13 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		}
 		if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Building project...");
-			console.AddLog("Check output on the console.");
 
 			ProjectBuilder::Build(project_settings);
+		}
+		if (ImGui::MenuItem("Clean/Build", nullptr, false, project_settings.IsOpen())) {
+			console.AddLog("Rebuilding project...");
+
+			ProjectBuilder::Rebuild(project_settings);
 		}
 		if (ImGui::MenuItem("Open in VSCode", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Opening project in VSCode...");

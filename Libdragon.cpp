@@ -2,12 +2,21 @@
 
 #include <thread>
 
+#include "ConsoleApp.h"
+
+extern ConsoleApp console;
+
 bool is_running_command;
 std::string current_command;
 
 void command_thread(const char *command) {
-	system(command);
+	int result = system(command);
 	is_running_command = false;
+
+	if (result == 0)
+		console.AddLog("Finished successfully.");
+	else
+		console.AddLog("[error] Process returned %d. Check console output for more info.", result);
 }
 
 void run_command(std::string command) {
