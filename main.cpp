@@ -255,6 +255,22 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 						project.SaveToDisk(project_settings.project_directory);
 						project_settings.SaveToDisk();
 					}
+
+					ImGui::Separator();
+
+					if (ImGui::SmallButton("Delete Scene")) {
+						for (size_t i = 0; i < project.scenes.size(); ++i) {
+							if (project.scenes[i].id == current_scene->id) {
+								project.scenes.erase(project.scenes.begin() + i);
+								std::string filename = project_settings.project_directory + "/.ngine/scenes/" + std::to_string(current_scene->id) + ".scene.json";
+								std::filesystem::remove(filename);
+
+								current_scene = nullptr;
+								break;
+							}
+						}
+					}
+
 					ImGui::EndTabItem();
 				}
 			}

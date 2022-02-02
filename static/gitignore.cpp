@@ -27,4 +27,8 @@ cmake-*/
 
 # removing csv files generated during build-resources.sh
 /assets/maps/**/*.csv
+
+# removing build generated files
+/src/**/*.gen.c
+/src/**/*.gen.h
 )";
