@@ -1,7 +1,5 @@
 #include <filesystem>
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <thread>
 
 #include "imgui/imgui.h"
@@ -13,7 +11,7 @@
 #include <SFML/Window/Event.hpp>
 
 #include "ConsoleApp.h"
-#include "generated/generated.h"
+#include "ProjectBuilder.h"
 #include "ProjectSettings.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
@@ -22,8 +20,6 @@ ConsoleApp console;
 ProjectSettings project_settings;
 
 int main() {
-	std::string project_folder;
-
 	std::string temp_output_string;
 	std::stringstream output_stream;
 	std::cout.rdbuf(output_stream.rdbuf());
@@ -59,7 +55,7 @@ int main() {
 				if (ImGui::MenuItem("Close Project")) {
 					console.AddLog("Closing project...");
 
-					project_folder.clear();
+					project_settings.CloseProject();
 					window.setTitle(default_title);
 
 					console.AddLog("Project closed.");
@@ -68,6 +64,19 @@ int main() {
 					window.close();
 				}
 				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
+				console.AddLog("Building project...");
+				console.AddLog("Check output on the console.");
+
+				ProjectBuilder::Build(project_settings);
+			}
+			if (ImGui::MenuItem("Open in VSCode", nullptr, false, project_settings.IsOpen())) {
+				console.AddLog("Opening project in VSCode...");
+
+				char cmd[255];
+				snprintf(cmd, 255, "code %s", project_settings.project_directory.c_str());
+				system(cmd);
 			}
 			ImGui::EndMainMenuBar();
 		}
@@ -122,13 +131,15 @@ int main() {
 				if (ImGui::Button("Open", ImVec2(50, 20))) {
 					console.AddLog("Opening project at '%s'...", input);
 
-					project_folder = input;
-					window.setTitle("NGine - " + project_folder);
+					project_settings.project_directory = input;
 
-					std::string project_filepath = project_folder + "/ngine.project.json";
+					std::string project_filepath = project_settings.project_directory + "/ngine.project.json";
 					project_settings.LoadFromFile(project_filepath);
 
+					window.setTitle("NGine - " + project_settings.project_directory);
 					open_project_window_open = false;
+
+					console.AddLog("Project opened.");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel", ImVec2(50, 20))) {

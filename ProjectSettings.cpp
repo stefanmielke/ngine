@@ -90,6 +90,8 @@ void ProjectSettings::LoadFromFile(std::string filepath) {
 	display.SetAntialias(json["display"]["antialias"]);
 
 	project_file.close();
+
+	is_open = true;
 }
 
 void ProjectSettings::SaveToFile(std::string filepath) {
@@ -98,4 +100,9 @@ void ProjectSettings::SaveToFile(std::string filepath) {
 	fprintf(file_project_settings, project_settings_file, display.GetResolution(),
 			display.GetBitDepth(), display.buffers, display.GetGamma(), display.GetAntialias());
 	fclose(file_project_settings);
+}
+
+void ProjectSettings::CloseProject() {
+	is_open = false;
+	project_directory.clear();
 }

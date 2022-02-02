@@ -1,0 +1,18 @@
+const char *main_s_cpp =
+	"#include <stdio.h>\n"
+	"\n"
+	"#include <libdragon.h>\n"
+	"\n"
+	"int main(void)\n"
+	"{\n"
+	"    init_interrupts();\n"
+	"\n"
+	"    console_init();\n"
+	"\n"
+	"    debug_init_usblog();\n"
+	"    console_set_debug(true);\n"
+	"\n"
+	"    printf(\"Hello world from NGine!\\n\");\n"
+	"\n"
+	"    while(1) {}\n"
+	"}";

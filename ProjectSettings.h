@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+
 enum Resolution {
 	RES_320x240,
 	RES_640x480,
@@ -43,9 +44,20 @@ class DisplaySettings {
 };
 
 class ProjectSettings {
+   private:
+	bool is_open;
+
    public:
+	std::string project_directory;
+
 	DisplaySettings display;
 
 	void LoadFromFile(std::string filepath);
 	void SaveToFile(std::string filepath);
+
+	void CloseProject();
+
+	[[nodiscard]] bool IsOpen() const {
+		return is_open;
+	};
 };

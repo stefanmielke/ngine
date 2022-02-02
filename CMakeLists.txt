@@ -4,8 +4,10 @@ project(ngine)
 set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wall -Wno-deprecated-enum-enum-conversion)
 
-set(SOURCES main.cpp ProjectSettings.cpp)
+set(SOURCES main.cpp ProjectSettings.cpp ProjectBuilder.cpp)
 set(SOURCES ${SOURCES} generated/project_settings.cpp)
+set(SOURCES ${SOURCES} static/main.s.cpp)
+
 set(SOURCES ${SOURCES} imgui-SFML/imgui-SFML.cpp)
 set(SOURCES ${SOURCES} imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp)
 
