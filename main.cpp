@@ -11,14 +11,16 @@
 #include "ConsoleApp.h"
 #include "Libdragon.h"
 #include "ProjectBuilder.h"
+#include "VSCode.h"
+#include "settings/EngineSettings.h"
 #include "settings/ProjectSettings.h"
 #include "settings/ProjectSettingsScreen.h"
-#include "VSCode.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
 ProjectSettings project_settings;
+EngineSettings engine_settings;
 
 char input_new_project[255];
 char input_open_project[255];
@@ -29,6 +31,9 @@ void update_gui(sf::RenderWindow &window, sf::Time time);
 int main() {
 	memset(input_new_project, 0, 255);
 	memset(input_open_project, 0, 255);
+
+	engine_settings.LoadFromDisk();
+	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
 
 	std::stringstream output_stream;
 	std::cout.rdbuf(output_stream.rdbuf());
@@ -120,6 +125,14 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 			VSCode::OpenFolder(project_settings.project_directory);
 		}
+		if (ImGui::MenuItem("Run in CEN64", nullptr, false, project_settings.IsOpen())) {
+			console.AddLog("Opening rom in CEN64...");
+
+			char cmd[255];
+			snprintf(cmd, 255, "source ~/.bashrc\ncd %s\ncen",
+					 project_settings.project_directory.c_str());
+			system(cmd);
+		}
 		ImGui::EndMainMenuBar();
 	}
 
@@ -164,6 +177,8 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 					open_project_window_open = false;
 
 					project_settings_screen.FromProjectSettings(project_settings);
+
+					engine_settings.SetLastOpenedProject(project_filepath);
 
 					console.AddLog("Project opened.");
 				}
