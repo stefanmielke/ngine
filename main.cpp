@@ -24,6 +24,7 @@ EngineSettings engine_settings;
 
 char input_new_project[255];
 char input_open_project[255];
+char mupen64_path[255];
 ProjectSettingsScreen project_settings_screen;
 
 void update_gui(sf::RenderWindow &window, sf::Time time);
@@ -34,6 +35,7 @@ int main() {
 
 	engine_settings.LoadFromDisk();
 	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
+	strcpy(mupen64_path, engine_settings.GetMupen64Path().c_str());
 
 	std::stringstream output_stream;
 	std::cout.rdbuf(output_stream.rdbuf());
@@ -108,29 +110,34 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 			ProjectBuilder::Build(project_settings);
 		}
-		if (ImGui::MenuItem("Clean/Build", nullptr, false, project_settings.IsOpen())) {
-			console.AddLog("Rebuilding project...");
+		if (ImGui::BeginMenu("Tasks", project_settings.IsOpen())) {
+			if (ImGui::MenuItem("Clean/Build")) {
+				console.AddLog("Rebuilding project...");
 
-			ProjectBuilder::Rebuild(project_settings);
-		}
-		if (ImGui::MenuItem("Regen Static Files", nullptr, false, project_settings.IsOpen())) {
-			console.AddLog("Regenerating static files...");
+				ProjectBuilder::Rebuild(project_settings);
+			}
+			if (ImGui::MenuItem("Regen Static Files")) {
+				console.AddLog("Regenerating static files...");
 
-			ProjectBuilder::GenerateStaticFiles(project_settings.project_directory);
+				ProjectBuilder::GenerateStaticFiles(project_settings.project_directory);
 
-			console.AddLog("Files regenerated.");
+				console.AddLog("Files regenerated.");
+			}
+			ImGui::EndMenu();
 		}
 		if (ImGui::MenuItem("Open in VSCode", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Opening project in VSCode...");
 
 			VSCode::OpenFolder(project_settings.project_directory);
 		}
-		if (ImGui::MenuItem("Run in CEN64", nullptr, false, project_settings.IsOpen())) {
-			console.AddLog("Opening rom in CEN64...");
+		if (ImGui::MenuItem(
+				"Run in Mupen64", nullptr, false,
+				project_settings.IsOpen() && !engine_settings.GetMupen64Path().empty())) {
+			console.AddLog("Opening rom in Mupen64...");
 
 			char cmd[255];
-			snprintf(cmd, 255, "source ~/.bashrc\ncd %s\ncen",
-					 project_settings.project_directory.c_str());
+			snprintf(cmd, 255, "cd %s\n%s *.z64", project_settings.project_directory.c_str(),
+					 engine_settings.GetMupen64Path().c_str());
 			system(cmd);
 		}
 		ImGui::EndMainMenuBar();
@@ -193,68 +200,88 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 	console.Draw("Output", window, is_output_open);
 
-	if (project_settings.IsOpen()) {
-		const int prop_x_size = 300;
-		const int prop_y_size = is_output_open ? 219 : 19;
-		ImGui::SetNextWindowSize(ImVec2(prop_x_size, window.getSize().y - prop_y_size));
-		ImGui::SetNextWindowPos(ImVec2(window.getSize().x - prop_x_size, 19));
-		if (ImGui::Begin("Properties", nullptr,
-						 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize)) {
-			ImGui::TextUnformatted("Project:");
-			ImGui::InputText("Name", project_settings_screen.project_name, 100);
-			ImGui::InputText("Rom", project_settings_screen.rom_name, 100);
+	const int prop_x_size = 300;
+	const int prop_y_size = is_output_open ? 219 : 19;
+	ImGui::SetNextWindowSize(ImVec2(prop_x_size, window.getSize().y - prop_y_size));
+	ImGui::SetNextWindowPos(ImVec2(window.getSize().x - prop_x_size, 19));
+	if (ImGui::Begin("General Settings", nullptr,
+					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+						 ImGuiWindowFlags_NoTitleBar)) {
+		if (ImGui::BeginTabBar("Properties")) {
+			if (ImGui::BeginTabItem("Project")) {
+				if (project_settings.IsOpen()) {
+					ImGui::InputText("Name", project_settings_screen.project_name, 100);
+					ImGui::InputText("Rom", project_settings_screen.rom_name, 100);
 
-			ImGui::Separator();
+					ImGui::Separator();
 
-			ImGui::TextUnformatted("Modules:");
-			ImGui::Checkbox("Console", &project_settings.modules.console);
-			ImGui::Checkbox("Controller", &project_settings.modules.controller);
-			ImGui::Checkbox("Debug Is Viewer", &project_settings.modules.debug_is_viewer);
-			ImGui::Checkbox("Debug USB", &project_settings.modules.debug_usb);
-			ImGui::Checkbox("Display", &project_settings.modules.display);
-			ImGui::Checkbox("DFS", &project_settings.modules.dfs);
-			ImGui::Checkbox("RDP", &project_settings.modules.rdp);
-			ImGui::Checkbox("Timer", &project_settings.modules.timer);
+					ImGui::TextUnformatted("Modules:");
+					ImGui::Checkbox("Console", &project_settings.modules.console);
+					ImGui::Checkbox("Controller", &project_settings.modules.controller);
+					ImGui::Checkbox("Debug Is Viewer", &project_settings.modules.debug_is_viewer);
+					ImGui::Checkbox("Debug USB", &project_settings.modules.debug_usb);
+					ImGui::Checkbox("Display", &project_settings.modules.display);
+					ImGui::Checkbox("DFS", &project_settings.modules.dfs);
+					ImGui::Checkbox("RDP", &project_settings.modules.rdp);
+					ImGui::Checkbox("Timer", &project_settings.modules.timer);
 
-			ImGui::Separator();
+					ImGui::Separator();
 
-			static int antialias_current, bit_depth_current, gamma_current, resolution_current;
-			const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
-											 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
-											 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
-			const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
-			const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT", "GAMMA_CORRECT_DITHER"};
-			const char *resolution_items[] = {"RESOLUTION_320x240", "RESOLUTION_640x480",
-											  "RESOLUTION_256x240", "RESOLUTION_512x480",
-											  "RESOLUTION_512x240", "RESOLUTION_640x240"};
+					static int antialias_current = project_settings.display.antialias;
+					static int bit_depth_current = project_settings.display.bit_depth;
+					static int gamma_current = project_settings.display.gamma;
+					static int resolution_current = project_settings.display.resolution;
 
-			if (project_settings.modules.display) {
-				ImGui::TextUnformatted("Display Settings:");
-				ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
-				ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
-				ImGui::SliderInt("Buffers", &project_settings_screen.display_buffers, 1, 3);
-				ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
-				ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
+					const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
+													 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
+													 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
+					const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
+					const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT",
+												 "GAMMA_CORRECT_DITHER"};
+					const char *resolution_items[] = {"RESOLUTION_320x240", "RESOLUTION_640x480",
+													  "RESOLUTION_256x240", "RESOLUTION_512x480",
+													  "RESOLUTION_512x240", "RESOLUTION_640x240"};
 
-				ImGui::Separator();
+					if (project_settings.modules.display) {
+						ImGui::TextUnformatted("Display Settings:");
+						ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
+						ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
+						ImGui::SliderInt("Buffers", &project_settings_screen.display_buffers, 1, 3);
+						ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
+						ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
+
+						ImGui::Separator();
+					}
+
+					if (ImGui::Button("Save")) {
+						strcpy(project_settings_screen.display_antialias,
+							   antialias_items[antialias_current]);
+						strcpy(project_settings_screen.display_bit_depth,
+							   bit_depth_items[bit_depth_current]);
+						strcpy(project_settings_screen.display_gamma, gamma_items[gamma_current]);
+						strcpy(project_settings_screen.display_resolution,
+							   resolution_items[resolution_current]);
+
+						project_settings_screen.ToProjectSettings(project_settings);
+
+						project_settings.SaveToFile();
+
+						console.AddLog("Saved Project Settings.");
+					}
+				}
+				ImGui::EndTabItem();
 			}
+			if (ImGui::BeginTabItem("Engine")) {
+				ImGui::InputText("Cen64 Path", mupen64_path, 255);
 
-			if (ImGui::Button("Save")) {
-				strcpy(project_settings_screen.display_antialias,
-					   antialias_items[antialias_current]);
-				strcpy(project_settings_screen.display_bit_depth,
-					   bit_depth_items[bit_depth_current]);
-				strcpy(project_settings_screen.display_gamma, gamma_items[gamma_current]);
-				strcpy(project_settings_screen.display_resolution,
-					   resolution_items[resolution_current]);
+				if (ImGui::Button("Save")) {
+					engine_settings.SetMupen64Path(mupen64_path);
+				}
 
-				project_settings_screen.ToProjectSettings(project_settings);
-
-				project_settings.SaveToFile();
-
-				console.AddLog("Saved Project Settings.");
+				ImGui::EndTabItem();
 			}
 		}
-		ImGui::End();
+		ImGui::EndTabBar();
 	}
+	ImGui::End();
 }
