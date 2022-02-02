@@ -4,8 +4,8 @@ project(ngine)
 set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wall -Wno-deprecated-enum-enum-conversion)
 
-set(SOURCES main.cpp ProjectSettings.cpp ProjectBuilder.cpp Libdragon.cpp VSCode.cpp VSCode.h)
-set(SOURCES ${SOURCES} generated/project_settings.cpp)
+set(SOURCES main.cpp ProjectSettings.cpp ProjectBuilder.cpp Libdragon.cpp VSCode.cpp VSCode.h DisplaySettings.cpp DisplaySettings.h)
+#set(SOURCES ${SOURCES} generated/project_settings.cpp)
 set(SOURCES ${SOURCES} static/main.s.cpp)
 
 set(SOURCES ${SOURCES} imgui-SFML/imgui-SFML.cpp)

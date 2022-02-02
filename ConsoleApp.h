@@ -8,7 +8,6 @@
 
 struct ConsoleApp {
 	ImVector<char *> Items;
-	ImGuiTextFilter Filter;
 	bool ScrollToBottom;
 
 	ConsoleApp() {
@@ -102,8 +101,6 @@ struct ConsoleApp {
 
 		for (int i = 0; i < Items.Size; i++) {
 			const char *item = Items[i];
-			if (!Filter.PassFilter(item))
-				continue;
 
 			// Normally you would store more information in your item than just a string.
 			// (e.g. make Items[] an array of structure, store color/type etc.)

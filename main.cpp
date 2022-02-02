@@ -20,9 +20,15 @@ const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 ConsoleApp console;
 ProjectSettings project_settings;
 
+char input_new_project[255];
+char input_open_project[255];
+
 void update_gui(sf::RenderWindow &window, sf::Time time);
 
 int main() {
+	memset(input_new_project, 0, 255);
+	memset(input_open_project, 0, 255);
+
 	std::stringstream output_stream;
 	std::cout.rdbuf(output_stream.rdbuf());
 
@@ -76,7 +82,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 			if (ImGui::MenuItem("Open Project")) {
 				open_project_window_open = true;
 			}
-			if (ImGui::MenuItem("Close Project")) {
+			if (ImGui::MenuItem("Close Project", nullptr, false, project_settings.IsOpen())) {
 				console.AddLog("Closing project...");
 
 				project_settings.CloseProject();
@@ -106,12 +112,11 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 	if (new_project_window_open) {
 		ImGui::SetNextWindowSize(ImVec2(300, 80));
 		if (ImGui::Begin("New Project", &new_project_window_open)) {
-			char input[255];
 			ImGui::TextUnformatted("Folder");
 			ImGui::SameLine();
-			ImGui::InputText("##", input, 255);
+			ImGui::InputText("##", input_new_project, 255);
 			if (ImGui::Button("Create", ImVec2(50, 20))) {
-				std::string new_project_folder(input);
+				std::string new_project_folder(input_new_project);
 
 				// create folder if it doesn't exist
 				const std::filesystem::path project_path(new_project_folder);
@@ -127,7 +132,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				ProjectSettings default_project_settings;
 				default_project_settings.SaveToFile(project_settings_filename);
 
-				console.AddLog("Running 'libdragon init' at '%s'...", input);
+				console.AddLog("Running 'libdragon init' at '%s'...", new_project_folder.c_str());
 				console.AddLog("Check output on the console.");
 
 				Libdragon::Init(new_project_folder);
@@ -144,17 +149,19 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 	if (open_project_window_open) {
 		ImGui::SetNextWindowSize(ImVec2(300, 80));
 		if (ImGui::Begin("Open Project", &open_project_window_open)) {
-			char input[255];
 			ImGui::TextUnformatted("Folder");
 			ImGui::SameLine();
-			ImGui::InputText("##", input, 255);
+			ImGui::InputText("##", input_open_project, 255);
 			if (ImGui::Button("Open", ImVec2(50, 20))) {
-				console.AddLog("Opening project at '%s'...", input);
+				console.AddLog("Opening project at '%s'...", input_open_project);
 
-				project_settings.project_directory = input;
+				if (project_settings.IsOpen()) {
+					project_settings.CloseProject();
+				}
 
-				std::string project_filepath = project_settings.project_directory +
-											   "/ngine.project.json";
+				project_settings.project_directory = input_open_project;
+
+				std::string project_filepath = std::string(input_open_project);
 				project_settings.LoadFromFile(project_filepath);
 
 				window.setTitle("NGine - " + project_settings.project_directory);
