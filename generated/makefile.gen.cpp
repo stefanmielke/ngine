@@ -1,46 +1,48 @@
 #include "generated.h"
 
-const char *makefile_gen_cpp =
-	"V=1\n"
-	"SOURCE_DIR=src\n"
-	"BUILD_DIR=build\n"
-	"include $(N64_INST)/include/n64.mk\n"
-	"\n"
-	"N64_CFLAGS += -Ilibs/libdragon-extensions/include\n"
-	"\n"
-	"C_ROOT_FILES := $(wildcard src/*.c)\n"
-	"C_LIB_EXTENSIONS_FILES := $(wildcard libs/libdragon-extensions/src/*.c)\n"
-	"\n"
-	"SRC = $(C_ROOT_FILES) $(C_LIB_EXTENSIONS_FILES)\n"
-	"OBJS = $(SRC:%%.c=%%.o)\n"
-	"DEPS = $(SRC:%%.c=%%.d)\n"
-	"\n"
-	"all: %s.z64\n"
-	"\n"
-	"%s.z64: N64_ROM_TITLE=\"%s\"\n"
-	"$(BUILD_DIR)/%s.elf: $(OBJS)\n"
-	"\n"
-	"clean:\n"
-	"\tfind . -name '*.v64' -delete\n"
-	"\tfind . -name '*.z64' -delete\n"
-	"\tfind . -name '*.elf' -delete\n"
-	"\tfind . -name '*.o' -delete\n"
-	"\tfind . -name '*.d' -delete\n"
-	"\tfind . -name '*.bin' -delete\n"
-	"\tfind . -name '*.plan_bak*' -delete\n"
-	"\tfind ./src -name '*.sprite' -delete\n"
-	"\tfind . -name '*.dfs' -delete\n"
-	"\tfind . -name '*.raw' -delete\n"
-	"\tfind . -name '*.z64' -delete\n"
-	"\tfind . -name '*.n64' -delete\n"
-	"\tfind ./assets/maps -name '*.csv' -delete\n"
-	"\trm -rf build/"
-	"\n"
-	"-include $(DEPS)\n"
-	"\n"
-	".PHONY: all clean";
+const char *makefile_gen_cpp = R"(V=1
+SOURCE_DIR=src
+BUILD_DIR=build
+include $(N64_INST)/include/n64.mk
 
-void generate_makefile_gen_cpp(FILE *filestream, const char *rom_filename, const char *rom_title) {
+N64_CFLAGS += -Ilibs/libdragon-extensions/include
+
+C_ROOT_FILES := $(wildcard src/*.c)
+C_LIB_EXTENSIONS_FILES := $(wildcard libs/libdragon-extensions/src/*.c)
+
+SRC = $(C_ROOT_FILES) $(C_LIB_EXTENSIONS_FILES)
+OBJS = $(SRC:%%.c=%%.o)
+DEPS = $(SRC:%%.c=%%.d)
+
+all: %s.z64
+
+%s.z64: N64_ROM_TITLE="%s"
+$(BUILD_DIR)/%s.elf: $(OBJS)
+
+clean:
+	find . -name '*.v64' -delete
+	find . -name '*.z64' -delete
+	find . -name '*.elf' -delete
+	find . -name '*.o' -delete
+	find . -name '*.d' -delete
+	find . -name '*.bin' -delete
+	find . -name '*.plan_bak*' -delete
+	find ./src -name '*.sprite' -delete
+	find . -name '*.dfs' -delete
+	find . -name '*.raw' -delete
+	find . -name '*.z64' -delete
+	find . -name '*.n64' -delete
+	rm -rf build/
+-include $(DEPS)
+
+.PHONY: all clean)";
+
+void generate_makefile_gen_cpp(std::string makefile_path, const char *rom_filename,
+							   const char *rom_title) {
+	FILE *filestream = fopen(makefile_path.c_str(), "w");
+
 	fprintf(filestream, makefile_gen_cpp, rom_filename, rom_filename, rom_title, rom_filename,
 			rom_filename);
+
+	fclose(filestream);
 }

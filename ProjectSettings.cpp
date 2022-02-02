@@ -36,7 +36,10 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	return true;
 }
 
-void ProjectSettings::SaveToFile(std::string &filepath) {
+void ProjectSettings::SaveToFile() {
+	if (project_directory.empty())
+		return;
+
 	nlohmann::json json;
 	json["project"]["name"] = project_name;
 	json["project"]["rom"] = rom_name;
@@ -47,7 +50,7 @@ void ProjectSettings::SaveToFile(std::string &filepath) {
 	json["display"]["gamma"] = display.GetGamma();
 	json["display"]["antialias"] = display.GetAntialias();
 
-	std::ofstream project_file(filepath);
+	std::ofstream project_file(project_directory + "/ngine.project.json");
 
 	project_file << json.dump(4);
 

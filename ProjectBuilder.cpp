@@ -38,19 +38,12 @@ void create_project_thread(std::string project_folder) {
 	if (!std::filesystem::exists(vscode_path)) {
 		std::filesystem::create_directories(vscode_path);
 	}
-	std::ofstream c_cpp_properties_file(project_folder + "/.vscode/c_cpp_properties.json");
-	c_cpp_properties_file << vs_code_cpp_properties << std::endl;
-	c_cpp_properties_file.close();
+	create_static_file(project_folder + "/.vscode/c_cpp_properties.json", vs_code_cpp_properties);
 
-	std::ofstream clang_format_file(project_folder + "/.clang-format");
-	clang_format_file << clang_format << std::endl;
-	clang_format_file.close();
+	create_static_file(project_folder + "/.clang-format", clang_format);
+	create_static_file(project_folder + "/.gitignore", gitignore);
 
-	std::ofstream gitignore_file(project_folder + "/.gitignore");
-	gitignore_file << gitignore << std::endl;
-	gitignore_file.close();
-
-	console.AddLog("Adding git submodules...");
+	create_static_file(project_folder + "/src/main.s.c", main_s_cpp);
 
 	console.AddLog("Adding libdragon-extensions...");
 
@@ -59,10 +52,10 @@ void create_project_thread(std::string project_folder) {
 	system(cmd);
 
 	console.AddLog("Creating project settings file...");
-	std::string project_settings_filename(project_folder + "/ngine.project.json");
 
 	ProjectSettings default_project_settings;
-	default_project_settings.SaveToFile(project_settings_filename);
+	default_project_settings.project_directory = project_folder;
+	default_project_settings.SaveToFile();
 
 	console.AddLog("Project settings file created.");
 
@@ -74,15 +67,10 @@ void ProjectBuilder::Create(std::string project_folder) {
 }
 
 void create_build_files(ProjectSettings &project_settings) {
-	std::ofstream main_s_cpp_file(project_settings.project_directory + "/src/main.s.c");
-	main_s_cpp_file << main_s_cpp << std::endl;
-	main_s_cpp_file.close();
 
 	std::string makefile_path(project_settings.project_directory + "/Makefile");
-	FILE *makefile = fopen(makefile_path.c_str(), "w");
-	generate_makefile_gen_cpp(makefile, project_settings.rom_name.c_str(),
+	generate_makefile_gen_cpp(makefile_path, project_settings.rom_name.c_str(),
 							  project_settings.project_name.c_str());
-	fclose(makefile);
 }
 
 void ProjectBuilder::Build(ProjectSettings project_settings) {

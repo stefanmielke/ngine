@@ -1,20 +1,20 @@
 const char *vs_code_cpp_properties =
-	"{\n"
-	"    \"configurations\": [\n"
-	"        {\n"
-	"            \"name\": \"N64\",\n"
-	"            \"includePath\": [\n"
-	"                \"${default}\",\n"
-	"                \"libs/libdragon-extensions/include\",\n"
-	"                \"libdragon/include\"\n"
-	"            ],\n"
-	"            \"defines\": [],\n"
-	"            \"compilerPath\": \"/usr/bin/gcc\",\n"
-	"            \"cStandard\": \"gnu99\",\n"
-	"            \"cppStandard\": \"gnu++14\",\n"
-	"            \"intelliSenseMode\": \"linux-gcc-x64\",\n"
-	"            \"configurationProvider\": \"ms-vscode.makefile-tools\"\n"
-	"        }\n"
-	"    ],\n"
-	"    \"version\": 4\n"
-	"}";
+	R"({
+"configurations": [
+	{
+		"name": "N64",
+		"includePath": [
+			"${default}",
+			"libs/libdragon-extensions/include",
+			"libdragon/include"
+		],
+		"defines": [],
+		"compilerPath": "/usr/bin/gcc",
+		"cStandard": "gnu99",
+		"cppStandard": "gnu++14",
+		"intelliSenseMode": "linux-gcc-x64",
+		"configurationProvider": "ms-vscode.makefile-tools"
+	}
+],
+"version": 4
+})";

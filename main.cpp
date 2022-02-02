@@ -235,8 +235,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				project_settings.display.SetGamma(gamma_items[gamma_current]);
 				project_settings.display.SetResolution(resolution_items[resolution_current]);
 
-				std::string project_filepath = project_settings.project_directory + "/ngine.project.json";
-				project_settings.SaveToFile(project_filepath);
+				project_settings.SaveToFile();
 			}
 		}
 		ImGui::End();
