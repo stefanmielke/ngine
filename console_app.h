@@ -48,15 +48,16 @@ struct ConsoleApp {
 
 	void Draw(const char *title, sf::RenderWindow &window) {
 		ImGui::SetNextWindowSize(ImVec2(window.getSize().x, 200));
-		ImGui::SetNextWindowPos(ImVec2(0, window.getSize().y - 200));
-		if (!ImGui::Begin(title, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar)) {
+		if (!ImGui::Begin(title, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
+			if (ImGui::IsWindowCollapsed()) {
+				ImGui::SetWindowPos(ImVec2(0, window.getSize().y - 19));
+			}
 			ImGui::End();
 			return;
 		}
+		ImGui::SetWindowPos(ImVec2(0, window.getSize().y - 200));
 
 		// TODO: display items starting from the bottom
-		ImGui::TextUnformatted("Output");
-		ImGui::SameLine();
 		if (ImGui::SmallButton("Clear")) {
 			ClearLog();
 		}
