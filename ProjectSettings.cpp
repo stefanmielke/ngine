@@ -1,6 +1,8 @@
+#include <fstream>
 #include "ProjectSettings.h"
 
 #include "generated/generated.h"
+#include "json.hpp"
 
 DisplaySettings::DisplaySettings()
 	: resolution(RES_320x240),
@@ -19,7 +21,6 @@ const char *DisplaySettings::GetResolution() {
 	}
 	return "";
 }
-
 const char *DisplaySettings::GetBitDepth() {
 	switch (bit_depth) {
 		case DEPTH_16:
@@ -29,7 +30,6 @@ const char *DisplaySettings::GetBitDepth() {
 	}
 	return "";
 }
-
 const char *DisplaySettings::GetGamma() {
 	switch (gamma) {
 		case GAMMA_NONE:
@@ -37,7 +37,6 @@ const char *DisplaySettings::GetGamma() {
 	}
 	return "";
 }
-
 const char *DisplaySettings::GetAntialias() {
 	switch (antialias) {
 		case ANTIALIAS_NONE:
@@ -48,7 +47,49 @@ const char *DisplaySettings::GetAntialias() {
 	return "";
 }
 
+void DisplaySettings::SetResolution(std::string value) {
+	if (value == "RESOLUTION_320x240") {
+		resolution = RES_320x240;
+	} else if (value == "RESOLUTION_320x240") {
+		resolution = RES_640x480;
+	}
+}
+void DisplaySettings::SetBitDepth(std::string value) {
+	if (value == "DEPTH_16_BPP") {
+		bit_depth = DEPTH_16;
+	} else if (value == "DEPTH_32_BPP") {
+		bit_depth = DEPTH_32;
+	}
+}
+void DisplaySettings::SetBuffers(std::string value) {
+	buffers = std::stoi(value);
+}
+void DisplaySettings::SetGamma(std::string value) {
+	if (value == "GAMMA_NONE") {
+		gamma = GAMMA_NONE;
+	}
+}
+void DisplaySettings::SetAntialias(std::string value) {
+	if (value == "ANTIALIAS_NONE") {
+		antialias = ANTIALIAS_NONE;
+	} else if (value == "ANTIALIAS_RESAMPLE") {
+		antialias = ANTIALIAS_RESAMPLE;
+	}
+}
+
 void ProjectSettings::LoadFromFile(std::string filepath) {
+	std::ifstream project_file(filepath);
+
+	nlohmann::json json;
+	project_file >> json;
+
+	display.SetResolution(json["display"]["resolution"]);
+	display.SetBitDepth(json["display"]["bit_depth"]);
+	display.SetBuffers(json["display"]["buffers"]);
+	display.SetGamma(json["display"]["gamma"]);
+	display.SetAntialias(json["display"]["antialias"]);
+
+	project_file.close();
 }
 
 void ProjectSettings::SaveToFile(std::string filepath) {

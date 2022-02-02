@@ -125,6 +125,9 @@ int main() {
 					project_folder = input;
 					window.setTitle("NGine - " + project_folder);
 
+					std::string project_filepath = project_folder + "/ngine.project.json";
+					project_settings.LoadFromFile(project_filepath);
+
 					open_project_window_open = false;
 				}
 				ImGui::SameLine();

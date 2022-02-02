@@ -34,6 +34,12 @@ class DisplaySettings {
 	const char *GetBitDepth();
 	const char *GetGamma();
 	const char *GetAntialias();
+
+	void SetResolution(std::string value);
+	void SetBitDepth(std::string value);
+	void SetBuffers(std::string value);
+	void SetGamma(std::string value);
+	void SetAntialias(std::string value);
 };
 
 class ProjectSettings {
