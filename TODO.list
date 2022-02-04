@@ -2,6 +2,13 @@
 [x] Content Browser in the middle part
 [x] Script Browser in the middle part
 [x] Create script files
-[ ] Attach script to scene
+[x] Attach script to scene
+[ ] Delete scripts
+    - Search inside scenes and remove from them
 [ ] Fix closing and opening project
 [ ] Change "Mupen64" to "Emulator"
+[ ] Import sprites
+    - Ask "Copy to sprite project" and copy to '/assets/'
+[ ] Import music
+[ ] Import sfx
+[ ] Import sprite fonts
