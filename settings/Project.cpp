@@ -11,10 +11,11 @@ void Project::SaveToDisk(std::string &folder) {
 		std::filesystem::create_directories(scenes_folder);
 	}
 
-	for (auto& scene : scenes) {
+	for (auto &scene : scenes) {
 		nlohmann::json json;
 		json["id"] = scene.id;
 		json["name"] = scene.name;
+		json["script_name"] = scene.script_name;
 
 		std::ofstream file(folder + "/.ngine/scenes/" + std::to_string(scene.id) + ".scene.json");
 		file << json.dump(4) << std::endl;
@@ -30,7 +31,7 @@ void Project::LoadFromDisk(std::string &folder) {
 	}
 
 	std::filesystem::recursive_directory_iterator dir_iter(scenes_folder);
-	for (auto& file_entry : dir_iter) {
+	for (auto &file_entry : dir_iter) {
 		if (file_entry.is_regular_file()) {
 			std::string filepath(file_entry.path());
 			if (filepath.ends_with(".scene.json")) {
@@ -43,6 +44,9 @@ void Project::LoadFromDisk(std::string &folder) {
 				Scene scene;
 				scene.id = json["id"];
 				scene.name = json["name"];
+
+				if (!json["script_name"].is_null())
+					scene.script_name = json["script_name"];
 
 				scenes.push_back(scene);
 			}

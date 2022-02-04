@@ -11,7 +11,6 @@
 
 #include "ConsoleApp.h"
 #include "json.hpp"
-#include "Libdragon.h"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
 #include "VSCode.h"
@@ -26,7 +25,7 @@ ConsoleApp console;
 Project project;
 Scene *current_scene = nullptr;
 char scene_name[100];
-std::vector<std::string> scripts_files;
+std::vector<std::string> script_files;
 
 ProjectSettings project_settings;
 EngineSettings engine_settings;
@@ -247,12 +246,13 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 						reload_scripts();
 					}
 					ImGui::Separator();
-					for (auto &script_name : scripts_files) {
+					for (auto &script_name : script_files) {
 						ImGui::TextUnformatted(script_name.c_str());
 						ImGui::SameLine();
 						ImGui::PushID(script_name.c_str());
 						if (ImGui::SmallButton("Edit")) {
-							std::string path = project_settings.project_directory + "/src/scripts/" + script_name + ".script.c";
+							std::string path = project_settings.project_directory +
+											   "/src/scripts/" + script_name + ".script.c";
 							VSCode::OpenPath(path);
 						}
 						ImGui::PopID();
@@ -297,6 +297,19 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				}
 				if (ImGui::BeginTabItem("Settings")) {
 					ImGui::InputText("Name", scene_name, 100);
+
+					{
+						std::string current_selected(current_scene->script_name);
+						ImGui::TextUnformatted("Attached Script");
+						if (ImGui::BeginCombo("##AttachedScript", current_selected.c_str())) {
+							for (auto &script : script_files) {
+								if (ImGui::Selectable(script.c_str(), script == current_selected)) {
+									current_scene->script_name = script;
+								}
+							}
+							ImGui::EndCombo();
+						}
+					}
 
 					ImGui::Separator();
 
@@ -465,10 +478,9 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 }
 
 void reload_scripts() {
-	scripts_files.clear();
+	script_files.clear();
 
-	std::filesystem::path script_folder = project_settings.project_directory +
-										  "/.ngine/scripts";
+	std::filesystem::path script_folder = project_settings.project_directory + "/.ngine/scripts";
 
 	if (!std::filesystem::exists(script_folder)) {
 		return;
@@ -485,7 +497,7 @@ void reload_scripts() {
 				filestream >> json;
 				filestream.close();
 
-				scripts_files.emplace_back(json["name"]);
+				script_files.emplace_back(json["name"]);
 			}
 		}
 	}
