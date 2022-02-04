@@ -5,8 +5,8 @@
 
 #include "../json.hpp"
 
-void Project::SaveToDisk(std::string &folder) {
-	std::filesystem::path scenes_folder(folder + "/.ngine/scenes");
+void Project::SaveToDisk(std::string &project_directory) {
+	std::filesystem::path scenes_folder(project_directory + "/.ngine/scenes");
 	if (!std::filesystem::exists(scenes_folder)) {
 		std::filesystem::create_directories(scenes_folder);
 	}
@@ -17,14 +17,14 @@ void Project::SaveToDisk(std::string &folder) {
 		json["name"] = scene.name;
 		json["script_name"] = scene.script_name;
 
-		std::ofstream file(folder + "/.ngine/scenes/" + std::to_string(scene.id) + ".scene.json");
+		std::ofstream file(project_directory + "/.ngine/scenes/" + std::to_string(scene.id) + ".scene.json");
 		file << json.dump(4) << std::endl;
 		file.close();
 	}
 }
 
-void Project::LoadFromDisk(std::string &folder) {
-	std::filesystem::path scenes_folder(folder + "/.ngine/scenes");
+void Project::LoadFromDisk(std::string &project_directory) {
+	std::filesystem::path scenes_folder(project_directory + "/.ngine/scenes");
 	if (!std::filesystem::exists(scenes_folder)) {
 		scenes.clear();
 		return;

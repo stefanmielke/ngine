@@ -22,6 +22,12 @@ void Libdragon::Build(std::string folder) {
 	ThreadCommand::RunCommand(command);
 }
 
+void Libdragon::Clean(std::string folder) {
+	char command[500];
+	snprintf(command, 500, "cd %s\nlibdragon exec make clean > build.log", folder.c_str());
+	ThreadCommand::RunCommand(command);
+}
+
 void Libdragon::CleanSync(std::string folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon exec make clean > build.log", folder.c_str());

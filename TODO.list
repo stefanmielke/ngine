@@ -6,7 +6,7 @@
 [ ] Delete scripts
     - Search inside scenes and remove from them
 [ ] Fix closing and opening project
-[ ] Change "Mupen64" to "Emulator"
+[x] Change "Mupen64" to "Emulator"
 [ ] Import sprites
     - Ask "Copy to sprite project" and copy to '/assets/'
 [ ] Import music

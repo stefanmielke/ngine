@@ -253,6 +253,18 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 							VSCode::OpenPath(path);
 						}
 						ImGui::PopID();
+						ImGui::SameLine();
+						ImGui::PushID((script_name + "D").c_str());
+						if (ImGui::SmallButton("Delete")) {
+							ScriptBuilder::DeleteScriptFile(project_settings, project, script_name.c_str());
+
+							for (int i = 0; i < script_files.size(); ++i) {
+								if (script_files[i] == script_name) {
+									script_files.erase(script_files.begin() + i);
+								}
+							}
+						}
+						ImGui::PopID();
 					}
 				}
 				ImGui::EndTabItem();
@@ -333,7 +345,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 					ImGui::Separator();
 					ImGui::Spacing();
 					if (ImGui::Button("Delete Scene")) {
-						for (size_t i = 0; i < project.scenes.size(); ++i) {
+						for (int i = 0; i < project.scenes.size(); ++i) {
 							if (project.scenes[i].id == current_scene->id) {
 								project.scenes.erase(project.scenes.begin() + i);
 								std::string filename = project_settings.project_directory +
