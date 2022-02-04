@@ -25,5 +25,5 @@ void Libdragon::Build(std::string folder) {
 void Libdragon::CleanSync(std::string folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon exec make clean > build.log", folder.c_str());
-	ThreadCommand::RunCommand(command);
+	system(command);
 }
