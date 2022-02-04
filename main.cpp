@@ -196,7 +196,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				if (project_settings.LoadFromFile(project_filepath)) {
 					project.LoadFromDisk(project_settings.project_directory);
 
-					window.setTitle("NGine - " + project_settings.project_directory);
+					window.setTitle("NGine - " + project_settings.project_name + " - " + project_settings.project_directory);
 					open_project_window_open = false;
 
 					project_settings_screen.FromProjectSettings(project_settings);
