@@ -3,7 +3,7 @@
 [x] Script Browser in the middle part
 [x] Create script files
 [x] Attach script to scene
-[ ] Delete scripts
+[x] Delete scripts
     - Search inside scenes and remove from them
 [ ] Fix closing and opening project
 [x] Change "Mupen64" to "Emulator"
