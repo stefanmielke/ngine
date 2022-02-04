@@ -19,6 +19,7 @@
 #include "settings/Project.h"
 #include "settings/ProjectSettings.h"
 #include "settings/ProjectSettingsScreen.h"
+#include "Emulator.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
@@ -151,12 +152,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
 				project_settings.IsOpen() && !engine_settings.GetMupen64Path().empty())) {
-			console.AddLog("Opening rom in emulator as '%s *.z64'...", engine_settings.GetMupen64Path().c_str());
-
-			char cmd[255];
-			snprintf(cmd, 255, "cd %s\n%s *.z64", project_settings.project_directory.c_str(),
-					 engine_settings.GetMupen64Path().c_str());
-			ThreadCommand::RunCommand(cmd);
+			Emulator::Run(engine_settings, project_settings, project);
 		}
 		ImGui::EndMainMenuBar();
 	}
