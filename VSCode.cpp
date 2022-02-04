@@ -1,7 +1,7 @@
 #include "VSCode.h"
 
-void VSCode::OpenFolder(std::string folder) {
+void VSCode::OpenPath(std::string path) {
 	char cmd[255];
-	snprintf(cmd, 255, "code %s", folder.c_str());
+	snprintf(cmd, 255, "code %s", path.c_str());
 	system(cmd);
 }

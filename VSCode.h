@@ -4,6 +4,6 @@
 
 class VSCode {
    public:
-	static void OpenFolder(std::string folder);
+	static void OpenPath(std::string path);
 };
 

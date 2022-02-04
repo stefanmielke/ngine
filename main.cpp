@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 
 #include "imgui/imgui.h"
@@ -9,8 +10,10 @@
 #include <SFML/Window/Event.hpp>
 
 #include "ConsoleApp.h"
+#include "json.hpp"
 #include "Libdragon.h"
 #include "ProjectBuilder.h"
+#include "ScriptBuilder.h"
 #include "VSCode.h"
 #include "settings/EngineSettings.h"
 #include "settings/Project.h"
@@ -23,6 +26,7 @@ ConsoleApp console;
 Project project;
 Scene *current_scene = nullptr;
 char scene_name[100];
+std::vector<std::string> scripts_files;
 
 ProjectSettings project_settings;
 EngineSettings engine_settings;
@@ -33,6 +37,7 @@ char mupen64_path[255];
 ProjectSettingsScreen project_settings_screen;
 
 void update_gui(sf::RenderWindow &window, sf::Time time);
+void reload_scripts();
 
 int main() {
 	memset(input_new_project, 0, 255);
@@ -141,7 +146,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		if (ImGui::MenuItem("Open in VSCode", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Opening project in VSCode...");
 
-			VSCode::OpenFolder(project_settings.project_directory);
+			VSCode::OpenPath(project_settings.project_directory);
 		}
 		if (ImGui::MenuItem(
 				"Run in Mupen64", nullptr, false,
@@ -202,6 +207,8 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 					engine_settings.SetLastOpenedProject(project_filepath);
 
+					reload_scripts();
+
 					console.AddLog("Project opened.");
 				}
 			}
@@ -215,12 +222,55 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 	console.Draw("Output", window, is_output_open);
 
+	const float center_x_size = (float)window.getSize().x - 600;
+	const float center_y_offset = is_output_open ? 219 : 38;
+	ImGui::SetNextWindowSize(ImVec2(center_x_size, (float)window.getSize().y - center_y_offset));
+	ImGui::SetNextWindowPos(ImVec2(300, 19));
+	if (ImGui::Begin("ContentBrowser", nullptr,
+					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
+		if (ImGui::BeginTabBar("CenterContentTabs",
+							   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
+			if (ImGui::BeginTabItem("Content Browser")) {
+				if (project_settings.IsOpen()) {
+				}
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Script Browser")) {
+				if (project_settings.IsOpen()) {
+					static char script_name[100] = {};
+					ImGui::InputText("Script Name", script_name, 100);
+					ImGui::SameLine();
+					if (ImGui::Button("Create Script File")) {
+						ScriptBuilder::CreateScriptFile(project_settings, script_name);
+						memset(script_name, 0, 100);
+
+						reload_scripts();
+					}
+					ImGui::Separator();
+					for (auto &script_name : scripts_files) {
+						ImGui::TextUnformatted(script_name.c_str());
+						ImGui::SameLine();
+						ImGui::PushID(script_name.c_str());
+						if (ImGui::SmallButton("Edit")) {
+							std::string path = project_settings.project_directory + "/src/scripts/" + script_name + ".script.c";
+							VSCode::OpenPath(path);
+						}
+						ImGui::PopID();
+					}
+				}
+				ImGui::EndTabItem();
+			}
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
+	}
+
 	const int prop_y_size = is_output_open ? 219 : 38;
 	ImGui::SetNextWindowSize(ImVec2(300, window.getSize().y - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 		if (current_scene) {
-			if (ImGui::BeginTabBar("Properties")) {
+			if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 				if (ImGui::BeginTabItem("Nodes")) {
 					if (ImGui::TreeNodeEx("Root Node")) {
 						{
@@ -262,7 +312,10 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 						for (size_t i = 0; i < project.scenes.size(); ++i) {
 							if (project.scenes[i].id == current_scene->id) {
 								project.scenes.erase(project.scenes.begin() + i);
-								std::string filename = project_settings.project_directory + "/.ngine/scenes/" + std::to_string(current_scene->id) + ".scene.json";
+								std::string filename = project_settings.project_directory +
+													   "/.ngine/scenes/" +
+													   std::to_string(current_scene->id) +
+													   ".scene.json";
 								std::filesystem::remove(filename);
 
 								current_scene = nullptr;
@@ -288,9 +341,6 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
 						 ImGuiWindowFlags_NoTitleBar)) {
 		if (ImGui::BeginTabBar("Properties")) {
-			if (ImGui::BeginTabItem("Node")) {
-				ImGui::EndTabItem();
-			}
 			if (ImGui::BeginTabItem("Scenes")) {
 				for (auto &scene : project.scenes) {
 					if (ImGui::Selectable(scene.name.c_str())) {
@@ -412,4 +462,31 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		ImGui::EndTabBar();
 	}
 	ImGui::End();
+}
+
+void reload_scripts() {
+	scripts_files.clear();
+
+	std::filesystem::path script_folder = project_settings.project_directory +
+										  "/.ngine/scripts";
+
+	if (!std::filesystem::exists(script_folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(script_folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path());
+			if (filepath.ends_with(".script.json")) {
+				nlohmann::json json;
+
+				std::ifstream filestream(file_entry.path());
+				filestream >> json;
+				filestream.close();
+
+				scripts_files.emplace_back(json["name"]);
+			}
+		}
+	}
 }
