@@ -5,13 +5,13 @@
 
 #include "../json.hpp"
 
-EngineSettings::EngineSettings() : last_opened_project(""), emu_mupen64_location("") {
+EngineSettings::EngineSettings() : last_opened_project(""), emulator_location("") {
 }
 
 void EngineSettings::SaveToDisk() {
 	nlohmann::json json;
 	json["engine"]["last_opened_project"] = last_opened_project;
-	json["engine"]["emu_mupen64_location"] = emu_mupen64_location;
+	json["engine"]["emulator_location"] = emulator_location;
 
 	std::ofstream filestream("ngine.engine.json");
 	filestream << json.dump(4);
@@ -29,8 +29,8 @@ void EngineSettings::LoadFromDisk() {
 
 	if (!json["engine"]["last_opened_project"].is_null())
 		last_opened_project = json["engine"]["last_opened_project"];
-	if (!json["engine"]["emu_mupen64_location"].is_null())
-		emu_mupen64_location = json["engine"]["emu_mupen64_location"];
+	if (!json["engine"]["emulator_location"].is_null())
+		emulator_location = json["engine"]["emulator_location"];
 
 	filestream.close();
 }
@@ -41,8 +41,8 @@ void EngineSettings::SetLastOpenedProject(std::string path) {
 	SaveToDisk();
 }
 
-void EngineSettings::SetMupen64Path(std::string path) {
-	emu_mupen64_location = std::move(path);
+void EngineSettings::SetEmulatorPath(std::string path) {
+	emulator_location = std::move(path);
 
 	SaveToDisk();
 }

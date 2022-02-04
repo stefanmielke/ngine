@@ -32,7 +32,7 @@ EngineSettings engine_settings;
 
 char input_new_project[255];
 char input_open_project[255];
-char mupen64_path[255];
+char emulator_path[255];
 ProjectSettingsScreen project_settings_screen;
 
 void update_gui(sf::RenderWindow &window, sf::Time time);
@@ -44,7 +44,7 @@ int main() {
 
 	engine_settings.LoadFromDisk();
 	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
-	strcpy(mupen64_path, engine_settings.GetMupen64Path().c_str());
+	strcpy(emulator_path, engine_settings.GetMupen64Path().c_str());
 
 	std::stringstream output_stream;
 	std::cout.rdbuf(output_stream.rdbuf());
@@ -148,9 +148,9 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 			VSCode::OpenPath(project_settings.project_directory);
 		}
 		if (ImGui::MenuItem(
-				"Run in Mupen64", nullptr, false,
+				"Run", nullptr, false,
 				project_settings.IsOpen() && !engine_settings.GetMupen64Path().empty())) {
-			console.AddLog("Opening rom in Mupen64...");
+			console.AddLog("Opening rom in emulator as '%s *.z64'...", project_settings.project_directory.c_str());
 
 			char cmd[255];
 			snprintf(cmd, 255, "cd %s\n%s *.z64", project_settings.project_directory.c_str(),
@@ -296,8 +296,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 					ImGui::EndTabItem();
 				}
 				if (ImGui::BeginTabItem("Settings")) {
-					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d",
-									   current_scene->id);
+					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d", current_scene->id);
 					ImGui::Spacing();
 					ImGui::Separator();
 
@@ -478,10 +477,15 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Engine")) {
-				ImGui::InputText("Mupen64 Path", mupen64_path, 255);
+				ImGui::TextUnformatted("Emulator Path (?)");
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip(
+						"example: '/path/to/cen64'.\nWe will run 'path path/to/rom_file.z64'.");
+				}
+				ImGui::InputText("##EmuPath", emulator_path, 255);
 
 				if (ImGui::Button("Save")) {
-					engine_settings.SetMupen64Path(mupen64_path);
+					engine_settings.SetEmulatorPath(emulator_path);
 				}
 
 				ImGui::EndTabItem();

@@ -9,9 +9,9 @@ class EngineSettings {
 	void SaveToDisk();
 	void LoadFromDisk();
 
-	void SetMupen64Path(std::string path);
+	void SetEmulatorPath(std::string path);
 	std::string GetMupen64Path() {
-		return emu_mupen64_location;
+		return emulator_location;
 	};
 
 	void SetLastOpenedProject(std::string path);
@@ -21,5 +21,5 @@ class EngineSettings {
 
    private:
 	std::string last_opened_project;
-	std::string emu_mupen64_location;
+	std::string emulator_location;
 };
