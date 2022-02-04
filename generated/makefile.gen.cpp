@@ -9,9 +9,10 @@ N64_CFLAGS += -Ilibs/libdragon-extensions/include
 
 C_ROOT_FILES := $(wildcard src/*.c)
 C_SCENE_FILES := $(wildcard src/scenes/*.c)
+C_SCRIPT_FILES := $(wildcard src/scripts/*.c)
 C_LIB_EXTENSIONS_FILES := $(wildcard libs/libdragon-extensions/src/*.c)
 
-SRC = $(C_ROOT_FILES) $(C_SCENE_FILES) $(C_LIB_EXTENSIONS_FILES)
+SRC = $(C_ROOT_FILES) $(C_SCENE_FILES) $(C_SCRIPT_FILES) $(C_LIB_EXTENSIONS_FILES)
 OBJS = $(SRC:%%.c=%%.o)
 DEPS = $(SRC:%%.c=%%.d)
 
