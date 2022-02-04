@@ -309,6 +309,10 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 							}
 							ImGui::EndCombo();
 						}
+						ImGui::SameLine();
+						if (ImGui::SmallButton("Remove")) {
+							current_scene->script_name.clear();
+						}
 					}
 
 					ImGui::Separator();

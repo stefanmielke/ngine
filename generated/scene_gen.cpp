@@ -27,7 +27,6 @@ short scene_%d_tick() {
 void scene_%d_display(display_context_t disp) {
 	graphics_fill_screen(disp, 0);
 	graphics_set_color(0xfff, 0);
-	graphics_draw_text(disp, 20, 20, "Scene %d");
 
 	%s
 }
@@ -56,7 +55,8 @@ void generate_scene_gen_files(std::string &project_folder, Project &project) {
 		if (!scene.script_name.empty()) {
 			includes = "#include \"../scripts/" + scene.script_name + ".script.h\"";
 			create_method_impl = "script_" + scene.script_name + "_create();";
-			tick_method_impl = "script_" + scene.script_name + "_tick();";
+			tick_method_impl = "short result = script_" + scene.script_name +
+							   "_tick();\n\tif (result >= 0) return result;;";
 			display_method_impl = "script_" + scene.script_name + "_display(disp);";
 			destroy_method_impl = "script_" + scene.script_name + "_destroy();";
 		}
@@ -64,7 +64,7 @@ void generate_scene_gen_files(std::string &project_folder, Project &project) {
 		filestream = fopen(c_name.c_str(), "w");
 		fprintf(filestream, scene_gen_c, scene.id, includes.c_str(), scene.id,
 				create_method_impl.c_str(), scene.id, tick_method_impl.c_str(), scene.id, scene.id,
-				scene.id, display_method_impl.c_str(), scene.id, destroy_method_impl.c_str());
+				display_method_impl.c_str(), scene.id, destroy_method_impl.c_str());
 		fclose(filestream);
 	}
 }
