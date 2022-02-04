@@ -15,7 +15,7 @@ void script_%s_create() {
 }
 
 short script_%s_tick() {
-	// return >0 to change to that screen.
+	// return '>= 0' to change to that screen (the value is the screen id).
 	return -1;
 }
 
