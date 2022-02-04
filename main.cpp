@@ -296,8 +296,17 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 					ImGui::EndTabItem();
 				}
 				if (ImGui::BeginTabItem("Settings")) {
-					ImGui::InputText("Name", scene_name, 100);
+					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d",
+									   current_scene->id);
+					ImGui::Spacing();
+					ImGui::Separator();
 
+					ImGui::Spacing();
+					ImGui::InputText("Name", scene_name, 100);
+					ImGui::Spacing();
+
+					ImGui::Separator();
+					ImGui::Spacing();
 					{
 						std::string current_selected(current_scene->script_name);
 						ImGui::TextUnformatted("Attached Script");
@@ -314,18 +323,20 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 							current_scene->script_name.clear();
 						}
 					}
+					ImGui::Spacing();
 
 					ImGui::Separator();
-
+					ImGui::Spacing();
 					if (ImGui::Button("Save")) {
 						current_scene->name = scene_name;
 						project.SaveToDisk(project_settings.project_directory);
 						project_settings.SaveToDisk();
 					}
+					ImGui::Spacing();
 
 					ImGui::Separator();
-
-					if (ImGui::SmallButton("Delete Scene")) {
+					ImGui::Spacing();
+					if (ImGui::Button("Delete Scene")) {
 						for (size_t i = 0; i < project.scenes.size(); ++i) {
 							if (project.scenes[i].id == current_scene->id) {
 								project.scenes.erase(project.scenes.begin() + i);
