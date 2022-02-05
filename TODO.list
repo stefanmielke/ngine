@@ -7,8 +7,14 @@
     - Search inside scenes and remove from them
 [ ] Fix closing and opening project
 [x] Change "Mupen64" to "Emulator"
-[ ] Import sprites
+[ ] Import sprites/spritesheets
+    - Drag&Drop
+    - H/VSlices
+    - DFS Folder
     - Ask "Copy to sprite project" and copy to '/assets/'
 [ ] Import music
 [ ] Import sfx
 [ ] Import sprite fonts
+[ ] Import Tiled maps
+[ ] Import LDtk maps
+[ ] Drag&Drop to open project

@@ -13,7 +13,6 @@
 #include "json.hpp"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
-#include "ThreadCommand.h"
 #include "VSCode.h"
 #include "settings/EngineSettings.h"
 #include "settings/Project.h"
@@ -233,12 +232,12 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 			}
 			if (ImGui::BeginTabItem("Script Browser")) {
 				if (project_settings.IsOpen()) {
-					static char script_name[100] = {};
-					ImGui::InputText("Script Name", script_name, 100);
+					static char script_name_input[100] = {};
+					ImGui::InputText("Script Name", script_name_input, 100);
 					ImGui::SameLine();
 					if (ImGui::Button("Create Script File")) {
-						ScriptBuilder::CreateScriptFile(project_settings, script_name);
-						memset(script_name, 0, 100);
+						ScriptBuilder::CreateScriptFile(project_settings, script_name_input);
+						memset(script_name_input, 0, 100);
 
 						reload_scripts();
 					}
@@ -274,8 +273,8 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		ImGui::End();
 	}
 
-	const int prop_y_size = is_output_open ? 219 : 38;
-	ImGui::SetNextWindowSize(ImVec2(300, window.getSize().y - prop_y_size));
+	const float prop_y_size = is_output_open ? 219 : 38;
+	ImGui::SetNextWindowSize(ImVec2(300, (float)window.getSize().y - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 		if (current_scene) {
@@ -370,9 +369,9 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 	}
 	ImGui::End();
 
-	const int prop_x_size = 300;
-	ImGui::SetNextWindowSize(ImVec2(prop_x_size, window.getSize().y - prop_y_size));
-	ImGui::SetNextWindowPos(ImVec2(window.getSize().x - prop_x_size, 19));
+	const float prop_x_size = 300;
+	ImGui::SetNextWindowSize(ImVec2(prop_x_size, (float)window.getSize().y - prop_y_size));
+	ImGui::SetNextWindowPos(ImVec2((float)window.getSize().x - prop_x_size, 19));
 	if (ImGui::Begin("General Settings", nullptr,
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
 						 ImGuiWindowFlags_NoTitleBar)) {
