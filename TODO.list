@@ -7,7 +7,7 @@
     - Search inside scenes and remove from them
 [ ] Fix closing and opening project
     - Create class to store/erase when loading/closing.
-[ ] Open project after creating it
+[x] Open project after creating it
 [x] Change "Mupen64" to "Emulator"
 [x] Import sprites/spritesheets
     - Drag&Drop
@@ -20,7 +20,7 @@
 [ ] Import Tiled maps
 [ ] Import LDtk maps
 [x] Add "Copy DFS folder" on clicking image
-[ ] Delete image
+[x] Delete image
 [ ] Change image props
 [x] Change title when saving project settings
 [x] Keep selected scene selected on "Scenes" tab
@@ -30,4 +30,5 @@
     - Create sprite files and push to 'filesystem' folder
 [ ] Option to change Libdragon git repo and branch
 [ ] Option to change Libdragon-Extensions git repo and branch
-[ ] Add input (keys_pressed, keys_up, keys_held)
+[x] Add input (keys_pressed, keys_up, keys_held)
+[ ] Move all UI code out of main.cpp

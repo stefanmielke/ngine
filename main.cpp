@@ -384,6 +384,20 @@ bool update_gui(SDL_Window *window) {
 								ImGui::SetClipboardText(dfs_path.c_str());
 							}
 						}
+						if (ImGui::Selectable("Delete")) {
+							if (selected_image) {
+								std::filesystem::remove(
+									project_settings.project_directory + "/.ngine/sprites/" +
+									selected_image->operator->()->name + ".sprite.json");
+
+								for (int i = 0; i < images.size(); ++i) {
+									if (images[i]->image_path == selected_image->operator->()->image_path) {
+										images.erase(images.begin() + i);
+										break;
+									}
+								}
+							}
+						}
 						ImGui::EndPopup();
 					}
 
