@@ -1,12 +1,12 @@
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_sdlrenderer.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "ConsoleApp.h"
 #include "Emulator.h"
@@ -29,6 +29,28 @@ char scene_name[100];
 std::vector<std::string> script_files;
 std::vector<LibdragonImage> images;
 
+struct DroppedImage {
+	std::string image_path;
+	SDL_Texture *image_data;
+	int w, h;
+
+	char name[50] = "\0";
+	char dfs_folder[100] = "/\0";
+	int h_slices, v_slices;
+	bool copy_to_assets;
+
+	explicit DroppedImage(const char *image_path)
+		: image_path(image_path),
+		  image_data(nullptr),
+		  w(0),
+		  h(0),
+		  h_slices(1),
+		  v_slices(1),
+		  copy_to_assets(true) {
+	}
+};
+std::vector<DroppedImage> dropped_image_files;
+
 ProjectSettings project_settings;
 EngineSettings engine_settings;
 
@@ -38,6 +60,7 @@ char emulator_path[255];
 ProjectSettingsScreen project_settings_screen;
 
 bool update_gui(SDL_Window *window);
+void render_image_import_windows();
 void reload_scripts();
 
 struct App {
@@ -56,6 +79,8 @@ void initSDL(void) {
 		printf("Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
+
+	IMG_Init(IMG_INIT_PNG);
 
 	app.window = SDL_CreateWindow(default_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 								  1024, 768, windowFlags);
@@ -87,9 +112,6 @@ int main() {
 	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
 	strcpy(emulator_path, engine_settings.GetMupen64Path().c_str());
 
-	std::stringstream output_stream;
-	std::cout.rdbuf(output_stream.rdbuf());
-
 	initSDL();
 
 	bool is_running = true;
@@ -102,6 +124,37 @@ int main() {
 				case SDL_QUIT:
 					is_running = false;
 					break;
+				case SDL_DROPFILE: {
+					console.AddLog("Dropped file: %s", event.drop.file);
+
+					if (project_settings.IsOpen()) {
+						std::string file(event.drop.file);
+						if (file.ends_with(".png")) {
+							DroppedImage dropped_image(event.drop.file);
+							dropped_image.image_data = IMG_LoadTexture(app.renderer,
+																	   event.drop.file);
+
+							int w, h;
+							SDL_QueryTexture(dropped_image.image_data, nullptr, nullptr, &w, &h);
+
+							const float max_size = 300.f;
+							if (w > h) {
+								h = (h / (float)w) * max_size;
+								w = max_size;
+							} else {
+								w = (w / (float)h) * max_size;
+								h = max_size;
+							}
+
+							dropped_image.w = w;
+							dropped_image.h = h;
+
+							dropped_image_files.push_back(dropped_image);
+
+							ImGui::SetWindowFocus("Import Images");
+						}
+					}
+				} break;
 				default:
 					break;
 			}
@@ -111,16 +164,10 @@ int main() {
 			break;
 
 		ImGui_ImplSDLRenderer_NewFrame();
-		ImGui_ImplSDL2_NewFrame(app.window);
+		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 
 		is_running = update_gui(app.window);
-
-		// pulling data from output stream if available
-		std::string temp_output_string;
-		while (std::getline(output_stream, temp_output_string, '\n')) {
-			console.AddLog("%s", temp_output_string.c_str());
-		}
 
 		ImGui::Render();
 
@@ -139,6 +186,7 @@ int main() {
 
 	SDL_DestroyRenderer(app.renderer);
 	SDL_DestroyWindow(app.window);
+	IMG_Quit();
 	SDL_Quit();
 
 	return 0;
@@ -274,6 +322,8 @@ bool update_gui(SDL_Window *window) {
 			ImGui::End();
 		}
 	}
+
+	render_image_import_windows();
 
 	console.Draw("Output", window, is_output_open);
 
@@ -590,5 +640,77 @@ void reload_scripts() {
 				script_files.emplace_back(json["name"]);
 			}
 		}
+	}
+}
+
+void render_image_import_windows() {
+	if (!dropped_image_files.empty()) {
+		int id = 1;
+		if (ImGui::Begin("Import Images")) {
+			if (ImGui::BeginTabBar("ImportImages")) {
+				for (int i = 0; i < dropped_image_files.size(); ++i) {
+					ImGui::PushID(id);
+					if (ImGui::BeginTabItem("Image")) {
+						ImGui::Image((ImTextureID)(intptr_t)dropped_image_files[i].image_data,
+									 ImVec2(dropped_image_files[i].w, dropped_image_files[i].h));
+
+						ImGui::Separator();
+						ImGui::Spacing();
+
+						ImGui::InputText("Name", dropped_image_files[i].name, 50);
+						ImGui::InputText("DFS Folder", dropped_image_files[i].dfs_folder, 100);
+						ImGui::InputInt("H Slices", &dropped_image_files[i].h_slices);
+						ImGui::InputInt("V Slices", &dropped_image_files[i].v_slices);
+						ImGui::Checkbox("Copy to Project", &dropped_image_files[i].copy_to_assets);
+
+						ImGui::Separator();
+						ImGui::Spacing();
+						if (ImGui::Button("Import")) {
+							std::string name(dropped_image_files[i].name);
+							std::string dfs_folder(dropped_image_files[i].dfs_folder);
+
+							if (name.empty() || dfs_folder.empty()) {
+								console.AddLog(
+									"[error] Please fill both 'name' and 'dfs folder' fields");
+							} else {
+								LibdragonImage image;
+								image.name = name;
+								image.dfs_folder = dfs_folder;
+								image.h_slices = dropped_image_files[i].h_slices;
+								image.v_slices = dropped_image_files[i].v_slices;
+
+								if (dropped_image_files[i].copy_to_assets) {
+									image.image_path = "#assets/sprites/" + name + ".png";
+
+									std::filesystem::create_directories(
+										project_settings.project_directory + "/assets/sprites");
+									std::filesystem::copy_file(dropped_image_files[i].image_path,
+															   project_settings.project_directory +
+																   "/assets/sprites/" + name + ".png");
+								} else {
+									image.image_path = dropped_image_files[i].image_path;
+								}
+
+								image.SaveToDisk(project_settings.project_directory);
+
+								dropped_image_files.erase(dropped_image_files.begin() + i);
+								--i;
+							}
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel")) {
+							dropped_image_files.erase(dropped_image_files.begin() + i);
+							--i;
+						}
+
+						ImGui::EndTabItem();
+					}
+					ImGui::PopID();
+					++id;
+				}
+			}
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
 	}
 }
