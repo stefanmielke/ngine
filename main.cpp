@@ -667,6 +667,10 @@ bool update_gui(SDL_Window *window) {
 
 						project_settings.SaveToDisk();
 
+						SDL_SetWindowTitle(app.window, ("NGine - " + project_settings.project_name +
+														" - " + project_settings.project_directory)
+														   .c_str());
+
 						console.AddLog("Saved Project Settings.");
 					}
 				}

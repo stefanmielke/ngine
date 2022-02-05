@@ -21,6 +21,7 @@
 [x] Add "Copy DFS folder" on clicking image
 [ ] Delete image
 [ ] Change image props
+[x] Change title when saving project settings
 [x] Keep selected scene selected on "Scenes" tab
 [x] Drag&Drop to open project
 [x] BUGFIX: Do not allow empty script names
