@@ -59,6 +59,7 @@ char input_open_project[255];
 char emulator_path[255];
 ProjectSettingsScreen project_settings_screen;
 
+bool open_project(const char *path);
 bool update_gui(SDL_Window *window);
 void render_image_import_windows();
 void reload_scripts();
@@ -70,7 +71,7 @@ struct App {
 	SDL_Window *window;
 } app;
 
-void initSDL(void) {
+void initSDL() {
 	int rendererFlags, windowFlags;
 
 	rendererFlags = SDL_RENDERER_ACCELERATED;
@@ -141,11 +142,11 @@ int main() {
 
 							const float max_size = 300.f;
 							if (w > h) {
-								h = (h / (float)w) * max_size;
-								w = max_size;
+								h = (int)(((float)h / (float)w) * max_size);
+								w = (int)max_size;
 							} else {
-								w = (w / (float)h) * max_size;
-								h = max_size;
+								w = (int)(((float)w / (float)h) * max_size);
+								h = (int)max_size;
 							}
 
 							dropped_image.w = w;
@@ -154,6 +155,13 @@ int main() {
 							dropped_image_files.push_back(dropped_image);
 
 							ImGui::SetWindowFocus("Import Images");
+						}
+					} else {
+						std::filesystem::path dropped_path(event.drop.file);
+						if (std::filesystem::is_directory(dropped_path)) {
+							open_project(dropped_path.c_str());
+						} else if (std::filesystem::is_regular_file(dropped_path)) {
+							open_project(dropped_path.parent_path().c_str());
 						}
 					}
 				} break;
@@ -192,6 +200,37 @@ int main() {
 	SDL_Quit();
 
 	return 0;
+}
+
+bool open_project(const char *path) {
+	console.AddLog("Opening project at '%s'...", path);
+
+	if (project_settings.IsOpen()) {
+		project_settings.CloseProject();
+	}
+
+	std::string project_filepath(path);
+	if (!project_settings.LoadFromFile(project_filepath)) {
+		return false;
+	}
+
+	project.LoadFromDisk(project_settings.project_directory);
+
+	SDL_SetWindowTitle(app.window, ("NGine - " + project_settings.project_name + " - " +
+									project_settings.project_directory)
+									   .c_str());
+
+	project_settings_screen.FromProjectSettings(project_settings);
+
+	engine_settings.SetLastOpenedProject(project_filepath);
+
+	reload_scripts();
+
+	load_images();
+
+	console.AddLog("Project opened.");
+
+	return true;
 }
 
 bool update_gui(SDL_Window *window) {
@@ -291,32 +330,8 @@ bool update_gui(SDL_Window *window) {
 			ImGui::SameLine();
 			ImGui::InputText("##", input_open_project, 255);
 			if (ImGui::Button("Open", ImVec2(50, 20))) {
-				console.AddLog("Opening project at '%s'...", input_open_project);
-
-				if (project_settings.IsOpen()) {
-					project_settings.CloseProject();
-				}
-
-				project_settings.project_directory = input_open_project;
-
-				std::string project_filepath = std::string(input_open_project);
-				if (project_settings.LoadFromFile(project_filepath)) {
-					project.LoadFromDisk(project_settings.project_directory);
-
-					SDL_SetWindowTitle(window, ("NGine - " + project_settings.project_name + " - " +
-												project_settings.project_directory)
-												   .c_str());
+				if (open_project(input_open_project)) {
 					open_project_window_open = false;
-
-					project_settings_screen.FromProjectSettings(project_settings);
-
-					engine_settings.SetLastOpenedProject(project_filepath);
-
-					reload_scripts();
-
-					load_images();
-
-					console.AddLog("Project opened.");
 				}
 			}
 			ImGui::SameLine();
