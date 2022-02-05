@@ -34,12 +34,11 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	project_name = json["project"]["name"];
 	next_scene_id = json["project"]["next_scene_id"];
 	rom_name = json["project"]["rom"];
-	if (!json["project"]["global_mem_alloc_size"].is_null())
-		global_mem_alloc_size = json["project"]["global_mem_alloc_size"];
-	if (!json["project"]["scene_mem_alloc_size"].is_null())
-		scene_mem_alloc_size = json["project"]["scene_mem_alloc_size"];
-	if (!json["project"]["initial_screen_id"].is_null())
-		initial_screen_id = json["project"]["initial_screen_id"];
+	global_script_name = json["project"]["global_script_name"];
+
+	global_mem_alloc_size = json["project"]["global_mem_alloc_size"];
+	scene_mem_alloc_size = json["project"]["scene_mem_alloc_size"];
+	initial_screen_id = json["project"]["initial_screen_id"];
 
 	display.SetResolution(json["display"]["resolution"]);
 	display.SetBitDepth(json["display"]["bit_depth"]);
@@ -47,22 +46,14 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	display.SetGamma(json["display"]["gamma"]);
 	display.SetAntialias(json["display"]["antialias"]);
 
-	if (!json["modules"]["console"].is_null())
-		modules.console = json["modules"]["console"];
-	if (!json["modules"]["controller"].is_null())
-		modules.controller = json["modules"]["controller"];
-	if (!json["modules"]["debug_usb"].is_null())
-		modules.debug_usb = json["modules"]["debug_usb"];
-	if (!json["modules"]["debug_is_viewer"].is_null())
-		modules.debug_is_viewer = json["modules"]["debug_is_viewer"];
-	if (!json["modules"]["dfs"].is_null())
-		modules.dfs = json["modules"]["dfs"];
-	if (!json["modules"]["display"].is_null())
-		modules.display = json["modules"]["display"];
-	if (!json["modules"]["rdp"].is_null())
-		modules.rdp = json["modules"]["rdp"];
-	if (!json["modules"]["timer"].is_null())
-		modules.timer = json["modules"]["timer"];
+	modules.console = json["modules"]["console"];
+	modules.controller = json["modules"]["controller"];
+	modules.debug_usb = json["modules"]["debug_usb"];
+	modules.debug_is_viewer = json["modules"]["debug_is_viewer"];
+	modules.dfs = json["modules"]["dfs"];
+	modules.display = json["modules"]["display"];
+	modules.rdp = json["modules"]["rdp"];
+	modules.timer = json["modules"]["timer"];
 
 	is_open = true;
 	return true;
@@ -80,6 +71,7 @@ void ProjectSettings::SaveToDisk() {
 	json["project"]["global_mem_alloc_size"] = global_mem_alloc_size;
 	json["project"]["scene_mem_alloc_size"] = scene_mem_alloc_size;
 	json["project"]["initial_screen_id"] = initial_screen_id;
+	json["project"]["global_script_name"] = global_script_name;
 
 	json["display"]["resolution"] = display.GetResolution();
 	json["display"]["bit_depth"] = display.GetBitDepth();

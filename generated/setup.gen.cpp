@@ -21,11 +21,15 @@ void setup() {
 void tick() {
 %s
 }
-)";
+
+void display(display_context_t disp) {
+%s
+})";
 
 void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	std::stringstream setup_body;
 	std::stringstream tick_body;
+	std::stringstream display_body;
 	std::stringstream variables;
 
 	if (settings.modules.display) {
@@ -66,9 +70,20 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 				   << "\tconsole_set_debug(true);" << std::endl;
 	}
 
+	if (!settings.global_script_name.empty()) {
+		setup_body << "\tscript_" << settings.global_script_name << "_create();" << std::endl;
+
+		tick_body << "\tscript_" << settings.global_script_name << "_tick();" << std::endl;
+
+		display_body << "\tscript_" << settings.global_script_name << "_display(disp);"
+					 << std::endl;
+
+		variables << "#include \"scripts/" << settings.global_script_name << ".script.h\"" << std::endl;
+	}
+
 	FILE *filestream = fopen(setup_path.c_str(), "w");
 	fprintf(filestream, setup_gen_c, variables.str().c_str(), setup_body.str().c_str(),
 			settings.global_mem_alloc_size * 1024, settings.scene_mem_alloc_size * 1024,
-			settings.initial_screen_id, tick_body.str().c_str());
+			settings.initial_screen_id, tick_body.str().c_str(), display_body.str().c_str());
 	fclose(filestream);
 }

@@ -16,6 +16,7 @@ class ProjectSettings {
 	std::string project_directory;
 
 	int initial_screen_id;
+	std::string global_script_name;
 
 	int global_mem_alloc_size;
 	int scene_mem_alloc_size;

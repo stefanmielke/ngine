@@ -466,30 +466,30 @@ bool update_gui(SDL_Window *window) {
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 		if (current_scene) {
 			if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
-//				if (ImGui::BeginTabItem("Nodes")) {
-//					if (ImGui::TreeNodeEx("Root Node")) {
-//						{
-//							ImGui::SameLine();
-//							if (ImGui::Selectable("Props")) {
-//								// do whatever
-//							}
-//						}
-//						{
-//							if (ImGui::Selectable("Test Node Press")) {
-//								// do whatever
-//							}
-//						}
-//
-//						if (ImGui::TreeNode("Test Node")) {
-//							ImGui::TreePop();
-//						}
-//						if (ImGui::TreeNode("Test Node 2")) {
-//							ImGui::TreePop();
-//						}
-//						ImGui::TreePop();
-//					}
-//					ImGui::EndTabItem();
-//				}
+				//				if (ImGui::BeginTabItem("Nodes")) {
+				//					if (ImGui::TreeNodeEx("Root Node")) {
+				//						{
+				//							ImGui::SameLine();
+				//							if (ImGui::Selectable("Props")) {
+				//								// do whatever
+				//							}
+				//						}
+				//						{
+				//							if (ImGui::Selectable("Test Node Press")) {
+				//								// do whatever
+				//							}
+				//						}
+				//
+				//						if (ImGui::TreeNode("Test Node")) {
+				//							ImGui::TreePop();
+				//						}
+				//						if (ImGui::TreeNode("Test Node 2")) {
+				//							ImGui::TreePop();
+				//						}
+				//						ImGui::TreePop();
+				//					}
+				//					ImGui::EndTabItem();
+				//				}
 				if (ImGui::BeginTabItem("Settings")) {
 					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d", current_scene->id);
 					ImGui::Spacing();
@@ -590,22 +590,40 @@ bool update_gui(SDL_Window *window) {
 
 					ImGui::Separator();
 
-					std::string current_selected("None");
-					for (auto &scene : project.scenes) {
-						if (scene.id == project_settings.initial_screen_id) {
-							current_selected = scene.name;
-							break;
-						}
-					}
-					ImGui::TextUnformatted("Initial Screen");
-					if (ImGui::BeginCombo("##InitialScreen", current_selected.c_str())) {
+					{
+						std::string current_selected("None");
 						for (auto &scene : project.scenes) {
-							if (ImGui::Selectable(scene.name.c_str(),
-												  scene.id == project_settings.initial_screen_id)) {
-								project_settings.initial_screen_id = scene.id;
+							if (scene.id == project_settings.initial_screen_id) {
+								current_selected = scene.name;
+								break;
 							}
 						}
-						ImGui::EndCombo();
+						ImGui::TextUnformatted("Initial Screen");
+						if (ImGui::BeginCombo("##InitialScreen", current_selected.c_str())) {
+							for (auto &scene : project.scenes) {
+								if (ImGui::Selectable(
+										scene.name.c_str(),
+										scene.id == project_settings.initial_screen_id)) {
+									project_settings.initial_screen_id = scene.id;
+								}
+							}
+							ImGui::EndCombo();
+						}
+					}
+
+					{
+						ImGui::TextUnformatted("Global Script");
+						if (ImGui::BeginCombo("##GlobalScript",
+											  project_settings.global_script_name.c_str())) {
+							for (auto &script : script_files) {
+								if (ImGui::Selectable(
+										script.c_str(),
+										script == project_settings.global_script_name)) {
+									project_settings.global_script_name = script;
+								}
+							}
+							ImGui::EndCombo();
+						}
 					}
 
 					ImGui::Separator();
