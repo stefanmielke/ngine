@@ -13,7 +13,7 @@ void Emulator::Run(EngineSettings &engine_settings, ProjectSettings &project_set
 	std::string rom_filename = project_settings.rom_name + ".z64";
 
 	console.AddLog("Opening rom in emulator as '%s %s'...",
-				   engine_settings.GetMupen64Path().c_str(), rom_filename.c_str());
+				   engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
 
 	if (!std::filesystem::exists(project_settings.project_directory + "/" + rom_filename)) {
 		console.AddLog("Rom file was not created. Triggering build before running...");
@@ -22,6 +22,6 @@ void Emulator::Run(EngineSettings &engine_settings, ProjectSettings &project_set
 
 	char cmd[255];
 	snprintf(cmd, 255, "cd %s\n%s %s", project_settings.project_directory.c_str(),
-			 engine_settings.GetMupen64Path().c_str(), rom_filename.c_str());
+			 engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
 	ThreadCommand::RunCommand(cmd);
 }

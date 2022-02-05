@@ -112,7 +112,7 @@ int main() {
 
 	engine_settings.LoadFromDisk();
 	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
-	strcpy(emulator_path, engine_settings.GetMupen64Path().c_str());
+	strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
 
 	initSDL();
 
@@ -258,7 +258,7 @@ bool update_gui(SDL_Window *window) {
 		}
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
-				project_settings.IsOpen() && !engine_settings.GetMupen64Path().empty())) {
+				project_settings.IsOpen() && !engine_settings.GetEmulatorPath().empty())) {
 			Emulator::Run(engine_settings, project_settings, project);
 		}
 		ImGui::EndMainMenuBar();

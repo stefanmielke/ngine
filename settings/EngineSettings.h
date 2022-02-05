@@ -10,7 +10,7 @@ class EngineSettings {
 	void LoadFromDisk();
 
 	void SetEmulatorPath(std::string path);
-	std::string GetMupen64Path() {
+	std::string GetEmulatorPath() {
 		return emulator_location;
 	};
 
