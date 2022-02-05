@@ -377,10 +377,13 @@ bool update_gui(SDL_Window *window) {
 					ImGui::InputText("Script Name", script_name_input, 100);
 					ImGui::SameLine();
 					if (ImGui::Button("Create Script File")) {
-						ScriptBuilder::CreateScriptFile(project_settings, script_name_input);
-						memset(script_name_input, 0, 100);
+						std::string script_name(script_name_input);
+						if (!script_name.empty()) {
+							ScriptBuilder::CreateScriptFile(project_settings, script_name_input);
+							memset(script_name_input, 0, 100);
 
-						reload_scripts();
+							reload_scripts();
+						}
 					}
 					ImGui::Separator();
 					for (auto &script_name : script_files) {

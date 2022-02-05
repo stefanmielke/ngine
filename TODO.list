@@ -19,4 +19,6 @@
 [ ] Import Tiled maps
 [ ] Import LDtk maps
 [ ] Drag&Drop to open project
-[ ] BUGFIX: Do not allow empty script names
+[x] BUGFIX: Do not allow empty script names
+[ ] Create DFS file with assets
+    - Create sprite files and push to 'filesystem' folder
