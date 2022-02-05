@@ -8,7 +8,7 @@
 [ ] Fix closing and opening project
     - Create class to store/erase when loading/closing.
 [x] Change "Mupen64" to "Emulator"
-[ ] Import sprites/spritesheets
+[x] Import sprites/spritesheets
     - Drag&Drop
     - H/VSlices
     - DFS Folder

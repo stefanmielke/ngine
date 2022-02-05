@@ -350,6 +350,7 @@ bool update_gui(SDL_Window *window) {
 					for (auto &image : images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image.loaded_image,
 											   ImVec2(item_size, item_size))) {
+							// TODO: add options like 'Delete' and 'Reimport'
 						}
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
