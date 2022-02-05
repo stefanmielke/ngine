@@ -37,6 +37,7 @@ clean:
 	find . -name '*.gen.c' -delete
 	find . -name '*.gen.h' -delete
 	rm -rf build/
+
 -include $(DEPS)
 
 .PHONY: all clean)";
@@ -83,6 +84,7 @@ clean:
 	find . -name '*.gen.c' -delete
 	find . -name '*.gen.h' -delete
 	rm -rf build/
+
 -include $(DEPS)
 
 .PHONY: all clean)";

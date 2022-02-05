@@ -10,8 +10,10 @@ void script_%s_destroy();
 
 const char *script_blank_gen_c = R"(#include "%s.script.h"
 
+#include "../game.s.h"
+
 void script_%s_create() {
-	// you can use 'scene_memory_pool' to allocate this instead of 'malloc'
+	// you can use 'scene_memory_pool' to allocate memory instead of 'malloc'
 }
 
 short script_%s_tick() {
@@ -24,5 +26,5 @@ void script_%s_display(display_context_t disp) {
 }
 
 void script_%s_destroy() {
-	// remember to destroy anything that uses malloc!
+	// remember to destroy anything that uses malloc here!
 })";

@@ -15,7 +15,7 @@ void Content::CreateSprites(ProjectSettings &project_settings,
 
 	for (auto &image : images) {
 		std::string dfs_output_path = "build/filesystem" + image->dfs_folder;
-		std::filesystem::create_directories(project_settings.project_directory + dfs_output_path);
+		std::filesystem::create_directories(project_settings.project_directory + "/" + dfs_output_path);
 
 		command << "libdragon exec /n64_toolchain/bin/mksprite "
 				<< (project_settings.display.bit_depth == DEPTH_16_BPP ? 16 : 32) << " "
