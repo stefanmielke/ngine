@@ -27,7 +27,7 @@ Project project;
 Scene *current_scene = nullptr;
 char scene_name[100];
 std::vector<std::string> script_files;
-std::vector<LibdragonImage> images;
+std::vector<std::unique_ptr<LibdragonImage>> images;
 
 struct DroppedImage {
 	std::string image_path;
@@ -64,7 +64,7 @@ bool update_gui(SDL_Window *window);
 void render_image_import_windows();
 void reload_scripts();
 void load_images();
-void load_image(LibdragonImage &image);
+void load_image(std::unique_ptr<LibdragonImage> &image);
 
 struct App {
 	SDL_Renderer *renderer;
@@ -356,6 +356,17 @@ bool update_gui(SDL_Window *window) {
 							   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 			if (ImGui::BeginTabItem("Content Browser")) {
 				if (project_settings.IsOpen()) {
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("PopupContentBrowser");
+					}
+
+					if (ImGui::BeginPopup("PopupContentBrowser")) {
+						if (ImGui::Selectable("Refresh")) {
+							load_images();
+						}
+						ImGui::EndPopup();
+					}
+
 					const int item_size = 100;
 					int items_per_line = std::floor(ImGui::GetWindowWidth() / (float)item_size);
 					if (items_per_line < 1)
@@ -363,7 +374,7 @@ bool update_gui(SDL_Window *window) {
 
 					int cur_i = 0;
 					for (auto &image : images) {
-						if (ImGui::ImageButton((ImTextureID)(intptr_t)image.loaded_image,
+						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
 							// TODO: add options like 'Delete' and 'Reimport'
 						}
@@ -371,11 +382,11 @@ bool update_gui(SDL_Window *window) {
 							ImGui::BeginTooltip();
 							ImGui::Text(
 								"%s\nPath: %s\nDFS Path: %s%s\nSize: %dx%d\nSlices: %dx%d\n",
-								image.name.c_str(), image.image_path.c_str(),
-								image.dfs_folder.c_str(), image.name.c_str(), image.width,
-								image.height, image.h_slices, image.v_slices);
-							ImGui::Image((ImTextureID)(intptr_t)image.loaded_image,
-										 ImVec2(image.width, image.height));
+								image->name.c_str(), image->image_path.c_str(),
+								image->dfs_folder.c_str(), image->name.c_str(), image->width,
+								image->height, image->h_slices, image->v_slices);
+							ImGui::Image((ImTextureID)(intptr_t)image->loaded_image,
+										 ImVec2(image->width, image->height));
 							ImGui::EndTooltip();
 						}
 						++cur_i;
@@ -722,14 +733,14 @@ void render_image_import_windows() {
 								console.AddLog(
 									"[error] Please fill both 'name' and 'dfs folder' fields");
 							} else {
-								LibdragonImage image;
-								image.name = name;
-								image.dfs_folder = dfs_folder;
-								image.h_slices = dropped_image_files[i].h_slices;
-								image.v_slices = dropped_image_files[i].v_slices;
+								auto image = std::make_unique<LibdragonImage>();
+								image->name = name;
+								image->dfs_folder = dfs_folder;
+								image->h_slices = dropped_image_files[i].h_slices;
+								image->v_slices = dropped_image_files[i].v_slices;
 
 								if (dropped_image_files[i].copy_to_assets) {
-									image.image_path = "#assets/sprites/" + name + ".png";
+									image->image_path = "#assets/sprites/" + name + ".png";
 
 									std::filesystem::create_directories(
 										project_settings.project_directory + "/assets/sprites");
@@ -738,15 +749,15 @@ void render_image_import_windows() {
 																   "/assets/sprites/" + name +
 																   ".png");
 								} else {
-									image.image_path = dropped_image_files[i].image_path;
+									image->image_path = dropped_image_files[i].image_path;
 								}
 
-								image.SaveToDisk(project_settings.project_directory);
+								image->SaveToDisk(project_settings.project_directory);
 								load_image(image);
 
-								images.push_back(image);
-
 								dropped_image_files.erase(dropped_image_files.begin() + i);
+
+								images.push_back(move(image));
 								--i;
 							}
 						}
@@ -772,7 +783,6 @@ void load_images() {
 	images.clear();
 
 	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sprites";
-
 	if (!std::filesystem::exists(folder)) {
 		return;
 	}
@@ -782,32 +792,32 @@ void load_images() {
 		if (file_entry.is_regular_file()) {
 			std::string filepath(file_entry.path());
 			if (filepath.ends_with(".sprite.json")) {
-				LibdragonImage image;
-				image.LoadFromDisk(filepath);
+				auto image = std::make_unique<LibdragonImage>();
+				image->LoadFromDisk(filepath);
 
 				load_image(image);
 
-				images.push_back(image);
+				images.push_back(move(image));
 			}
 		}
 	}
 }
 
-void load_image(LibdragonImage &image) {
-	if (image.image_path.starts_with("#")) {
+void load_image(std::unique_ptr<LibdragonImage> &image) {
+	if (image->image_path.starts_with("#")) {
 		std::string path(project_settings.project_directory + "/");
-		path.append(image.image_path.begin() + 1, image.image_path.end());
+		path.append(image->image_path.begin() + 1, image->image_path.end());
 
-		image.loaded_image = IMG_LoadTexture(app.renderer, path.c_str());
+		image->loaded_image = IMG_LoadTexture(app.renderer, path.c_str());
 	} else {
-		image.loaded_image = IMG_LoadTexture(app.renderer, image.image_path.c_str());
+		image->loaded_image = IMG_LoadTexture(app.renderer, image->image_path.c_str());
 	}
 
 	int w, h;
-	SDL_QueryTexture(image.loaded_image, nullptr, nullptr, &w, &h);
+	SDL_QueryTexture(image->loaded_image, nullptr, nullptr, &w, &h);
 
-	image.width = w;
-	image.height = h;
+	image->width = w;
+	image->height = h;
 
 	const float max_size = 100.f;
 	if (w > h) {
@@ -818,6 +828,6 @@ void load_image(LibdragonImage &image) {
 		h = max_size;
 	}
 
-	image.display_width = w;
-	image.display_height = h;
+	image->display_width = w;
+	image->display_height = h;
 }

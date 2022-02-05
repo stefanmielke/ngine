@@ -19,7 +19,8 @@ class LibdragonImage {
 	SDL_Texture *loaded_image;
 
 	LibdragonImage();
+	~LibdragonImage();
 
-	void SaveToDisk(std::string project_directory);
-	void LoadFromDisk(std::string filepath);
+	void SaveToDisk(std::string &project_directory);
+	void LoadFromDisk(std::string &filepath);
 };
