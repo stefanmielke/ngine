@@ -62,6 +62,8 @@ ProjectSettingsScreen project_settings_screen;
 bool update_gui(SDL_Window *window);
 void render_image_import_windows();
 void reload_scripts();
+void load_images();
+void load_image(LibdragonImage &image);
 
 struct App {
 	SDL_Renderer *renderer;
@@ -312,6 +314,8 @@ bool update_gui(SDL_Window *window) {
 
 					reload_scripts();
 
+					load_images();
+
 					console.AddLog("Project opened.");
 				}
 			}
@@ -337,6 +341,32 @@ bool update_gui(SDL_Window *window) {
 							   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 			if (ImGui::BeginTabItem("Content Browser")) {
 				if (project_settings.IsOpen()) {
+					const int item_size = 100;
+					int items_per_line = std::floor(ImGui::GetWindowWidth() / (float)item_size);
+					if (items_per_line < 1)
+						items_per_line = 1;
+
+					int cur_i = 0;
+					for (auto &image : images) {
+						if (ImGui::ImageButton((ImTextureID)(intptr_t)image.loaded_image,
+											   ImVec2(item_size, item_size))) {
+						}
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text(
+								"%s\nPath: %s\nDFS Path: %s%s\nSize: %dx%d\nSlices: %dx%d\n",
+								image.name.c_str(), image.image_path.c_str(),
+								image.dfs_folder.c_str(), image.name.c_str(), image.width,
+								image.height, image.h_slices, image.v_slices);
+							ImGui::Image((ImTextureID)(intptr_t)image.loaded_image,
+										 ImVec2(image.width, image.height));
+							ImGui::EndTooltip();
+						}
+						++cur_i;
+
+						if (cur_i % items_per_line != 0)
+							ImGui::SameLine();
+					}
 				}
 				ImGui::EndTabItem();
 			}
@@ -686,12 +716,16 @@ void render_image_import_windows() {
 										project_settings.project_directory + "/assets/sprites");
 									std::filesystem::copy_file(dropped_image_files[i].image_path,
 															   project_settings.project_directory +
-																   "/assets/sprites/" + name + ".png");
+																   "/assets/sprites/" + name +
+																   ".png");
 								} else {
 									image.image_path = dropped_image_files[i].image_path;
 								}
 
 								image.SaveToDisk(project_settings.project_directory);
+								load_image(image);
+
+								images.push_back(image);
 
 								dropped_image_files.erase(dropped_image_files.begin() + i);
 								--i;
@@ -713,4 +747,58 @@ void render_image_import_windows() {
 		}
 		ImGui::End();
 	}
+}
+
+void load_images() {
+	images.clear();
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sprites";
+
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path());
+			if (filepath.ends_with(".sprite.json")) {
+				LibdragonImage image;
+				image.LoadFromDisk(filepath);
+
+				load_image(image);
+
+				images.push_back(image);
+			}
+		}
+	}
+}
+
+void load_image(LibdragonImage &image) {
+	if (image.image_path.starts_with("#")) {
+		std::string path(project_settings.project_directory + "/");
+		path.append(image.image_path.begin() + 1, image.image_path.end());
+
+		image.loaded_image = IMG_LoadTexture(app.renderer, path.c_str());
+	} else {
+		image.loaded_image = IMG_LoadTexture(app.renderer, image.image_path.c_str());
+	}
+
+	int w, h;
+	SDL_QueryTexture(image.loaded_image, nullptr, nullptr, &w, &h);
+
+	image.width = w;
+	image.height = h;
+
+	const float max_size = 100.f;
+	if (w > h) {
+		h = (h / (float)w) * max_size;
+		w = max_size;
+	} else {
+		w = (w / (float)h) * max_size;
+		h = max_size;
+	}
+
+	image.display_width = w;
+	image.display_height = h;
 }

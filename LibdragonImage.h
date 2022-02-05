@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <SDL2/SDL_image.h>
 
 class LibdragonImage {
    public:
@@ -9,6 +10,13 @@ class LibdragonImage {
 	std::string dfs_folder;
 	int h_slices;
 	int v_slices;
+
+	int width;
+	int height;
+	int display_width;
+	int display_height;
+
+	SDL_Texture *loaded_image;
 
 	LibdragonImage();
 
