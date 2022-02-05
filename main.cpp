@@ -10,7 +10,9 @@
 #include <SFML/Window/Event.hpp>
 
 #include "ConsoleApp.h"
+#include "Emulator.h"
 #include "json.hpp"
+#include "LibdragonImage.h"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
 #include "VSCode.h"
@@ -18,7 +20,6 @@
 #include "settings/Project.h"
 #include "settings/ProjectSettings.h"
 #include "settings/ProjectSettingsScreen.h"
-#include "Emulator.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
@@ -27,6 +28,7 @@ Project project;
 Scene *current_scene = nullptr;
 char scene_name[100];
 std::vector<std::string> script_files;
+std::vector<LibdragonImage> images;
 
 ProjectSettings project_settings;
 EngineSettings engine_settings;
