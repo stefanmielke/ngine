@@ -28,6 +28,7 @@ Scene *current_scene = nullptr;
 char scene_name[100];
 std::vector<std::string> script_files;
 std::vector<std::unique_ptr<LibdragonImage>> images;
+std::unique_ptr<LibdragonImage> *selected_image;
 
 struct DroppedImage {
 	std::string image_path;
@@ -110,6 +111,7 @@ void initSDL() {
 int main() {
 	memset(input_new_project, 0, 255);
 	memset(input_open_project, 0, 255);
+	selected_image = nullptr;
 
 	engine_settings.LoadFromDisk();
 	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
@@ -373,10 +375,24 @@ bool update_gui(SDL_Window *window) {
 						items_per_line = 1;
 
 					int cur_i = 0;
+					if (ImGui::BeginPopup("PopupContentBrowserImage")) {
+						if (ImGui::Selectable("Copy DFS Path")) {
+							if (selected_image) {
+								std::string dfs_path(selected_image->operator->()->dfs_folder +
+													 selected_image->operator->()->name +
+													 ".sprite");
+								ImGui::SetClipboardText(dfs_path.c_str());
+							}
+						}
+						ImGui::EndPopup();
+					}
+
 					for (auto &image : images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
 							// TODO: add options like 'Delete' and 'Reimport'
+							selected_image = &image;
+							ImGui::OpenPopup("PopupContentBrowserImage");
 						}
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
@@ -751,7 +767,8 @@ void render_image_import_windows() {
 								} else {
 									image->image_path = std::filesystem::path(
 															dropped_image_files[i].image_path)
-															.lexically_relative(project_settings.project_directory);
+															.lexically_relative(
+																project_settings.project_directory);
 								}
 
 								image->SaveToDisk(project_settings.project_directory);
