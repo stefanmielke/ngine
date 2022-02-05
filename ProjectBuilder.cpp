@@ -11,6 +11,7 @@
 #include "static/static.h"
 
 extern ConsoleApp console;
+extern bool open_project(const char *path);
 
 void create_project_thread(std::string project_folder) {
 	// create folder if it doesn't exist
@@ -56,6 +57,8 @@ void create_project_thread(std::string project_folder) {
 	console.AddLog("Project settings file created.");
 
 	console.AddLog("Project creation complete.");
+
+	open_project(project_folder.c_str());
 }
 
 void ProjectBuilder::Create(std::string project_folder) {

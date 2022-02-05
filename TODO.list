@@ -7,6 +7,7 @@
     - Search inside scenes and remove from them
 [ ] Fix closing and opening project
     - Create class to store/erase when loading/closing.
+[ ] Open project after creating it
 [x] Change "Mupen64" to "Emulator"
 [x] Import sprites/spritesheets
     - Drag&Drop
