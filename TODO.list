@@ -28,3 +28,6 @@
 [x] BUGFIX: Do not allow empty script names
 [x] Create DFS file with assets
     - Create sprite files and push to 'filesystem' folder
+[ ] Option to change Libdragon git repo and branch
+[ ] Option to change Libdragon-Extensions git repo and branch
+[ ] Add input (keys_pressed, keys_up, keys_held)

@@ -11,13 +11,14 @@ MemZone scene_memory_pool;
 SceneManager *scene_manager;
 
 void setup();
+void tick();
 
 int main(void) {
 	setup();
 
-	printf("Hello world from NGine!\n");
-
 	while (1) {
+		tick();
+
 		scene_manager_tick(scene_manager);
 
 		static display_context_t disp = 0;

@@ -466,30 +466,30 @@ bool update_gui(SDL_Window *window) {
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 		if (current_scene) {
 			if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
-				if (ImGui::BeginTabItem("Nodes")) {
-					if (ImGui::TreeNodeEx("Root Node")) {
-						{
-							ImGui::SameLine();
-							if (ImGui::Selectable("Props")) {
-								// do whatever
-							}
-						}
-						{
-							if (ImGui::Selectable("Test Node Press")) {
-								// do whatever
-							}
-						}
-
-						if (ImGui::TreeNode("Test Node")) {
-							ImGui::TreePop();
-						}
-						if (ImGui::TreeNode("Test Node 2")) {
-							ImGui::TreePop();
-						}
-						ImGui::TreePop();
-					}
-					ImGui::EndTabItem();
-				}
+//				if (ImGui::BeginTabItem("Nodes")) {
+//					if (ImGui::TreeNodeEx("Root Node")) {
+//						{
+//							ImGui::SameLine();
+//							if (ImGui::Selectable("Props")) {
+//								// do whatever
+//							}
+//						}
+//						{
+//							if (ImGui::Selectable("Test Node Press")) {
+//								// do whatever
+//							}
+//						}
+//
+//						if (ImGui::TreeNode("Test Node")) {
+//							ImGui::TreePop();
+//						}
+//						if (ImGui::TreeNode("Test Node 2")) {
+//							ImGui::TreePop();
+//						}
+//						ImGui::TreePop();
+//					}
+//					ImGui::EndTabItem();
+//				}
 				if (ImGui::BeginTabItem("Settings")) {
 					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d", current_scene->id);
 					ImGui::Spacing();
@@ -572,6 +572,8 @@ bool update_gui(SDL_Window *window) {
 					}
 				}
 
+				ImGui::Separator();
+				ImGui::Spacing();
 				if (ImGui::Button("Create New Scene")) {
 					project.scenes.emplace_back();
 					current_scene = &project.scenes[project.scenes.size() - 1];
