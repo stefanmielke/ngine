@@ -3,11 +3,10 @@
 #include <iostream>
 
 #include "imgui/imgui.h"
-#include "imgui-SFML/imgui-SFML.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_sdlrenderer.h"
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
+#include <SDL2/SDL.h>
 
 #include "ConsoleApp.h"
 #include "Emulator.h"
@@ -38,8 +37,47 @@ char input_open_project[255];
 char emulator_path[255];
 ProjectSettingsScreen project_settings_screen;
 
-void update_gui(sf::RenderWindow &window, sf::Time time);
+bool update_gui(SDL_Window *window);
 void reload_scripts();
+
+struct App {
+	SDL_Renderer *renderer;
+	SDL_Window *window;
+} app;
+
+void initSDL(void) {
+	int rendererFlags, windowFlags;
+
+	rendererFlags = SDL_RENDERER_ACCELERATED;
+
+	windowFlags = SDL_WINDOW_RESIZABLE;
+
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		printf("Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	app.window = SDL_CreateWindow(default_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+								  1024, 768, windowFlags);
+
+	if (!app.window) {
+		printf("Failed to open window: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
+	app.renderer = SDL_CreateRenderer(app.window, -1, rendererFlags);
+
+	if (!app.renderer) {
+		printf("Failed to create renderer: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	ImGui::CreateContext();
+	ImGui_ImplSDL2_InitForSDLRenderer(app.window);
+	ImGui_ImplSDLRenderer_Init(app.renderer);
+}
 
 int main() {
 	memset(input_new_project, 0, 255);
@@ -52,23 +90,31 @@ int main() {
 	std::stringstream output_stream;
 	std::cout.rdbuf(output_stream.rdbuf());
 
-	sf::RenderWindow window(sf::VideoMode(1024, 768), default_title);
-	window.setFramerateLimit(60);
-	if (!ImGui::SFML::Init(window))
-		return -1;
+	initSDL();
 
-	sf::Clock deltaClock;
-	sf::Event event{};
-	while (window.isOpen()) {
-		while (window.pollEvent(event)) {
-			ImGui::SFML::ProcessEvent(window, event);
+	bool is_running = true;
+	while (is_running) {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			ImGui_ImplSDL2_ProcessEvent(&event);
 
-			if (event.type == sf::Event::Closed) {
-				window.close();
+			switch (event.type) {
+				case SDL_QUIT:
+					is_running = false;
+					break;
+				default:
+					break;
 			}
 		}
 
-		update_gui(window, deltaClock.restart());
+		if (!is_running)
+			break;
+
+		ImGui_ImplSDLRenderer_NewFrame();
+		ImGui_ImplSDL2_NewFrame(app.window);
+		ImGui::NewFrame();
+
+		is_running = update_gui(app.window);
 
 		// pulling data from output stream if available
 		std::string temp_output_string;
@@ -76,23 +122,33 @@ int main() {
 			console.AddLog("%s", temp_output_string.c_str());
 		}
 
-		window.clear();
+		ImGui::Render();
 
-		// render SFML stuff here
+		SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
+		SDL_RenderClear(app.renderer);
 
-		ImGui::SFML::Render(window);
-		window.display();
+		// render SDL stuff here
+
+		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+		SDL_RenderPresent(app.renderer);
 	}
 
-	ImGui::SFML::Shutdown();
+	ImGui_ImplSDLRenderer_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
+	SDL_DestroyRenderer(app.renderer);
+	SDL_DestroyWindow(app.window);
+	SDL_Quit();
 
 	return 0;
 }
 
-void update_gui(sf::RenderWindow &window, sf::Time time) {
-	ImGui::SFML::Update(window, time);
-
+bool update_gui(SDL_Window *window) {
 	bool is_output_open = true;
+
+	int window_width, window_height;
+	SDL_GetWindowSize(window, &window_width, &window_height);
 
 	static bool new_project_window_open = false;
 	static bool open_project_window_open = false;
@@ -108,12 +164,12 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				console.AddLog("Closing project...");
 
 				project_settings.CloseProject();
-				window.setTitle(default_title);
+				SDL_SetWindowTitle(window, default_title);
 
 				console.AddLog("Project closed.");
 			}
 			if (ImGui::MenuItem("Exit")) {
-				window.close();
+				return false;
 			}
 			ImGui::EndMenu();
 		}
@@ -197,7 +253,9 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 				if (project_settings.LoadFromFile(project_filepath)) {
 					project.LoadFromDisk(project_settings.project_directory);
 
-					window.setTitle("NGine - " + project_settings.project_name + " - " + project_settings.project_directory);
+					SDL_SetWindowTitle(window, ("NGine - " + project_settings.project_name + " - " +
+												project_settings.project_directory)
+												   .c_str());
 					open_project_window_open = false;
 
 					project_settings_screen.FromProjectSettings(project_settings);
@@ -219,9 +277,9 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 
 	console.Draw("Output", window, is_output_open);
 
-	const float center_x_size = (float)window.getSize().x - 600;
+	const float center_x_size = (float)window_width - 600;
 	const float center_y_offset = is_output_open ? 219 : 38;
-	ImGui::SetNextWindowSize(ImVec2(center_x_size, (float)window.getSize().y - center_y_offset));
+	ImGui::SetNextWindowSize(ImVec2(center_x_size, (float)window_height - center_y_offset));
 	ImGui::SetNextWindowPos(ImVec2(300, 19));
 	if (ImGui::Begin("ContentBrowser", nullptr,
 					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
@@ -257,7 +315,8 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 						ImGui::SameLine();
 						ImGui::PushID((script_name + "D").c_str());
 						if (ImGui::SmallButton("Delete")) {
-							ScriptBuilder::DeleteScriptFile(project_settings, project, script_name.c_str());
+							ScriptBuilder::DeleteScriptFile(project_settings, project,
+															script_name.c_str());
 
 							for (int i = 0; i < script_files.size(); ++i) {
 								if (script_files[i] == script_name) {
@@ -276,7 +335,7 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 	}
 
 	const float prop_y_size = is_output_open ? 219 : 38;
-	ImGui::SetNextWindowSize(ImVec2(300, (float)window.getSize().y - prop_y_size));
+	ImGui::SetNextWindowSize(ImVec2(300, (float)window_height - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 		if (current_scene) {
@@ -372,8 +431,8 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 	ImGui::End();
 
 	const float prop_x_size = 300;
-	ImGui::SetNextWindowSize(ImVec2(prop_x_size, (float)window.getSize().y - prop_y_size));
-	ImGui::SetNextWindowPos(ImVec2((float)window.getSize().x - prop_x_size, 19));
+	ImGui::SetNextWindowSize(ImVec2(prop_x_size, (float)window_height - prop_y_size));
+	ImGui::SetNextWindowPos(ImVec2((float)window_width - prop_x_size, 19));
 	if (ImGui::Begin("General Settings", nullptr,
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
 						 ImGuiWindowFlags_NoTitleBar)) {
@@ -504,6 +563,8 @@ void update_gui(sf::RenderWindow &window, sf::Time time) {
 		ImGui::EndTabBar();
 	}
 	ImGui::End();
+
+	return true;
 }
 
 void reload_scripts() {

@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include <SFML/Graphics.hpp>
+#include <SDL2/SDL.h>
 
 #include "imgui.h"
 
@@ -48,19 +48,22 @@ struct ConsoleApp {
 		Items.push_back(Strdup(buf));
 	}
 
-	void Draw(const char *title, sf::RenderWindow &window, bool &is_open) {
+	void Draw(const char *title, SDL_Window *window, bool &is_open) {
 		is_open = true;
 
-		ImGui::SetNextWindowSize(ImVec2(window.getSize().x, 200));
+		int window_width, window_height;
+		SDL_GetWindowSize(window, &window_width, &window_height);
+
+		ImGui::SetNextWindowSize(ImVec2(window_width, 200));
 		if (!ImGui::Begin(title, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
 			if (ImGui::IsWindowCollapsed()) {
 				is_open = false;
-				ImGui::SetWindowPos(ImVec2(0, window.getSize().y - 19));
+				ImGui::SetWindowPos(ImVec2(0, window_height - 19));
 			}
 			ImGui::End();
 			return;
 		}
-		ImGui::SetWindowPos(ImVec2(0, window.getSize().y - 200));
+		ImGui::SetWindowPos(ImVec2(0, window_height - 200));
 
 		// TODO: display items starting from the bottom
 		if (ImGui::SmallButton("Clear")) {
