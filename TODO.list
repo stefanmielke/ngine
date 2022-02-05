@@ -21,7 +21,7 @@
 [x] Add "Copy DFS folder" on clicking image
 [ ] Delete image
 [ ] Change image props
-[ ] Keep selected scene selected on "Scenes" tab
+[x] Keep selected scene selected on "Scenes" tab
 [x] Drag&Drop to open project
 [x] BUGFIX: Do not allow empty script names
 [x] Create DFS file with assets

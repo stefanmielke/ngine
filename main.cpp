@@ -565,7 +565,8 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::BeginTabBar("Properties")) {
 			if (ImGui::BeginTabItem("Scenes")) {
 				for (auto &scene : project.scenes) {
-					if (ImGui::Selectable(scene.name.c_str())) {
+					if (ImGui::Selectable(scene.name.c_str(),
+										  current_scene && scene.id == current_scene->id)) {
 						current_scene = &scene;
 						strcpy(scene_name, current_scene->name.c_str());
 					}
