@@ -6,9 +6,8 @@ const char *setup_gen_c = R"(#include <libdragon.h>
 
 #include "game.s.h"
 #include "scenes/change_scene.s.h"
-
 %s
-
+%s
 void setup() {
 %s
 	mem_zone_init(&global_memory_pool, %d);
@@ -19,17 +18,16 @@ void setup() {
 }
 
 void tick() {
-%s
-}
+%s}
 
 void display(display_context_t disp) {
-%s
-})";
+%s})";
 
 void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	std::stringstream setup_body;
 	std::stringstream tick_body;
 	std::stringstream display_body;
+	std::stringstream includes;
 	std::stringstream variables;
 
 	if (settings.modules.display) {
@@ -78,12 +76,14 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 		display_body << "\tscript_" << settings.global_script_name << "_display(disp);"
 					 << std::endl;
 
-		variables << "#include \"scripts/" << settings.global_script_name << ".script.h\"" << std::endl;
+		includes << "#include \"scripts/" << settings.global_script_name << ".script.h\""
+				  << std::endl;
 	}
 
 	FILE *filestream = fopen(setup_path.c_str(), "w");
-	fprintf(filestream, setup_gen_c, variables.str().c_str(), setup_body.str().c_str(),
-			settings.global_mem_alloc_size * 1024, settings.scene_mem_alloc_size * 1024,
-			settings.initial_screen_id, tick_body.str().c_str(), display_body.str().c_str());
+	fprintf(filestream, setup_gen_c, includes.str().c_str(), variables.str().c_str(),
+			setup_body.str().c_str(), settings.global_mem_alloc_size * 1024,
+			settings.scene_mem_alloc_size * 1024, settings.initial_screen_id,
+			tick_body.str().c_str(), display_body.str().c_str());
 	fclose(filestream);
 }
