@@ -6,6 +6,7 @@
 [x] Delete scripts
     - Search inside scenes and remove from them
 [ ] Fix closing and opening project
+    - Create class to store/erase when loading/closing.
 [x] Change "Mupen64" to "Emulator"
 [ ] Import sprites/spritesheets
     - Drag&Drop
@@ -18,3 +19,4 @@
 [ ] Import Tiled maps
 [ ] Import LDtk maps
 [ ] Drag&Drop to open project
+[ ] BUGFIX: Do not allow empty script names
