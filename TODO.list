@@ -18,7 +18,7 @@
 [ ] Import sprite fonts
 [ ] Import Tiled maps
 [ ] Import LDtk maps
-[ ] Drag&Drop to open project
+[x] Drag&Drop to open project
 [x] BUGFIX: Do not allow empty script names
 [ ] Create DFS file with assets
     - Create sprite files and push to 'filesystem' folder

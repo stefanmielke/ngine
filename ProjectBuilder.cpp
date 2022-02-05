@@ -5,6 +5,7 @@
 #include <thread>
 
 #include "ConsoleApp.h"
+#include "Content.h"
 #include "Libdragon.h"
 #include "generated/generated.h"
 #include "static/static.h"
@@ -61,11 +62,11 @@ void ProjectBuilder::Create(std::string project_folder) {
 	std::thread(create_project_thread, project_folder).detach();
 }
 
-void create_build_files(ProjectSettings &project_settings, Project &project) {
+void create_build_files(ProjectSettings &project_settings, Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images) {
 
 	std::string makefile_path(project_settings.project_directory + "/Makefile");
 	generate_makefile_gen(makefile_path, project_settings.rom_name.c_str(),
-						  project_settings.project_name.c_str());
+						  project_settings.project_name.c_str(), !images.empty());
 
 	std::string setup_path(project_settings.project_directory + "/src/setup.gen.c");
 	generate_setup_gen_c(setup_path, project_settings);
@@ -74,18 +75,20 @@ void create_build_files(ProjectSettings &project_settings, Project &project) {
 	generate_change_scene_gen_c(change_scene_path, project);
 
 	generate_scene_gen_files(project_settings.project_directory, project);
+
+	Content::CreateSprites(project_settings, images);
 }
 
-void ProjectBuilder::Build(ProjectSettings project_settings, Project &project) {
-	create_build_files(project_settings, project);
+void ProjectBuilder::Build(ProjectSettings &project_settings, Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images) {
+	create_build_files(project_settings, project, images);
 
 	Libdragon::Build(project_settings.project_directory);
 }
 
-void ProjectBuilder::Rebuild(ProjectSettings project_settings, Project &project) {
+void ProjectBuilder::Rebuild(ProjectSettings &project_settings, Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images) {
 	Libdragon::CleanSync(project_settings.project_directory);
 
-	create_build_files(project_settings, project);
+	create_build_files(project_settings, project, images);
 
 	Libdragon::Build(project_settings.project_directory);
 }

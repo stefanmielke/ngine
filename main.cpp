@@ -273,13 +273,13 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Building project...");
 
-			ProjectBuilder::Build(project_settings, project);
+			ProjectBuilder::Build(project_settings, project, images);
 		}
 		if (ImGui::BeginMenu("Tasks", project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding project...");
 
-				ProjectBuilder::Rebuild(project_settings, project);
+				ProjectBuilder::Rebuild(project_settings, project, images);
 			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");
@@ -298,7 +298,7 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
 				project_settings.IsOpen() && !engine_settings.GetEmulatorPath().empty())) {
-			Emulator::Run(engine_settings, project_settings, project);
+			Emulator::Run(engine_settings, project_settings, project, images);
 		}
 		ImGui::EndMainMenuBar();
 	}
@@ -381,7 +381,7 @@ bool update_gui(SDL_Window *window) {
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
 							ImGui::Text(
-								"%s\nPath: %s\nDFS Path: %s%s\nSize: %dx%d\nSlices: %dx%d\n",
+								"%s\nPath: %s\nDFS Path: %s%s.sprite\nSize: %dx%d\nSlices: %dx%d\n",
 								image->name.c_str(), image->image_path.c_str(),
 								image->dfs_folder.c_str(), image->name.c_str(), image->width,
 								image->height, image->h_slices, image->v_slices);
@@ -740,7 +740,7 @@ void render_image_import_windows() {
 								image->v_slices = dropped_image_files[i].v_slices;
 
 								if (dropped_image_files[i].copy_to_assets) {
-									image->image_path = "#assets/sprites/" + name + ".png";
+									image->image_path = "assets/sprites/" + name + ".png";
 
 									std::filesystem::create_directories(
 										project_settings.project_directory + "/assets/sprites");
@@ -749,7 +749,9 @@ void render_image_import_windows() {
 																   "/assets/sprites/" + name +
 																   ".png");
 								} else {
-									image->image_path = dropped_image_files[i].image_path;
+									image->image_path = std::filesystem::path(
+															dropped_image_files[i].image_path)
+															.lexically_relative(project_settings.project_directory);
 								}
 
 								image->SaveToDisk(project_settings.project_directory);
@@ -804,14 +806,9 @@ void load_images() {
 }
 
 void load_image(std::unique_ptr<LibdragonImage> &image) {
-	if (image->image_path.starts_with("#")) {
-		std::string path(project_settings.project_directory + "/");
-		path.append(image->image_path.begin() + 1, image->image_path.end());
+	std::string path(project_settings.project_directory + "/" + image->image_path);
 
-		image->loaded_image = IMG_LoadTexture(app.renderer, path.c_str());
-	} else {
-		image->loaded_image = IMG_LoadTexture(app.renderer, image->image_path.c_str());
-	}
+	image->loaded_image = IMG_LoadTexture(app.renderer, path.c_str());
 
 	int w, h;
 	SDL_QueryTexture(image->loaded_image, nullptr, nullptr, &w, &h);
