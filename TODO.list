@@ -16,6 +16,12 @@
     - Ask "Copy to sprite project" and copy to '/assets/'
 [x] Import music
 [x] Import sfx
+[ ] Import xm sound files
+[ ] Import ym sound files
+    - "--ym-compress <true|false>": Compress output file
+[ ] Add wav options
+    - "--wav-loop <true|false>": Activate playback loop by default
+    - "--wav-loop-offset <N>": Set looping offset (in samples; default: 0)
 [ ] Import sprite fonts
 [ ] Import Tiled maps
 [ ] Import LDtk maps

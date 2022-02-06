@@ -500,9 +500,7 @@ bool update_gui(SDL_Window *window) {
 						}
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
-							ImGui::Text("%s\nPath: %s\nDFS Path: %s%s.wav64\n", sound->name.c_str(),
-										sound->sound_path.c_str(), sound->dfs_folder.c_str(),
-										sound->name.c_str());
+							ImGui::Text("%s", sound->GetTooltip().c_str());
 							ImGui::EndTooltip();
 						}
 						++cur_i;
@@ -1079,7 +1077,7 @@ void render_image_import_windows() {
 										"Sound with the name already exists. Please choose a "
 										"different name.");
 								} else {
-									auto image = std::make_unique<LibdragonSound>();
+									auto image = std::make_unique<LibdragonSound>(SOUND_WAV);
 									image->name = name;
 									image->dfs_folder = dfs_folder;
 									image->sound_path = "assets/sounds/" + name + ".wav";
@@ -1179,7 +1177,7 @@ void load_sounds() {
 		if (file_entry.is_regular_file()) {
 			std::string filepath(file_entry.path());
 			if (filepath.ends_with(".sound.json")) {
-				auto sound = std::make_unique<LibdragonSound>();
+				auto sound = std::make_unique<LibdragonSound>(SOUND_UNKNOWN);
 				sound->LoadFromDisk(filepath);
 
 				sounds.push_back(move(sound));
