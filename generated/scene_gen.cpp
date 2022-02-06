@@ -25,7 +25,7 @@ short scene_%d_tick() {
 }
 
 void scene_%d_display(display_context_t disp) {
-	graphics_fill_screen(disp, %d);
+	graphics_fill_screen(disp, %u);
 	graphics_set_color(0xfff, 0);
 
 	%s
