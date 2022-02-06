@@ -27,8 +27,6 @@ const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
 
-static Project project;
-
 static ProjectSettings project_settings;
 static EngineSettings engine_settings;
 
@@ -45,6 +43,7 @@ struct App {
 	SDL_Renderer *renderer;
 	SDL_Window *window;
 	ProjectState state;
+	Project project;
 } app;
 
 static void initSDL() {
@@ -201,7 +200,7 @@ bool open_project(const char *path) {
 		return false;
 	}
 
-	project.LoadFromDisk(project_settings.project_directory);
+	app.project.LoadFromDisk(project_settings.project_directory);
 
 	SDL_SetWindowTitle(app.window, ("NGine - " + project_settings.project_name + " - " +
 									project_settings.project_directory)
@@ -238,7 +237,7 @@ bool update_gui(SDL_Window *window) {
 				open_project_window_open = true;
 			}
 			if (ImGui::MenuItem("Close Project", nullptr, false, project_settings.IsOpen())) {
-				console.AddLog("Closing project...");
+				console.AddLog("Closing app.project...");
 
 				project_settings.CloseProject();
 				SDL_SetWindowTitle(window, default_title);
@@ -251,23 +250,23 @@ bool update_gui(SDL_Window *window) {
 			ImGui::EndMenu();
 		}
 		if (ImGui::MenuItem("Save Project", nullptr, false, project_settings.IsOpen())) {
-			console.AddLog("Saving project...");
+			console.AddLog("Saving app.project...");
 
-			project.SaveToDisk(project_settings.project_directory);
+			app.project.SaveToDisk(project_settings.project_directory);
 			project_settings.SaveToDisk();
 
 			console.AddLog("Project saved.");
 		}
 		if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
-			console.AddLog("Building project...");
+			console.AddLog("Building app.project...");
 
-			ProjectBuilder::Build(project_settings, project, project.images, project.sounds);
+			ProjectBuilder::Build(project_settings, app.project, app.project.images, app.project.sounds);
 		}
 		if (ImGui::BeginMenu("Tasks", project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
-				console.AddLog("Rebuilding project...");
+				console.AddLog("Rebuilding app.project...");
 
-				ProjectBuilder::Rebuild(project_settings, project, project.images, project.sounds);
+				ProjectBuilder::Rebuild(project_settings, app.project, app.project.images, app.project.sounds);
 			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");
@@ -286,7 +285,7 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
 				project_settings.IsOpen() && !engine_settings.GetEmulatorPath().empty())) {
-			Emulator::Run(engine_settings, project_settings, project, project.images, project.sounds);
+			Emulator::Run(engine_settings, project_settings, app.project, app.project.images, app.project.sounds);
 		}
 		ImGui::EndMainMenuBar();
 	}
@@ -382,9 +381,9 @@ bool update_gui(SDL_Window *window) {
 								(*app.state.selected_image)
 									->DeleteFromDisk(project_settings.project_directory);
 
-								for (int i = 0; i < project.images.size(); ++i) {
-									if (project.images[i]->image_path == (*app.state.selected_image)->image_path) {
-										project.images.erase(project.images.begin() + i);
+								for (int i = 0; i < app.project.images.size(); ++i) {
+									if (app.project.images[i]->image_path == (*app.state.selected_image)->image_path) {
+										app.project.images.erase(app.project.images.begin() + i);
 										break;
 									}
 								}
@@ -394,7 +393,7 @@ bool update_gui(SDL_Window *window) {
 						ImGui::EndPopup();
 					}
 
-					for (auto &image : project.images) {
+					for (auto &image : app.project.images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
 							app.state.selected_image = &image;
@@ -454,9 +453,9 @@ bool update_gui(SDL_Window *window) {
 								(*app.state.selected_sound)
 									->DeleteFromDisk(project_settings.project_directory);
 
-								for (int i = 0; i < project.sounds.size(); ++i) {
-									if (project.sounds[i]->sound_path == (*app.state.selected_sound)->sound_path) {
-										project.sounds.erase(project.sounds.begin() + i);
+								for (int i = 0; i < app.project.sounds.size(); ++i) {
+									if (app.project.sounds[i]->sound_path == (*app.state.selected_sound)->sound_path) {
+										app.project.sounds.erase(app.project.sounds.begin() + i);
 										break;
 									}
 								}
@@ -466,7 +465,7 @@ bool update_gui(SDL_Window *window) {
 						ImGui::EndPopup();
 					}
 
-					for (auto &sound : project.sounds) {
+					for (auto &sound : app.project.sounds) {
 						if (ImGui::Selectable(sound->name.c_str())) {
 							app.state.selected_sound = &sound;
 							ImGui::OpenPopup("PopupSoundsBrowserSound");
@@ -496,7 +495,7 @@ bool update_gui(SDL_Window *window) {
 						}
 					}
 					ImGui::Separator();
-					for (auto &script_name : project.script_files) {
+					for (auto &script_name : app.project.script_files) {
 						ImGui::TextUnformatted(script_name.c_str());
 						ImGui::SameLine();
 						ImGui::PushID(script_name.c_str());
@@ -509,12 +508,12 @@ bool update_gui(SDL_Window *window) {
 						ImGui::SameLine();
 						ImGui::PushID((script_name + "D").c_str());
 						if (ImGui::SmallButton("Delete")) {
-							ScriptBuilder::DeleteScriptFile(project_settings, project,
+							ScriptBuilder::DeleteScriptFile(project_settings, app.project,
 															script_name.c_str());
 
-							for (int i = 0; i < project.script_files.size(); ++i) {
-								if (project.script_files[i] == script_name) {
-									project.script_files.erase(project.script_files.begin() + i);
+							for (int i = 0; i < app.project.script_files.size(); ++i) {
+								if (app.project.script_files[i] == script_name) {
+									app.project.script_files.erase(app.project.script_files.begin() + i);
 								}
 							}
 						}
@@ -577,7 +576,7 @@ bool update_gui(SDL_Window *window) {
 						std::string current_selected(app.state.current_scene->script_name);
 						ImGui::TextUnformatted("Attached Script");
 						if (ImGui::BeginCombo("##AttachedScript", current_selected.c_str())) {
-							for (auto &script : project.script_files) {
+							for (auto &script : app.project.script_files) {
 								if (ImGui::Selectable(script.c_str(), script == current_selected)) {
 									app.state.current_scene->script_name = script;
 								}
@@ -595,7 +594,7 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Spacing();
 					if (ImGui::Button("Save")) {
 						app.state.current_scene->name = app.state.scene_name;
-						project.SaveToDisk(project_settings.project_directory);
+						app.project.SaveToDisk(project_settings.project_directory);
 						project_settings.SaveToDisk();
 					}
 					ImGui::Spacing();
@@ -603,9 +602,9 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Separator();
 					ImGui::Spacing();
 					if (ImGui::Button("Delete Scene")) {
-						for (int i = 0; i < project.scenes.size(); ++i) {
-							if (project.scenes[i].id == app.state.current_scene->id) {
-								project.scenes.erase(project.scenes.begin() + i);
+						for (int i = 0; i < app.project.scenes.size(); ++i) {
+							if (app.project.scenes[i].id == app.state.current_scene->id) {
+								app.project.scenes.erase(app.project.scenes.begin() + i);
 								std::string filename = project_settings.project_directory +
 													   "/.ngine/scenes/" +
 													   std::to_string(app.state.current_scene->id) +
@@ -668,8 +667,8 @@ bool update_gui(SDL_Window *window) {
 							auto find_by_name = [&name_string](std::unique_ptr<LibdragonImage> &i) {
 								return i->name == name_string;
 							};
-							if (std::find_if(project.images.begin(), project.images.end(), find_by_name) !=
-								std::end(project.images)) {
+							if (std::find_if(app.project.images.begin(), app.project.images.end(), find_by_name) !=
+								std::end(app.project.images)) {
 								console.AddLog(
 									"Image with the name already exists. Please choose a "
 									"different name.");
@@ -737,8 +736,8 @@ bool update_gui(SDL_Window *window) {
 							auto find_by_name = [&name_string](std::unique_ptr<LibdragonSound> &i) {
 								return i->name == name_string;
 							};
-							if (std::find_if(project.sounds.begin(), project.sounds.end(), find_by_name) !=
-								std::end(project.sounds)) {
+							if (std::find_if(app.project.sounds.begin(), app.project.sounds.end(), find_by_name) !=
+								std::end(app.project.sounds)) {
 								console.AddLog(
 									"Sound with the name already exists. Please choose a "
 									"different name.");
@@ -774,7 +773,7 @@ bool update_gui(SDL_Window *window) {
 				}
 			}
 			if (ImGui::BeginTabItem("Scenes")) {
-				for (auto &scene : project.scenes) {
+				for (auto &scene : app.project.scenes) {
 					if (ImGui::Selectable(scene.name.c_str(),
 										  app.state.current_scene && scene.id == app.state.current_scene->id)) {
 						app.state.current_scene = &scene;
@@ -785,10 +784,10 @@ bool update_gui(SDL_Window *window) {
 				ImGui::Separator();
 				ImGui::Spacing();
 				if (ImGui::Button("Create New Scene")) {
-					project.scenes.emplace_back();
-					app.state.current_scene = &project.scenes[project.scenes.size() - 1];
+					app.project.scenes.emplace_back();
+					app.state.current_scene = &app.project.scenes[app.project.scenes.size() - 1];
 					app.state.current_scene->id = project_settings.next_scene_id++;
-					app.state.current_scene->name = std::to_string(project.scenes.size());
+					app.state.current_scene->name = std::to_string(app.project.scenes.size());
 					strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
 				}
 				ImGui::EndTabItem();
@@ -804,7 +803,7 @@ bool update_gui(SDL_Window *window) {
 
 							{
 								std::string current_selected("None");
-								for (auto &scene : project.scenes) {
+								for (auto &scene : app.project.scenes) {
 									if (scene.id == project_settings.initial_screen_id) {
 										current_selected = scene.name;
 										break;
@@ -813,7 +812,7 @@ bool update_gui(SDL_Window *window) {
 								ImGui::TextUnformatted("Initial Screen");
 								if (ImGui::BeginCombo("##InitialScreen",
 													  current_selected.c_str())) {
-									for (auto &scene : project.scenes) {
+									for (auto &scene : app.project.scenes) {
 										if (ImGui::Selectable(
 												scene.name.c_str(),
 												scene.id == project_settings.initial_screen_id)) {
@@ -829,7 +828,7 @@ bool update_gui(SDL_Window *window) {
 								if (ImGui::BeginCombo(
 										"##GlobalScript",
 										project_settings.global_script_name.c_str())) {
-									for (auto &script : project.script_files) {
+									for (auto &script : app.project.script_files) {
 										if (ImGui::Selectable(
 												script.c_str(),
 												script == project_settings.global_script_name)) {
@@ -974,7 +973,7 @@ bool update_gui(SDL_Window *window) {
 }
 
 void reload_scripts() {
-	project.script_files.clear();
+	app.project.script_files.clear();
 
 	std::filesystem::path script_folder = project_settings.project_directory + "/.ngine/scripts";
 
@@ -993,7 +992,7 @@ void reload_scripts() {
 				filestream >> json;
 				filestream.close();
 
-				project.script_files.emplace_back(json["name"]);
+				app.project.script_files.emplace_back(json["name"]);
 			}
 		}
 	}
@@ -1033,8 +1032,8 @@ void render_image_import_windows() {
 									[&name_string](std::unique_ptr<LibdragonImage> &i) {
 										return i->name == name_string;
 									};
-								if (std::find_if(project.images.begin(), project.images.end(), find_by_name) !=
-									std::end(project.images)) {
+								if (std::find_if(app.project.images.begin(), app.project.images.end(), find_by_name) !=
+									std::end(app.project.images)) {
 									console.AddLog(
 										"Image with the name already exists. Please choose a "
 										"different name.");
@@ -1058,7 +1057,7 @@ void render_image_import_windows() {
 
 									app.state.dropped_image_files.erase(app.state.dropped_image_files.begin() + i);
 
-									project.images.push_back(move(image));
+									app.project.images.push_back(move(image));
 									--i;
 								}
 							}
@@ -1099,8 +1098,8 @@ void render_image_import_windows() {
 									[&name_string](std::unique_ptr<LibdragonSound> &i) {
 										return i->name == name_string;
 									};
-								if (std::find_if(project.sounds.begin(), project.sounds.end(), find_by_name) !=
-									std::end(project.sounds)) {
+								if (std::find_if(app.project.sounds.begin(), app.project.sounds.end(), find_by_name) !=
+									std::end(app.project.sounds)) {
 									console.AddLog(
 										"Sound with the name already exists. Please choose a "
 										"different name.");
@@ -1123,7 +1122,7 @@ void render_image_import_windows() {
 
 									app.state.dropped_sound_files.erase(app.state.dropped_sound_files.begin() + i);
 
-									project.sounds.push_back(move(image));
+									app.project.sounds.push_back(move(image));
 									--i;
 								}
 							}
@@ -1147,7 +1146,7 @@ void render_image_import_windows() {
 }
 
 void load_images() {
-	project.images.clear();
+	app.project.images.clear();
 
 	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sprites";
 	if (!std::filesystem::exists(folder)) {
@@ -1164,7 +1163,7 @@ void load_images() {
 
 				load_image(image);
 
-				project.images.push_back(move(image));
+				app.project.images.push_back(move(image));
 			}
 		}
 	}
@@ -1195,7 +1194,7 @@ void load_image(std::unique_ptr<LibdragonImage> &image) {
 }
 
 void load_sounds() {
-	project.sounds.clear();
+	app.project.sounds.clear();
 
 	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sounds";
 	if (!std::filesystem::exists(folder)) {
@@ -1210,7 +1209,7 @@ void load_sounds() {
 				auto sound = std::make_unique<LibdragonSound>(SOUND_UNKNOWN);
 				sound->LoadFromDisk(filepath);
 
-				project.sounds.push_back(move(sound));
+				app.project.sounds.push_back(move(sound));
 			}
 		}
 	}
