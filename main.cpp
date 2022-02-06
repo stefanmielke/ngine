@@ -19,9 +19,7 @@
 #include "ProjectState.h"
 #include "ScriptBuilder.h"
 #include "VSCode.h"
-#include "settings/EngineSettings.h"
 #include "settings/Project.h"
-#include "settings/ProjectSettings.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
@@ -41,6 +39,7 @@ struct App {
 	SDL_Window *window;
 	ProjectState state;
 	Project project;
+	EngineSettings engine_settings;
 } app;
 
 static void initSDL() {
@@ -80,9 +79,9 @@ static void initSDL() {
 }
 
 int main() {
-	app.project.engine_settings.LoadFromDisk();
-	strcpy(app.state.input_open_project, app.project.engine_settings.GetLastOpenedProject().c_str());
-	strcpy(app.state.emulator_path, app.project.engine_settings.GetEmulatorPath().c_str());
+	app.engine_settings.LoadFromDisk();
+	strcpy(app.state.input_open_project, app.engine_settings.GetLastOpenedProject().c_str());
+	strcpy(app.state.emulator_path, app.engine_settings.GetEmulatorPath().c_str());
 
 	initSDL();
 
@@ -205,7 +204,7 @@ bool open_project(const char *path) {
 
 	app.state.project_settings_screen.FromProjectSettings(app.project.project_settings);
 
-	app.project.engine_settings.SetLastOpenedProject(project_filepath);
+	app.engine_settings.SetLastOpenedProject(project_filepath);
 
 	reload_scripts();
 
@@ -281,8 +280,8 @@ bool update_gui(SDL_Window *window) {
 		}
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
-				app.project.project_settings.IsOpen() && !app.project.engine_settings.GetEmulatorPath().empty())) {
-			Emulator::Run(app.project.engine_settings, app.project.project_settings, app.project, app.project.images, app.project.sounds);
+				app.project.project_settings.IsOpen() && !app.engine_settings.GetEmulatorPath().empty())) {
+			Emulator::Run(app.engine_settings, app.project.project_settings, app.project, app.project.images, app.project.sounds);
 		}
 		ImGui::EndMainMenuBar();
 	}
@@ -956,7 +955,7 @@ bool update_gui(SDL_Window *window) {
 				ImGui::InputText("##EmuPath", app.state.emulator_path, 255);
 
 				if (ImGui::Button("Save")) {
-					app.project.engine_settings.SetEmulatorPath(app.state.emulator_path);
+					app.engine_settings.SetEmulatorPath(app.state.emulator_path);
 				}
 
 				ImGui::EndTabItem();

@@ -18,7 +18,6 @@ class Project {
 	std::vector<std::unique_ptr<LibdragonImage>> images;
 
 	ProjectSettings project_settings;
-	EngineSettings engine_settings;
 
 	void SaveToDisk(std::string &project_directory);
 	void LoadFromDisk(std::string &project_directory);
