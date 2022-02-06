@@ -27,9 +27,6 @@ const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
 
-static ProjectSettings project_settings;
-static EngineSettings engine_settings;
-
 bool open_project(const char *path);
 
 static bool update_gui(SDL_Window *window);
@@ -83,9 +80,9 @@ static void initSDL() {
 }
 
 int main() {
-	engine_settings.LoadFromDisk();
-	strcpy(app.state.input_open_project, engine_settings.GetLastOpenedProject().c_str());
-	strcpy(app.state.emulator_path, engine_settings.GetEmulatorPath().c_str());
+	app.project.engine_settings.LoadFromDisk();
+	strcpy(app.state.input_open_project, app.project.engine_settings.GetLastOpenedProject().c_str());
+	strcpy(app.state.emulator_path, app.project.engine_settings.GetEmulatorPath().c_str());
 
 	initSDL();
 
@@ -102,7 +99,7 @@ int main() {
 				case SDL_DROPFILE: {
 					console.AddLog("Dropped file: %s", event.drop.file);
 
-					if (project_settings.IsOpen()) {
+					if (app.project.project_settings.IsOpen()) {
 						std::string file(event.drop.file);
 						if (file.ends_with(".png")) {
 							DroppedImage dropped_image(event.drop.file);
@@ -191,24 +188,24 @@ int main() {
 bool open_project(const char *path) {
 	console.AddLog("Opening project at '%s'...", path);
 
-	if (project_settings.IsOpen()) {
-		project_settings.CloseProject();
+	if (app.project.project_settings.IsOpen()) {
+		app.project.project_settings.CloseProject();
 	}
 
 	std::string project_filepath(path);
-	if (!project_settings.LoadFromFile(project_filepath)) {
+	if (!app.project.project_settings.LoadFromFile(project_filepath)) {
 		return false;
 	}
 
-	app.project.LoadFromDisk(project_settings.project_directory);
+	app.project.LoadFromDisk(app.project.project_settings.project_directory);
 
-	SDL_SetWindowTitle(app.window, ("NGine - " + project_settings.project_name + " - " +
-									project_settings.project_directory)
+	SDL_SetWindowTitle(app.window, ("NGine - " + app.project.project_settings.project_name + " - " +
+									app.project.project_settings.project_directory)
 									   .c_str());
 
-	app.state.project_settings_screen.FromProjectSettings(project_settings);
+	app.state.project_settings_screen.FromProjectSettings(app.project.project_settings);
 
-	engine_settings.SetLastOpenedProject(project_filepath);
+	app.project.engine_settings.SetLastOpenedProject(project_filepath);
 
 	reload_scripts();
 
@@ -236,10 +233,10 @@ bool update_gui(SDL_Window *window) {
 			if (ImGui::MenuItem("Open Project")) {
 				open_project_window_open = true;
 			}
-			if (ImGui::MenuItem("Close Project", nullptr, false, project_settings.IsOpen())) {
+			if (ImGui::MenuItem("Close Project", nullptr, false, app.project.project_settings.IsOpen())) {
 				console.AddLog("Closing app.project...");
 
-				project_settings.CloseProject();
+				app.project.project_settings.CloseProject();
 				SDL_SetWindowTitle(window, default_title);
 
 				console.AddLog("Project closed.");
@@ -249,43 +246,43 @@ bool update_gui(SDL_Window *window) {
 			}
 			ImGui::EndMenu();
 		}
-		if (ImGui::MenuItem("Save Project", nullptr, false, project_settings.IsOpen())) {
+		if (ImGui::MenuItem("Save Project", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Saving app.project...");
 
-			app.project.SaveToDisk(project_settings.project_directory);
-			project_settings.SaveToDisk();
+			app.project.SaveToDisk(app.project.project_settings.project_directory);
+			app.project.project_settings.SaveToDisk();
 
 			console.AddLog("Project saved.");
 		}
-		if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
+		if (ImGui::MenuItem("Build", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Building app.project...");
 
-			ProjectBuilder::Build(project_settings, app.project, app.project.images, app.project.sounds);
+			ProjectBuilder::Build(app.project.project_settings, app.project, app.project.images, app.project.sounds);
 		}
-		if (ImGui::BeginMenu("Tasks", project_settings.IsOpen())) {
+		if (ImGui::BeginMenu("Tasks", app.project.project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding app.project...");
 
-				ProjectBuilder::Rebuild(project_settings, app.project, app.project.images, app.project.sounds);
+				ProjectBuilder::Rebuild(app.project.project_settings, app.project, app.project.images, app.project.sounds);
 			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");
 
-				ProjectBuilder::GenerateStaticFiles(project_settings.project_directory);
+				ProjectBuilder::GenerateStaticFiles(app.project.project_settings.project_directory);
 
 				console.AddLog("Files regenerated.");
 			}
 			ImGui::EndMenu();
 		}
-		if (ImGui::MenuItem("Open in VSCode", nullptr, false, project_settings.IsOpen())) {
+		if (ImGui::MenuItem("Open in VSCode", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Opening project in VSCode...");
 
-			VSCode::OpenPath(project_settings.project_directory);
+			VSCode::OpenPath(app.project.project_settings.project_directory);
 		}
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
-				project_settings.IsOpen() && !engine_settings.GetEmulatorPath().empty())) {
-			Emulator::Run(engine_settings, project_settings, app.project, app.project.images, app.project.sounds);
+				app.project.project_settings.IsOpen() && !app.project.engine_settings.GetEmulatorPath().empty())) {
+			Emulator::Run(app.project.engine_settings, app.project.project_settings, app.project, app.project.images, app.project.sounds);
 		}
 		ImGui::EndMainMenuBar();
 	}
@@ -342,7 +339,7 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::BeginTabBar("CenterContentTabs",
 							   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 			if (ImGui::BeginTabItem("Sprites Browser")) {
-				if (project_settings.IsOpen()) {
+				if (app.project.project_settings.IsOpen()) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup("PopupSpritesBrowser");
 					}
@@ -379,7 +376,7 @@ bool update_gui(SDL_Window *window) {
 						if (ImGui::Selectable("Delete")) {
 							if (app.state.selected_image) {
 								(*app.state.selected_image)
-									->DeleteFromDisk(project_settings.project_directory);
+									->DeleteFromDisk(app.project.project_settings.project_directory);
 
 								for (int i = 0; i < app.project.images.size(); ++i) {
 									if (app.project.images[i]->image_path == (*app.state.selected_image)->image_path) {
@@ -419,7 +416,7 @@ bool update_gui(SDL_Window *window) {
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Sounds Browser")) {
-				if (project_settings.IsOpen()) {
+				if (app.project.project_settings.IsOpen()) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup("PopupSoundsBrowser");
 					}
@@ -451,7 +448,7 @@ bool update_gui(SDL_Window *window) {
 						if (ImGui::Selectable("Delete")) {
 							if (app.state.selected_sound) {
 								(*app.state.selected_sound)
-									->DeleteFromDisk(project_settings.project_directory);
+									->DeleteFromDisk(app.project.project_settings.project_directory);
 
 								for (int i = 0; i < app.project.sounds.size(); ++i) {
 									if (app.project.sounds[i]->sound_path == (*app.state.selected_sound)->sound_path) {
@@ -481,14 +478,14 @@ bool update_gui(SDL_Window *window) {
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Script Browser")) {
-				if (project_settings.IsOpen()) {
+				if (app.project.project_settings.IsOpen()) {
 					static char script_name_input[100] = {};
 					ImGui::InputText("Script Name", script_name_input, 100);
 					ImGui::SameLine();
 					if (ImGui::Button("Create Script File")) {
 						std::string script_name(script_name_input);
 						if (!script_name.empty()) {
-							ScriptBuilder::CreateScriptFile(project_settings, script_name_input);
+							ScriptBuilder::CreateScriptFile(app.project.project_settings, script_name_input);
 							memset(script_name_input, 0, 100);
 
 							reload_scripts();
@@ -500,7 +497,7 @@ bool update_gui(SDL_Window *window) {
 						ImGui::SameLine();
 						ImGui::PushID(script_name.c_str());
 						if (ImGui::SmallButton("Edit")) {
-							std::string path = project_settings.project_directory +
+							std::string path = app.project.project_settings.project_directory +
 											   "/src/scripts/" + script_name + ".script.c";
 							VSCode::OpenPath(path);
 						}
@@ -508,7 +505,7 @@ bool update_gui(SDL_Window *window) {
 						ImGui::SameLine();
 						ImGui::PushID((script_name + "D").c_str());
 						if (ImGui::SmallButton("Delete")) {
-							ScriptBuilder::DeleteScriptFile(project_settings, app.project,
+							ScriptBuilder::DeleteScriptFile(app.project.project_settings, app.project,
 															script_name.c_str());
 
 							for (int i = 0; i < app.project.script_files.size(); ++i) {
@@ -594,8 +591,8 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Spacing();
 					if (ImGui::Button("Save")) {
 						app.state.current_scene->name = app.state.scene_name;
-						app.project.SaveToDisk(project_settings.project_directory);
-						project_settings.SaveToDisk();
+						app.project.SaveToDisk(app.project.project_settings.project_directory);
+						app.project.project_settings.SaveToDisk();
 					}
 					ImGui::Spacing();
 
@@ -605,7 +602,7 @@ bool update_gui(SDL_Window *window) {
 						for (int i = 0; i < app.project.scenes.size(); ++i) {
 							if (app.project.scenes[i].id == app.state.current_scene->id) {
 								app.project.scenes.erase(app.project.scenes.begin() + i);
-								std::string filename = project_settings.project_directory +
+								std::string filename = app.project.project_settings.project_directory +
 													   "/.ngine/scenes/" +
 													   std::to_string(app.state.current_scene->id) +
 													   ".scene.json";
@@ -674,13 +671,13 @@ bool update_gui(SDL_Window *window) {
 									"different name.");
 								will_save = false;
 							} else {
-								std::filesystem::copy_file(project_settings.project_directory +
+								std::filesystem::copy_file(app.project.project_settings.project_directory +
 															   "/" + (*app.state.image_editing)->image_path,
-														   project_settings.project_directory +
+														   app.project.project_settings.project_directory +
 															   "/assets/sprites/" +
 															   image_edit_name + ".png");
 								(*app.state.image_editing)
-									->DeleteFromDisk(project_settings.project_directory);
+									->DeleteFromDisk(app.project.project_settings.project_directory);
 							}
 						}
 
@@ -692,7 +689,7 @@ bool update_gui(SDL_Window *window) {
 							(*app.state.image_editing)->image_path = "assets/sprites/" +
 														   (*app.state.image_editing)->name + ".png";
 
-							(*app.state.image_editing)->SaveToDisk(project_settings.project_directory);
+							(*app.state.image_editing)->SaveToDisk(app.project.project_settings.project_directory);
 
 							app.state.image_editing = nullptr;
 						}
@@ -743,13 +740,13 @@ bool update_gui(SDL_Window *window) {
 									"different name.");
 								will_save = false;
 							} else {
-								std::filesystem::copy_file(project_settings.project_directory +
+								std::filesystem::copy_file(app.project.project_settings.project_directory +
 															   "/" + (*app.state.sound_editing)->sound_path,
-														   project_settings.project_directory +
+														   app.project.project_settings.project_directory +
 															   "/assets/sounds/" + sound_edit_name +
 															   ".wav");
 								(*app.state.sound_editing)
-									->DeleteFromDisk(project_settings.project_directory);
+									->DeleteFromDisk(app.project.project_settings.project_directory);
 							}
 						}
 
@@ -759,7 +756,7 @@ bool update_gui(SDL_Window *window) {
 							(*app.state.sound_editing)->sound_path = "assets/sounds/" +
 														   (*app.state.sound_editing)->name + ".wav";
 
-							(*app.state.sound_editing)->SaveToDisk(project_settings.project_directory);
+							(*app.state.sound_editing)->SaveToDisk(app.project.project_settings.project_directory);
 
 							app.state.sound_editing = nullptr;
 						}
@@ -786,14 +783,14 @@ bool update_gui(SDL_Window *window) {
 				if (ImGui::Button("Create New Scene")) {
 					app.project.scenes.emplace_back();
 					app.state.current_scene = &app.project.scenes[app.project.scenes.size() - 1];
-					app.state.current_scene->id = project_settings.next_scene_id++;
+					app.state.current_scene->id = app.project.project_settings.next_scene_id++;
 					app.state.current_scene->name = std::to_string(app.project.scenes.size());
 					strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
 				}
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Project")) {
-				if (project_settings.IsOpen()) {
+				if (app.project.project_settings.IsOpen()) {
 					if (ImGui::BeginTabBar("ProjectAllSettings")) {
 						if (ImGui::BeginTabItem("General")) {
 							ImGui::InputText("Name", app.state.project_settings_screen.project_name, 100);
@@ -804,7 +801,7 @@ bool update_gui(SDL_Window *window) {
 							{
 								std::string current_selected("None");
 								for (auto &scene : app.project.scenes) {
-									if (scene.id == project_settings.initial_screen_id) {
+									if (scene.id == app.project.project_settings.initial_screen_id) {
 										current_selected = scene.name;
 										break;
 									}
@@ -815,8 +812,8 @@ bool update_gui(SDL_Window *window) {
 									for (auto &scene : app.project.scenes) {
 										if (ImGui::Selectable(
 												scene.name.c_str(),
-												scene.id == project_settings.initial_screen_id)) {
-											project_settings.initial_screen_id = scene.id;
+												scene.id == app.project.project_settings.initial_screen_id)) {
+											app.project.project_settings.initial_screen_id = scene.id;
 										}
 									}
 									ImGui::EndCombo();
@@ -827,12 +824,12 @@ bool update_gui(SDL_Window *window) {
 								ImGui::TextUnformatted("Global Script");
 								if (ImGui::BeginCombo(
 										"##GlobalScript",
-										project_settings.global_script_name.c_str())) {
+										app.project.project_settings.global_script_name.c_str())) {
 									for (auto &script : app.project.script_files) {
 										if (ImGui::Selectable(
 												script.c_str(),
-												script == project_settings.global_script_name)) {
-											project_settings.global_script_name = script;
+												script == app.project.project_settings.global_script_name)) {
+											app.project.project_settings.global_script_name = script;
 										}
 									}
 									ImGui::EndCombo();
@@ -842,61 +839,61 @@ bool update_gui(SDL_Window *window) {
 							ImGui::Separator();
 
 							ImGui::TextUnformatted("Global Memory Reserve (KB)");
-							ImGui::InputInt("##GlobalMem", &project_settings.global_mem_alloc_size,
+							ImGui::InputInt("##GlobalMem", &app.project.project_settings.global_mem_alloc_size,
 											1, 1024);
 							ImGui::TextUnformatted("Scene Memory Reserve (KB)");
-							ImGui::InputInt("##LocalMem", &project_settings.scene_mem_alloc_size, 1,
+							ImGui::InputInt("##LocalMem", &app.project.project_settings.scene_mem_alloc_size, 1,
 											1024);
 
 							ImGui::EndTabItem();
 						}
 
 						if (ImGui::BeginTabItem("Modules")) {
-							if (ImGui::Checkbox("Audio", &project_settings.modules.audio)) {
-								if (!project_settings.modules.audio)
-									project_settings.modules.audio_mixer = false;
+							if (ImGui::Checkbox("Audio", &app.project.project_settings.modules.audio)) {
+								if (!app.project.project_settings.modules.audio)
+									app.project.project_settings.modules.audio_mixer = false;
 							}
 
-							if (!project_settings.modules.audio)
+							if (!app.project.project_settings.modules.audio)
 								ImGui::BeginDisabled();
-							ImGui::Checkbox("Audio Mixer", &project_settings.modules.audio_mixer);
-							if (!project_settings.modules.audio)
+							ImGui::Checkbox("Audio Mixer", &app.project.project_settings.modules.audio_mixer);
+							if (!app.project.project_settings.modules.audio)
 								ImGui::EndDisabled();
 
-							ImGui::Checkbox("Console", &project_settings.modules.console);
-							ImGui::Checkbox("Controller", &project_settings.modules.controller);
+							ImGui::Checkbox("Console", &app.project.project_settings.modules.console);
+							ImGui::Checkbox("Controller", &app.project.project_settings.modules.controller);
 							ImGui::Checkbox("Debug Is Viewer",
-											&project_settings.modules.debug_is_viewer);
-							ImGui::Checkbox("Debug USB", &project_settings.modules.debug_usb);
-							ImGui::Checkbox("Display", &project_settings.modules.display);
-							ImGui::Checkbox("DFS", &project_settings.modules.dfs);
-							ImGui::Checkbox("RDP", &project_settings.modules.rdp);
-							ImGui::Checkbox("Timer", &project_settings.modules.timer);
+											&app.project.project_settings.modules.debug_is_viewer);
+							ImGui::Checkbox("Debug USB", &app.project.project_settings.modules.debug_usb);
+							ImGui::Checkbox("Display", &app.project.project_settings.modules.display);
+							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
+							ImGui::Checkbox("RDP", &app.project.project_settings.modules.rdp);
+							ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer);
 
 							ImGui::EndTabItem();
 						}
 
-						if (project_settings.modules.audio) {
+						if (app.project.project_settings.modules.audio) {
 							if (ImGui::BeginTabItem("Audio")) {
-								ImGui::InputInt("Frequency", &project_settings.audio.frequency);
-								ImGui::InputInt("Buffers", &project_settings.audio.buffers);
+								ImGui::InputInt("Frequency", &app.project.project_settings.audio.frequency);
+								ImGui::InputInt("Buffers", &app.project.project_settings.audio.buffers);
 
 								ImGui::EndTabItem();
 							}
 						}
 
-						if (project_settings.modules.audio_mixer) {
+						if (app.project.project_settings.modules.audio_mixer) {
 							if (ImGui::BeginTabItem("Mixer")) {
-								ImGui::InputInt("Channels", &project_settings.audio_mixer.channels);
+								ImGui::InputInt("Channels", &app.project.project_settings.audio_mixer.channels);
 
 								ImGui::EndTabItem();
 							}
 						}
 
-						static int antialias_current = project_settings.display.antialias;
-						static int bit_depth_current = project_settings.display.bit_depth;
-						static int gamma_current = project_settings.display.gamma;
-						static int resolution_current = project_settings.display.resolution;
+						static int antialias_current = app.project.project_settings.display.antialias;
+						static int bit_depth_current = app.project.project_settings.display.bit_depth;
+						static int gamma_current = app.project.project_settings.display.gamma;
+						static int resolution_current = app.project.project_settings.display.resolution;
 
 						const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
 														 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
@@ -908,7 +905,7 @@ bool update_gui(SDL_Window *window) {
 							"RESOLUTION_320x240", "RESOLUTION_640x480", "RESOLUTION_256x240",
 							"RESOLUTION_512x480", "RESOLUTION_512x240", "RESOLUTION_640x240"};
 
-						if (project_settings.modules.display) {
+						if (app.project.project_settings.modules.display) {
 							if (ImGui::BeginTabItem("Display")) {
 								ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
 								ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
@@ -934,13 +931,13 @@ bool update_gui(SDL_Window *window) {
 							strcpy(app.state.project_settings_screen.display_resolution,
 								   resolution_items[resolution_current]);
 
-							app.state.project_settings_screen.ToProjectSettings(project_settings);
+							app.state.project_settings_screen.ToProjectSettings(app.project.project_settings);
 
-							project_settings.SaveToDisk();
+							app.project.project_settings.SaveToDisk();
 
 							SDL_SetWindowTitle(app.window,
-											   ("NGine - " + project_settings.project_name + " - " +
-												project_settings.project_directory)
+											   ("NGine - " + app.project.project_settings.project_name + " - " +
+												app.project.project_settings.project_directory)
 												   .c_str());
 
 							console.AddLog("Saved Project Settings.");
@@ -959,7 +956,7 @@ bool update_gui(SDL_Window *window) {
 				ImGui::InputText("##EmuPath", app.state.emulator_path, 255);
 
 				if (ImGui::Button("Save")) {
-					engine_settings.SetEmulatorPath(app.state.emulator_path);
+					app.project.engine_settings.SetEmulatorPath(app.state.emulator_path);
 				}
 
 				ImGui::EndTabItem();
@@ -975,7 +972,7 @@ bool update_gui(SDL_Window *window) {
 void reload_scripts() {
 	app.project.script_files.clear();
 
-	std::filesystem::path script_folder = project_settings.project_directory + "/.ngine/scripts";
+	std::filesystem::path script_folder = app.project.project_settings.project_directory + "/.ngine/scripts";
 
 	if (!std::filesystem::exists(script_folder)) {
 		return;
@@ -1046,13 +1043,13 @@ void render_image_import_windows() {
 									image->image_path = "assets/sprites/" + name + ".png";
 
 									std::filesystem::create_directories(
-										project_settings.project_directory + "/assets/sprites");
+										app.project.project_settings.project_directory + "/assets/sprites");
 									std::filesystem::copy_file(app.state.dropped_image_files[i].image_path,
-															   project_settings.project_directory +
+															   app.project.project_settings.project_directory +
 																   "/assets/sprites/" + name +
 																   ".png");
 
-									image->SaveToDisk(project_settings.project_directory);
+									image->SaveToDisk(app.project.project_settings.project_directory);
 									load_image(image);
 
 									app.state.dropped_image_files.erase(app.state.dropped_image_files.begin() + i);
@@ -1112,13 +1109,13 @@ void render_image_import_windows() {
 									image->wav_loop_offset = app.state.dropped_sound_files[i].loop_offset;
 
 									std::filesystem::create_directories(
-										project_settings.project_directory + "/assets/sounds");
+										app.project.project_settings.project_directory + "/assets/sounds");
 									std::filesystem::copy_file(app.state.dropped_sound_files[i].sound_path,
-															   project_settings.project_directory +
+															   app.project.project_settings.project_directory +
 																   "/assets/sounds/" + name +
 																   ".wav");
 
-									image->SaveToDisk(project_settings.project_directory);
+									image->SaveToDisk(app.project.project_settings.project_directory);
 
 									app.state.dropped_sound_files.erase(app.state.dropped_sound_files.begin() + i);
 
@@ -1148,7 +1145,7 @@ void render_image_import_windows() {
 void load_images() {
 	app.project.images.clear();
 
-	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sprites";
+	std::filesystem::path folder = app.project.project_settings.project_directory + "/.ngine/sprites";
 	if (!std::filesystem::exists(folder)) {
 		return;
 	}
@@ -1170,7 +1167,7 @@ void load_images() {
 }
 
 void load_image(std::unique_ptr<LibdragonImage> &image) {
-	std::string path(project_settings.project_directory + "/" + image->image_path);
+	std::string path(app.project.project_settings.project_directory + "/" + image->image_path);
 
 	image->loaded_image = IMG_LoadTexture(app.renderer, path.c_str());
 
@@ -1196,7 +1193,7 @@ void load_image(std::unique_ptr<LibdragonImage> &image) {
 void load_sounds() {
 	app.project.sounds.clear();
 
-	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sounds";
+	std::filesystem::path folder = app.project.project_settings.project_directory + "/.ngine/sounds";
 	if (!std::filesystem::exists(folder)) {
 		return;
 	}

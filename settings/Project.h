@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "EngineSettings.h"
+#include "ProjectSettings.h"
 #include "Scene.h"
 #include "../LibdragonSound.h"
 #include "../LibdragonImage.h"
@@ -14,6 +16,9 @@ class Project {
 	std::vector<std::string> script_files;
 	std::vector<std::unique_ptr<LibdragonSound>> sounds;
 	std::vector<std::unique_ptr<LibdragonImage>> images;
+
+	ProjectSettings project_settings;
+	EngineSettings engine_settings;
 
 	void SaveToDisk(std::string &project_directory);
 	void LoadFromDisk(std::string &project_directory);
