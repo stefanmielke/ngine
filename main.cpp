@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "App.h"
 #include "ConsoleApp.h"
 #include "DroppedAssets.h"
 #include "Emulator.h"
@@ -16,13 +17,12 @@
 #include "LibdragonImage.h"
 #include "LibdragonSound.h"
 #include "ProjectBuilder.h"
-#include "ProjectState.h"
 #include "ScriptBuilder.h"
 #include "VSCode.h"
-#include "settings/Project.h"
 
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
+App app;
 ConsoleApp console;
 
 bool open_project(const char *path);
@@ -33,14 +33,6 @@ static void reload_scripts();
 static void load_sounds();
 static void load_images();
 static void load_image(std::unique_ptr<LibdragonImage> &image);
-
-struct App {
-	SDL_Renderer *renderer;
-	SDL_Window *window;
-	ProjectState state;
-	Project project;
-	EngineSettings engine_settings;
-} app;
 
 static void initSDL() {
 	int rendererFlags, windowFlags;

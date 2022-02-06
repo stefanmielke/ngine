@@ -7,6 +7,7 @@
 #include "LibdragonImage.h"
 #include "LibdragonSound.h"
 #include "settings/ProjectSettingsScreen.h"
+#include "settings/Scene.h"
 
 struct ProjectState {
    public:
