@@ -33,3 +33,7 @@
 [x] Add input (keys_pressed, keys_up, keys_held)
 [ ] Move all UI code out of main.cpp
 [x] Choose fill color for scene
+[ ] Scene nodes
+
+Future:
+[ ] Import 3d models
