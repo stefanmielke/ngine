@@ -34,6 +34,7 @@
 [x] Always delete build folder when building
 [x] Fix closing and opening project
     - Create class to store/erase when loading/closing.
+[x] Move all UI code out of main.cpp
 
 [ ] Import xm sound files
 [ ] Import ym sound files
@@ -43,7 +44,6 @@
 [ ] Import LDtk maps
 [ ] Option to change Libdragon git repo and branch
 [ ] Option to change Libdragon-Extensions git repo and branch
-[ ] Move all UI code out of main.cpp
 [ ] Scene nodes
 [ ] README!
 [ ] Fix texture leak on exiting the app.

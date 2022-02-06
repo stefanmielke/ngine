@@ -53,6 +53,10 @@ void Sdl::Quit(SDL_Window *window, SDL_Renderer *renderer) {
 	SDL_Quit();
 }
 
+void Sdl::ProcessEvent(SDL_Event *event) {
+	ImGui_ImplSDL2_ProcessEvent(event);
+}
+
 void Sdl::NewFrame() {
 	ImGui_ImplSDLRenderer_NewFrame();
 	ImGui_ImplSDL2_NewFrame();

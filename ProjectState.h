@@ -10,7 +10,7 @@
 #include "settings/ProjectSettingsScreen.h"
 #include "settings/Scene.h"
 
-struct ProjectState {
+class ProjectState {
    public:
 	std::unique_ptr<LibdragonImage> *selected_image;
 	std::unique_ptr<LibdragonImage> *image_editing;
