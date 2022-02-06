@@ -398,21 +398,19 @@ bool update_gui(SDL_Window *window) {
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
 							if (selected_image) {
-								std::string dfs_path(selected_image->operator->()->dfs_folder +
-													 selected_image->operator->()->name +
-													 ".sprite");
+								std::string dfs_path((*selected_image)->dfs_folder +
+													 (*selected_image)->name + ".sprite");
 								ImGui::SetClipboardText(dfs_path.c_str());
 								selected_image = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
 							if (selected_image) {
-								selected_image->operator->()->DeleteFromDisk(
-									project_settings.project_directory);
+								(*selected_image)
+									->DeleteFromDisk(project_settings.project_directory);
 
 								for (int i = 0; i < images.size(); ++i) {
-									if (images[i]->image_path ==
-										selected_image->operator->()->image_path) {
+									if (images[i]->image_path == (*selected_image)->image_path) {
 										images.erase(images.begin() + i);
 										break;
 									}
@@ -472,20 +470,19 @@ bool update_gui(SDL_Window *window) {
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
 							if (selected_sound) {
-								std::string dfs_path(selected_sound->operator->()->dfs_folder +
-													 selected_sound->operator->()->name + ".wav64");
+								std::string dfs_path((*selected_sound)->dfs_folder +
+													 (*selected_sound)->name + ".wav64");
 								ImGui::SetClipboardText(dfs_path.c_str());
 								selected_sound = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
 							if (selected_sound) {
-								selected_sound->operator->()->DeleteFromDisk(
-									project_settings.project_directory);
+								(*selected_sound)
+									->DeleteFromDisk(project_settings.project_directory);
 
 								for (int i = 0; i < sounds.size(); ++i) {
-									if (sounds[i]->sound_path ==
-										selected_sound->operator->()->sound_path) {
+									if (sounds[i]->sound_path == (*selected_sound)->sound_path) {
 										sounds.erase(sounds.begin() + i);
 										break;
 									}
@@ -725,9 +722,8 @@ bool update_gui(SDL_Window *window) {
 							(*image_editing)->dfs_folder = image_edit_dfs_folder;
 							(*image_editing)->h_slices = image_edit_h_slices;
 							(*image_editing)->v_slices = image_edit_v_slices;
-							image_editing->operator->()->image_path = "assets/sprites/" +
-																	  (*image_editing)->name +
-																	  ".png";
+							(*image_editing)->image_path = "assets/sprites/" +
+														   (*image_editing)->name + ".png";
 
 							(*image_editing)->SaveToDisk(project_settings.project_directory);
 
@@ -1013,7 +1009,7 @@ void render_image_import_windows() {
 								std::string name_string(name);
 								auto find_by_name =
 									[&name_string](std::unique_ptr<LibdragonImage> &i) {
-										return i.operator->()->name == name_string;
+										return i->name == name_string;
 									};
 								if (std::find_if(images.begin(), images.end(), find_by_name) !=
 									std::end(images)) {
@@ -1075,7 +1071,7 @@ void render_image_import_windows() {
 								std::string name_string(name);
 								auto find_by_name =
 									[&name_string](std::unique_ptr<LibdragonSound> &i) {
-										return i.operator->()->name == name_string;
+										return i->name == name_string;
 									};
 								if (std::find_if(sounds.begin(), sounds.end(), find_by_name) !=
 									std::end(sounds)) {
