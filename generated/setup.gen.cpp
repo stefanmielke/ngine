@@ -20,12 +20,16 @@ void setup() {
 void tick() {
 %s}
 
+void tick_end() {
+%s}
+
 void display(display_context_t disp) {
 %s})";
 
 void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	std::stringstream setup_body;
 	std::stringstream tick_body;
+	std::stringstream tick_end_body;
 	std::stringstream display_body;
 	std::stringstream includes;
 	std::stringstream variables;
@@ -60,6 +64,19 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	if (settings.modules.console) {
 		setup_body << "\tconsole_init();" << std::endl;
 	}
+	if (settings.modules.audio) {
+		setup_body << "\taudio_init(" << settings.audio.frequency << ", " << settings.audio.buffers
+				   << ");" << std::endl;
+	}
+	if (settings.modules.audio_mixer) {
+		setup_body << "\tmixer_init(" << settings.audio_mixer.channels << ");" << std::endl;
+
+		tick_end_body << "\tif (audio_can_write()) {" << std::endl
+					  << "\t\tshort *buf = audio_write_begin();" << std::endl
+					  << "\t\tmixer_poll(buf, audio_get_buffer_length());" << std::endl
+					  << "\t\taudio_write_end();" << std::endl
+					  << "\t}" << std::endl;
+	}
 	if (settings.modules.debug_is_viewer) {
 		setup_body << "\tdebug_init_isviewer();" << std::endl;
 	}
@@ -77,13 +94,13 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 					 << std::endl;
 
 		includes << "#include \"scripts/" << settings.global_script_name << ".script.h\""
-				  << std::endl;
+				 << std::endl;
 	}
 
 	FILE *filestream = fopen(setup_path.c_str(), "w");
 	fprintf(filestream, setup_gen_c, includes.str().c_str(), variables.str().c_str(),
 			setup_body.str().c_str(), settings.global_mem_alloc_size * 1024,
 			settings.scene_mem_alloc_size * 1024, settings.initial_screen_id,
-			tick_body.str().c_str(), display_body.str().c_str());
+			tick_body.str().c_str(), tick_end_body.str().c_str(), display_body.str().c_str());
 	fclose(filestream);
 }

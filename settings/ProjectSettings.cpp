@@ -40,12 +40,19 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	scene_mem_alloc_size = json["project"]["scene_mem_alloc_size"];
 	initial_screen_id = json["project"]["initial_screen_id"];
 
+	audio.buffers = json["audio"]["buffers"];
+	audio.frequency = json["audio"]["frequency"];
+
+	audio_mixer.channels = json["audio_mixer"]["channels"];
+
 	display.SetResolution(json["display"]["resolution"]);
 	display.SetBitDepth(json["display"]["bit_depth"]);
 	display.buffers = json["display"]["buffers"];
 	display.SetGamma(json["display"]["gamma"]);
 	display.SetAntialias(json["display"]["antialias"]);
 
+	modules.audio = json["modules"]["audio"];
+	modules.audio_mixer = json["modules"]["audio_mixer"];
 	modules.console = json["modules"]["console"];
 	modules.controller = json["modules"]["controller"];
 	modules.debug_usb = json["modules"]["debug_usb"];
@@ -73,12 +80,19 @@ void ProjectSettings::SaveToDisk() {
 	json["project"]["initial_screen_id"] = initial_screen_id;
 	json["project"]["global_script_name"] = global_script_name;
 
+	json["audio"]["buffers"] = audio.buffers;
+	json["audio"]["frequency"] = audio.frequency;
+
+	json["audio_mixer"]["channels"] = audio_mixer.channels;
+
 	json["display"]["resolution"] = display.GetResolution();
 	json["display"]["bit_depth"] = display.GetBitDepth();
 	json["display"]["buffers"] = display.buffers;
 	json["display"]["gamma"] = display.GetGamma();
 	json["display"]["antialias"] = display.GetAntialias();
 
+	json["modules"]["audio"] = modules.audio;
+	json["modules"]["audio_mixer"] = modules.audio_mixer;
 	json["modules"]["console"] = modules.console;
 	json["modules"]["controller"] = modules.controller;
 	json["modules"]["debug_usb"] = modules.debug_usb;

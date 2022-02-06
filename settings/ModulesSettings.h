@@ -8,6 +8,8 @@ class ModulesSettings {
 	bool timer;
 	bool controller;
 	bool console;
+	bool audio;
+	bool audio_mixer;
 
 	bool debug_is_viewer;
 	bool debug_usb;

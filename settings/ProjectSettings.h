@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "AudioMixerSettings.h"
+#include "AudioSettings.h"
 #include "DisplaySettings.h"
 #include "ModulesSettings.h"
 
@@ -21,6 +23,8 @@ class ProjectSettings {
 	int global_mem_alloc_size;
 	int scene_mem_alloc_size;
 
+	AudioSettings audio;
+	AudioMixerSettings audio_mixer;
 	DisplaySettings display;
 	ModulesSettings modules;
 

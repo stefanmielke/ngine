@@ -23,7 +23,8 @@
     - "--wav-loop <true|false>": Activate playback loop by default
     - "--wav-loop-offset <N>": Set looping offset (in samples; default: 0)
 [x] DFS sounds gen/import
-[ ] Set audiomixer as module and load it properly
+[x] Set audiomixer as module and load it properly
+[ ] Separate project settings on multiple tabs
 [ ] Import sprite fonts
 [ ] Import Tiled maps
 [ ] Import LDtk maps

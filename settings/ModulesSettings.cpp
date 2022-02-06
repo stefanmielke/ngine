@@ -7,6 +7,8 @@ ModulesSettings::ModulesSettings()
 	  timer(true),
 	  controller(true),
 	  console(false),
+	  audio(true),
+	  audio_mixer(true),
 	  debug_is_viewer(true),
 	  debug_usb(false) {
 }

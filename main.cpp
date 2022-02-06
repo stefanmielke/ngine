@@ -874,6 +874,8 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Separator();
 
 					ImGui::TextUnformatted("Modules:");
+					ImGui::Checkbox("Audio", &project_settings.modules.audio);
+					ImGui::Checkbox("Audio Mixer", &project_settings.modules.audio_mixer);
 					ImGui::Checkbox("Console", &project_settings.modules.console);
 					ImGui::Checkbox("Controller", &project_settings.modules.controller);
 					ImGui::Checkbox("Debug Is Viewer", &project_settings.modules.debug_is_viewer);

@@ -12,6 +12,7 @@ SceneManager *scene_manager;
 
 void setup();
 void tick();
+void tick_end();
 void display(display_context_t disp);
 
 int main(void) {
@@ -21,6 +22,8 @@ int main(void) {
 		tick();
 
 		scene_manager_tick(scene_manager);
+
+		tick_end();
 
 		static display_context_t disp = 0;
 		while (!(disp = display_lock()))
