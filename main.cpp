@@ -880,9 +880,17 @@ bool update_gui(SDL_Window *window) {
 						}
 
 						if (ImGui::BeginTabItem("Modules")) {
-							ImGui::TextUnformatted("Modules:");
-							ImGui::Checkbox("Audio", &project_settings.modules.audio);
+							if (ImGui::Checkbox("Audio", &project_settings.modules.audio)) {
+								if (!project_settings.modules.audio)
+									project_settings.modules.audio_mixer = false;
+							}
+
+							if (!project_settings.modules.audio)
+								ImGui::BeginDisabled();
 							ImGui::Checkbox("Audio Mixer", &project_settings.modules.audio_mixer);
+							if (!project_settings.modules.audio)
+								ImGui::EndDisabled();
+
 							ImGui::Checkbox("Console", &project_settings.modules.console);
 							ImGui::Checkbox("Controller", &project_settings.modules.controller);
 							ImGui::Checkbox("Debug Is Viewer",
@@ -894,6 +902,23 @@ bool update_gui(SDL_Window *window) {
 							ImGui::Checkbox("Timer", &project_settings.modules.timer);
 
 							ImGui::EndTabItem();
+						}
+
+						if (project_settings.modules.audio) {
+							if (ImGui::BeginTabItem("Audio")) {
+								ImGui::InputInt("Frequency", &project_settings.audio.frequency);
+								ImGui::InputInt("Buffers", &project_settings.audio.buffers);
+
+								ImGui::EndTabItem();
+							}
+						}
+
+						if (project_settings.modules.audio_mixer) {
+							if (ImGui::BeginTabItem("Mixer")) {
+								ImGui::InputInt("Channels", &project_settings.audio_mixer.channels);
+
+								ImGui::EndTabItem();
+							}
 						}
 
 						static int antialias_current = project_settings.display.antialias;
@@ -910,9 +935,9 @@ bool update_gui(SDL_Window *window) {
 						const char *resolution_items[] = {
 							"RESOLUTION_320x240", "RESOLUTION_640x480", "RESOLUTION_256x240",
 							"RESOLUTION_512x480", "RESOLUTION_512x240", "RESOLUTION_640x240"};
-						if (ImGui::BeginTabItem("Display")) {
-							if (project_settings.modules.display) {
-								ImGui::TextUnformatted("Display Settings:");
+
+						if (project_settings.modules.display) {
+							if (ImGui::BeginTabItem("Display")) {
 								ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
 								ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
 								ImGui::SliderInt("Buffers",
@@ -920,8 +945,9 @@ bool update_gui(SDL_Window *window) {
 								ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
 								ImGui::Combo("Resolution", &resolution_current, resolution_items,
 											 6);
+
+								ImGui::EndTabItem();
 							}
-							ImGui::EndTabItem();
 						}
 
 						ImGui::Separator();
