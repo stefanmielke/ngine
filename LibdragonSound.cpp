@@ -62,7 +62,9 @@ std::string LibdragonSound::GetTooltip() const {
 			<< ".wav64\n\nType: " << GetType();
 	switch (type) {
 		case SOUND_WAV: {
-			tooltip << "\nLoop: " << (wav_loop ? "Yes" : "No") << "\nLoop Offset: " << wav_loop_offset;
+			tooltip << "\nLoop: " << (wav_loop ? "Yes" : "No");
+			if (wav_loop)
+				tooltip << "\nLoop Offset: " << wav_loop_offset;
 		} break;
 		case SOUND_YM: {
 			tooltip << "\nCompress: "<< (ym_compress ? "Yes" : "No");

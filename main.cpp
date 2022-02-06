@@ -504,9 +504,6 @@ bool update_gui(SDL_Window *window) {
 							ImGui::EndTooltip();
 						}
 						++cur_i;
-
-						//						if (cur_i % items_per_line != 0)
-						//							ImGui::SameLine();
 					}
 				}
 				ImGui::EndTabItem();
@@ -748,6 +745,15 @@ bool update_gui(SDL_Window *window) {
 				if (ImGui::BeginTabItem("Sound Settings")) {
 					ImGui::InputText("Name", sound_edit_name, 50);
 					ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100);
+
+					if ((*sound_editing)->type == SOUND_WAV) {
+						ImGui::Checkbox("Loop", &(*sound_editing)->wav_loop);
+						if ((*sound_editing)->wav_loop) {
+							ImGui::InputInt("Loop Offset", &(*sound_editing)->wav_loop_offset);
+						}
+					} else if ((*sound_editing)->type == SOUND_YM) {
+						ImGui::Checkbox("Compress", &(*sound_editing)->ym_compress);
+					}
 
 					ImGui::Separator();
 					ImGui::Spacing();
