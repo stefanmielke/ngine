@@ -4,5 +4,5 @@ class App;
 
 class AppGui {
    public:
-	static bool Update(App &app);
+	static void Update(App &app);
 };

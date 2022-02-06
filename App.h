@@ -13,5 +13,7 @@ class App {
 	Project project;
 	ProjectState state;
 
+	bool is_running;
+
 	App();
 };

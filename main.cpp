@@ -18,15 +18,14 @@ int main() {
 
 	Sdl::Init(app.window, app.renderer, default_title);
 
-	bool is_running = true;
-	while (is_running) {
+	while (app.is_running) {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			Sdl::ProcessEvent(&event);
 
 			switch (event.type) {
 				case SDL_QUIT:
-					is_running = false;
+					app.is_running = false;
 					break;
 				case SDL_DROPFILE: {
 					console.AddLog("Dropped file: %s", event.drop.file);
@@ -85,12 +84,12 @@ int main() {
 			}
 		}
 
-		if (!is_running)
+		if (!app.is_running)
 			break;
 
 		Sdl::NewFrame();
 
-		is_running = AppGui::Update(app);
+		AppGui::Update(app);
 
 		Sdl::RenderStart(app.renderer);
 

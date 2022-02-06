@@ -14,7 +14,7 @@
 
 extern const char *default_title;
 
-bool AppGui::Update(App &app) {
+void AppGui::Update(App &app) {
 	bool is_output_open = true;
 
 	int window_width, window_height;
@@ -42,7 +42,8 @@ bool AppGui::Update(App &app) {
 				console.AddLog("Project closed.");
 			}
 			if (ImGui::MenuItem("Exit")) {
-				return false;
+				app.is_running = false;
+				return;
 			}
 			ImGui::EndMenu();
 		}
@@ -807,5 +808,5 @@ bool AppGui::Update(App &app) {
 	}
 	ImGui::End();
 
-	return true;
+	return;
 }
