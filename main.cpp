@@ -33,9 +33,14 @@ static char scene_name[100];
 static std::vector<std::string> script_files;
 static std::vector<std::unique_ptr<LibdragonSound>> sounds;
 static std::vector<std::unique_ptr<LibdragonImage>> images;
+
 static std::unique_ptr<LibdragonImage> *selected_image;
 static std::unique_ptr<LibdragonImage> *image_editing;
 static bool reload_image_edit = false;
+
+static std::unique_ptr<LibdragonSound> *selected_sound;
+static std::unique_ptr<LibdragonSound> *sound_editing;
+static bool reload_sound_edit = false;
 
 static std::vector<DroppedImage> dropped_image_files;
 static std::vector<DroppedSound> dropped_sound_files;
@@ -102,6 +107,9 @@ int main() {
 	memset(input_new_project, 0, 255);
 	memset(input_open_project, 0, 255);
 	selected_image = nullptr;
+	image_editing = nullptr;
+	selected_sound = nullptr;
+	sound_editing = nullptr;
 
 	engine_settings.LoadFromDisk();
 	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
@@ -364,10 +372,10 @@ bool update_gui(SDL_Window *window) {
 			if (ImGui::BeginTabItem("Sprites Browser")) {
 				if (project_settings.IsOpen()) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-						ImGui::OpenPopup("PopupContentBrowser");
+						ImGui::OpenPopup("PopupSpritesBrowser");
 					}
 
-					if (ImGui::BeginPopup("PopupContentBrowser")) {
+					if (ImGui::BeginPopup("PopupSpritesBrowser")) {
 						if (ImGui::Selectable("Refresh")) {
 							load_images();
 						}
@@ -380,7 +388,7 @@ bool update_gui(SDL_Window *window) {
 						items_per_line = 1;
 
 					int cur_i = 0;
-					if (ImGui::BeginPopup("PopupContentBrowserImage")) {
+					if (ImGui::BeginPopup("PopupSpritesBrowserImage")) {
 						if (ImGui::Selectable("Edit Settings")) {
 							if (selected_image) {
 								image_editing = selected_image;
@@ -418,9 +426,8 @@ bool update_gui(SDL_Window *window) {
 					for (auto &image : images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
-							// TODO: add options like 'Delete' and 'Reimport'
 							selected_image = &image;
-							ImGui::OpenPopup("PopupContentBrowserImage");
+							ImGui::OpenPopup("PopupSpritesBrowserImage");
 						}
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
@@ -437,6 +444,74 @@ bool update_gui(SDL_Window *window) {
 
 						if (cur_i % items_per_line != 0)
 							ImGui::SameLine();
+					}
+				}
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Sounds Browser")) {
+				if (project_settings.IsOpen()) {
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("PopupSoundsBrowser");
+					}
+
+					if (ImGui::BeginPopup("PopupSoundsBrowser")) {
+						if (ImGui::Selectable("Refresh")) {
+							load_sounds();
+						}
+						ImGui::EndPopup();
+					}
+
+					int cur_i = 0;
+					if (ImGui::BeginPopup("PopupSoundsBrowserSound")) {
+						if (ImGui::Selectable("Edit Settings")) {
+							if (selected_sound) {
+								sound_editing = selected_sound;
+								reload_sound_edit = true;
+								selected_sound = nullptr;
+							}
+						}
+						if (ImGui::Selectable("Copy DFS Path")) {
+							if (selected_sound) {
+								std::string dfs_path(selected_sound->operator->()->dfs_folder +
+													 selected_sound->operator->()->name + ".wav64");
+								ImGui::SetClipboardText(dfs_path.c_str());
+								selected_sound = nullptr;
+							}
+						}
+						if (ImGui::Selectable("Delete")) {
+							if (selected_sound) {
+								selected_sound->operator->()->DeleteFromDisk(
+									project_settings.project_directory);
+
+								for (int i = 0; i < sounds.size(); ++i) {
+									if (sounds[i]->sound_path ==
+										selected_sound->operator->()->sound_path) {
+										sounds.erase(sounds.begin() + i);
+										break;
+									}
+								}
+								selected_sound = nullptr;
+							}
+						}
+						ImGui::EndPopup();
+					}
+
+					for (auto &sound : sounds) {
+						if (ImGui::Selectable(sound->name.c_str())) {
+							selected_sound = &sound;
+							ImGui::OpenPopup("PopupSoundsBrowserSound");
+						}
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s\nPath: %s\nDFS Path: %s%s.wav64\n", sound->name.c_str(),
+										sound->sound_path.c_str(), sound->dfs_folder.c_str(),
+										sound->name.c_str());
+							ImGui::EndTooltip();
+						}
+						++cur_i;
+
+						//						if (cur_i % items_per_line != 0)
+						//							ImGui::SameLine();
 					}
 				}
 				ImGui::EndTabItem();
@@ -603,15 +678,15 @@ bool update_gui(SDL_Window *window) {
 				if (reload_image_edit) {
 					reload_image_edit = false;
 
-					strcpy(image_edit_name, image_editing->operator->()->name.c_str());
-					strcpy(image_edit_dfs_folder, image_editing->operator->()->dfs_folder.c_str());
-					image_edit_h_slices = image_editing->operator->()->h_slices;
-					image_edit_v_slices = image_editing->operator->()->v_slices;
+					strcpy(image_edit_name, (*image_editing)->name.c_str());
+					strcpy(image_edit_dfs_folder, (*image_editing)->dfs_folder.c_str());
+					image_edit_h_slices = (*image_editing)->h_slices;
+					image_edit_v_slices = (*image_editing)->v_slices;
 				}
 				if (ImGui::BeginTabItem("Image Settings")) {
-					ImGui::Image((ImTextureID)(intptr_t)image_editing->operator->()->loaded_image,
-								 ImVec2(image_editing->operator->()->display_width * 2,
-										image_editing->operator->()->display_height * 2));
+					ImGui::Image((ImTextureID)(intptr_t)(*image_editing)->loaded_image,
+								 ImVec2((*image_editing)->display_width * 2,
+										(*image_editing)->display_height * 2));
 					ImGui::Separator();
 					ImGui::Spacing();
 					ImGui::InputText("Name", image_edit_name, 50);
@@ -623,10 +698,10 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Spacing();
 					if (ImGui::Button("Save")) {
 						bool will_save = true;
-						if (image_editing->operator->()->name != image_edit_name) {
+						if ((*image_editing)->name != image_edit_name) {
 							std::string name_string(image_edit_name);
 							auto find_by_name = [&name_string](std::unique_ptr<LibdragonImage> &i) {
-								return i.operator->()->name == name_string;
+								return i->name == name_string;
 							};
 							if (std::find_if(images.begin(), images.end(), find_by_name) !=
 								std::end(images)) {
@@ -635,27 +710,26 @@ bool update_gui(SDL_Window *window) {
 									"different name.");
 								will_save = false;
 							} else {
-								std::filesystem::copy_file(
-									project_settings.project_directory + "/" +
-										image_editing->operator->()->image_path,
-									project_settings.project_directory + "/assets/sprites/" +
-										image_edit_name + ".png");
-								image_editing->operator->()->DeleteFromDisk(
-									project_settings.project_directory);
+								std::filesystem::copy_file(project_settings.project_directory +
+															   "/" + (*image_editing)->image_path,
+														   project_settings.project_directory +
+															   "/assets/sprites/" +
+															   image_edit_name + ".png");
+								(*image_editing)
+									->DeleteFromDisk(project_settings.project_directory);
 							}
 						}
 
 						if (will_save) {
-							image_editing->operator->()->name = image_edit_name;
-							image_editing->operator->()->dfs_folder = image_edit_dfs_folder;
-							image_editing->operator->()->h_slices = image_edit_h_slices;
-							image_editing->operator->()->v_slices = image_edit_v_slices;
-							image_editing->operator->()
-								->image_path = "assets/sprites/" +
-											   image_editing->operator->()->name + ".png";
+							(*image_editing)->name = image_edit_name;
+							(*image_editing)->dfs_folder = image_edit_dfs_folder;
+							(*image_editing)->h_slices = image_edit_h_slices;
+							(*image_editing)->v_slices = image_edit_v_slices;
+							image_editing->operator->()->image_path = "assets/sprites/" +
+																	  (*image_editing)->name +
+																	  ".png";
 
-							image_editing->operator->()->SaveToDisk(
-								project_settings.project_directory);
+							(*image_editing)->SaveToDisk(project_settings.project_directory);
 
 							image_editing = nullptr;
 						}
@@ -663,6 +737,64 @@ bool update_gui(SDL_Window *window) {
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
 						image_editing = nullptr;
+					}
+
+					ImGui::EndTabItem();
+				}
+			}
+			if (sound_editing) {
+				static char sound_edit_name[50];
+				static char sound_edit_dfs_folder[100];
+				if (reload_sound_edit) {
+					reload_sound_edit = false;
+
+					strcpy(sound_edit_name, (*sound_editing)->name.c_str());
+					strcpy(sound_edit_dfs_folder, (*sound_editing)->dfs_folder.c_str());
+				}
+				if (ImGui::BeginTabItem("Sound Settings")) {
+					ImGui::InputText("Name", sound_edit_name, 50);
+					ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100);
+
+					ImGui::Separator();
+					ImGui::Spacing();
+					if (ImGui::Button("Save")) {
+						bool will_save = true;
+						if ((*sound_editing)->name != sound_edit_name) {
+							std::string name_string(sound_edit_name);
+							auto find_by_name = [&name_string](std::unique_ptr<LibdragonSound> &i) {
+								return i->name == name_string;
+							};
+							if (std::find_if(sounds.begin(), sounds.end(), find_by_name) !=
+								std::end(sounds)) {
+								console.AddLog(
+									"Sound with the name already exists. Please choose a "
+									"different name.");
+								will_save = false;
+							} else {
+								std::filesystem::copy_file(project_settings.project_directory +
+															   "/" + (*sound_editing)->sound_path,
+														   project_settings.project_directory +
+															   "/assets/sounds/" + sound_edit_name +
+															   ".wav");
+								(*sound_editing)
+									->DeleteFromDisk(project_settings.project_directory);
+							}
+						}
+
+						if (will_save) {
+							(*sound_editing)->name = sound_edit_name;
+							(*sound_editing)->dfs_folder = sound_edit_dfs_folder;
+							(*sound_editing)->sound_path = "assets/sounds/" +
+														   (*sound_editing)->name + ".wav";
+
+							(*sound_editing)->SaveToDisk(project_settings.project_directory);
+
+							sound_editing = nullptr;
+						}
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel")) {
+						sound_editing = nullptr;
 					}
 
 					ImGui::EndTabItem();
