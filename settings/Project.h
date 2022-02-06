@@ -9,6 +9,8 @@
 #include "../LibdragonSound.h"
 #include "../LibdragonImage.h"
 
+class App;
+
 class Project {
    public:
 	std::vector<Scene> scenes;
@@ -21,6 +23,8 @@ class Project {
 
 	void SaveToDisk(std::string &project_directory);
 	void LoadFromDisk(std::string &project_directory);
+
+	bool Open(const char *path, App *app);
 
 	void ReloadImages(SDL_Renderer *renderer);
 	void ReloadScripts();

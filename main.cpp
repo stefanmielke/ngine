@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <fstream>
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
@@ -23,8 +22,6 @@ const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 App app;
 ConsoleApp console;
-
-bool open_project(const char *path);
 
 static bool update_gui(SDL_Window *window);
 static void render_image_import_windows();
@@ -128,9 +125,9 @@ int main() {
 					} else {
 						std::filesystem::path dropped_path(event.drop.file);
 						if (std::filesystem::is_directory(dropped_path)) {
-							open_project(dropped_path.c_str());
+							app.project.Open(dropped_path.c_str(), &app);
 						} else if (std::filesystem::is_regular_file(dropped_path)) {
-							open_project(dropped_path.parent_path().c_str());
+							app.project.Open(dropped_path.parent_path().c_str(), &app);
 						}
 					}
 				} break;
@@ -169,38 +166,6 @@ int main() {
 	SDL_Quit();
 
 	return 0;
-}
-
-bool open_project(const char *path) {
-	console.AddLog("Opening project at '%s'...", path);
-
-	if (app.project.project_settings.IsOpen()) {
-		app.project.project_settings.CloseProject();
-	}
-
-	std::string project_filepath(path);
-	if (!app.project.project_settings.LoadFromFile(project_filepath)) {
-		return false;
-	}
-
-	app.project.LoadFromDisk(app.project.project_settings.project_directory);
-
-	SDL_SetWindowTitle(app.window, ("NGine - " + app.project.project_settings.project_name + " - " +
-									app.project.project_settings.project_directory)
-									   .c_str());
-
-	app.state.project_settings_screen.FromProjectSettings(app.project.project_settings);
-
-	app.engine_settings.SetLastOpenedProject(project_filepath);
-
-	app.project.ReloadScripts();
-
-	app.project.ReloadImages(app.renderer);
-	app.project.ReloadSounds();
-
-	console.AddLog("Project opened.");
-
-	return true;
 }
 
 bool update_gui(SDL_Window *window) {
@@ -243,13 +208,13 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::MenuItem("Build", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Building app.project...");
 
-			ProjectBuilder::Build(app.project.project_settings, app.project, app.project.images, app.project.sounds);
+			ProjectBuilder::Build(app.project);
 		}
 		if (ImGui::BeginMenu("Tasks", app.project.project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding app.project...");
 
-				ProjectBuilder::Rebuild(app.project.project_settings, app.project, app.project.images, app.project.sounds);
+				ProjectBuilder::Rebuild(app.project);
 			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");
@@ -268,7 +233,7 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
 				app.project.project_settings.IsOpen() && !app.engine_settings.GetEmulatorPath().empty())) {
-			Emulator::Run(app.engine_settings, app.project.project_settings, app.project, app.project.images, app.project.sounds);
+			Emulator::Run(&app);
 		}
 		ImGui::EndMainMenuBar();
 	}
@@ -282,7 +247,7 @@ bool update_gui(SDL_Window *window) {
 			if (ImGui::Button("Create", ImVec2(50, 20))) {
 				std::string new_project_folder(app.state.input_new_project);
 
-				ProjectBuilder::Create(new_project_folder);
+				ProjectBuilder::Create(&app, new_project_folder);
 
 				new_project_window_open = false;
 			}
@@ -300,7 +265,7 @@ bool update_gui(SDL_Window *window) {
 			ImGui::SameLine();
 			ImGui::InputText("##", app.state.input_open_project, 255);
 			if (ImGui::Button("Open", ImVec2(50, 20))) {
-				if (open_project(app.state.input_open_project)) {
+				if (app.project.Open(app.state.input_open_project, &app)) {
 					open_project_window_open = false;
 				}
 			}

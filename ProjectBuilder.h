@@ -9,13 +9,9 @@
 
 class ProjectBuilder {
    public:
-	static void Create(std::string project_folder);
-	static void Build(ProjectSettings &project_settings, Project &project,
-					  std::vector<std::unique_ptr<LibdragonImage>> &images,
-					  std::vector<std::unique_ptr<LibdragonSound>> &sounds);
-	static void Rebuild(ProjectSettings &project_settings, Project &project,
-						std::vector<std::unique_ptr<LibdragonImage>> &images,
-						std::vector<std::unique_ptr<LibdragonSound>> &sounds);
+	static void Create(App *app, std::string project_folder);
+	static void Build(Project &project);
+	static void Rebuild(Project &project);
 
 	static void GenerateStaticFiles(std::string project_folder);
 };

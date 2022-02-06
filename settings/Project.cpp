@@ -3,7 +3,11 @@
 #include <filesystem>
 #include <fstream>
 
+#include "../App.h"
+#include "../ConsoleApp.h"
 #include "../json.hpp"
+
+extern ConsoleApp console;
 
 void Project::SaveToDisk(std::string &project_directory) {
 	std::filesystem::path scenes_folder(project_directory + "/.ngine/scenes");
@@ -57,6 +61,38 @@ void Project::LoadFromDisk(std::string &project_directory) {
 		}
 	}
 }
+
+bool Project::Open(const char *path, App *app) {
+	console.AddLog("Opening project at '%s'...", path);
+
+	if (project_settings.IsOpen()) {
+		project_settings.CloseProject();
+	}
+
+	std::string project_filepath(path);
+	if (!project_settings.LoadFromFile(project_filepath)) {
+		return false;
+	}
+
+	LoadFromDisk(project_settings.project_directory);
+
+	SDL_SetWindowTitle(app->window, ("NGine - " + project_settings.project_name + " - " +
+									project_settings.project_directory)
+									   .c_str());
+
+	app->state.project_settings_screen.FromProjectSettings(project_settings);
+
+	app->engine_settings.SetLastOpenedProject(project_filepath);
+
+	ReloadScripts();
+	ReloadImages(app->renderer);
+	ReloadSounds();
+
+	console.AddLog("Project opened.");
+
+	return true;
+}
+
 void Project::ReloadImages(SDL_Renderer *renderer) {
 	images.clear();
 

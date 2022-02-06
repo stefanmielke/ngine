@@ -2,27 +2,26 @@
 
 #include <filesystem>
 
+#include "App.h"
 #include "ConsoleApp.h"
 #include "ThreadCommand.h"
 #include "ProjectBuilder.h"
 
 extern ConsoleApp console;
 
-void Emulator::Run(EngineSettings &engine_settings, ProjectSettings &project_settings,
-				   Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images,
-				   std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
-	std::string rom_filename = project_settings.rom_name + ".z64";
+void Emulator::Run(App *app) {
+	std::string rom_filename = app->project.project_settings.rom_name + ".z64";
 
 	console.AddLog("Opening rom in emulator as '%s %s'...",
-				   engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
+				   app->engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
 
-	if (!std::filesystem::exists(project_settings.project_directory + "/" + rom_filename)) {
+	if (!std::filesystem::exists(app->project.project_settings.project_directory + "/" + rom_filename)) {
 		console.AddLog("Rom file was not created. Triggering build before running...");
-		ProjectBuilder::Build(project_settings, project, images, sounds);
+		ProjectBuilder::Build(app->project);
 	}
 
 	char cmd[255];
-	snprintf(cmd, 255, "cd %s\n%s %s", project_settings.project_directory.c_str(),
-			 engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
+	snprintf(cmd, 255, "cd %s\n%s %s", app->project.project_settings.project_directory.c_str(),
+			 app->engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
 	ThreadCommand::RunCommand(cmd);
 }

@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <thread>
 
+#include "App.h"
 #include "ConsoleApp.h"
 #include "Content.h"
 #include "Libdragon.h"
@@ -11,9 +12,8 @@
 #include "static/static.h"
 
 extern ConsoleApp console;
-extern bool open_project(const char *path);
 
-void create_project_thread(std::string project_folder) {
+void create_project_thread(App *app, std::string project_folder) {
 	// create folder if it doesn't exist
 	const std::filesystem::path project_path(project_folder);
 	if (!std::filesystem::exists(project_path)) {
@@ -61,51 +61,45 @@ void create_project_thread(std::string project_folder) {
 
 	console.AddLog("Project creation complete.");
 
-	open_project(project_folder.c_str());
+	app->project.Open(project_folder.c_str(), app);
 }
 
-void ProjectBuilder::Create(std::string project_folder) {
-	std::thread(create_project_thread, project_folder).detach();
+void ProjectBuilder::Create(App *app, std::string project_folder) {
+	std::thread(create_project_thread, app, project_folder).detach();
 }
 
-void create_build_files(ProjectSettings &project_settings, Project &project,
-						std::vector<std::unique_ptr<LibdragonImage>> &images,
-						std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
-	std::filesystem::remove_all(project_settings.project_directory + "/build");
+void create_build_files(Project &project) {
+	std::filesystem::remove_all(project.project_settings.project_directory + "/build");
 
-	std::string makefile_path(project_settings.project_directory + "/Makefile");
-	generate_makefile_gen(makefile_path, project_settings.rom_name.c_str(),
-						  project_settings.project_name.c_str(), !images.empty());
+	std::string makefile_path(project.project_settings.project_directory + "/Makefile");
+	generate_makefile_gen(makefile_path, project.project_settings.rom_name.c_str(),
+						  project.project_settings.project_name.c_str(), !project.images.empty());
 
-	std::string setup_path(project_settings.project_directory + "/src/setup.gen.c");
-	generate_setup_gen_c(setup_path, project_settings);
+	std::string setup_path(project.project_settings.project_directory + "/src/setup.gen.c");
+	generate_setup_gen_c(setup_path, project.project_settings);
 
-	std::string change_scene_path(project_settings.project_directory +
+	std::string change_scene_path(project.project_settings.project_directory +
 								  "/src/scenes/change_scene.gen.c");
 	generate_change_scene_gen_c(change_scene_path, project);
 
-	generate_scene_gen_files(project_settings, project);
+	generate_scene_gen_files(project.project_settings, project);
 
-	Content::CreateSprites(project_settings, images);
-	Content::CreateSounds(project_settings, sounds);
+	Content::CreateSprites(project.project_settings, project.images);
+	Content::CreateSounds(project.project_settings, project.sounds);
 }
 
-void ProjectBuilder::Build(ProjectSettings &project_settings, Project &project,
-						   std::vector<std::unique_ptr<LibdragonImage>> &images,
-						   std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
-	create_build_files(project_settings, project, images, sounds);
+void ProjectBuilder::Build(Project &project) {
+	create_build_files(project);
 
-	Libdragon::Build(project_settings.project_directory);
+	Libdragon::Build(project.project_settings.project_directory);
 }
 
-void ProjectBuilder::Rebuild(ProjectSettings &project_settings, Project &project,
-							 std::vector<std::unique_ptr<LibdragonImage>> &images,
-							 std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
-	Libdragon::CleanSync(project_settings.project_directory);
+void ProjectBuilder::Rebuild(Project &project) {
+	Libdragon::CleanSync(project.project_settings.project_directory);
 
-	create_build_files(project_settings, project, images, sounds);
+	create_build_files(project);
 
-	Libdragon::Build(project_settings.project_directory);
+	Libdragon::Build(project.project_settings.project_directory);
 }
 
 void ProjectBuilder::GenerateStaticFiles(std::string project_folder) {
