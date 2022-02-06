@@ -28,6 +28,5 @@ class LibdragonSound {
 	void LoadFromDisk(std::string &filepath);
 	void DeleteFromDisk(std::string &project_directory) const;
 
-	[[nodiscard]] const char *GetType() const;
 	[[nodiscard]] std::string GetTooltip() const;
 };

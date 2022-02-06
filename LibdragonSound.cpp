@@ -59,32 +59,26 @@ void LibdragonSound::DeleteFromDisk(std::string &project_directory) const {
 std::string LibdragonSound::GetTooltip() const {
 	std::stringstream tooltip;
 	tooltip << name << "\nPath: " << sound_path << "\nDFS_Path: " << dfs_folder << name
-			<< ".wav64\n\nType: " << GetType();
-	switch (type) {
+			<< ".wav64\n";
+
+		switch (type) {
+		case SOUND_UNKNOWN: {
+			tooltip << "\nType: UNKNOWN";
+		} break;
 		case SOUND_WAV: {
-			tooltip << "\nLoop: " << (wav_loop ? "Yes" : "No");
+			tooltip << "\nType: WAV (Waveforms)\nLoop: " << (wav_loop ? "Yes" : "No");
 			if (wav_loop)
 				tooltip << "\nLoop Offset: " << wav_loop_offset;
 		} break;
-		case SOUND_YM: {
-			tooltip << "\nCompress: "<< (ym_compress ? "Yes" : "No");
+		case SOUND_XM: {
+			tooltip << "\nType: XM (MilkyTracker, OpenMPT)";
 		} break;
-		default:
-			break;
+		case SOUND_YM: {
+			tooltip << "\nType: YM (Arkos Tracker II)\nCompress: " << (ym_compress ? "Yes" : "No");
+		} break;
+		default: {
+			tooltip << "\nType: NOT MAPPED";
+		} break;
 	}
 	return tooltip.str();
-}
-const char *LibdragonSound::GetType() const {
-	switch (type) {
-		case SOUND_UNKNOWN:
-			return "UNKNOWN";
-		case SOUND_WAV:
-			return "Waveforms";
-		case SOUND_XM:
-			return "MilkyTracker, OpenMPT";
-		case SOUND_YM:
-			return "Arkos Tracker II";
-		default:
-			return "NOT MAPPED";
-	}
 }

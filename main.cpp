@@ -1061,6 +1061,10 @@ void render_image_import_windows() {
 					if (ImGui::BeginTabItem("WAV Sound")) {
 						ImGui::InputText("Name", dropped_sound_files[i].name, 50);
 						ImGui::InputText("DFS Folder", dropped_sound_files[i].dfs_folder, 100);
+						ImGui::Checkbox("Loop", &dropped_sound_files[i].loop);
+						if (dropped_sound_files[i].loop) {
+							ImGui::InputInt("Loop Offset", &dropped_sound_files[i].loop_offset);
+						}
 
 						ImGui::Separator();
 						ImGui::Spacing();
@@ -1087,6 +1091,8 @@ void render_image_import_windows() {
 									image->name = name;
 									image->dfs_folder = dfs_folder;
 									image->sound_path = "assets/sounds/" + name + ".wav";
+									image->wav_loop = dropped_sound_files[i].loop;
+									image->wav_loop_offset = dropped_sound_files[i].loop_offset;
 
 									std::filesystem::create_directories(
 										project_settings.project_directory + "/assets/sounds");

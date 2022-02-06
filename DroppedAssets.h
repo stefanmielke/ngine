@@ -23,6 +23,10 @@ struct DroppedSound {
 	char name[50] = "\0";
 	char dfs_folder[100] = "/\0";
 
-	explicit DroppedSound(const char *sound_path) : sound_path(sound_path) {
+	bool loop;
+	int loop_offset;
+
+	explicit DroppedSound(const char *sound_path)
+		: sound_path(sound_path), loop(false), loop_offset(0) {
 	}
 };
