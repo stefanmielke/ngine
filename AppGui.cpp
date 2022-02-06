@@ -14,14 +14,34 @@
 
 extern const char *default_title;
 
-void AppGui::Update(App &app) {
-	bool is_output_open = true;
+static bool new_project_window_open = false;
+static bool open_project_window_open = false;
 
-	int window_width, window_height;
+static int window_width, window_height;
+static bool is_output_open;
+
+void AppGui::Update(App &app) {
+	is_output_open = true;
+
 	SDL_GetWindowSize(app.window, &window_width, &window_height);
 
-	static bool new_project_window_open = false;
-	static bool open_project_window_open = false;
+	RenderMenuBar(app);
+
+	RenderNewProjectWindow(app);
+	RenderOpenProjectWindow(app);
+
+	ImportAssets::RenderImportScreen(&app);
+
+	console.Draw("Output", app.window, is_output_open);
+
+	RenderContentBrowser(app);
+
+	RenderSceneWindow(app);
+
+	RenderSettingsWindow(app);
+}
+
+void AppGui::RenderMenuBar(App &app) {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("New Project")) {
@@ -89,7 +109,9 @@ void AppGui::Update(App &app) {
 		}
 		ImGui::EndMainMenuBar();
 	}
+}
 
+void AppGui::RenderNewProjectWindow(App &app) {
 	if (new_project_window_open) {
 		ImGui::SetNextWindowSize(ImVec2(300, 80));
 		if (ImGui::Begin("New Project", &new_project_window_open)) {
@@ -110,6 +132,9 @@ void AppGui::Update(App &app) {
 			ImGui::End();
 		}
 	}
+}
+
+void AppGui::RenderOpenProjectWindow(App &app) {
 	if (open_project_window_open) {
 		ImGui::SetNextWindowSize(ImVec2(300, 80));
 		if (ImGui::Begin("Open Project", &open_project_window_open)) {
@@ -128,11 +153,9 @@ void AppGui::Update(App &app) {
 			ImGui::End();
 		}
 	}
+}
 
-	ImportAssets::RenderImportScreen(&app);
-
-	console.Draw("Output", app.window, is_output_open);
-
+void AppGui::RenderContentBrowser(App &app) {
 	const float center_x_size = (float)window_width - 600;
 	const float center_y_offset = is_output_open ? 219 : 38;
 	ImGui::SetNextWindowSize(ImVec2(center_x_size, (float)window_height - center_y_offset));
@@ -332,7 +355,9 @@ void AppGui::Update(App &app) {
 		}
 		ImGui::End();
 	}
+}
 
+void AppGui::RenderSceneWindow(App &app) {
 	const float prop_y_size = is_output_open ? 219 : 38;
 	ImGui::SetNextWindowSize(ImVec2(300, (float)window_height - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
@@ -434,8 +459,11 @@ void AppGui::Update(App &app) {
 		}
 	}
 	ImGui::End();
+}
 
+void AppGui::RenderSettingsWindow(App &app) {
 	const float prop_x_size = 300;
+	const float prop_y_size = is_output_open ? 219 : 38;
 	ImGui::SetNextWindowSize(ImVec2(prop_x_size, (float)window_height - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2((float)window_width - prop_x_size, 19));
 	if (ImGui::Begin("General Settings", nullptr,
@@ -807,6 +835,4 @@ void AppGui::Update(App &app) {
 		ImGui::EndTabBar();
 	}
 	ImGui::End();
-
-	return;
 }
