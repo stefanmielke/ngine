@@ -10,4 +10,6 @@ class Scene {
 	std::string script_name;
 
 	float fill_color[3];
+
+	Scene();
 };
