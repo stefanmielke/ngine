@@ -9,5 +9,5 @@ class Scene {
 
 	std::string script_name;
 
-	// TODO: add node tree
+	float fill_color[3];
 };

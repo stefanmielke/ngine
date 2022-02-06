@@ -77,7 +77,7 @@ void create_build_files(ProjectSettings &project_settings, Project &project, std
 	std::string change_scene_path(project_settings.project_directory + "/src/scenes/change_scene.gen.c");
 	generate_change_scene_gen_c(change_scene_path, project);
 
-	generate_scene_gen_files(project_settings.project_directory, project);
+	generate_scene_gen_files(project_settings, project);
 
 	Content::CreateSprites(project_settings, images);
 }

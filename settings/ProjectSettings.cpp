@@ -89,9 +89,7 @@ void ProjectSettings::SaveToDisk() {
 	json["modules"]["timer"] = modules.timer;
 
 	std::ofstream project_file(project_directory + "/ngine.project.json");
-
 	project_file << json.dump(4);
-
 	project_file.close();
 }
 

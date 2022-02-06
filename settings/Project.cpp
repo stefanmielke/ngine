@@ -15,9 +15,11 @@ void Project::SaveToDisk(std::string &project_directory) {
 		nlohmann::json json;
 		json["id"] = scene.id;
 		json["name"] = scene.name;
+		json["fill_color"] = scene.fill_color;
 		json["script_name"] = scene.script_name;
 
-		std::ofstream file(project_directory + "/.ngine/scenes/" + std::to_string(scene.id) + ".scene.json");
+		std::ofstream file(project_directory + "/.ngine/scenes/" + std::to_string(scene.id) +
+						   ".scene.json");
 		file << json.dump(4) << std::endl;
 		file.close();
 	}
@@ -44,9 +46,11 @@ void Project::LoadFromDisk(std::string &project_directory) {
 				Scene scene;
 				scene.id = json["id"];
 				scene.name = json["name"];
+				scene.script_name = json["script_name"];
 
-				if (!json["script_name"].is_null())
-					scene.script_name = json["script_name"];
+				scene.fill_color[0] = json["fill_color"][0];
+				scene.fill_color[1] = json["fill_color"][1];
+				scene.fill_color[2] = json["fill_color"][2];
 
 				scenes.push_back(scene);
 			}

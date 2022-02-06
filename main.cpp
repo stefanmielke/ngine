@@ -518,8 +518,12 @@ bool update_gui(SDL_Window *window) {
 
 					ImGui::Spacing();
 					ImGui::InputText("Name", scene_name, 100);
-					ImGui::Spacing();
 
+					ImGui::Spacing();
+					ImGui::TextUnformatted("Background Fill Color");
+					ImGui::ColorPicker3("##FillColor", current_scene->fill_color);
+
+					ImGui::Spacing();
 					ImGui::Separator();
 					ImGui::Spacing();
 					{
