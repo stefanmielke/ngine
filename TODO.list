@@ -34,6 +34,7 @@
 [ ] Move all UI code out of main.cpp
 [x] Choose fill color for scene
 [ ] Scene nodes
+[ ] README!
 
 Future:
 [ ] Import 3d models

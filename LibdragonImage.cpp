@@ -53,7 +53,7 @@ void LibdragonImage::LoadFromDisk(std::string &filepath) {
 	v_slices = json["v_slices"];
 }
 
-void LibdragonImage::DeleteFromDisk(std::string &project_directory) {
+void LibdragonImage::DeleteFromDisk(std::string &project_directory) const {
 	std::string json_filepath = project_directory + "/.ngine/sprites/" + name + ".sprite.json";
 	std::filesystem::remove(json_filepath);
 

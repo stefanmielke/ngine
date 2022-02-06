@@ -10,9 +10,11 @@
 #include <SDL2/SDL_image.h>
 
 #include "ConsoleApp.h"
+#include "DroppedAssets.h"
 #include "Emulator.h"
 #include "json.hpp"
 #include "LibdragonImage.h"
+#include "LibdragonSound.h"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
 #include "VSCode.h"
@@ -29,25 +31,14 @@ static Project project;
 static Scene *current_scene = nullptr;
 static char scene_name[100];
 static std::vector<std::string> script_files;
+static std::vector<std::unique_ptr<LibdragonSound>> sounds;
 static std::vector<std::unique_ptr<LibdragonImage>> images;
 static std::unique_ptr<LibdragonImage> *selected_image;
 static std::unique_ptr<LibdragonImage> *image_editing;
 static bool reload_image_edit = false;
 
-struct DroppedImage {
-	std::string image_path;
-	SDL_Texture *image_data;
-	int w, h;
-
-	char name[50] = "\0";
-	char dfs_folder[100] = "/\0";
-	int h_slices, v_slices;
-
-	explicit DroppedImage(const char *image_path)
-		: image_path(image_path), image_data(nullptr), w(0), h(0), h_slices(1), v_slices(1) {
-	}
-};
 static std::vector<DroppedImage> dropped_image_files;
+static std::vector<DroppedSound> dropped_sound_files;
 
 static ProjectSettings project_settings;
 static EngineSettings engine_settings;
@@ -62,6 +53,7 @@ bool open_project(const char *path);
 static bool update_gui(SDL_Window *window);
 static void render_image_import_windows();
 static void reload_scripts();
+static void load_sounds();
 static void load_images();
 static void load_image(std::unique_ptr<LibdragonImage> &image);
 
@@ -134,6 +126,11 @@ int main() {
 						std::string file(event.drop.file);
 						if (file.ends_with(".png")) {
 							DroppedImage dropped_image(event.drop.file);
+
+							std::filesystem::path filepath(event.drop.file);
+							strcpy(dropped_image.name,
+								   filepath.filename().replace_extension().c_str());
+
 							dropped_image.image_data = IMG_LoadTexture(app.renderer,
 																	   event.drop.file);
 
@@ -154,7 +151,16 @@ int main() {
 
 							dropped_image_files.push_back(dropped_image);
 
-							ImGui::SetWindowFocus("Import Images");
+							ImGui::SetWindowFocus("Import Assets");
+						} else if (file.ends_with(".wav")) {
+							DroppedSound dropped_sound(event.drop.file);
+							std::filesystem::path filepath(event.drop.file);
+							strcpy(dropped_sound.name,
+								   filepath.filename().replace_extension().c_str());
+
+							dropped_sound_files.push_back(dropped_sound);
+
+							ImGui::SetWindowFocus("Import Assets");
 						}
 					} else {
 						std::filesystem::path dropped_path(event.drop.file);
@@ -227,6 +233,7 @@ bool open_project(const char *path) {
 	reload_scripts();
 
 	load_images();
+	load_sounds();
 
 	console.AddLog("Project opened.");
 
@@ -354,7 +361,7 @@ bool update_gui(SDL_Window *window) {
 					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
 		if (ImGui::BeginTabBar("CenterContentTabs",
 							   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
-			if (ImGui::BeginTabItem("Content Browser")) {
+			if (ImGui::BeginTabItem("Sprites Browser")) {
 				if (project_settings.IsOpen()) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup("PopupContentBrowser");
@@ -843,10 +850,10 @@ void reload_scripts() {
 }
 
 void render_image_import_windows() {
-	if (!dropped_image_files.empty()) {
+	if (!dropped_image_files.empty() || !dropped_sound_files.empty()) {
 		int id = 1;
-		if (ImGui::Begin("Import Images")) {
-			if (ImGui::BeginTabBar("ImportImages")) {
+		if (ImGui::Begin("Import Assets")) {
+			if (ImGui::BeginTabBar("ImportAssets")) {
 				for (int i = 0; i < dropped_image_files.size(); ++i) {
 					ImGui::PushID(id);
 					if (ImGui::BeginTabItem("Image")) {
@@ -917,6 +924,65 @@ void render_image_import_windows() {
 					ImGui::PopID();
 					++id;
 				}
+				for (int i = 0; i < dropped_sound_files.size(); ++i) {
+					ImGui::PushID(id);
+					if (ImGui::BeginTabItem("WAV Sound")) {
+						ImGui::InputText("Name", dropped_sound_files[i].name, 50);
+						ImGui::InputText("DFS Folder", dropped_sound_files[i].dfs_folder, 100);
+
+						ImGui::Separator();
+						ImGui::Spacing();
+						if (ImGui::Button("Import")) {
+							std::string name(dropped_sound_files[i].name);
+							std::string dfs_folder(dropped_sound_files[i].dfs_folder);
+
+							if (name.empty() || dfs_folder.empty()) {
+								console.AddLog(
+									"[error] Please fill both 'name' and 'dfs folder' fields");
+							} else {
+								std::string name_string(name);
+								auto find_by_name =
+									[&name_string](std::unique_ptr<LibdragonSound> &i) {
+										return i.operator->()->name == name_string;
+									};
+								if (std::find_if(sounds.begin(), sounds.end(), find_by_name) !=
+									std::end(sounds)) {
+									console.AddLog(
+										"Sound with the name already exists. Please choose a "
+										"different name.");
+								} else {
+									auto image = std::make_unique<LibdragonSound>();
+									image->name = name;
+									image->dfs_folder = dfs_folder;
+									image->sound_path = "assets/sounds/" + name + ".wav";
+
+									std::filesystem::create_directories(
+										project_settings.project_directory + "/assets/sounds");
+									std::filesystem::copy_file(dropped_sound_files[i].sound_path,
+															   project_settings.project_directory +
+																   "/assets/sounds/" + name +
+																   ".wav");
+
+									image->SaveToDisk(project_settings.project_directory);
+
+									dropped_sound_files.erase(dropped_sound_files.begin() + i);
+
+									sounds.push_back(move(image));
+									--i;
+								}
+							}
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel")) {
+							dropped_sound_files.erase(dropped_sound_files.begin() + i);
+							--i;
+						}
+
+						ImGui::EndTabItem();
+					}
+					ImGui::PopID();
+					++id;
+				}
 			}
 			ImGui::EndTabBar();
 		}
@@ -970,4 +1036,26 @@ void load_image(std::unique_ptr<LibdragonImage> &image) {
 
 	image->display_width = w;
 	image->display_height = h;
+}
+
+void load_sounds() {
+	sounds.clear();
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sounds";
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path());
+			if (filepath.ends_with(".sound.json")) {
+				auto sound = std::make_unique<LibdragonSound>();
+				sound->LoadFromDisk(filepath);
+
+				sounds.push_back(move(sound));
+			}
+		}
+	}
 }
