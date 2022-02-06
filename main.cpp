@@ -64,8 +64,7 @@ static void initSDL() {
 
 int main() {
 	app.engine_settings.LoadFromDisk();
-	strcpy(app.state.input_open_project, app.engine_settings.GetLastOpenedProject().c_str());
-	strcpy(app.state.emulator_path, app.engine_settings.GetEmulatorPath().c_str());
+	app.state = ProjectState(app.engine_settings);
 
 	initSDL();
 
@@ -187,7 +186,9 @@ bool update_gui(SDL_Window *window) {
 			if (ImGui::MenuItem("Close Project", nullptr, false, app.project.project_settings.IsOpen())) {
 				console.AddLog("Closing app.project...");
 
-				app.project.project_settings.CloseProject();
+				app.project = Project();
+				app.state = ProjectState(app.engine_settings);
+
 				SDL_SetWindowTitle(window, default_title);
 
 				console.AddLog("Project closed.");

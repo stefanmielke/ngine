@@ -9,7 +9,9 @@ class App {
    public:
 	SDL_Renderer *renderer;
 	SDL_Window *window;
-	ProjectState state;
-	Project project;
 	EngineSettings engine_settings;
+	Project project;
+	ProjectState state;
+
+	App();
 };

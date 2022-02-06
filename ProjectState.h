@@ -6,6 +6,7 @@
 #include "DroppedAssets.h"
 #include "LibdragonImage.h"
 #include "LibdragonSound.h"
+#include "settings/EngineSettings.h"
 #include "settings/ProjectSettingsScreen.h"
 #include "settings/Scene.h"
 
@@ -30,7 +31,7 @@ struct ProjectState {
 	Scene *current_scene;
 	char scene_name[100];
 
-	ProjectState()
+	explicit ProjectState(EngineSettings &engine_settings)
 		: selected_image(nullptr),
 		  image_editing(nullptr),
 		  reload_image_edit(false),
@@ -44,9 +45,10 @@ struct ProjectState {
 		  current_scene(nullptr),
 		  scene_name() {
 		memset(input_new_project, 0, 255);
-		memset(input_open_project, 0, 255);
-		memset(emulator_path, 0, 255);
 		memset(scene_name, 0, 100);
+
+		strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
+		strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
 	}
 
 	~ProjectState() {
