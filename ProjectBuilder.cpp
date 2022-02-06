@@ -45,7 +45,10 @@ void create_project_thread(std::string project_folder) {
 	console.AddLog("Adding libdragon-extensions...");
 
 	char cmd[500];
-	snprintf(cmd, 500, "cd %s\ngit submodule add git@github.com:stefanmielke/libdragon-extensions.git libs/libdragon-extensions", project_folder.c_str());
+	snprintf(cmd, 500,
+			 "cd %s\ngit submodule add git@github.com:stefanmielke/libdragon-extensions.git "
+			 "libs/libdragon-extensions",
+			 project_folder.c_str());
 	system(cmd);
 
 	console.AddLog("Creating project settings file...");
@@ -65,8 +68,9 @@ void ProjectBuilder::Create(std::string project_folder) {
 	std::thread(create_project_thread, project_folder).detach();
 }
 
-void create_build_files(ProjectSettings &project_settings, Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images) {
-
+void create_build_files(ProjectSettings &project_settings, Project &project,
+						std::vector<std::unique_ptr<LibdragonImage>> &images,
+						std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
 	std::string makefile_path(project_settings.project_directory + "/Makefile");
 	generate_makefile_gen(makefile_path, project_settings.rom_name.c_str(),
 						  project_settings.project_name.c_str(), !images.empty());
@@ -74,24 +78,30 @@ void create_build_files(ProjectSettings &project_settings, Project &project, std
 	std::string setup_path(project_settings.project_directory + "/src/setup.gen.c");
 	generate_setup_gen_c(setup_path, project_settings);
 
-	std::string change_scene_path(project_settings.project_directory + "/src/scenes/change_scene.gen.c");
+	std::string change_scene_path(project_settings.project_directory +
+								  "/src/scenes/change_scene.gen.c");
 	generate_change_scene_gen_c(change_scene_path, project);
 
 	generate_scene_gen_files(project_settings, project);
 
 	Content::CreateSprites(project_settings, images);
+	Content::CreateSounds(project_settings, sounds);
 }
 
-void ProjectBuilder::Build(ProjectSettings &project_settings, Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images) {
-	create_build_files(project_settings, project, images);
+void ProjectBuilder::Build(ProjectSettings &project_settings, Project &project,
+						   std::vector<std::unique_ptr<LibdragonImage>> &images,
+						   std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
+	create_build_files(project_settings, project, images, sounds);
 
 	Libdragon::Build(project_settings.project_directory);
 }
 
-void ProjectBuilder::Rebuild(ProjectSettings &project_settings, Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images) {
+void ProjectBuilder::Rebuild(ProjectSettings &project_settings, Project &project,
+							 std::vector<std::unique_ptr<LibdragonImage>> &images,
+							 std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
 	Libdragon::CleanSync(project_settings.project_directory);
 
-	create_build_files(project_settings, project, images);
+	create_build_files(project_settings, project, images, sounds);
 
 	Libdragon::Build(project_settings.project_directory);
 }

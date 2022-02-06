@@ -9,7 +9,8 @@
 extern ConsoleApp console;
 
 void Emulator::Run(EngineSettings &engine_settings, ProjectSettings &project_settings,
-				   Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images) {
+				   Project &project, std::vector<std::unique_ptr<LibdragonImage>> &images,
+				   std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
 	std::string rom_filename = project_settings.rom_name + ".z64";
 
 	console.AddLog("Opening rom in emulator as '%s %s'...",
@@ -17,7 +18,7 @@ void Emulator::Run(EngineSettings &engine_settings, ProjectSettings &project_set
 
 	if (!std::filesystem::exists(project_settings.project_directory + "/" + rom_filename)) {
 		console.AddLog("Rom file was not created. Triggering build before running...");
-		ProjectBuilder::Build(project_settings, project, images);
+		ProjectBuilder::Build(project_settings, project, images, sounds);
 	}
 
 	char cmd[255];

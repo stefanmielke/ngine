@@ -19,9 +19,11 @@
 [ ] Import xm sound files
 [ ] Import ym sound files
     - "--ym-compress <true|false>": Compress output file
-[ ] Add wav options
+[x] Add wav options
     - "--wav-loop <true|false>": Activate playback loop by default
     - "--wav-loop-offset <N>": Set looping offset (in samples; default: 0)
+[x] DFS sounds gen/import
+[ ] Set audiomixer as module and load it properly
 [ ] Import sprite fonts
 [ ] Import Tiled maps
 [ ] Import LDtk maps

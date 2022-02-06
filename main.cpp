@@ -288,13 +288,13 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::MenuItem("Build", nullptr, false, project_settings.IsOpen())) {
 			console.AddLog("Building project...");
 
-			ProjectBuilder::Build(project_settings, project, images);
+			ProjectBuilder::Build(project_settings, project, images, sounds);
 		}
 		if (ImGui::BeginMenu("Tasks", project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding project...");
 
-				ProjectBuilder::Rebuild(project_settings, project, images);
+				ProjectBuilder::Rebuild(project_settings, project, images, sounds);
 			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");
@@ -313,7 +313,7 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::MenuItem(
 				"Run", nullptr, false,
 				project_settings.IsOpen() && !engine_settings.GetEmulatorPath().empty())) {
-			Emulator::Run(engine_settings, project_settings, project, images);
+			Emulator::Run(engine_settings, project_settings, project, images, sounds);
 		}
 		ImGui::EndMainMenuBar();
 	}

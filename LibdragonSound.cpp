@@ -61,7 +61,7 @@ std::string LibdragonSound::GetTooltip() const {
 	tooltip << name << "\nPath: " << sound_path << "\nDFS_Path: " << dfs_folder << name
 			<< ".wav64\n";
 
-		switch (type) {
+	switch (type) {
 		case SOUND_UNKNOWN: {
 			tooltip << "\nType: UNKNOWN";
 		} break;
@@ -81,4 +81,34 @@ std::string LibdragonSound::GetTooltip() const {
 		} break;
 	}
 	return tooltip.str();
+}
+std::string LibdragonSound::GetLibdragonExtension() const {
+	switch (type) {
+		case SOUND_UNKNOWN:
+			return ".no_ext";
+		case SOUND_WAV:
+			return ".wav64";
+		case SOUND_XM:
+			return ".xm64";
+		case SOUND_YM:
+			return ".ym64";
+		default:
+			return ".not_mapped";
+	}
+}
+std::string LibdragonSound::GetLibdragonGenFlags() const {
+	switch (type) {
+		case SOUND_WAV: {
+			if (wav_loop)
+				return "--wav-loop true --wav-loop-offset " + std::to_string(wav_loop_offset);
+			else
+				return "";
+		}
+		case SOUND_YM:
+			return std::string("--ym-compress ") + (ym_compress ? "true" : "false");
+		case SOUND_UNKNOWN:
+		case SOUND_XM:
+		default:
+			return "";
+	}
 }
