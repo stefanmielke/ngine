@@ -822,116 +822,133 @@ bool update_gui(SDL_Window *window) {
 			}
 			if (ImGui::BeginTabItem("Project")) {
 				if (project_settings.IsOpen()) {
-					ImGui::InputText("Name", project_settings_screen.project_name, 100);
-					ImGui::InputText("Rom", project_settings_screen.rom_name, 100);
+					if (ImGui::BeginTabBar("ProjectAllSettings")) {
+						if (ImGui::BeginTabItem("General")) {
+							ImGui::InputText("Name", project_settings_screen.project_name, 100);
+							ImGui::InputText("Rom", project_settings_screen.rom_name, 100);
 
-					ImGui::Separator();
+							ImGui::Separator();
 
-					{
-						std::string current_selected("None");
-						for (auto &scene : project.scenes) {
-							if (scene.id == project_settings.initial_screen_id) {
-								current_selected = scene.name;
-								break;
-							}
-						}
-						ImGui::TextUnformatted("Initial Screen");
-						if (ImGui::BeginCombo("##InitialScreen", current_selected.c_str())) {
-							for (auto &scene : project.scenes) {
-								if (ImGui::Selectable(
-										scene.name.c_str(),
-										scene.id == project_settings.initial_screen_id)) {
-									project_settings.initial_screen_id = scene.id;
+							{
+								std::string current_selected("None");
+								for (auto &scene : project.scenes) {
+									if (scene.id == project_settings.initial_screen_id) {
+										current_selected = scene.name;
+										break;
+									}
+								}
+								ImGui::TextUnformatted("Initial Screen");
+								if (ImGui::BeginCombo("##InitialScreen",
+													  current_selected.c_str())) {
+									for (auto &scene : project.scenes) {
+										if (ImGui::Selectable(
+												scene.name.c_str(),
+												scene.id == project_settings.initial_screen_id)) {
+											project_settings.initial_screen_id = scene.id;
+										}
+									}
+									ImGui::EndCombo();
 								}
 							}
-							ImGui::EndCombo();
-						}
-					}
 
-					{
-						ImGui::TextUnformatted("Global Script");
-						if (ImGui::BeginCombo("##GlobalScript",
-											  project_settings.global_script_name.c_str())) {
-							for (auto &script : script_files) {
-								if (ImGui::Selectable(
-										script.c_str(),
-										script == project_settings.global_script_name)) {
-									project_settings.global_script_name = script;
+							{
+								ImGui::TextUnformatted("Global Script");
+								if (ImGui::BeginCombo(
+										"##GlobalScript",
+										project_settings.global_script_name.c_str())) {
+									for (auto &script : script_files) {
+										if (ImGui::Selectable(
+												script.c_str(),
+												script == project_settings.global_script_name)) {
+											project_settings.global_script_name = script;
+										}
+									}
+									ImGui::EndCombo();
 								}
 							}
-							ImGui::EndCombo();
+
+							ImGui::Separator();
+
+							ImGui::TextUnformatted("Global Memory Reserve (KB)");
+							ImGui::InputInt("##GlobalMem", &project_settings.global_mem_alloc_size,
+											1, 1024);
+							ImGui::TextUnformatted("Scene Memory Reserve (KB)");
+							ImGui::InputInt("##LocalMem", &project_settings.scene_mem_alloc_size, 1,
+											1024);
+
+							ImGui::EndTabItem();
 						}
-					}
 
-					ImGui::Separator();
+						if (ImGui::BeginTabItem("Modules")) {
+							ImGui::TextUnformatted("Modules:");
+							ImGui::Checkbox("Audio", &project_settings.modules.audio);
+							ImGui::Checkbox("Audio Mixer", &project_settings.modules.audio_mixer);
+							ImGui::Checkbox("Console", &project_settings.modules.console);
+							ImGui::Checkbox("Controller", &project_settings.modules.controller);
+							ImGui::Checkbox("Debug Is Viewer",
+											&project_settings.modules.debug_is_viewer);
+							ImGui::Checkbox("Debug USB", &project_settings.modules.debug_usb);
+							ImGui::Checkbox("Display", &project_settings.modules.display);
+							ImGui::Checkbox("DFS", &project_settings.modules.dfs);
+							ImGui::Checkbox("RDP", &project_settings.modules.rdp);
+							ImGui::Checkbox("Timer", &project_settings.modules.timer);
 
-					ImGui::TextUnformatted("Global Memory Reserve (KB)");
-					ImGui::InputInt("##GlobalMem", &project_settings.global_mem_alloc_size, 1,
-									1024);
-					ImGui::TextUnformatted("Scene Memory Reserve (KB)");
-					ImGui::InputInt("##LocalMem", &project_settings.scene_mem_alloc_size, 1, 1024);
+							ImGui::EndTabItem();
+						}
 
-					ImGui::Separator();
+						static int antialias_current = project_settings.display.antialias;
+						static int bit_depth_current = project_settings.display.bit_depth;
+						static int gamma_current = project_settings.display.gamma;
+						static int resolution_current = project_settings.display.resolution;
 
-					ImGui::TextUnformatted("Modules:");
-					ImGui::Checkbox("Audio", &project_settings.modules.audio);
-					ImGui::Checkbox("Audio Mixer", &project_settings.modules.audio_mixer);
-					ImGui::Checkbox("Console", &project_settings.modules.console);
-					ImGui::Checkbox("Controller", &project_settings.modules.controller);
-					ImGui::Checkbox("Debug Is Viewer", &project_settings.modules.debug_is_viewer);
-					ImGui::Checkbox("Debug USB", &project_settings.modules.debug_usb);
-					ImGui::Checkbox("Display", &project_settings.modules.display);
-					ImGui::Checkbox("DFS", &project_settings.modules.dfs);
-					ImGui::Checkbox("RDP", &project_settings.modules.rdp);
-					ImGui::Checkbox("Timer", &project_settings.modules.timer);
-
-					ImGui::Separator();
-
-					static int antialias_current = project_settings.display.antialias;
-					static int bit_depth_current = project_settings.display.bit_depth;
-					static int gamma_current = project_settings.display.gamma;
-					static int resolution_current = project_settings.display.resolution;
-
-					const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
-													 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
-													 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
-					const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
-					const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT",
-												 "GAMMA_CORRECT_DITHER"};
-					const char *resolution_items[] = {"RESOLUTION_320x240", "RESOLUTION_640x480",
-													  "RESOLUTION_256x240", "RESOLUTION_512x480",
-													  "RESOLUTION_512x240", "RESOLUTION_640x240"};
-
-					if (project_settings.modules.display) {
-						ImGui::TextUnformatted("Display Settings:");
-						ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
-						ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
-						ImGui::SliderInt("Buffers", &project_settings_screen.display_buffers, 1, 3);
-						ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
-						ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
+						const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
+														 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
+														 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
+						const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
+						const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT",
+													 "GAMMA_CORRECT_DITHER"};
+						const char *resolution_items[] = {
+							"RESOLUTION_320x240", "RESOLUTION_640x480", "RESOLUTION_256x240",
+							"RESOLUTION_512x480", "RESOLUTION_512x240", "RESOLUTION_640x240"};
+						if (ImGui::BeginTabItem("Display")) {
+							if (project_settings.modules.display) {
+								ImGui::TextUnformatted("Display Settings:");
+								ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
+								ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
+								ImGui::SliderInt("Buffers",
+												 &project_settings_screen.display_buffers, 1, 3);
+								ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
+								ImGui::Combo("Resolution", &resolution_current, resolution_items,
+											 6);
+							}
+							ImGui::EndTabItem();
+						}
 
 						ImGui::Separator();
+						ImGui::Spacing();
+						if (ImGui::Button("Save")) {
+							strcpy(project_settings_screen.display_antialias,
+								   antialias_items[antialias_current]);
+							strcpy(project_settings_screen.display_bit_depth,
+								   bit_depth_items[bit_depth_current]);
+							strcpy(project_settings_screen.display_gamma,
+								   gamma_items[gamma_current]);
+							strcpy(project_settings_screen.display_resolution,
+								   resolution_items[resolution_current]);
+
+							project_settings_screen.ToProjectSettings(project_settings);
+
+							project_settings.SaveToDisk();
+
+							SDL_SetWindowTitle(app.window,
+											   ("NGine - " + project_settings.project_name + " - " +
+												project_settings.project_directory)
+												   .c_str());
+
+							console.AddLog("Saved Project Settings.");
+						}
 					}
-
-					if (ImGui::Button("Save")) {
-						strcpy(project_settings_screen.display_antialias,
-							   antialias_items[antialias_current]);
-						strcpy(project_settings_screen.display_bit_depth,
-							   bit_depth_items[bit_depth_current]);
-						strcpy(project_settings_screen.display_gamma, gamma_items[gamma_current]);
-						strcpy(project_settings_screen.display_resolution,
-							   resolution_items[resolution_current]);
-
-						project_settings_screen.ToProjectSettings(project_settings);
-
-						project_settings.SaveToDisk();
-
-						SDL_SetWindowTitle(app.window, ("NGine - " + project_settings.project_name +
-														" - " + project_settings.project_directory)
-														   .c_str());
-
-						console.AddLog("Saved Project Settings.");
-					}
+					ImGui::EndTabBar();
 				}
 				ImGui::EndTabItem();
 			}
