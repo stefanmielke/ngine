@@ -16,6 +16,7 @@
 #include "LibdragonImage.h"
 #include "LibdragonSound.h"
 #include "ProjectBuilder.h"
+#include "ProjectState.h"
 #include "ScriptBuilder.h"
 #include "VSCode.h"
 #include "settings/EngineSettings.h"
@@ -27,31 +28,15 @@ const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
 
+static ProjectState state;
+
 static Project project;
-static Scene *current_scene = nullptr;
-static char scene_name[100];
 static std::vector<std::string> script_files;
 static std::vector<std::unique_ptr<LibdragonSound>> sounds;
 static std::vector<std::unique_ptr<LibdragonImage>> images;
 
-static std::unique_ptr<LibdragonImage> *selected_image;
-static std::unique_ptr<LibdragonImage> *image_editing;
-static bool reload_image_edit = false;
-
-static std::unique_ptr<LibdragonSound> *selected_sound;
-static std::unique_ptr<LibdragonSound> *sound_editing;
-static bool reload_sound_edit = false;
-
-static std::vector<DroppedImage> dropped_image_files;
-static std::vector<DroppedSound> dropped_sound_files;
-
 static ProjectSettings project_settings;
 static EngineSettings engine_settings;
-
-static char input_new_project[255];
-static char input_open_project[255];
-static char emulator_path[255];
-static ProjectSettingsScreen project_settings_screen;
 
 bool open_project(const char *path);
 
@@ -104,16 +89,9 @@ static void initSDL() {
 }
 
 int main() {
-	memset(input_new_project, 0, 255);
-	memset(input_open_project, 0, 255);
-	selected_image = nullptr;
-	image_editing = nullptr;
-	selected_sound = nullptr;
-	sound_editing = nullptr;
-
 	engine_settings.LoadFromDisk();
-	strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
-	strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
+	strcpy(state.input_open_project, engine_settings.GetLastOpenedProject().c_str());
+	strcpy(state.emulator_path, engine_settings.GetEmulatorPath().c_str());
 
 	initSDL();
 
@@ -157,7 +135,7 @@ int main() {
 							dropped_image.w = w;
 							dropped_image.h = h;
 
-							dropped_image_files.push_back(dropped_image);
+							state.dropped_image_files.push_back(dropped_image);
 
 							ImGui::SetWindowFocus("Import Assets");
 						} else if (file.ends_with(".wav")) {
@@ -166,7 +144,7 @@ int main() {
 							strcpy(dropped_sound.name,
 								   filepath.filename().replace_extension().c_str());
 
-							dropped_sound_files.push_back(dropped_sound);
+							state.dropped_sound_files.push_back(dropped_sound);
 
 							ImGui::SetWindowFocus("Import Assets");
 						}
@@ -234,7 +212,7 @@ bool open_project(const char *path) {
 									project_settings.project_directory)
 									   .c_str());
 
-	project_settings_screen.FromProjectSettings(project_settings);
+	state.project_settings_screen.FromProjectSettings(project_settings);
 
 	engine_settings.SetLastOpenedProject(project_filepath);
 
@@ -323,9 +301,9 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::Begin("New Project", &new_project_window_open)) {
 			ImGui::TextUnformatted("Folder");
 			ImGui::SameLine();
-			ImGui::InputText("##", input_new_project, 255);
+			ImGui::InputText("##", state.input_new_project, 255);
 			if (ImGui::Button("Create", ImVec2(50, 20))) {
-				std::string new_project_folder(input_new_project);
+				std::string new_project_folder(state.input_new_project);
 
 				ProjectBuilder::Create(new_project_folder);
 
@@ -343,9 +321,9 @@ bool update_gui(SDL_Window *window) {
 		if (ImGui::Begin("Open Project", &open_project_window_open)) {
 			ImGui::TextUnformatted("Folder");
 			ImGui::SameLine();
-			ImGui::InputText("##", input_open_project, 255);
+			ImGui::InputText("##", state.input_open_project, 255);
 			if (ImGui::Button("Open", ImVec2(50, 20))) {
-				if (open_project(input_open_project)) {
+				if (open_project(state.input_open_project)) {
 					open_project_window_open = false;
 				}
 			}
@@ -390,32 +368,32 @@ bool update_gui(SDL_Window *window) {
 					int cur_i = 0;
 					if (ImGui::BeginPopup("PopupSpritesBrowserImage")) {
 						if (ImGui::Selectable("Edit Settings")) {
-							if (selected_image) {
-								image_editing = selected_image;
-								reload_image_edit = true;
-								selected_image = nullptr;
+							if (state.selected_image) {
+								state.image_editing = state.selected_image;
+								state.reload_image_edit = true;
+								state.selected_image = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
-							if (selected_image) {
-								std::string dfs_path((*selected_image)->dfs_folder +
-													 (*selected_image)->name + ".sprite");
+							if (state.selected_image) {
+								std::string dfs_path((*state.selected_image)->dfs_folder +
+													 (*state.selected_image)->name + ".sprite");
 								ImGui::SetClipboardText(dfs_path.c_str());
-								selected_image = nullptr;
+								state.selected_image = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
-							if (selected_image) {
-								(*selected_image)
+							if (state.selected_image) {
+								(*state.selected_image)
 									->DeleteFromDisk(project_settings.project_directory);
 
 								for (int i = 0; i < images.size(); ++i) {
-									if (images[i]->image_path == (*selected_image)->image_path) {
+									if (images[i]->image_path == (*state.selected_image)->image_path) {
 										images.erase(images.begin() + i);
 										break;
 									}
 								}
-								selected_image = nullptr;
+								state.selected_image = nullptr;
 							}
 						}
 						ImGui::EndPopup();
@@ -424,7 +402,7 @@ bool update_gui(SDL_Window *window) {
 					for (auto &image : images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
-							selected_image = &image;
+							state.selected_image = &image;
 							ImGui::OpenPopup("PopupSpritesBrowserImage");
 						}
 						if (ImGui::IsItemHovered()) {
@@ -462,32 +440,32 @@ bool update_gui(SDL_Window *window) {
 					int cur_i = 0;
 					if (ImGui::BeginPopup("PopupSoundsBrowserSound")) {
 						if (ImGui::Selectable("Edit Settings")) {
-							if (selected_sound) {
-								sound_editing = selected_sound;
-								reload_sound_edit = true;
-								selected_sound = nullptr;
+							if (state.selected_sound) {
+								state.sound_editing = state.selected_sound;
+								state.reload_sound_edit = true;
+								state.selected_sound = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
-							if (selected_sound) {
-								std::string dfs_path((*selected_sound)->dfs_folder +
-													 (*selected_sound)->name + ".wav64");
+							if (state.selected_sound) {
+								std::string dfs_path((*state.selected_sound)->dfs_folder +
+													 (*state.selected_sound)->name + ".wav64");
 								ImGui::SetClipboardText(dfs_path.c_str());
-								selected_sound = nullptr;
+								state.selected_sound = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
-							if (selected_sound) {
-								(*selected_sound)
+							if (state.selected_sound) {
+								(*state.selected_sound)
 									->DeleteFromDisk(project_settings.project_directory);
 
 								for (int i = 0; i < sounds.size(); ++i) {
-									if (sounds[i]->sound_path == (*selected_sound)->sound_path) {
+									if (sounds[i]->sound_path == (*state.selected_sound)->sound_path) {
 										sounds.erase(sounds.begin() + i);
 										break;
 									}
 								}
-								selected_sound = nullptr;
+								state.selected_sound = nullptr;
 							}
 						}
 						ImGui::EndPopup();
@@ -495,7 +473,7 @@ bool update_gui(SDL_Window *window) {
 
 					for (auto &sound : sounds) {
 						if (ImGui::Selectable(sound->name.c_str())) {
-							selected_sound = &sound;
+							state.selected_sound = &sound;
 							ImGui::OpenPopup("PopupSoundsBrowserSound");
 						}
 						if (ImGui::IsItemHovered()) {
@@ -559,7 +537,7 @@ bool update_gui(SDL_Window *window) {
 	ImGui::SetNextWindowSize(ImVec2(300, (float)window_height - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-		if (current_scene) {
+		if (state.current_scene) {
 			if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 				//				if (ImGui::BeginTabItem("Nodes")) {
 				//					if (ImGui::TreeNodeEx("Root Node")) {
@@ -586,34 +564,34 @@ bool update_gui(SDL_Window *window) {
 				//					ImGui::EndTabItem();
 				//				}
 				if (ImGui::BeginTabItem("Settings")) {
-					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d", current_scene->id);
+					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d", state.current_scene->id);
 					ImGui::Spacing();
 					ImGui::Separator();
 
 					ImGui::Spacing();
-					ImGui::InputText("Name", scene_name, 100);
+					ImGui::InputText("Name", state.scene_name, 100);
 
 					ImGui::Spacing();
 					ImGui::TextUnformatted("Background Fill Color");
-					ImGui::ColorPicker3("##FillColor", current_scene->fill_color);
+					ImGui::ColorPicker3("##FillColor", state.current_scene->fill_color);
 
 					ImGui::Spacing();
 					ImGui::Separator();
 					ImGui::Spacing();
 					{
-						std::string current_selected(current_scene->script_name);
+						std::string current_selected(state.current_scene->script_name);
 						ImGui::TextUnformatted("Attached Script");
 						if (ImGui::BeginCombo("##AttachedScript", current_selected.c_str())) {
 							for (auto &script : script_files) {
 								if (ImGui::Selectable(script.c_str(), script == current_selected)) {
-									current_scene->script_name = script;
+									state.current_scene->script_name = script;
 								}
 							}
 							ImGui::EndCombo();
 						}
 						ImGui::SameLine();
 						if (ImGui::SmallButton("Remove")) {
-							current_scene->script_name.clear();
+							state.current_scene->script_name.clear();
 						}
 					}
 					ImGui::Spacing();
@@ -621,7 +599,7 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Separator();
 					ImGui::Spacing();
 					if (ImGui::Button("Save")) {
-						current_scene->name = scene_name;
+						state.current_scene->name = state.scene_name;
 						project.SaveToDisk(project_settings.project_directory);
 						project_settings.SaveToDisk();
 					}
@@ -631,15 +609,15 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Spacing();
 					if (ImGui::Button("Delete Scene")) {
 						for (int i = 0; i < project.scenes.size(); ++i) {
-							if (project.scenes[i].id == current_scene->id) {
+							if (project.scenes[i].id == state.current_scene->id) {
 								project.scenes.erase(project.scenes.begin() + i);
 								std::string filename = project_settings.project_directory +
 													   "/.ngine/scenes/" +
-													   std::to_string(current_scene->id) +
+													   std::to_string(state.current_scene->id) +
 													   ".scene.json";
 								std::filesystem::remove(filename);
 
-								current_scene = nullptr;
+								state.current_scene = nullptr;
 								break;
 							}
 						}
@@ -662,23 +640,23 @@ bool update_gui(SDL_Window *window) {
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
 						 ImGuiWindowFlags_NoTitleBar)) {
 		if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_AutoSelectNewTabs)) {
-			if (image_editing) {
+			if (state.image_editing) {
 				static char image_edit_name[50];
 				static char image_edit_dfs_folder[100];
 				static int image_edit_h_slices = 0;
 				static int image_edit_v_slices = 0;
-				if (reload_image_edit) {
-					reload_image_edit = false;
+				if (state.reload_image_edit) {
+					state.reload_image_edit = false;
 
-					strcpy(image_edit_name, (*image_editing)->name.c_str());
-					strcpy(image_edit_dfs_folder, (*image_editing)->dfs_folder.c_str());
-					image_edit_h_slices = (*image_editing)->h_slices;
-					image_edit_v_slices = (*image_editing)->v_slices;
+					strcpy(image_edit_name, (*state.image_editing)->name.c_str());
+					strcpy(image_edit_dfs_folder, (*state.image_editing)->dfs_folder.c_str());
+					image_edit_h_slices = (*state.image_editing)->h_slices;
+					image_edit_v_slices = (*state.image_editing)->v_slices;
 				}
 				if (ImGui::BeginTabItem("Image Settings")) {
-					ImGui::Image((ImTextureID)(intptr_t)(*image_editing)->loaded_image,
-								 ImVec2((*image_editing)->display_width * 2,
-										(*image_editing)->display_height * 2));
+					ImGui::Image((ImTextureID)(intptr_t)(*state.image_editing)->loaded_image,
+								 ImVec2((*state.image_editing)->display_width * 2,
+										(*state.image_editing)->display_height * 2));
 					ImGui::Separator();
 					ImGui::Spacing();
 					ImGui::InputText("Name", image_edit_name, 50);
@@ -690,7 +668,7 @@ bool update_gui(SDL_Window *window) {
 					ImGui::Spacing();
 					if (ImGui::Button("Save")) {
 						bool will_save = true;
-						if ((*image_editing)->name != image_edit_name) {
+						if ((*state.image_editing)->name != image_edit_name) {
 							std::string name_string(image_edit_name);
 							auto find_by_name = [&name_string](std::unique_ptr<LibdragonImage> &i) {
 								return i->name == name_string;
@@ -703,63 +681,63 @@ bool update_gui(SDL_Window *window) {
 								will_save = false;
 							} else {
 								std::filesystem::copy_file(project_settings.project_directory +
-															   "/" + (*image_editing)->image_path,
+															   "/" + (*state.image_editing)->image_path,
 														   project_settings.project_directory +
 															   "/assets/sprites/" +
 															   image_edit_name + ".png");
-								(*image_editing)
+								(*state.image_editing)
 									->DeleteFromDisk(project_settings.project_directory);
 							}
 						}
 
 						if (will_save) {
-							(*image_editing)->name = image_edit_name;
-							(*image_editing)->dfs_folder = image_edit_dfs_folder;
-							(*image_editing)->h_slices = image_edit_h_slices;
-							(*image_editing)->v_slices = image_edit_v_slices;
-							(*image_editing)->image_path = "assets/sprites/" +
-														   (*image_editing)->name + ".png";
+							(*state.image_editing)->name = image_edit_name;
+							(*state.image_editing)->dfs_folder = image_edit_dfs_folder;
+							(*state.image_editing)->h_slices = image_edit_h_slices;
+							(*state.image_editing)->v_slices = image_edit_v_slices;
+							(*state.image_editing)->image_path = "assets/sprites/" +
+														   (*state.image_editing)->name + ".png";
 
-							(*image_editing)->SaveToDisk(project_settings.project_directory);
+							(*state.image_editing)->SaveToDisk(project_settings.project_directory);
 
-							image_editing = nullptr;
+							state.image_editing = nullptr;
 						}
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
-						image_editing = nullptr;
+						state.image_editing = nullptr;
 					}
 
 					ImGui::EndTabItem();
 				}
 			}
-			if (sound_editing) {
+			if (state.sound_editing) {
 				static char sound_edit_name[50];
 				static char sound_edit_dfs_folder[100];
-				if (reload_sound_edit) {
-					reload_sound_edit = false;
+				if (state.reload_sound_edit) {
+					state.reload_sound_edit = false;
 
-					strcpy(sound_edit_name, (*sound_editing)->name.c_str());
-					strcpy(sound_edit_dfs_folder, (*sound_editing)->dfs_folder.c_str());
+					strcpy(sound_edit_name, (*state.sound_editing)->name.c_str());
+					strcpy(sound_edit_dfs_folder, (*state.sound_editing)->dfs_folder.c_str());
 				}
 				if (ImGui::BeginTabItem("Sound Settings")) {
 					ImGui::InputText("Name", sound_edit_name, 50);
 					ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100);
 
-					if ((*sound_editing)->type == SOUND_WAV) {
-						ImGui::Checkbox("Loop", &(*sound_editing)->wav_loop);
-						if ((*sound_editing)->wav_loop) {
-							ImGui::InputInt("Loop Offset", &(*sound_editing)->wav_loop_offset);
+					if ((*state.sound_editing)->type == SOUND_WAV) {
+						ImGui::Checkbox("Loop", &(*state.sound_editing)->wav_loop);
+						if ((*state.sound_editing)->wav_loop) {
+							ImGui::InputInt("Loop Offset", &(*state.sound_editing)->wav_loop_offset);
 						}
-					} else if ((*sound_editing)->type == SOUND_YM) {
-						ImGui::Checkbox("Compress", &(*sound_editing)->ym_compress);
+					} else if ((*state.sound_editing)->type == SOUND_YM) {
+						ImGui::Checkbox("Compress", &(*state.sound_editing)->ym_compress);
 					}
 
 					ImGui::Separator();
 					ImGui::Spacing();
 					if (ImGui::Button("Save")) {
 						bool will_save = true;
-						if ((*sound_editing)->name != sound_edit_name) {
+						if ((*state.sound_editing)->name != sound_edit_name) {
 							std::string name_string(sound_edit_name);
 							auto find_by_name = [&name_string](std::unique_ptr<LibdragonSound> &i) {
 								return i->name == name_string;
@@ -772,29 +750,29 @@ bool update_gui(SDL_Window *window) {
 								will_save = false;
 							} else {
 								std::filesystem::copy_file(project_settings.project_directory +
-															   "/" + (*sound_editing)->sound_path,
+															   "/" + (*state.sound_editing)->sound_path,
 														   project_settings.project_directory +
 															   "/assets/sounds/" + sound_edit_name +
 															   ".wav");
-								(*sound_editing)
+								(*state.sound_editing)
 									->DeleteFromDisk(project_settings.project_directory);
 							}
 						}
 
 						if (will_save) {
-							(*sound_editing)->name = sound_edit_name;
-							(*sound_editing)->dfs_folder = sound_edit_dfs_folder;
-							(*sound_editing)->sound_path = "assets/sounds/" +
-														   (*sound_editing)->name + ".wav";
+							(*state.sound_editing)->name = sound_edit_name;
+							(*state.sound_editing)->dfs_folder = sound_edit_dfs_folder;
+							(*state.sound_editing)->sound_path = "assets/sounds/" +
+														   (*state.sound_editing)->name + ".wav";
 
-							(*sound_editing)->SaveToDisk(project_settings.project_directory);
+							(*state.sound_editing)->SaveToDisk(project_settings.project_directory);
 
-							sound_editing = nullptr;
+							state.sound_editing = nullptr;
 						}
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
-						sound_editing = nullptr;
+						state.sound_editing = nullptr;
 					}
 
 					ImGui::EndTabItem();
@@ -803,9 +781,9 @@ bool update_gui(SDL_Window *window) {
 			if (ImGui::BeginTabItem("Scenes")) {
 				for (auto &scene : project.scenes) {
 					if (ImGui::Selectable(scene.name.c_str(),
-										  current_scene && scene.id == current_scene->id)) {
-						current_scene = &scene;
-						strcpy(scene_name, current_scene->name.c_str());
+										  state.current_scene && scene.id == state.current_scene->id)) {
+						state.current_scene = &scene;
+						strcpy(state.scene_name, state.current_scene->name.c_str());
 					}
 				}
 
@@ -813,10 +791,10 @@ bool update_gui(SDL_Window *window) {
 				ImGui::Spacing();
 				if (ImGui::Button("Create New Scene")) {
 					project.scenes.emplace_back();
-					current_scene = &project.scenes[project.scenes.size() - 1];
-					current_scene->id = project_settings.next_scene_id++;
-					current_scene->name = std::to_string(project.scenes.size());
-					strcpy(scene_name, current_scene->name.c_str());
+					state.current_scene = &project.scenes[project.scenes.size() - 1];
+					state.current_scene->id = project_settings.next_scene_id++;
+					state.current_scene->name = std::to_string(project.scenes.size());
+					strcpy(state.scene_name, state.current_scene->name.c_str());
 				}
 				ImGui::EndTabItem();
 			}
@@ -824,8 +802,8 @@ bool update_gui(SDL_Window *window) {
 				if (project_settings.IsOpen()) {
 					if (ImGui::BeginTabBar("ProjectAllSettings")) {
 						if (ImGui::BeginTabItem("General")) {
-							ImGui::InputText("Name", project_settings_screen.project_name, 100);
-							ImGui::InputText("Rom", project_settings_screen.rom_name, 100);
+							ImGui::InputText("Name", state.project_settings_screen.project_name, 100);
+							ImGui::InputText("Rom", state.project_settings_screen.rom_name, 100);
 
 							ImGui::Separator();
 
@@ -941,7 +919,7 @@ bool update_gui(SDL_Window *window) {
 								ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
 								ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
 								ImGui::SliderInt("Buffers",
-												 &project_settings_screen.display_buffers, 1, 3);
+												 &state.project_settings_screen.display_buffers, 1, 3);
 								ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
 								ImGui::Combo("Resolution", &resolution_current, resolution_items,
 											 6);
@@ -953,16 +931,16 @@ bool update_gui(SDL_Window *window) {
 						ImGui::Separator();
 						ImGui::Spacing();
 						if (ImGui::Button("Save")) {
-							strcpy(project_settings_screen.display_antialias,
+							strcpy(state.project_settings_screen.display_antialias,
 								   antialias_items[antialias_current]);
-							strcpy(project_settings_screen.display_bit_depth,
+							strcpy(state.project_settings_screen.display_bit_depth,
 								   bit_depth_items[bit_depth_current]);
-							strcpy(project_settings_screen.display_gamma,
+							strcpy(state.project_settings_screen.display_gamma,
 								   gamma_items[gamma_current]);
-							strcpy(project_settings_screen.display_resolution,
+							strcpy(state.project_settings_screen.display_resolution,
 								   resolution_items[resolution_current]);
 
-							project_settings_screen.ToProjectSettings(project_settings);
+							state.project_settings_screen.ToProjectSettings(project_settings);
 
 							project_settings.SaveToDisk();
 
@@ -984,10 +962,10 @@ bool update_gui(SDL_Window *window) {
 					ImGui::SetTooltip(
 						"example: '/path/to/cen64'.\nWe will run 'path path/to/rom_file.z64'.");
 				}
-				ImGui::InputText("##EmuPath", emulator_path, 255);
+				ImGui::InputText("##EmuPath", state.emulator_path, 255);
 
 				if (ImGui::Button("Save")) {
-					engine_settings.SetEmulatorPath(emulator_path);
+					engine_settings.SetEmulatorPath(state.emulator_path);
 				}
 
 				ImGui::EndTabItem();
@@ -1027,29 +1005,29 @@ void reload_scripts() {
 }
 
 void render_image_import_windows() {
-	if (!dropped_image_files.empty() || !dropped_sound_files.empty()) {
+	if (!state.dropped_image_files.empty() || !state.dropped_sound_files.empty()) {
 		int id = 1;
 		if (ImGui::Begin("Import Assets")) {
 			if (ImGui::BeginTabBar("ImportAssets")) {
-				for (int i = 0; i < dropped_image_files.size(); ++i) {
+				for (int i = 0; i < state.dropped_image_files.size(); ++i) {
 					ImGui::PushID(id);
 					if (ImGui::BeginTabItem("Image")) {
-						ImGui::Image((ImTextureID)(intptr_t)dropped_image_files[i].image_data,
-									 ImVec2(dropped_image_files[i].w, dropped_image_files[i].h));
+						ImGui::Image((ImTextureID)(intptr_t)state.dropped_image_files[i].image_data,
+									 ImVec2(state.dropped_image_files[i].w, state.dropped_image_files[i].h));
 
 						ImGui::Separator();
 						ImGui::Spacing();
 
-						ImGui::InputText("Name", dropped_image_files[i].name, 50);
-						ImGui::InputText("DFS Folder", dropped_image_files[i].dfs_folder, 100);
-						ImGui::InputInt("H Slices", &dropped_image_files[i].h_slices);
-						ImGui::InputInt("V Slices", &dropped_image_files[i].v_slices);
+						ImGui::InputText("Name", state.dropped_image_files[i].name, 50);
+						ImGui::InputText("DFS Folder", state.dropped_image_files[i].dfs_folder, 100);
+						ImGui::InputInt("H Slices", &state.dropped_image_files[i].h_slices);
+						ImGui::InputInt("V Slices", &state.dropped_image_files[i].v_slices);
 
 						ImGui::Separator();
 						ImGui::Spacing();
 						if (ImGui::Button("Import")) {
-							std::string name(dropped_image_files[i].name);
-							std::string dfs_folder(dropped_image_files[i].dfs_folder);
+							std::string name(state.dropped_image_files[i].name);
+							std::string dfs_folder(state.dropped_image_files[i].dfs_folder);
 
 							if (name.empty() || dfs_folder.empty()) {
 								console.AddLog(
@@ -1069,13 +1047,13 @@ void render_image_import_windows() {
 									auto image = std::make_unique<LibdragonImage>();
 									image->name = name;
 									image->dfs_folder = dfs_folder;
-									image->h_slices = dropped_image_files[i].h_slices;
-									image->v_slices = dropped_image_files[i].v_slices;
+									image->h_slices = state.dropped_image_files[i].h_slices;
+									image->v_slices = state.dropped_image_files[i].v_slices;
 									image->image_path = "assets/sprites/" + name + ".png";
 
 									std::filesystem::create_directories(
 										project_settings.project_directory + "/assets/sprites");
-									std::filesystem::copy_file(dropped_image_files[i].image_path,
+									std::filesystem::copy_file(state.dropped_image_files[i].image_path,
 															   project_settings.project_directory +
 																   "/assets/sprites/" + name +
 																   ".png");
@@ -1083,7 +1061,7 @@ void render_image_import_windows() {
 									image->SaveToDisk(project_settings.project_directory);
 									load_image(image);
 
-									dropped_image_files.erase(dropped_image_files.begin() + i);
+									state.dropped_image_files.erase(state.dropped_image_files.begin() + i);
 
 									images.push_back(move(image));
 									--i;
@@ -1092,7 +1070,7 @@ void render_image_import_windows() {
 						}
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
-							dropped_image_files.erase(dropped_image_files.begin() + i);
+							state.dropped_image_files.erase(state.dropped_image_files.begin() + i);
 							--i;
 						}
 
@@ -1101,21 +1079,21 @@ void render_image_import_windows() {
 					ImGui::PopID();
 					++id;
 				}
-				for (int i = 0; i < dropped_sound_files.size(); ++i) {
+				for (int i = 0; i < state.dropped_sound_files.size(); ++i) {
 					ImGui::PushID(id);
 					if (ImGui::BeginTabItem("WAV Sound")) {
-						ImGui::InputText("Name", dropped_sound_files[i].name, 50);
-						ImGui::InputText("DFS Folder", dropped_sound_files[i].dfs_folder, 100);
-						ImGui::Checkbox("Loop", &dropped_sound_files[i].loop);
-						if (dropped_sound_files[i].loop) {
-							ImGui::InputInt("Loop Offset", &dropped_sound_files[i].loop_offset);
+						ImGui::InputText("Name", state.dropped_sound_files[i].name, 50);
+						ImGui::InputText("DFS Folder", state.dropped_sound_files[i].dfs_folder, 100);
+						ImGui::Checkbox("Loop", &state.dropped_sound_files[i].loop);
+						if (state.dropped_sound_files[i].loop) {
+							ImGui::InputInt("Loop Offset", &state.dropped_sound_files[i].loop_offset);
 						}
 
 						ImGui::Separator();
 						ImGui::Spacing();
 						if (ImGui::Button("Import")) {
-							std::string name(dropped_sound_files[i].name);
-							std::string dfs_folder(dropped_sound_files[i].dfs_folder);
+							std::string name(state.dropped_sound_files[i].name);
+							std::string dfs_folder(state.dropped_sound_files[i].dfs_folder);
 
 							if (name.empty() || dfs_folder.empty()) {
 								console.AddLog(
@@ -1136,19 +1114,19 @@ void render_image_import_windows() {
 									image->name = name;
 									image->dfs_folder = dfs_folder;
 									image->sound_path = "assets/sounds/" + name + ".wav";
-									image->wav_loop = dropped_sound_files[i].loop;
-									image->wav_loop_offset = dropped_sound_files[i].loop_offset;
+									image->wav_loop = state.dropped_sound_files[i].loop;
+									image->wav_loop_offset = state.dropped_sound_files[i].loop_offset;
 
 									std::filesystem::create_directories(
 										project_settings.project_directory + "/assets/sounds");
-									std::filesystem::copy_file(dropped_sound_files[i].sound_path,
+									std::filesystem::copy_file(state.dropped_sound_files[i].sound_path,
 															   project_settings.project_directory +
 																   "/assets/sounds/" + name +
 																   ".wav");
 
 									image->SaveToDisk(project_settings.project_directory);
 
-									dropped_sound_files.erase(dropped_sound_files.begin() + i);
+									state.dropped_sound_files.erase(state.dropped_sound_files.begin() + i);
 
 									sounds.push_back(move(image));
 									--i;
@@ -1157,7 +1135,7 @@ void render_image_import_windows() {
 						}
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
-							dropped_sound_files.erase(dropped_sound_files.begin() + i);
+							state.dropped_sound_files.erase(state.dropped_sound_files.begin() + i);
 							--i;
 						}
 
