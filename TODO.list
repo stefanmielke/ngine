@@ -21,7 +21,7 @@
 [ ] Import LDtk maps
 [x] Add "Copy DFS folder" on clicking image
 [x] Delete image
-[ ] Change image props
+[x] Change image props
 [x] Change title when saving project settings
 [x] Keep selected scene selected on "Scenes" tab
 [x] Drag&Drop to open project
@@ -32,3 +32,4 @@
 [ ] Option to change Libdragon-Extensions git repo and branch
 [x] Add input (keys_pressed, keys_up, keys_held)
 [ ] Move all UI code out of main.cpp
+[ ] Choose fill color for scene

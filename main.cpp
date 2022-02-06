@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_sdlrenderer.h"
 
@@ -23,12 +24,15 @@
 const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 
 ConsoleApp console;
-Project project;
-Scene *current_scene = nullptr;
-char scene_name[100];
-std::vector<std::string> script_files;
-std::vector<std::unique_ptr<LibdragonImage>> images;
-std::unique_ptr<LibdragonImage> *selected_image;
+
+static Project project;
+static Scene *current_scene = nullptr;
+static char scene_name[100];
+static std::vector<std::string> script_files;
+static std::vector<std::unique_ptr<LibdragonImage>> images;
+static std::unique_ptr<LibdragonImage> *selected_image;
+static std::unique_ptr<LibdragonImage> *image_editing;
+static bool reload_image_edit = false;
 
 struct DroppedImage {
 	std::string image_path;
@@ -38,41 +42,35 @@ struct DroppedImage {
 	char name[50] = "\0";
 	char dfs_folder[100] = "/\0";
 	int h_slices, v_slices;
-	bool copy_to_assets;
 
 	explicit DroppedImage(const char *image_path)
-		: image_path(image_path),
-		  image_data(nullptr),
-		  w(0),
-		  h(0),
-		  h_slices(1),
-		  v_slices(1),
-		  copy_to_assets(true) {
+		: image_path(image_path), image_data(nullptr), w(0), h(0), h_slices(1), v_slices(1) {
 	}
 };
-std::vector<DroppedImage> dropped_image_files;
+static std::vector<DroppedImage> dropped_image_files;
 
-ProjectSettings project_settings;
-EngineSettings engine_settings;
+static ProjectSettings project_settings;
+static EngineSettings engine_settings;
 
-char input_new_project[255];
-char input_open_project[255];
-char emulator_path[255];
-ProjectSettingsScreen project_settings_screen;
+static char input_new_project[255];
+static char input_open_project[255];
+static char emulator_path[255];
+static ProjectSettingsScreen project_settings_screen;
 
 bool open_project(const char *path);
-bool update_gui(SDL_Window *window);
-void render_image_import_windows();
-void reload_scripts();
-void load_images();
-void load_image(std::unique_ptr<LibdragonImage> &image);
+
+static bool update_gui(SDL_Window *window);
+static void render_image_import_windows();
+static void reload_scripts();
+static void load_images();
+static void load_image(std::unique_ptr<LibdragonImage> &image);
 
 struct App {
 	SDL_Renderer *renderer;
 	SDL_Window *window;
 } app;
 
-void initSDL() {
+static void initSDL() {
 	int rendererFlags, windowFlags;
 
 	rendererFlags = SDL_RENDERER_ACCELERATED;
@@ -376,26 +374,35 @@ bool update_gui(SDL_Window *window) {
 
 					int cur_i = 0;
 					if (ImGui::BeginPopup("PopupContentBrowserImage")) {
+						if (ImGui::Selectable("Edit Settings")) {
+							if (selected_image) {
+								image_editing = selected_image;
+								reload_image_edit = true;
+								selected_image = nullptr;
+							}
+						}
 						if (ImGui::Selectable("Copy DFS Path")) {
 							if (selected_image) {
 								std::string dfs_path(selected_image->operator->()->dfs_folder +
 													 selected_image->operator->()->name +
 													 ".sprite");
 								ImGui::SetClipboardText(dfs_path.c_str());
+								selected_image = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
 							if (selected_image) {
-								std::filesystem::remove(
-									project_settings.project_directory + "/.ngine/sprites/" +
-									selected_image->operator->()->name + ".sprite.json");
+								selected_image->operator->()->DeleteFromDisk(
+									project_settings.project_directory);
 
 								for (int i = 0; i < images.size(); ++i) {
-									if (images[i]->image_path == selected_image->operator->()->image_path) {
+									if (images[i]->image_path ==
+										selected_image->operator->()->image_path) {
 										images.erase(images.begin() + i);
 										break;
 									}
 								}
+								selected_image = nullptr;
 							}
 						}
 						ImGui::EndPopup();
@@ -576,7 +583,80 @@ bool update_gui(SDL_Window *window) {
 	if (ImGui::Begin("General Settings", nullptr,
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
 						 ImGuiWindowFlags_NoTitleBar)) {
-		if (ImGui::BeginTabBar("Properties")) {
+		if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_AutoSelectNewTabs)) {
+			if (image_editing) {
+				static char image_edit_name[50];
+				static char image_edit_dfs_folder[100];
+				static int image_edit_h_slices = 0;
+				static int image_edit_v_slices = 0;
+				if (reload_image_edit) {
+					reload_image_edit = false;
+
+					strcpy(image_edit_name, image_editing->operator->()->name.c_str());
+					strcpy(image_edit_dfs_folder, image_editing->operator->()->dfs_folder.c_str());
+					image_edit_h_slices = image_editing->operator->()->h_slices;
+					image_edit_v_slices = image_editing->operator->()->v_slices;
+				}
+				if (ImGui::BeginTabItem("Image Settings")) {
+					ImGui::Image((ImTextureID)(intptr_t)image_editing->operator->()->loaded_image,
+								 ImVec2(image_editing->operator->()->display_width * 2,
+										image_editing->operator->()->display_height * 2));
+					ImGui::Separator();
+					ImGui::Spacing();
+					ImGui::InputText("Name", image_edit_name, 50);
+					ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100);
+					ImGui::InputInt("H Slices", &image_edit_h_slices);
+					ImGui::InputInt("V Slices", &image_edit_v_slices);
+
+					ImGui::Separator();
+					ImGui::Spacing();
+					if (ImGui::Button("Save")) {
+						bool will_save = true;
+						if (image_editing->operator->()->name != image_edit_name) {
+							std::string name_string(image_edit_name);
+							auto find_by_name = [&name_string](std::unique_ptr<LibdragonImage> &i) {
+								return i.operator->()->name == name_string;
+							};
+							if (std::find_if(images.begin(), images.end(), find_by_name) !=
+								std::end(images)) {
+								console.AddLog(
+									"Image with the name already exists. Please choose a "
+									"different name.");
+								will_save = false;
+							} else {
+								std::filesystem::copy_file(
+									project_settings.project_directory + "/" +
+										image_editing->operator->()->image_path,
+									project_settings.project_directory + "/assets/sprites/" +
+										image_edit_name + ".png");
+								image_editing->operator->()->DeleteFromDisk(
+									project_settings.project_directory);
+							}
+						}
+
+						if (will_save) {
+							image_editing->operator->()->name = image_edit_name;
+							image_editing->operator->()->dfs_folder = image_edit_dfs_folder;
+							image_editing->operator->()->h_slices = image_edit_h_slices;
+							image_editing->operator->()->v_slices = image_edit_v_slices;
+							image_editing->operator->()
+								->image_path = "assets/sprites/" +
+											   image_editing->operator->()->name + ".png";
+
+							image_editing->operator->()->SaveToDisk(
+								project_settings.project_directory);
+
+							image_editing = nullptr;
+						}
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel")) {
+						image_editing = nullptr;
+					}
+
+					ImGui::EndTabItem();
+				}
+			}
 			if (ImGui::BeginTabItem("Scenes")) {
 				for (auto &scene : project.scenes) {
 					if (ImGui::Selectable(scene.name.c_str(),
@@ -776,7 +856,6 @@ void render_image_import_windows() {
 						ImGui::InputText("DFS Folder", dropped_image_files[i].dfs_folder, 100);
 						ImGui::InputInt("H Slices", &dropped_image_files[i].h_slices);
 						ImGui::InputInt("V Slices", &dropped_image_files[i].v_slices);
-						ImGui::Checkbox("Copy to Project", &dropped_image_files[i].copy_to_assets);
 
 						ImGui::Separator();
 						ImGui::Spacing();
@@ -788,13 +867,22 @@ void render_image_import_windows() {
 								console.AddLog(
 									"[error] Please fill both 'name' and 'dfs folder' fields");
 							} else {
-								auto image = std::make_unique<LibdragonImage>();
-								image->name = name;
-								image->dfs_folder = dfs_folder;
-								image->h_slices = dropped_image_files[i].h_slices;
-								image->v_slices = dropped_image_files[i].v_slices;
-
-								if (dropped_image_files[i].copy_to_assets) {
+								std::string name_string(name);
+								auto find_by_name =
+									[&name_string](std::unique_ptr<LibdragonImage> &i) {
+										return i.operator->()->name == name_string;
+									};
+								if (std::find_if(images.begin(), images.end(), find_by_name) !=
+									std::end(images)) {
+									console.AddLog(
+										"Image with the name already exists. Please choose a "
+										"different name.");
+								} else {
+									auto image = std::make_unique<LibdragonImage>();
+									image->name = name;
+									image->dfs_folder = dfs_folder;
+									image->h_slices = dropped_image_files[i].h_slices;
+									image->v_slices = dropped_image_files[i].v_slices;
 									image->image_path = "assets/sprites/" + name + ".png";
 
 									std::filesystem::create_directories(
@@ -803,20 +891,15 @@ void render_image_import_windows() {
 															   project_settings.project_directory +
 																   "/assets/sprites/" + name +
 																   ".png");
-								} else {
-									image->image_path = std::filesystem::path(
-															dropped_image_files[i].image_path)
-															.lexically_relative(
-																project_settings.project_directory);
+
+									image->SaveToDisk(project_settings.project_directory);
+									load_image(image);
+
+									dropped_image_files.erase(dropped_image_files.begin() + i);
+
+									images.push_back(move(image));
+									--i;
 								}
-
-								image->SaveToDisk(project_settings.project_directory);
-								load_image(image);
-
-								dropped_image_files.erase(dropped_image_files.begin() + i);
-
-								images.push_back(move(image));
-								--i;
 							}
 						}
 						ImGui::SameLine();

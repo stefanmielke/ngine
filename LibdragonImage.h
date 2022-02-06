@@ -23,4 +23,5 @@ class LibdragonImage {
 
 	void SaveToDisk(std::string &project_directory);
 	void LoadFromDisk(std::string &filepath);
+	void DeleteFromDisk(std::string &project_directory);
 };
