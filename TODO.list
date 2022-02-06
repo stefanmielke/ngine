@@ -32,9 +32,9 @@
 [x] Add input (keys_pressed, keys_up, keys_held)
 [x] Choose fill color for scene
 [x] Always delete build folder when building
-
-[ ] Fix closing and opening project
+[x] Fix closing and opening project
     - Create class to store/erase when loading/closing.
+
 [ ] Import xm sound files
 [ ] Import ym sound files
     - "--ym-compress <true|false>": Compress output file
@@ -46,6 +46,7 @@
 [ ] Move all UI code out of main.cpp
 [ ] Scene nodes
 [ ] README!
+[ ] Fix texture leak on exiting the app.
 
 Future:
 [ ] Import 3d models

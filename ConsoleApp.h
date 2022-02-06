@@ -139,3 +139,5 @@ struct ConsoleApp {
 		ImGui::End();
 	}
 };
+
+extern ConsoleApp console;
