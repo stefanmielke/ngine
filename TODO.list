@@ -32,4 +32,4 @@
 [ ] Option to change Libdragon-Extensions git repo and branch
 [x] Add input (keys_pressed, keys_up, keys_held)
 [ ] Move all UI code out of main.cpp
-[ ] Choose fill color for scene
+[x] Choose fill color for scene
