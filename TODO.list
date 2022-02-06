@@ -44,6 +44,7 @@
 [x] Choose fill color for scene
 [ ] Scene nodes
 [ ] README!
+[x] Always delete build folder when building
 
 Future:
 [ ] Import 3d models

@@ -71,6 +71,8 @@ void ProjectBuilder::Create(std::string project_folder) {
 void create_build_files(ProjectSettings &project_settings, Project &project,
 						std::vector<std::unique_ptr<LibdragonImage>> &images,
 						std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
+	std::filesystem::remove_all(project_settings.project_directory + "/build");
+
 	std::string makefile_path(project_settings.project_directory + "/Makefile");
 	generate_makefile_gen(makefile_path, project_settings.rom_name.c_str(),
 						  project_settings.project_name.c_str(), !images.empty());
