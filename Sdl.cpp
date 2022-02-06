@@ -52,3 +52,21 @@ void Sdl::Quit(SDL_Window *window, SDL_Renderer *renderer) {
 	IMG_Quit();
 	SDL_Quit();
 }
+
+void Sdl::NewFrame() {
+	ImGui_ImplSDLRenderer_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+}
+
+void Sdl::RenderStart(SDL_Renderer *renderer) {
+	ImGui::Render();
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderClear(renderer);
+}
+
+void Sdl::RenderEnd(SDL_Renderer *renderer) {
+	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+	SDL_RenderPresent(renderer);
+}

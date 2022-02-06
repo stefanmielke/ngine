@@ -104,21 +104,15 @@ int main() {
 		if (!is_running)
 			break;
 
-		ImGui_ImplSDLRenderer_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
+		Sdl::NewFrame();
 
 		is_running = update_gui(app.window);
 
-		ImGui::Render();
-
-		SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
-		SDL_RenderClear(app.renderer);
+		Sdl::RenderStart(app.renderer);
 
 		// render SDL stuff here
 
-		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-		SDL_RenderPresent(app.renderer);
+		Sdl::RenderEnd(app.renderer);
 	}
 
 	Sdl::Quit(app.window, app.renderer);
