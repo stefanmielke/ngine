@@ -57,3 +57,73 @@ void Project::LoadFromDisk(std::string &project_directory) {
 		}
 	}
 }
+void Project::ReloadImages(SDL_Renderer *renderer) {
+	images.clear();
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sprites";
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path());
+			if (filepath.ends_with(".sprite.json")) {
+				auto image = std::make_unique<LibdragonImage>();
+				image->LoadFromDisk(filepath);
+				image->LoadImage(project_settings.project_directory, renderer);
+
+				images.push_back(move(image));
+			}
+		}
+	}
+}
+
+void Project::ReloadScripts() {
+	script_files.clear();
+
+	std::filesystem::path script_folder = project_settings.project_directory + "/.ngine/scripts";
+
+	if (!std::filesystem::exists(script_folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(script_folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path());
+			if (filepath.ends_with(".script.json")) {
+				nlohmann::json json;
+
+				std::ifstream filestream(file_entry.path());
+				filestream >> json;
+				filestream.close();
+
+				script_files.emplace_back(json["name"]);
+			}
+		}
+	}
+}
+
+void Project::ReloadSounds() {
+	sounds.clear();
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/sounds";
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path());
+			if (filepath.ends_with(".sound.json")) {
+				auto sound = std::make_unique<LibdragonSound>(SOUND_UNKNOWN);
+				sound->LoadFromDisk(filepath);
+
+				sounds.push_back(move(sound));
+			}
+		}
+	}
+}

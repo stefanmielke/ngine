@@ -13,7 +13,6 @@
 #include "ConsoleApp.h"
 #include "DroppedAssets.h"
 #include "Emulator.h"
-#include "json.hpp"
 #include "LibdragonImage.h"
 #include "LibdragonSound.h"
 #include "ProjectBuilder.h"
@@ -29,10 +28,6 @@ bool open_project(const char *path);
 
 static bool update_gui(SDL_Window *window);
 static void render_image_import_windows();
-static void reload_scripts();
-static void load_sounds();
-static void load_images();
-static void load_image(std::unique_ptr<LibdragonImage> &image);
 
 static void initSDL() {
 	int rendererFlags, windowFlags;
@@ -198,10 +193,10 @@ bool open_project(const char *path) {
 
 	app.engine_settings.SetLastOpenedProject(project_filepath);
 
-	reload_scripts();
+	app.project.ReloadScripts();
 
-	load_images();
-	load_sounds();
+	app.project.ReloadImages(app.renderer);
+	app.project.ReloadSounds();
 
 	console.AddLog("Project opened.");
 
@@ -337,7 +332,7 @@ bool update_gui(SDL_Window *window) {
 
 					if (ImGui::BeginPopup("PopupSpritesBrowser")) {
 						if (ImGui::Selectable("Refresh")) {
-							load_images();
+							app.project.ReloadImages(app.renderer);
 						}
 						ImGui::EndPopup();
 					}
@@ -414,7 +409,7 @@ bool update_gui(SDL_Window *window) {
 
 					if (ImGui::BeginPopup("PopupSoundsBrowser")) {
 						if (ImGui::Selectable("Refresh")) {
-							load_sounds();
+							app.project.ReloadSounds();
 						}
 						ImGui::EndPopup();
 					}
@@ -479,7 +474,7 @@ bool update_gui(SDL_Window *window) {
 							ScriptBuilder::CreateScriptFile(app.project.project_settings, script_name_input);
 							memset(script_name_input, 0, 100);
 
-							reload_scripts();
+							app.project.ReloadScripts();
 						}
 					}
 					ImGui::Separator();
@@ -960,32 +955,6 @@ bool update_gui(SDL_Window *window) {
 	return true;
 }
 
-void reload_scripts() {
-	app.project.script_files.clear();
-
-	std::filesystem::path script_folder = app.project.project_settings.project_directory + "/.ngine/scripts";
-
-	if (!std::filesystem::exists(script_folder)) {
-		return;
-	}
-
-	std::filesystem::recursive_directory_iterator dir_iter(script_folder);
-	for (auto &file_entry : dir_iter) {
-		if (file_entry.is_regular_file()) {
-			std::string filepath(file_entry.path());
-			if (filepath.ends_with(".script.json")) {
-				nlohmann::json json;
-
-				std::ifstream filestream(file_entry.path());
-				filestream >> json;
-				filestream.close();
-
-				app.project.script_files.emplace_back(json["name"]);
-			}
-		}
-	}
-}
-
 void render_image_import_windows() {
 	if (!app.state.dropped_image_files.empty() || !app.state.dropped_sound_files.empty()) {
 		int id = 1;
@@ -1041,7 +1010,7 @@ void render_image_import_windows() {
 																   ".png");
 
 									image->SaveToDisk(app.project.project_settings.project_directory);
-									load_image(image);
+									image->LoadImage(app.project.project_settings.project_directory, app.renderer);
 
 									app.state.dropped_image_files.erase(app.state.dropped_image_files.begin() + i);
 
@@ -1130,75 +1099,5 @@ void render_image_import_windows() {
 			ImGui::EndTabBar();
 		}
 		ImGui::End();
-	}
-}
-
-void load_images() {
-	app.project.images.clear();
-
-	std::filesystem::path folder = app.project.project_settings.project_directory + "/.ngine/sprites";
-	if (!std::filesystem::exists(folder)) {
-		return;
-	}
-
-	std::filesystem::recursive_directory_iterator dir_iter(folder);
-	for (auto &file_entry : dir_iter) {
-		if (file_entry.is_regular_file()) {
-			std::string filepath(file_entry.path());
-			if (filepath.ends_with(".sprite.json")) {
-				auto image = std::make_unique<LibdragonImage>();
-				image->LoadFromDisk(filepath);
-
-				load_image(image);
-
-				app.project.images.push_back(move(image));
-			}
-		}
-	}
-}
-
-void load_image(std::unique_ptr<LibdragonImage> &image) {
-	std::string path(app.project.project_settings.project_directory + "/" + image->image_path);
-
-	image->loaded_image = IMG_LoadTexture(app.renderer, path.c_str());
-
-	int w, h;
-	SDL_QueryTexture(image->loaded_image, nullptr, nullptr, &w, &h);
-
-	image->width = w;
-	image->height = h;
-
-	const float max_size = 100.f;
-	if (w > h) {
-		h = (h / (float)w) * max_size;
-		w = max_size;
-	} else {
-		w = (w / (float)h) * max_size;
-		h = max_size;
-	}
-
-	image->display_width = w;
-	image->display_height = h;
-}
-
-void load_sounds() {
-	app.project.sounds.clear();
-
-	std::filesystem::path folder = app.project.project_settings.project_directory + "/.ngine/sounds";
-	if (!std::filesystem::exists(folder)) {
-		return;
-	}
-
-	std::filesystem::recursive_directory_iterator dir_iter(folder);
-	for (auto &file_entry : dir_iter) {
-		if (file_entry.is_regular_file()) {
-			std::string filepath(file_entry.path());
-			if (filepath.ends_with(".sound.json")) {
-				auto sound = std::make_unique<LibdragonSound>(SOUND_UNKNOWN);
-				sound->LoadFromDisk(filepath);
-
-				app.project.sounds.push_back(move(sound));
-			}
-		}
 	}
 }

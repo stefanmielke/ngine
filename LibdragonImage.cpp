@@ -60,3 +60,27 @@ void LibdragonImage::DeleteFromDisk(std::string &project_directory) const {
 	std::string image_filepath = project_directory + "/" + image_path;
 	std::filesystem::remove(image_filepath);
 }
+
+void LibdragonImage::LoadImage(std::string &project_directory, SDL_Renderer *renderer) {
+	std::string path(project_directory + "/" + image_path);
+
+	loaded_image = IMG_LoadTexture(renderer, path.c_str());
+
+	int w, h;
+	SDL_QueryTexture(loaded_image, nullptr, nullptr, &w, &h);
+
+	width = w;
+	height = h;
+
+	const float max_size = 100.f;
+	if (w > h) {
+		h = (h / (float)w) * max_size;
+		w = max_size;
+	} else {
+		w = (w / (float)h) * max_size;
+		h = max_size;
+	}
+
+	display_width = w;
+	display_height = h;
+}

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <SDL2/SDL.h>
 
 #include "ProjectSettings.h"
 #include "Scene.h"
@@ -20,4 +21,8 @@ class Project {
 
 	void SaveToDisk(std::string &project_directory);
 	void LoadFromDisk(std::string &project_directory);
+
+	void ReloadImages(SDL_Renderer *renderer);
+	void ReloadScripts();
+	void ReloadSounds();
 };
