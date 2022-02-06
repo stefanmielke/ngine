@@ -14,8 +14,8 @@
     - H/VSlices
     - DFS Folder
     - Ask "Copy to sprite project" and copy to '/assets/'
-[ ] Import music
-[ ] Import sfx
+[x] Import music
+[x] Import sfx
 [ ] Import sprite fonts
 [ ] Import Tiled maps
 [ ] Import LDtk maps
