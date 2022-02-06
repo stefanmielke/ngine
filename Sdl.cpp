@@ -6,7 +6,7 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_sdlrenderer.h"
 
-void Sdl::Init(SDL_Window *window, SDL_Renderer *renderer, const char *window_title) {
+void Sdl::Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_title) {
 	int rendererFlags, windowFlags;
 
 	rendererFlags = SDL_RENDERER_ACCELERATED;
@@ -20,7 +20,7 @@ void Sdl::Init(SDL_Window *window, SDL_Renderer *renderer, const char *window_ti
 
 	IMG_Init(IMG_INIT_PNG);
 
-	window = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024,
+	*window = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024,
 							  768, windowFlags);
 
 	if (!window) {
@@ -30,7 +30,7 @@ void Sdl::Init(SDL_Window *window, SDL_Renderer *renderer, const char *window_ti
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-	renderer = SDL_CreateRenderer(window, -1, rendererFlags);
+	*renderer = SDL_CreateRenderer(*window, -1, rendererFlags);
 
 	if (!renderer) {
 		printf("Failed to create renderer: %s\n", SDL_GetError());
@@ -38,8 +38,8 @@ void Sdl::Init(SDL_Window *window, SDL_Renderer *renderer, const char *window_ti
 	}
 
 	ImGui::CreateContext();
-	ImGui_ImplSDL2_InitForSDLRenderer(window);
-	ImGui_ImplSDLRenderer_Init(renderer);
+	ImGui_ImplSDL2_InitForSDLRenderer(*window);
+	ImGui_ImplSDLRenderer_Init(*renderer);
 }
 
 void Sdl::Quit(SDL_Window *window, SDL_Renderer *renderer) {

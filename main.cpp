@@ -16,7 +16,7 @@ int main() {
 	app.engine_settings.LoadFromDisk();
 	app.state = ProjectState(app.engine_settings);
 
-	Sdl::Init(app.window, app.renderer, default_title);
+	Sdl::Init(&app.window, &app.renderer, default_title);
 
 	while (app.is_running) {
 		SDL_Event event;
