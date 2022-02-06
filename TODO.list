@@ -5,8 +5,6 @@
 [x] Attach script to scene
 [x] Delete scripts
     - Search inside scenes and remove from them
-[ ] Fix closing and opening project
-    - Create class to store/erase when loading/closing.
 [x] Open project after creating it
 [x] Change "Mupen64" to "Emulator"
 [x] Import sprites/spritesheets
@@ -16,18 +14,12 @@
     - Ask "Copy to sprite project" and copy to '/assets/'
 [x] Import music
 [x] Import sfx
-[ ] Import xm sound files
-[ ] Import ym sound files
-    - "--ym-compress <true|false>": Compress output file
 [x] Add wav options
     - "--wav-loop <true|false>": Activate playback loop by default
     - "--wav-loop-offset <N>": Set looping offset (in samples; default: 0)
 [x] DFS sounds gen/import
 [x] Set audiomixer as module and load it properly
-[ ] Separate project settings on multiple tabs
-[ ] Import sprite fonts
-[ ] Import Tiled maps
-[ ] Import LDtk maps
+[x] Separate project settings on multiple tabs
 [x] Add "Copy DFS folder" on clicking image
 [x] Delete image
 [x] Change image props
@@ -37,14 +29,23 @@
 [x] BUGFIX: Do not allow empty script names
 [x] Create DFS file with assets
     - Create sprite files and push to 'filesystem' folder
+[x] Add input (keys_pressed, keys_up, keys_held)
+[x] Choose fill color for scene
+[x] Always delete build folder when building
+
+[ ] Fix closing and opening project
+    - Create class to store/erase when loading/closing.
+[ ] Import xm sound files
+[ ] Import ym sound files
+    - "--ym-compress <true|false>": Compress output file
+[ ] Import sprite fonts
+[ ] Import Tiled maps
+[ ] Import LDtk maps
 [ ] Option to change Libdragon git repo and branch
 [ ] Option to change Libdragon-Extensions git repo and branch
-[x] Add input (keys_pressed, keys_up, keys_held)
 [ ] Move all UI code out of main.cpp
-[x] Choose fill color for scene
 [ ] Scene nodes
 [ ] README!
-[x] Always delete build folder when building
 
 Future:
 [ ] Import 3d models
