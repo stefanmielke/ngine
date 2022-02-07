@@ -218,6 +218,9 @@ void AppGui::RenderContentBrowser(App &app) {
 						ImGui::EndPopup();
 					}
 
+					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+					ImGui::Separator();
+
 					for (auto &image : app.project.images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
@@ -291,6 +294,9 @@ void AppGui::RenderContentBrowser(App &app) {
 						}
 						ImGui::EndPopup();
 					}
+
+					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+					ImGui::Separator();
 
 					for (auto &sound : app.project.sounds) {
 						if (ImGui::Selectable(sound->name.c_str())) {
