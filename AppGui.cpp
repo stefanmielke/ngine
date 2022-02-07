@@ -710,6 +710,10 @@ void AppGui::RenderSettingsWindow(App &app) {
 									}
 									ImGui::EndCombo();
 								}
+								ImGui::SameLine();
+								if (ImGui::Button("Remove")) {
+									app.project.project_settings.global_script_name = "";
+								}
 							}
 
 							ImGui::Separator();

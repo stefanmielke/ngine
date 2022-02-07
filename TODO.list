@@ -39,6 +39,8 @@
 [x] Memory pool as module
 [x] Do not create scene files if module is not used.
 [x] [Enter] create script
+[x] [Enter] open/create project
+[x] Create "remove global script" button
 
 [ ] Import xm sound files
 [ ] Import ym sound files
@@ -52,9 +54,7 @@
 [ ] README!
 [ ] Fix texture leak on exiting the app.
 [ ] Set DFS location
-[ ] Remove global script button
 [ ] Resize import preview image based on window
-[ ] [Enter] open/create project
 
 Future:
 [ ] Import 3d models
