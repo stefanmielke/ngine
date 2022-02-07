@@ -16,6 +16,9 @@ void change_scene(short curr_scene, short next_scene) {
 })";
 
 void generate_change_scene_gen_c(std::string &filepath, Project &project) {
+	if (!project.project_settings.modules.scene_manager)
+		return;
+
 	std::stringstream header_content;
 	std::stringstream content;
 	for (auto &scene : project.scenes) {

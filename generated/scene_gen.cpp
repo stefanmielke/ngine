@@ -36,6 +36,9 @@ void scene_%d_destroy() {
 })";
 
 void generate_scene_gen_files(ProjectSettings &project_settings, Project &project) {
+	if (!project_settings.modules.scene_manager)
+		return;
+
 	for (auto &scene : project.scenes) {
 		std::string header_name = project_settings.project_directory + "/src/scenes/scene_" +
 								  std::to_string(scene.id) + ".gen.h";
