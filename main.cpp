@@ -16,6 +16,8 @@ int main() {
 
 	Sdl::Init(&app.window, &app.renderer, app.default_title);
 
+	AppGui::ChangeTheme(app, app.engine_settings.GetTheme());
+
 	while (app.is_running) {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {

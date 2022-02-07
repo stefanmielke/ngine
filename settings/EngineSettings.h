@@ -2,6 +2,12 @@
 
 #include <string>
 
+enum Theme {
+	THEME_DARK,
+	THEME_LIGHT,
+	THEME_CLASSIC,
+};
+
 class EngineSettings {
    public:
 	EngineSettings();
@@ -19,7 +25,13 @@ class EngineSettings {
 		return last_opened_project;
 	};
 
+	void SetTheme(Theme theme_id);
+	Theme GetTheme() {
+		return theme;
+	};
+
    private:
 	std::string last_opened_project;
 	std::string emulator_location;
+	Theme theme;
 };

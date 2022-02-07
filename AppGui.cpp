@@ -665,36 +665,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 											 100);
 
 							ImGui::Separator();
-
-							{
-								std::string current_selected("None");
-								for (auto &scene : app.project.scenes) {
-									if (scene.id ==
-										app.project.project_settings.initial_screen_id) {
-										current_selected = scene.name;
-										break;
-									}
-								}
-								ImGui::TextUnformatted("Initial Screen");
-
-								ImGui::BeginDisabled(
-									!app.project.project_settings.modules.scene_manager);
-								if (ImGui::BeginCombo("##InitialScreen",
-													  current_selected.c_str())) {
-									for (auto &scene : app.project.scenes) {
-										if (ImGui::Selectable(
-												scene.name.c_str(),
-												scene.id == app.project.project_settings
-																.initial_screen_id)) {
-											app.project.project_settings
-												.initial_screen_id = scene.id;
-										}
-									}
-									ImGui::EndCombo();
-								}
-								ImGui::EndDisabled();
-							}
-
 							{
 								ImGui::TextUnformatted("Global Script");
 								if (ImGui::BeginCombo(
@@ -714,6 +684,36 @@ void AppGui::RenderSettingsWindow(App &app) {
 								if (ImGui::Button("Remove")) {
 									app.project.project_settings.global_script_name = "";
 								}
+							}
+
+							ImGui::Separator();
+							{
+								ImGui::BeginDisabled(
+									!app.project.project_settings.modules.scene_manager);
+
+								std::string current_selected("None");
+								for (auto &scene : app.project.scenes) {
+									if (scene.id ==
+										app.project.project_settings.initial_screen_id) {
+										current_selected = scene.name;
+										break;
+									}
+								}
+								ImGui::TextUnformatted("Initial Screen");
+								if (ImGui::BeginCombo("##InitialScreen",
+													  current_selected.c_str())) {
+									for (auto &scene : app.project.scenes) {
+										if (ImGui::Selectable(
+												scene.name.c_str(),
+												scene.id == app.project.project_settings
+																.initial_screen_id)) {
+											app.project.project_settings
+												.initial_screen_id = scene.id;
+										}
+									}
+									ImGui::EndCombo();
+								}
+								ImGui::EndDisabled();
 							}
 
 							ImGui::Separator();
@@ -858,6 +858,16 @@ void AppGui::RenderSettingsWindow(App &app) {
 				}
 				ImGui::InputText("##EmuPath", app.state.emulator_path, 255);
 
+				{
+					ImGui::TextUnformatted("Theme");
+					static int selected_theme = (int)app.engine_settings.GetTheme();
+					const char *themes[] = {"Dark", "Light", "Classic"};
+					if (ImGui::Combo("##Theme", &selected_theme, themes, 3)) {
+						ChangeTheme(app, (Theme)selected_theme);
+					}
+				}
+
+				ImGui::Spacing();
 				if (ImGui::Button("Save")) {
 					app.engine_settings.SetEmulatorPath(app.state.emulator_path);
 				}
@@ -868,4 +878,20 @@ void AppGui::RenderSettingsWindow(App &app) {
 		ImGui::EndTabBar();
 	}
 	ImGui::End();
+}
+
+void AppGui::ChangeTheme(App &app, Theme theme) {
+	app.engine_settings.SetTheme(theme);
+
+	switch (theme) {
+		case THEME_DARK:
+			ImGui::StyleColorsDark();
+			break;
+		case THEME_LIGHT:
+			ImGui::StyleColorsLight();
+			break;
+		case THEME_CLASSIC:
+			ImGui::StyleColorsClassic();
+			break;
+	}
 }

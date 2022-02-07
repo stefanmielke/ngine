@@ -41,7 +41,10 @@
 [x] [Enter] create script
 [x] [Enter] open/create project
 [x] Create "remove global script" button
+[x] Themes
 
+[ ] Set DFS location
+    - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import xm sound files
 [ ] Import ym sound files
     - "--ym-compress <true|false>": Compress output file
@@ -53,7 +56,6 @@
 [ ] Scene nodes
 [ ] README!
 [ ] Fix texture leak on exiting the app.
-[ ] Set DFS location
 [ ] Resize import preview image based on window
 
 Future:

@@ -23,7 +23,7 @@ void Sdl::Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_
 	*window = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024,
 							  768, windowFlags);
 
-	if (!window) {
+	if (!*window) {
 		printf("Failed to open window: %s\n", SDL_GetError());
 		exit(1);
 	}
@@ -32,7 +32,7 @@ void Sdl::Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_
 
 	*renderer = SDL_CreateRenderer(*window, -1, rendererFlags);
 
-	if (!renderer) {
+	if (!*renderer) {
 		printf("Failed to create renderer: %s\n", SDL_GetError());
 		exit(1);
 	}
