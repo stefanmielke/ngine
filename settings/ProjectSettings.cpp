@@ -59,6 +59,7 @@ bool ProjectSettings::LoadFromFile(std::string &folder) {
 	modules.debug_is_viewer = json["modules"]["debug_is_viewer"];
 	modules.dfs = json["modules"]["dfs"];
 	modules.display = json["modules"]["display"];
+	modules.memory_pool = json["modules"]["memory_pool"];
 	modules.rdp = json["modules"]["rdp"];
 	modules.scene_manager = json["modules"]["scene_manager"];
 	modules.timer = json["modules"]["timer"];
@@ -100,6 +101,7 @@ void ProjectSettings::SaveToDisk() {
 	json["modules"]["debug_is_viewer"] = modules.debug_is_viewer;
 	json["modules"]["dfs"] = modules.dfs;
 	json["modules"]["display"] = modules.display;
+	json["modules"]["memory_pool"] = modules.memory_pool;
 	json["modules"]["rdp"] = modules.rdp;
 	json["modules"]["scene_manager"] = modules.scene_manager;
 	json["modules"]["timer"] = modules.timer;

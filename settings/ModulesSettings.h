@@ -11,6 +11,7 @@ class ModulesSettings {
 	bool audio;
 	bool audio_mixer;
 	bool scene_manager;
+	bool memory_pool;
 
 	bool debug_is_viewer;
 	bool debug_usb;

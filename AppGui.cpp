@@ -702,6 +702,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 							ImGui::Separator();
 
+							ImGui::BeginDisabled(!app.project.project_settings.modules.memory_pool);
 							ImGui::TextUnformatted("Global Memory Reserve (KB)");
 							ImGui::InputInt("##GlobalMem",
 											&app.project.project_settings.global_mem_alloc_size, 1,
@@ -710,6 +711,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 							ImGui::InputInt("##LocalMem",
 											&app.project.project_settings.scene_mem_alloc_size, 1,
 											1024);
+							ImGui::EndDisabled();
 
 							ImGui::EndTabItem();
 						}
@@ -739,6 +741,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 							ImGui::Checkbox("Display",
 											&app.project.project_settings.modules.display);
 							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
+							ImGui::Checkbox("Memory Pool", &app.project.project_settings.modules.memory_pool);
 							ImGui::Checkbox("RDP", &app.project.project_settings.modules.rdp);
 							ImGui::Checkbox("Scene Manager",
 											&app.project.project_settings.modules.scene_manager);

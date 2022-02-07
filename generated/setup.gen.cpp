@@ -10,8 +10,6 @@ const char *setup_gen_c = R"(#include <libdragon.h>
 %s
 void setup() {
 %s
-	mem_zone_init(&global_memory_pool, %d);
-	mem_zone_init(&scene_memory_pool, %d);
 %s}
 
 void tick() {
@@ -39,7 +37,18 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 		display_body << "\tstatic display_context_t disp = 0;" << std::endl
 					 << "\twhile (!(disp = display_lock()));" << std::endl;
 	}
+	if (settings.modules.memory_pool) {
+		variables << "MemZone global_memory_pool;" << std::endl
+				  << "MemZone scene_memory_pool;" << std::endl;
+
+		setup_end_body << "\tmem_zone_init(&global_memory_pool, "
+					   << settings.global_mem_alloc_size * 1024 << ");" << std::endl
+					   << "\tmem_zone_init(&scene_memory_pool, "
+					   << settings.scene_mem_alloc_size * 1024 << ");" << std::endl;
+	}
 	if (settings.modules.scene_manager) {
+		variables << "SceneManager *scene_manager;" << std::endl;
+
 		tick_end_body << "\tscene_manager_tick(scene_manager);" << std::endl;
 
 		if (settings.modules.display) {
@@ -117,8 +126,7 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 
 	FILE *filestream = fopen(setup_path.c_str(), "w");
 	fprintf(filestream, setup_gen_c, includes.str().c_str(), variables.str().c_str(),
-			setup_body.str().c_str(), settings.global_mem_alloc_size * 1024,
-			settings.scene_mem_alloc_size * 1024, setup_end_body.str().c_str(),
-			tick_body.str().c_str(), tick_end_body.str().c_str(), display_body.str().c_str());
+			setup_body.str().c_str(), setup_end_body.str().c_str(), tick_body.str().c_str(),
+			tick_end_body.str().c_str(), display_body.str().c_str());
 	fclose(filestream);
 }

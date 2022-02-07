@@ -36,7 +36,9 @@
     - Create class to store/erase when loading/closing.
 [x] Move all UI code out of main.cpp
 [x] Scene manager as module
+[x] Memory pool as module
 
+[ ] Do not create scene files if module is not used.
 [ ] Import xm sound files
 [ ] Import ym sound files
     - "--ym-compress <true|false>": Compress output file
@@ -50,7 +52,6 @@
 [ ] Fix texture leak on exiting the app.
 [ ] Set DFS location
 [ ] Remove global script button
-[ ] Memory pool as module
 [ ] Resize import preview image based on window
 [ ] [Enter] create script
 [ ] [Enter] open/create project

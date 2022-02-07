@@ -5,11 +5,6 @@ const char *main_s_c =
 #include <mem_pool.h>
 #include <scene_manager.h>
 
-MemZone global_memory_pool;
-MemZone scene_memory_pool;
-
-SceneManager *scene_manager;
-
 void setup();
 void tick();
 void display();
