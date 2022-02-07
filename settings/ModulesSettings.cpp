@@ -9,6 +9,7 @@ ModulesSettings::ModulesSettings()
 	  console(false),
 	  audio(true),
 	  audio_mixer(true),
+	  scene_manager(true),
 	  debug_is_viewer(true),
 	  debug_usb(false) {
 }

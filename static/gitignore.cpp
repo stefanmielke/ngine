@@ -16,19 +16,9 @@ build.log
 *.dfs
 *.d
 
-filesystem/
-
-/src/res/
-
-*.plan_bak*
-
-# cmake files
-cmake-*/
-
 # removing csv files generated during build-resources.sh
 /assets/maps/**/*.csv
 
 # removing build generated files
 /src/**/*.gen.c
-/src/**/*.gen.h
-)";
+/src/**/*.gen.h)";

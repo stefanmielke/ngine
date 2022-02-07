@@ -10,6 +10,7 @@ class ModulesSettings {
 	bool console;
 	bool audio;
 	bool audio_mixer;
+	bool scene_manager;
 
 	bool debug_is_viewer;
 	bool debug_usb;

@@ -35,6 +35,7 @@
 [x] Fix closing and opening project
     - Create class to store/erase when loading/closing.
 [x] Move all UI code out of main.cpp
+[x] Scene manager as module
 
 [ ] Import xm sound files
 [ ] Import ym sound files
@@ -47,6 +48,12 @@
 [ ] Scene nodes
 [ ] README!
 [ ] Fix texture leak on exiting the app.
+[ ] Set DFS location
+[ ] Remove global script button
+[ ] Memory pool as module
+[ ] Resize import preview image based on window
+[ ] [Enter] create script
+[ ] [Enter] open/create project
 
 Future:
 [ ] Import 3d models

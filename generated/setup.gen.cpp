@@ -12,22 +12,18 @@ void setup() {
 %s
 	mem_zone_init(&global_memory_pool, %d);
 	mem_zone_init(&scene_memory_pool, %d);
-
-	scene_manager = scene_manager_init(&global_memory_pool, &scene_memory_pool, change_scene);
-	scene_manager_change_scene(scene_manager, %d);
-}
+%s}
 
 void tick() {
+%s
 %s}
 
-void tick_end() {
-%s}
-
-void display(display_context_t disp) {
+void display() {
 %s})";
 
 void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	std::stringstream setup_body;
+	std::stringstream setup_end_body;
 	std::stringstream tick_body;
 	std::stringstream tick_end_body;
 	std::stringstream display_body;
@@ -39,6 +35,22 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 				   << settings.display.GetBitDepth() << ", " << settings.display.buffers << ", "
 				   << settings.display.GetGamma() << ", " << settings.display.GetAntialias() << ");"
 				   << std::endl;
+
+		display_body << "\tstatic display_context_t disp = 0;" << std::endl
+					 << "\twhile (!(disp = display_lock()));" << std::endl;
+	}
+	if (settings.modules.scene_manager) {
+		tick_end_body << "\tscene_manager_tick(scene_manager);" << std::endl;
+
+		if (settings.modules.display) {
+			display_body << "\tscene_manager_display(scene_manager, disp);" << std::endl;
+		}
+
+		setup_end_body << "\tscene_manager = scene_manager_init(&global_memory_pool, "
+						  "&scene_memory_pool, change_scene);"
+					   << std::endl
+					   << "\tscene_manager_change_scene(scene_manager, "
+					   << settings.initial_screen_id << ");" << std::endl;
 	}
 	if (settings.modules.dfs) {
 		setup_body << "\tdfs_init(DFS_DEFAULT_LOCATION);" << std::endl;
@@ -90,17 +102,23 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 
 		tick_body << "\tscript_" << settings.global_script_name << "_tick();" << std::endl;
 
-		display_body << "\tscript_" << settings.global_script_name << "_display(disp);"
-					 << std::endl;
+		if (settings.modules.display) {
+			display_body << "\tscript_" << settings.global_script_name << "_display(disp);"
+						 << std::endl;
+		}
 
 		includes << "#include \"scripts/" << settings.global_script_name << ".script.h\""
 				 << std::endl;
 	}
 
+	if (settings.modules.display) {
+		display_body << "display_show(disp);" << std::endl;
+	}
+
 	FILE *filestream = fopen(setup_path.c_str(), "w");
 	fprintf(filestream, setup_gen_c, includes.str().c_str(), variables.str().c_str(),
 			setup_body.str().c_str(), settings.global_mem_alloc_size * 1024,
-			settings.scene_mem_alloc_size * 1024, settings.initial_screen_id,
+			settings.scene_mem_alloc_size * 1024, setup_end_body.str().c_str(),
 			tick_body.str().c_str(), tick_end_body.str().c_str(), display_body.str().c_str());
 	fclose(filestream);
 }
