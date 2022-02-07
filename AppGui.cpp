@@ -664,6 +664,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 									}
 								}
 								ImGui::TextUnformatted("Initial Screen");
+
+								ImGui::BeginDisabled(
+									!app.project.project_settings.modules.scene_manager);
 								if (ImGui::BeginCombo("##InitialScreen",
 													  current_selected.c_str())) {
 									for (auto &scene : app.project.scenes) {
@@ -677,6 +680,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 									}
 									ImGui::EndCombo();
 								}
+								ImGui::EndDisabled();
 							}
 
 							{
