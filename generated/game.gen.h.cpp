@@ -7,7 +7,7 @@ const char *game_gen_h =
 %s
 %s)";
 
-void generate_game_gen_h(Project &project) {
+void generate_game_gen_h(const Project &project) {
 	std::stringstream includes;
 	std::stringstream variables;
 

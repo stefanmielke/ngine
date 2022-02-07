@@ -24,9 +24,9 @@ class LibdragonSound {
 
 	explicit LibdragonSound(LibdragonSoundType type);
 
-	void SaveToDisk(std::string &project_directory);
-	void LoadFromDisk(std::string &filepath);
-	void DeleteFromDisk(std::string &project_directory) const;
+	void SaveToDisk(const std::string &project_directory);
+	void LoadFromDisk(const std::string &filepath);
+	void DeleteFromDisk(const std::string &project_directory) const;
 
 	[[nodiscard]] std::string GetTooltip() const;
 	[[nodiscard]] std::string GetLibdragonGenFlags() const;

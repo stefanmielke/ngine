@@ -58,8 +58,7 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::EndMenu();
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
-		if (ImGui::MenuItem("Save All", nullptr, false,
-							app.project.project_settings.IsOpen())) {
+		if (ImGui::MenuItem("Save All", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Saving Project...");
 
 			app.project.SaveToDisk(app.project.project_settings.project_directory);
@@ -236,7 +235,7 @@ void AppGui::RenderContentBrowser(App &app) {
 								image->dfs_folder.c_str(), image->name.c_str(), image->width,
 								image->height, image->h_slices, image->v_slices);
 							ImGui::Image((ImTextureID)(intptr_t)image->loaded_image,
-										 ImVec2(image->width, image->height));
+										 ImVec2((float)image->width, (float)image->height));
 							ImGui::EndTooltip();
 						}
 						++cur_i;
@@ -347,8 +346,7 @@ void AppGui::RenderContentBrowser(App &app) {
 						ImGui::SameLine();
 						ImGui::PushID((script_name + "D").c_str());
 						if (ImGui::SmallButton("Delete")) {
-							ScriptBuilder::DeleteScriptFile(app.project.project_settings,
-															app.project, script_name.c_str());
+							ScriptBuilder::DeleteScriptFile(app.project, script_name.c_str());
 
 							for (int i = 0; i < app.project.script_files.size(); ++i) {
 								if (app.project.script_files[i] == script_name) {
@@ -500,8 +498,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 				}
 				if (ImGui::BeginTabItem("Image Settings")) {
 					ImGui::Image((ImTextureID)(intptr_t)(*app.state.image_editing)->loaded_image,
-								 ImVec2((*app.state.image_editing)->display_width * 2,
-										(*app.state.image_editing)->display_height * 2));
+								 ImVec2((float)(*app.state.image_editing)->display_width * 2.f,
+										(float)(*app.state.image_editing)->display_height * 2.f));
 					ImGui::Separator();
 					ImGui::Spacing();
 					ImGui::InputText("Name", image_edit_name, 50);
@@ -515,9 +513,10 @@ void AppGui::RenderSettingsWindow(App &app) {
 						bool will_save = true;
 						if ((*app.state.image_editing)->name != image_edit_name) {
 							std::string name_string(image_edit_name);
-							auto find_by_name = [&name_string](std::unique_ptr<LibdragonImage> &i) {
-								return i->name == name_string;
-							};
+							auto find_by_name =
+								[&name_string](const std::unique_ptr<LibdragonImage> &i) {
+									return i->name == name_string;
+								};
 							if (std::find_if(app.project.images.begin(), app.project.images.end(),
 											 find_by_name) != std::end(app.project.images)) {
 								console.AddLog(
@@ -588,9 +587,10 @@ void AppGui::RenderSettingsWindow(App &app) {
 						bool will_save = true;
 						if ((*app.state.sound_editing)->name != sound_edit_name) {
 							std::string name_string(sound_edit_name);
-							auto find_by_name = [&name_string](std::unique_ptr<LibdragonSound> &i) {
-								return i->name == name_string;
-							};
+							auto find_by_name =
+								[&name_string](const std::unique_ptr<LibdragonSound> &i) {
+									return i->name == name_string;
+								};
 							if (std::find_if(app.project.sounds.begin(), app.project.sounds.end(),
 											 find_by_name) != std::end(app.project.sounds)) {
 								console.AddLog(
@@ -865,9 +865,11 @@ void AppGui::RenderSettingsWindow(App &app) {
 				ImGui::TextUnformatted("Editor Path (?)");
 				if (ImGui::IsItemHovered()) {
 					ImGui::SetTooltip(
-						"example: '/path/to/editor'.\nWe will run 'path path/to/file/or/directory'.");
+						"example: '/path/to/editor'.\nWe will run 'path "
+						"path/to/file/or/directory'.");
 				}
-				ImGui::InputTextWithHint("##EditorPath", "use 'code' for VSCode", app.state.editor_path, 255);
+				ImGui::InputTextWithHint("##EditorPath", "use 'code' for VSCode",
+										 app.state.editor_path, 255);
 
 				{
 					ImGui::TextUnformatted("Theme");

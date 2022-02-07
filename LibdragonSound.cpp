@@ -9,7 +9,7 @@ LibdragonSound::LibdragonSound(LibdragonSoundType type)
 	: type(type), wav_loop(false), wav_loop_offset(0), ym_compress(false) {
 }
 
-void LibdragonSound::SaveToDisk(std::string &project_directory) {
+void LibdragonSound::SaveToDisk(const std::string &project_directory) {
 	nlohmann::json json = {
 		{"name", name},
 		{"sound_path", sound_path},
@@ -31,7 +31,7 @@ void LibdragonSound::SaveToDisk(std::string &project_directory) {
 	filestream.close();
 }
 
-void LibdragonSound::LoadFromDisk(std::string &filepath) {
+void LibdragonSound::LoadFromDisk(const std::string &filepath) {
 	nlohmann::json json;
 
 	std::ifstream filestream(filepath);
@@ -48,7 +48,7 @@ void LibdragonSound::LoadFromDisk(std::string &filepath) {
 	ym_compress = json["ym_compress"];
 }
 
-void LibdragonSound::DeleteFromDisk(std::string &project_directory) const {
+void LibdragonSound::DeleteFromDisk(const std::string &project_directory) const {
 	std::string json_filepath = project_directory + "/.ngine/sounds/" + name + ".sound.json";
 	std::filesystem::remove(json_filepath);
 

@@ -6,8 +6,8 @@
 #include "ConsoleApp.h"
 #include "ThreadCommand.h"
 
-void Content::CreateSprites(ProjectSettings &project_settings,
-							std::vector<std::unique_ptr<LibdragonImage>> &images) {
+void Content::CreateSprites(const ProjectSettings &project_settings,
+							const std::vector<std::unique_ptr<LibdragonImage>> &images) {
 	std::stringstream command;
 	command << "cd " << project_settings.project_directory << std::endl;
 
@@ -26,8 +26,8 @@ void Content::CreateSprites(ProjectSettings &project_settings,
 
 	ThreadCommand::RunCommand(command.str());
 }
-void Content::CreateSounds(ProjectSettings &project_settings,
-						   std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
+void Content::CreateSounds(const ProjectSettings &project_settings,
+						   const std::vector<std::unique_ptr<LibdragonSound>> &sounds) {
 	std::stringstream command;
 	command << "cd " << project_settings.project_directory << std::endl;
 

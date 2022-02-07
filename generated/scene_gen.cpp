@@ -35,18 +35,18 @@ void scene_%d_destroy() {
 	%s
 })";
 
-void generate_scene_gen_files(ProjectSettings &project_settings, Project &project) {
-	if (!project_settings.modules.scene_manager)
+void generate_scene_gen_files(const Project &project) {
+	if (!project.project_settings.modules.scene_manager)
 		return;
 
 	for (auto &scene : project.scenes) {
-		std::string header_name = project_settings.project_directory + "/src/scenes/scene_" +
+		std::string header_name = project.project_settings.project_directory + "/src/scenes/scene_" +
 								  std::to_string(scene.id) + ".gen.h";
 		FILE *filestream = fopen(header_name.c_str(), "w");
 		fprintf(filestream, scene_gen_h, scene.id, scene.id, scene.id, scene.id);
 		fclose(filestream);
 
-		std::string c_name = project_settings.project_directory + "/src/scenes/scene_" +
+		std::string c_name = project.project_settings.project_directory + "/src/scenes/scene_" +
 							 std::to_string(scene.id) + ".gen.c";
 
 		std::string includes;
@@ -65,10 +65,10 @@ void generate_scene_gen_files(ProjectSettings &project_settings, Project &projec
 		}
 
 		unsigned int fill_color;
-		if (project_settings.display.bit_depth == DEPTH_16_BPP) {
-			char sr = (char)(255 * scene.fill_color[0]);
-			char sg = (char)(255 * scene.fill_color[1]);
-			char sb = (char)(255 * scene.fill_color[2]);
+		if (project.project_settings.display.bit_depth == DEPTH_16_BPP) {
+			auto sr = (unsigned char)(255 * scene.fill_color[0]);
+			auto sg = (unsigned char)(255 * scene.fill_color[1]);
+			auto sb = (unsigned char)(255 * scene.fill_color[2]);
 
 			int r = sr >> 3;
 			int g = sg >> 3;

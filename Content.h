@@ -9,6 +9,8 @@
 
 class Content {
    public:
-	static void CreateSprites(ProjectSettings &project_settings, std::vector<std::unique_ptr<LibdragonImage>> &images);
-	static void CreateSounds(ProjectSettings &project_settings, std::vector<std::unique_ptr<LibdragonSound>> &sounds);
+	static void CreateSprites(const ProjectSettings &project_settings,
+							  const std::vector<std::unique_ptr<LibdragonImage>> &images);
+	static void CreateSounds(const ProjectSettings &project_settings,
+							 const std::vector<std::unique_ptr<LibdragonSound>> &sounds);
 };

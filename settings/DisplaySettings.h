@@ -39,10 +39,10 @@ class DisplaySettings {
 
 	DisplaySettings();
 
-	const char *GetResolution() const;
-	const char *GetBitDepth() const;
-	const char *GetGamma() const;
-	const char *GetAntialias() const;
+	[[nodiscard]] const char *GetResolution() const;
+	[[nodiscard]] const char *GetBitDepth() const;
+	[[nodiscard]] const char *GetGamma() const;
+	[[nodiscard]] const char *GetAntialias() const;
 
 	void SetResolution(const std::string& value);
 	void SetBitDepth(const std::string& value);

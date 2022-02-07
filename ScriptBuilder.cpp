@@ -8,7 +8,7 @@
 #include "Libdragon.h"
 #include "generated/generated.h"
 
-bool ScriptBuilder::CreateScriptFile(ProjectSettings &project_settings, const char *script_name) {
+bool ScriptBuilder::CreateScriptFile(const ProjectSettings &project_settings, const char *script_name) {
 	const std::string script_folder = project_settings.project_directory + "/src/scripts/";
 	const std::string script_json_folder = project_settings.project_directory + "/.ngine/scripts/";
 
@@ -48,10 +48,9 @@ bool ScriptBuilder::CreateScriptFile(ProjectSettings &project_settings, const ch
 	return true;
 }
 
-void ScriptBuilder::DeleteScriptFile(ProjectSettings &project_settings, Project &project,
-									 const char *script_name) {
-	const std::string script_folder = project_settings.project_directory + "/src/scripts/";
-	const std::string script_json_folder = project_settings.project_directory + "/.ngine/scripts/";
+void ScriptBuilder::DeleteScriptFile(Project &project, const char *script_name) {
+	const std::string script_folder = project.project_settings.project_directory + "/src/scripts/";
+	const std::string script_json_folder = project.project_settings.project_directory + "/.ngine/scripts/";
 
 	{
 		std::string filepath = script_json_folder + script_name + ".script.json";
@@ -76,12 +75,12 @@ void ScriptBuilder::DeleteScriptFile(ProjectSettings &project_settings, Project 
 			}
 		}
 	}
-	project.SaveToDisk(project_settings.project_directory);
+	project.SaveToDisk(project.project_settings.project_directory);
 
 	// force clean if the script was referenced on a scene to stop build errors
 	if (removed_from_scene) {
 		console.AddLog("Script was referenced by a Scene. Cleaning the project...");
 
-		Libdragon::Clean(project_settings.project_directory);
+		Libdragon::Clean(project.project_settings.project_directory);
 	}
 }

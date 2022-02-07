@@ -13,5 +13,5 @@ class ProjectBuilder {
 	static void Build(Project &project);
 	static void Rebuild(Project &project);
 
-	static void GenerateStaticFiles(std::string project_folder);
+	static void GenerateStaticFiles(const std::string& project_folder);
 };

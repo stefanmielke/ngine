@@ -59,7 +59,7 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Project creation complete.");
 
-	app->OpenProject(project_folder.c_str());
+	app->OpenProject(project_folder);
 }
 
 void ProjectBuilder::Create(App *app, std::string project_folder) {
@@ -82,7 +82,7 @@ void create_build_files(Project &project) {
 								  "/src/scenes/change_scene.gen.c");
 	generate_change_scene_gen_c(change_scene_path, project);
 
-	generate_scene_gen_files(project.project_settings, project);
+	generate_scene_gen_files(project);
 
 	Content::CreateSprites(project.project_settings, project.images);
 	Content::CreateSounds(project.project_settings, project.sounds);
@@ -102,7 +102,7 @@ void ProjectBuilder::Rebuild(Project &project) {
 	Libdragon::Build(project.project_settings.project_directory);
 }
 
-void ProjectBuilder::GenerateStaticFiles(std::string project_folder) {
+void ProjectBuilder::GenerateStaticFiles(const std::string& project_folder) {
 	std::filesystem::create_directories(project_folder + "/.vscode");
 	std::filesystem::create_directories(project_folder + "/src/scenes");
 

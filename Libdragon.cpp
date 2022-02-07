@@ -2,30 +2,30 @@
 
 #include "ThreadCommand.h"
 
-void Libdragon::Init(std::string folder) {
+void Libdragon::Init(const std::string& folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon init", folder.c_str());
 	ThreadCommand::RunCommand(command);
 }
-void Libdragon::InitSync(std::string folder) {
+void Libdragon::InitSync(const std::string& folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon init", folder.c_str());
 	system(command);
 }
 
-void Libdragon::Build(std::string folder) {
+void Libdragon::Build(const std::string& folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon make -j > build.log", folder.c_str());
 	ThreadCommand::RunCommand(command);
 }
 
-void Libdragon::Clean(std::string folder) {
+void Libdragon::Clean(const std::string& folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon exec make clean > build.log", folder.c_str());
 	ThreadCommand::RunCommand(command);
 }
 
-void Libdragon::CleanSync(std::string folder) {
+void Libdragon::CleanSync(const std::string& folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon exec make clean > build.log", folder.c_str());
 	system(command);
