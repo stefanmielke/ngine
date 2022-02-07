@@ -863,6 +863,13 @@ void AppGui::RenderSettingsWindow(App &app) {
 				}
 				ImGui::InputText("##EmuPath", app.state.emulator_path, 255);
 
+				ImGui::TextUnformatted("Editor Path (?)");
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip(
+						"example: '/path/to/editor'.\nWe will run 'path path/to/file/or/directory'.");
+				}
+				ImGui::InputTextWithHint("##EditorPath", "use 'code' for VSCode", app.state.editor_path, 255);
+
 				{
 					ImGui::TextUnformatted("Theme");
 					static int selected_theme = (int)app.engine_settings.GetTheme();
@@ -874,6 +881,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 				ImGui::Spacing();
 				if (ImGui::Button("Save")) {
 					app.engine_settings.SetEmulatorPath(app.state.emulator_path);
+					app.engine_settings.SetEditorLocation(app.state.editor_path);
 				}
 
 				ImGui::EndTabItem();

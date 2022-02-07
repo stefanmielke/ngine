@@ -25,6 +25,11 @@ class EngineSettings {
 		return last_opened_project;
 	};
 
+	void SetEditorLocation(std::string path);
+	std::string GetEditorLocation() {
+		return editor_location;
+	};
+
 	void SetTheme(Theme theme_id);
 	Theme GetTheme() {
 		return theme;
@@ -33,5 +38,6 @@ class EngineSettings {
    private:
 	std::string last_opened_project;
 	std::string emulator_location;
+	std::string editor_location;
 	Theme theme;
 };

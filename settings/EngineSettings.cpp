@@ -5,7 +5,7 @@
 
 #include "../json.hpp"
 
-EngineSettings::EngineSettings() : last_opened_project(), emulator_location(), theme(THEME_DARK) {
+EngineSettings::EngineSettings() : editor_location("code"), theme(THEME_DARK) {
 }
 
 void EngineSettings::SaveToDisk() {
@@ -13,8 +13,9 @@ void EngineSettings::SaveToDisk() {
 		{
 			"engine",
 			{
-				{"last_opened_project", last_opened_project},
+				{"editor_location", editor_location},
 				{"emulator_location", emulator_location},
+				{"last_opened_project", last_opened_project},
 				{"theme", theme},
 			},
 		},
@@ -36,7 +37,8 @@ void EngineSettings::LoadFromDisk() {
 
 	last_opened_project = json["engine"]["last_opened_project"];
 	emulator_location = json["engine"]["emulator_location"];
-	theme =  json["engine"]["theme"];
+	editor_location = json["engine"]["editor_location"];
+	theme = json["engine"]["theme"];
 
 	filestream.close();
 }
@@ -49,6 +51,12 @@ void EngineSettings::SetLastOpenedProject(std::string path) {
 
 void EngineSettings::SetEmulatorPath(std::string path) {
 	emulator_location = std::move(path);
+
+	SaveToDisk();
+}
+
+void EngineSettings::SetEditorLocation(std::string path) {
+	editor_location = std::move(path);
 
 	SaveToDisk();
 }
