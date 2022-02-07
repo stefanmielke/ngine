@@ -454,9 +454,11 @@ void AppGui::RenderSceneWindow(App &app) {
 				}
 			}
 			ImGui::EndTabBar();
-		} else if (app.project.project_settings.modules.scene_manager) {
+		} else if (app.project.project_settings.IsOpen() &&
+				   app.project.project_settings.modules.scene_manager) {
 			ImGui::TextWrapped("Load a scene on the right side under 'Scenes' tab.");
-		} else {
+		} else if (app.project.project_settings.IsOpen() &&
+				   !app.project.project_settings.modules.scene_manager) {
 			ImGui::TextWrapped("Please enable 'Scene Manager' module to use this feature.");
 		}
 	}
@@ -618,7 +620,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 				}
 			}
 			if (ImGui::BeginTabItem("Scenes")) {
-				if (app.project.project_settings.modules.scene_manager) {
+				if (app.project.project_settings.IsOpen() &&
+					app.project.project_settings.modules.scene_manager) {
 					for (auto &scene : app.project.scenes) {
 						if (ImGui::Selectable(scene.name.c_str(),
 											  app.state.current_scene &&
@@ -626,19 +629,21 @@ void AppGui::RenderSettingsWindow(App &app) {
 							app.state.current_scene = &scene;
 							strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
 						}
-					}
 
-					ImGui::Separator();
-					ImGui::Spacing();
-					if (ImGui::Button("Create New Scene")) {
-						app.project.scenes.emplace_back();
-						app.state.current_scene = &app.project
-													   .scenes[app.project.scenes.size() - 1];
-						app.state.current_scene->id = app.project.project_settings.next_scene_id++;
-						app.state.current_scene->name = std::to_string(app.project.scenes.size());
-						strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
+						ImGui::Separator();
+						ImGui::Spacing();
+						if (ImGui::Button("Create New Scene")) {
+							app.project.scenes.emplace_back();
+							app.state.current_scene = &app.project
+														   .scenes[app.project.scenes.size() - 1];
+							app.state.current_scene->id = app.project.project_settings
+															  .next_scene_id++;
+							app.state.current_scene->name = std::to_string(
+								app.project.scenes.size());
+							strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
+						}
 					}
-				} else {
+				} else if (app.project.project_settings.IsOpen()) {
 					ImGui::TextWrapped("Please enable 'Scene Manager' module to use this feature.");
 				}
 				ImGui::EndTabItem();
@@ -741,7 +746,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 							ImGui::Checkbox("Display",
 											&app.project.project_settings.modules.display);
 							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
-							ImGui::Checkbox("Memory Pool", &app.project.project_settings.modules.memory_pool);
+							ImGui::Checkbox("Memory Pool",
+											&app.project.project_settings.modules.memory_pool);
 							ImGui::Checkbox("RDP", &app.project.project_settings.modules.rdp);
 							ImGui::Checkbox("Scene Manager",
 											&app.project.project_settings.modules.scene_manager);
