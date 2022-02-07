@@ -58,6 +58,7 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			ImGui::EndMenu();
 		}
+		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Save Project", nullptr, false,
 							app.project.project_settings.IsOpen())) {
 			console.AddLog("Saving app.project...");
@@ -67,11 +68,13 @@ void AppGui::RenderMenuBar(App &app) {
 
 			console.AddLog("Project saved.");
 		}
+		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Build", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Building app.project...");
 
 			ProjectBuilder::Build(app.project);
 		}
+		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Tasks", app.project.project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding app.project...");
@@ -87,12 +90,14 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			ImGui::EndMenu();
 		}
+		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Open in VSCode", nullptr, false,
 							app.project.project_settings.IsOpen())) {
 			console.AddLog("Opening project in VSCode...");
 
 			VSCode::OpenPath(app.project.project_settings.project_directory);
 		}
+		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Run", nullptr, false,
 							app.project.project_settings.IsOpen() &&
 								!app.engine_settings.GetEmulatorPath().empty())) {
@@ -861,8 +866,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 				{
 					ImGui::TextUnformatted("Theme");
 					static int selected_theme = (int)app.engine_settings.GetTheme();
-					const char *themes[] = {"Dark", "Light", "Classic"};
-					if (ImGui::Combo("##Theme", &selected_theme, themes, 3)) {
+					if (ImGui::Combo("##Theme", &selected_theme, "Dark\0Light\0Classic\0")) {
 						ChangeTheme(app, (Theme)selected_theme);
 					}
 				}
