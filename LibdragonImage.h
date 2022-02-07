@@ -21,9 +21,9 @@ class LibdragonImage {
 	LibdragonImage();
 	~LibdragonImage();
 
-	void LoadImage(std::string &project_directory, SDL_Renderer *renderer);
+	void LoadImage(const std::string &project_directory, SDL_Renderer *renderer);
 
-	void SaveToDisk(std::string &project_directory);
-	void LoadFromDisk(std::string &filepath);
-	void DeleteFromDisk(std::string &project_directory) const;
+	void SaveToDisk(const std::string &project_directory);
+	void LoadFromDisk(const std::string &filepath);
+	void DeleteFromDisk(const std::string &project_directory) const;
 };

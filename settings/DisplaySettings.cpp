@@ -81,9 +81,6 @@ void DisplaySettings::SetBitDepth(const std::string& value) {
 		bit_depth = DEPTH_32_BPP;
 	}
 }
-void DisplaySettings::SetBuffers(const std::string& value) {
-	buffers = std::stoi(value);
-}
 void DisplaySettings::SetGamma(const std::string& value) {
 	if (value == "GAMMA_NONE") {
 		gamma = GAMMA_NONE;

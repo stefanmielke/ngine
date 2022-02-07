@@ -15,7 +15,7 @@ ProjectSettings::ProjectSettings()
 	  scene_mem_alloc_size(1024 * 2) {
 }
 
-bool ProjectSettings::LoadFromFile(std::string &folder) {
+bool ProjectSettings::LoadFromFile(const std::string &folder) {
 	project_directory = folder;
 
 	if (!std::filesystem::exists(project_directory + "/ngine.project.json")) {

@@ -21,8 +21,8 @@ class Project {
 
 	ProjectSettings project_settings;
 
-	void SaveToDisk(std::string &project_directory);
-	void LoadFromDisk(std::string &project_directory);
+	void SaveToDisk(const std::string &project_directory);
+	void LoadFromDisk(const std::string &project_directory);
 
 	bool Open(const char *path, App *app);
 

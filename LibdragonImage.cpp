@@ -22,7 +22,7 @@ LibdragonImage::~LibdragonImage() {
 	}
 }
 
-void LibdragonImage::SaveToDisk(std::string &project_directory) {
+void LibdragonImage::SaveToDisk(const std::string &project_directory) {
 	nlohmann::json json = {
 		{"name", name},			{"image_path", image_path}, {"dfs_folder", dfs_folder},
 		{"h_slices", h_slices}, {"v_slices", v_slices},
@@ -39,7 +39,7 @@ void LibdragonImage::SaveToDisk(std::string &project_directory) {
 	filestream.close();
 }
 
-void LibdragonImage::LoadFromDisk(std::string &filepath) {
+void LibdragonImage::LoadFromDisk(const std::string &filepath) {
 	nlohmann::json json;
 
 	std::ifstream filestream(filepath);
@@ -53,7 +53,7 @@ void LibdragonImage::LoadFromDisk(std::string &filepath) {
 	v_slices = json["v_slices"];
 }
 
-void LibdragonImage::DeleteFromDisk(std::string &project_directory) const {
+void LibdragonImage::DeleteFromDisk(const std::string &project_directory) const {
 	std::string json_filepath = project_directory + "/.ngine/sprites/" + name + ".sprite.json";
 	std::filesystem::remove(json_filepath);
 
@@ -61,7 +61,7 @@ void LibdragonImage::DeleteFromDisk(std::string &project_directory) const {
 	std::filesystem::remove(image_filepath);
 }
 
-void LibdragonImage::LoadImage(std::string &project_directory, SDL_Renderer *renderer) {
+void LibdragonImage::LoadImage(const std::string &project_directory, SDL_Renderer *renderer) {
 	std::string path(project_directory + "/" + image_path);
 
 	loaded_image = IMG_LoadTexture(renderer, path.c_str());

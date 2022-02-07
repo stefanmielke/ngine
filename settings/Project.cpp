@@ -7,7 +7,7 @@
 #include "../ConsoleApp.h"
 #include "../json.hpp"
 
-void Project::SaveToDisk(std::string &project_directory) {
+void Project::SaveToDisk(const std::string &project_directory) {
 	std::filesystem::path scenes_folder(project_directory + "/.ngine/scenes");
 	if (!std::filesystem::exists(scenes_folder)) {
 		std::filesystem::create_directories(scenes_folder);
@@ -27,7 +27,7 @@ void Project::SaveToDisk(std::string &project_directory) {
 	}
 }
 
-void Project::LoadFromDisk(std::string &project_directory) {
+void Project::LoadFromDisk(const std::string &project_directory) {
 	std::filesystem::path scenes_folder(project_directory + "/.ngine/scenes");
 	if (!std::filesystem::exists(scenes_folder)) {
 		scenes.clear();

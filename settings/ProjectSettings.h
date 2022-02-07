@@ -30,7 +30,7 @@ class ProjectSettings {
 
 	ProjectSettings();
 
-	bool LoadFromFile(std::string &folder);
+	bool LoadFromFile(const std::string &folder);
 	void SaveToDisk();
 
 	[[nodiscard]] bool IsOpen() const {

@@ -205,10 +205,10 @@ void AppGui::RenderContentBrowser(App &app) {
 									->DeleteFromDisk(
 										app.project.project_settings.project_directory);
 
-								for (int i = 0; i < app.project.images.size(); ++i) {
+								for (size_t i = 0; i < app.project.images.size(); ++i) {
 									if (app.project.images[i]->image_path ==
 										(*app.state.selected_image)->image_path) {
-										app.project.images.erase(app.project.images.begin() + i);
+										app.project.images.erase(app.project.images.begin() + (int)i);
 										break;
 									}
 								}
@@ -282,10 +282,10 @@ void AppGui::RenderContentBrowser(App &app) {
 									->DeleteFromDisk(
 										app.project.project_settings.project_directory);
 
-								for (int i = 0; i < app.project.sounds.size(); ++i) {
+								for (size_t i = 0; i < app.project.sounds.size(); ++i) {
 									if (app.project.sounds[i]->sound_path ==
 										(*app.state.selected_sound)->sound_path) {
-										app.project.sounds.erase(app.project.sounds.begin() + i);
+										app.project.sounds.erase(app.project.sounds.begin() + (int)i);
 										break;
 									}
 								}
@@ -348,10 +348,10 @@ void AppGui::RenderContentBrowser(App &app) {
 						if (ImGui::SmallButton("Delete")) {
 							ScriptBuilder::DeleteScriptFile(app.project, script_name.c_str());
 
-							for (int i = 0; i < app.project.script_files.size(); ++i) {
+							for (size_t i = 0; i < app.project.script_files.size(); ++i) {
 								if (app.project.script_files[i] == script_name) {
 									app.project.script_files.erase(
-										app.project.script_files.begin() + i);
+										app.project.script_files.begin() + (int)i);
 								}
 							}
 						}
@@ -443,9 +443,9 @@ void AppGui::RenderSceneWindow(App &app) {
 					ImGui::Separator();
 					ImGui::Spacing();
 					if (ImGui::Button("Delete Scene")) {
-						for (int i = 0; i < app.project.scenes.size(); ++i) {
+						for (size_t i = 0; i < app.project.scenes.size(); ++i) {
 							if (app.project.scenes[i].id == app.state.current_scene->id) {
-								app.project.scenes.erase(app.project.scenes.begin() + i);
+								app.project.scenes.erase(app.project.scenes.begin() + (int)i);
 								std::string filename = app.project.project_settings
 														   .project_directory +
 													   "/.ngine/scenes/" +

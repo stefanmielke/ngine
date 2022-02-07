@@ -46,7 +46,6 @@ class DisplaySettings {
 
 	void SetResolution(const std::string& value);
 	void SetBitDepth(const std::string& value);
-	void SetBuffers(const std::string& value);
 	void SetGamma(const std::string& value);
 	void SetAntialias(const std::string& value);
 };

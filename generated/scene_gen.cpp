@@ -78,10 +78,10 @@ void generate_scene_gen_files(const Project &project) {
 			fill_color = ((r & 0x1F) << 11) | ((g & 0x1F) << 6) | ((b & 0x1F) << 1) | (a >> 7);
 			fill_color = fill_color | (fill_color << 16);
 		} else {
-			char sr = (char)(255 * scene.fill_color[0]);
-			char sg = (char)(255 * scene.fill_color[1]);
-			char sb = (char)(255 * scene.fill_color[2]);
-			fill_color = (sr << 24) | (sg << 16) | (sb << 8) | ((char)255);
+			auto sr = (unsigned char)(255 * scene.fill_color[0]);
+			auto sg = (unsigned char)(255 * scene.fill_color[1]);
+			auto sb = (unsigned char)(255 * scene.fill_color[2]);
+			fill_color = (sr << 24) | (sg << 16) | (sb << 8) | ((unsigned char)255);
 		}
 
 		filestream = fopen(c_name.c_str(), "w");

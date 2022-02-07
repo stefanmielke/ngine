@@ -71,7 +71,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 										app->renderer);
 
 									app->state.dropped_image_files.erase(
-										app->state.dropped_image_files.begin() + i);
+										app->state.dropped_image_files.begin() + (int)i);
 
 									app->project.images.push_back(move(image));
 									--i;
@@ -81,7 +81,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
 							app->state.dropped_image_files.erase(
-								app->state.dropped_image_files.begin() + i);
+								app->state.dropped_image_files.begin() + (int)i);
 							--i;
 						}
 
@@ -152,7 +152,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
 							app->state.dropped_sound_files.erase(
-								app->state.dropped_sound_files.begin() + i);
+								app->state.dropped_sound_files.begin() + (int)i);
 							--i;
 						}
 
