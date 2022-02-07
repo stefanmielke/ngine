@@ -4,7 +4,6 @@
 
 extern const char *change_scene_s_h;
 extern const char *clang_format;
-extern const char *game_s_h;
 extern const char *gitignore;
 extern const char *main_s_c;
 extern const char *vs_code_cpp_properties;

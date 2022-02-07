@@ -10,7 +10,7 @@ void script_%s_destroy();
 
 const char *script_blank_gen_c = R"(#include "%s.script.h"
 
-#include "../game.s.h"
+#include "../game.gen.h"
 
 void script_%s_create() {
 	// you can use 'scene_memory_pool' to allocate memory instead of 'malloc'

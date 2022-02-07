@@ -71,6 +71,8 @@ void ProjectBuilder::Create(App *app, std::string project_folder) {
 void create_build_files(Project &project) {
 	std::filesystem::remove_all(project.project_settings.project_directory + "/build");
 
+	generate_game_gen_h(project);
+
 	std::string makefile_path(project.project_settings.project_directory + "/Makefile");
 	generate_makefile_gen(makefile_path, project.project_settings.rom_name.c_str(),
 						  project.project_settings.project_name.c_str(), !project.images.empty());
@@ -112,6 +114,5 @@ void ProjectBuilder::GenerateStaticFiles(std::string project_folder) {
 	create_static_file(project_folder + "/.gitignore", gitignore);
 
 	create_static_file(project_folder + "/src/main.s.c", main_s_c);
-	create_static_file(project_folder + "/src/game.s.h", game_s_h);
 	create_static_file(project_folder + "/src/scenes/change_scene.s.h", change_scene_s_h);
 }

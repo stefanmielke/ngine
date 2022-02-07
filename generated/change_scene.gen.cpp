@@ -4,7 +4,7 @@
 
 const char *change_scene_gen_c = R"(#include "change_scene.s.h"
 
-#include "../game.s.h"
+#include "../game.gen.h"
 %s
 
 void change_scene(short curr_scene, short next_scene) {

@@ -4,7 +4,7 @@
 
 const char *setup_gen_c = R"(#include <libdragon.h>
 
-#include "game.s.h"
+#include "game.gen.h"
 #include "scenes/change_scene.s.h"
 %s
 %s
