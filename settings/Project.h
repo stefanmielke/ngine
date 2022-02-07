@@ -25,8 +25,15 @@ class Project {
 	void LoadFromDisk(const std::string &project_directory);
 
 	bool Open(const char *path, App *app);
+	void Close();
 
 	void ReloadImages(SDL_Renderer *renderer);
 	void ReloadScripts();
 	void ReloadSounds();
+
+	Project() = default;
+	Project(Project const &) = delete;
+	Project &operator=(Project const &) = delete;
+
+	~Project();
 };

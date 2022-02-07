@@ -11,7 +11,7 @@ App::App()
 	  is_running(true) {
 }
 
-bool App::OpenProject(const std::string& path) {
+bool App::OpenProject(const std::string &path) {
 	if (project.project_settings.IsOpen()) {
 		CloseProject();
 	}
@@ -22,7 +22,7 @@ bool App::OpenProject(const std::string& path) {
 void App::CloseProject() {
 	console.AddLog("Closing Project...");
 
-	project = Project();
+	project.Close();
 	state = ProjectState(engine_settings);
 
 	SDL_SetWindowTitle(window, default_title);

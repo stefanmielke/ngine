@@ -157,3 +157,19 @@ void Project::ReloadSounds() {
 		}
 	}
 }
+
+void Project::Close() {
+	scenes.clear();
+	script_files.clear();
+	images.clear();
+	sounds.clear();
+
+	project_settings = ProjectSettings();
+}
+
+Project::~Project() {
+	scenes.clear();
+	script_files.clear();
+	images.clear();
+	sounds.clear();
+}

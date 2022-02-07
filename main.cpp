@@ -97,6 +97,8 @@ int main() {
 		Sdl::RenderEnd(app.renderer);
 	}
 
+	app.project.Close();
+
 	Sdl::Quit(app.window, app.renderer);
 
 	return 0;
