@@ -13,7 +13,12 @@ class App {
 	Project project;
 	ProjectState state;
 
+	const char *default_title = "NGine - N64 Engine Powered by Libdragon";
+
 	bool is_running;
 
 	App();
+
+	bool OpenProject(const std::string& path);
+	void CloseProject();
 };

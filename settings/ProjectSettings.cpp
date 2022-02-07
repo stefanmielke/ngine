@@ -110,8 +110,3 @@ void ProjectSettings::SaveToDisk() {
 	project_file << json.dump(4);
 	project_file.close();
 }
-
-void ProjectSettings::CloseProject() {
-	is_open = false;
-	project_directory.clear();
-}

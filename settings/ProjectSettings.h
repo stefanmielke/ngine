@@ -33,8 +33,6 @@ class ProjectSettings {
 	bool LoadFromFile(std::string &folder);
 	void SaveToDisk();
 
-	void CloseProject();
-
 	[[nodiscard]] bool IsOpen() const {
 		return is_open;
 	};

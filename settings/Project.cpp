@@ -65,10 +65,6 @@ void Project::LoadFromDisk(std::string &project_directory) {
 bool Project::Open(const char *path, App *app) {
 	console.AddLog("Opening project at '%s'...", path);
 
-	if (project_settings.IsOpen()) {
-		project_settings.CloseProject();
-	}
-
 	std::string project_filepath(path);
 	if (!project_settings.LoadFromFile(project_filepath)) {
 		return false;

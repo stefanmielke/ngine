@@ -6,8 +6,6 @@
 #include "DroppedAssets.h"
 #include "Sdl.h"
 
-const char *default_title = "NGine - N64 Engine Powered by Libdragon";
-
 ConsoleApp console;
 
 static App app;
@@ -16,7 +14,7 @@ int main() {
 	app.engine_settings.LoadFromDisk();
 	app.state = ProjectState(app.engine_settings);
 
-	Sdl::Init(&app.window, &app.renderer, default_title);
+	Sdl::Init(&app.window, &app.renderer, app.default_title);
 
 	while (app.is_running) {
 		SDL_Event event;
@@ -73,9 +71,9 @@ int main() {
 					} else {
 						std::filesystem::path dropped_path(event.drop.file);
 						if (std::filesystem::is_directory(dropped_path)) {
-							app.project.Open(dropped_path.c_str(), &app);
+							app.OpenProject(dropped_path.c_str());
 						} else if (std::filesystem::is_regular_file(dropped_path)) {
-							app.project.Open(dropped_path.parent_path().c_str(), &app);
+							app.OpenProject(dropped_path.parent_path().c_str());
 						}
 					}
 				} break;

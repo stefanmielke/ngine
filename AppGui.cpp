@@ -12,8 +12,6 @@
 #include "ScriptBuilder.h"
 #include "VSCode.h"
 
-extern const char *default_title;
-
 static bool new_project_window_open = false;
 static bool open_project_window_open = false;
 
@@ -52,14 +50,7 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			if (ImGui::MenuItem("Close Project", nullptr, false,
 								app.project.project_settings.IsOpen())) {
-				console.AddLog("Closing app.project...");
-
-				app.project = Project();
-				app.state = ProjectState(app.engine_settings);
-
-				SDL_SetWindowTitle(app.window, default_title);
-
-				console.AddLog("Project closed.");
+				app.CloseProject();
 			}
 			if (ImGui::MenuItem("Exit")) {
 				app.is_running = false;
@@ -117,8 +108,11 @@ void AppGui::RenderNewProjectWindow(App &app) {
 		if (ImGui::Begin("New Project", &new_project_window_open)) {
 			ImGui::TextUnformatted("Folder");
 			ImGui::SameLine();
-			ImGui::InputText("##", app.state.input_new_project, 255);
-			if (ImGui::Button("Create", ImVec2(50, 20))) {
+			bool create_project;
+			create_project = ImGui::InputTextWithHint("##", "/path/to/project/folder",
+													  app.state.input_new_project, 255,
+													  ImGuiInputTextFlags_EnterReturnsTrue);
+			if (ImGui::Button("Create", ImVec2(50, 20)) || create_project) {
 				std::string new_project_folder(app.state.input_new_project);
 
 				ProjectBuilder::Create(&app, new_project_folder);
@@ -140,9 +134,12 @@ void AppGui::RenderOpenProjectWindow(App &app) {
 		if (ImGui::Begin("Open Project", &open_project_window_open)) {
 			ImGui::TextUnformatted("Folder");
 			ImGui::SameLine();
-			ImGui::InputText("##", app.state.input_open_project, 255);
-			if (ImGui::Button("Open", ImVec2(50, 20))) {
-				if (app.project.Open(app.state.input_open_project, &app)) {
+			bool open_project;
+			open_project = ImGui::InputTextWithHint("##", "/path/to/project/folder",
+													app.state.input_open_project, 255,
+													ImGuiInputTextFlags_EnterReturnsTrue);
+			if (ImGui::Button("Open", ImVec2(50, 20)) || open_project) {
+				if (app.OpenProject(app.state.input_open_project)) {
 					open_project_window_open = false;
 				}
 			}
@@ -317,7 +314,9 @@ void AppGui::RenderContentBrowser(App &app) {
 				if (app.project.project_settings.IsOpen()) {
 					static char script_name_input[100] = {};
 					bool create_script;
-					create_script = ImGui::InputTextWithHint("##ScriptName", "script_name", script_name_input, 100, ImGuiInputTextFlags_EnterReturnsTrue);
+					create_script = ImGui::InputTextWithHint("##ScriptName", "script_name",
+															 script_name_input, 100,
+															 ImGuiInputTextFlags_EnterReturnsTrue);
 					ImGui::SameLine();
 					if (ImGui::Button("Create Script") || create_script) {
 						std::string script_name(script_name_input);

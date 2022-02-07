@@ -61,7 +61,7 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Project creation complete.");
 
-	app->project.Open(project_folder.c_str(), app);
+	app->OpenProject(project_folder.c_str());
 }
 
 void ProjectBuilder::Create(App *app, std::string project_folder) {
