@@ -10,7 +10,7 @@
 
 extern ConsoleApp console;
 
-void ScriptBuilder::CreateScriptFile(ProjectSettings &project_settings, const char *script_name) {
+bool ScriptBuilder::CreateScriptFile(ProjectSettings &project_settings, const char *script_name) {
 	const std::string script_folder = project_settings.project_directory + "/src/scripts/";
 	const std::string script_json_folder = project_settings.project_directory + "/.ngine/scripts/";
 
@@ -22,7 +22,7 @@ void ScriptBuilder::CreateScriptFile(ProjectSettings &project_settings, const ch
 
 		if (std::filesystem::exists(filepath)) {
 			console.AddLog("Script with the same name already exists.");
-			return;
+			return false;
 		}
 
 		nlohmann::json json;
@@ -46,6 +46,8 @@ void ScriptBuilder::CreateScriptFile(ProjectSettings &project_settings, const ch
 				script_name);
 		fclose(filestream);
 	}
+
+	return true;
 }
 
 void ScriptBuilder::DeleteScriptFile(ProjectSettings &project_settings, Project &project,

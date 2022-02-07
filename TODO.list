@@ -38,6 +38,7 @@
 [x] Scene manager as module
 [x] Memory pool as module
 [x] Do not create scene files if module is not used.
+[x] [Enter] create script
 
 [ ] Import xm sound files
 [ ] Import ym sound files
@@ -53,7 +54,6 @@
 [ ] Set DFS location
 [ ] Remove global script button
 [ ] Resize import preview image based on window
-[ ] [Enter] create script
 [ ] [Enter] open/create project
 
 Future:

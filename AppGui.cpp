@@ -316,16 +316,18 @@ void AppGui::RenderContentBrowser(App &app) {
 			if (ImGui::BeginTabItem("Script Browser")) {
 				if (app.project.project_settings.IsOpen()) {
 					static char script_name_input[100] = {};
-					ImGui::InputText("Script Name", script_name_input, 100);
+					bool create_script;
+					create_script = ImGui::InputTextWithHint("##ScriptName", "script_name", script_name_input, 100, ImGuiInputTextFlags_EnterReturnsTrue);
 					ImGui::SameLine();
-					if (ImGui::Button("Create Script File")) {
+					if (ImGui::Button("Create Script") || create_script) {
 						std::string script_name(script_name_input);
 						if (!script_name.empty()) {
-							ScriptBuilder::CreateScriptFile(app.project.project_settings,
-															script_name_input);
-							memset(script_name_input, 0, 100);
+							if (ScriptBuilder::CreateScriptFile(app.project.project_settings,
+																script_name_input)) {
+								memset(script_name_input, 0, 100);
 
-							app.project.ReloadScripts();
+								app.project.ReloadScripts();
+							}
 						}
 					}
 					ImGui::Separator();
