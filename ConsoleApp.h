@@ -54,16 +54,16 @@ struct ConsoleApp {
 		int window_width, window_height;
 		SDL_GetWindowSize(window, &window_width, &window_height);
 
-		ImGui::SetNextWindowSize(ImVec2(window_width, 200));
+		ImGui::SetNextWindowSize(ImVec2((float)window_width, 200.f));
 		if (!ImGui::Begin(title, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
 			if (ImGui::IsWindowCollapsed()) {
 				is_open = false;
-				ImGui::SetWindowPos(ImVec2(0, window_height - 19));
+				ImGui::SetWindowPos(ImVec2(0, (float)window_height - 19.f));
 			}
 			ImGui::End();
 			return;
 		}
-		ImGui::SetWindowPos(ImVec2(0, window_height - 200));
+		ImGui::SetWindowPos(ImVec2(0, (float)window_height - 200.f));
 
 		// TODO: display items starting from the bottom
 		if (ImGui::SmallButton("Clear")) {

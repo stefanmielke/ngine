@@ -8,7 +8,7 @@ DisplaySettings::DisplaySettings()
 	  antialias(ANTIALIAS_RESAMPLE) {
 }
 
-const char *DisplaySettings::GetResolution() {
+const char *DisplaySettings::GetResolution() const {
 	switch (resolution) {
 		case RESOLUTION_320x240:
 			return "RESOLUTION_320x240";
@@ -25,7 +25,7 @@ const char *DisplaySettings::GetResolution() {
 	}
 	return "";
 }
-const char *DisplaySettings::GetBitDepth() {
+const char *DisplaySettings::GetBitDepth() const {
 	switch (bit_depth) {
 		case DEPTH_16_BPP:
 			return "DEPTH_16_BPP";
@@ -34,7 +34,7 @@ const char *DisplaySettings::GetBitDepth() {
 	}
 	return "";
 }
-const char *DisplaySettings::GetGamma() {
+const char *DisplaySettings::GetGamma() const {
 	switch (gamma) {
 		case GAMMA_NONE:
 			return "GAMMA_NONE";
@@ -45,7 +45,7 @@ const char *DisplaySettings::GetGamma() {
 	}
 	return "";
 }
-const char *DisplaySettings::GetAntialias() {
+const char *DisplaySettings::GetAntialias() const {
 	switch (antialias) {
 		case ANTIALIAS_OFF:
 			return "ANTIALIAS_OFF";
@@ -59,11 +59,11 @@ const char *DisplaySettings::GetAntialias() {
 	return "";
 }
 
-void DisplaySettings::SetResolution(std::string value) {
+void DisplaySettings::SetResolution(const std::string& value) {
 	if (value == "RESOLUTION_320x240") {
 		resolution = RESOLUTION_320x240;
-	} else if (value == "RESOLUTION_320x240") {
-		resolution = RESOLUTION_320x240;
+	} else if (value == "RESOLUTION_640x480") {
+		resolution = RESOLUTION_640x480;
 	} else if (value == "RESOLUTION_256x240") {
 		resolution = RESOLUTION_256x240;
 	} else if (value == "RESOLUTION_512x480") {
@@ -74,17 +74,17 @@ void DisplaySettings::SetResolution(std::string value) {
 		resolution = RESOLUTION_640x240;
 	}
 }
-void DisplaySettings::SetBitDepth(std::string value) {
+void DisplaySettings::SetBitDepth(const std::string& value) {
 	if (value == "DEPTH_16_BPP") {
 		bit_depth = DEPTH_16_BPP;
 	} else if (value == "DEPTH_32_BPP") {
 		bit_depth = DEPTH_32_BPP;
 	}
 }
-void DisplaySettings::SetBuffers(std::string value) {
+void DisplaySettings::SetBuffers(const std::string& value) {
 	buffers = std::stoi(value);
 }
-void DisplaySettings::SetGamma(std::string value) {
+void DisplaySettings::SetGamma(const std::string& value) {
 	if (value == "GAMMA_NONE") {
 		gamma = GAMMA_NONE;
 	} else if (value == "GAMMA_CORRECT") {
@@ -93,7 +93,7 @@ void DisplaySettings::SetGamma(std::string value) {
 		gamma = GAMMA_CORRECT_DITHER;
 	}
 }
-void DisplaySettings::SetAntialias(std::string value) {
+void DisplaySettings::SetAntialias(const std::string& value) {
 	if (value == "ANTIALIAS_OFF") {
 		antialias = ANTIALIAS_OFF;
 	} else if (value == "ANTIALIAS_RESAMPLE") {

@@ -74,11 +74,11 @@ void LibdragonImage::LoadImage(std::string &project_directory, SDL_Renderer *ren
 
 	const float max_size = 100.f;
 	if (w > h) {
-		h = (h / (float)w) * max_size;
-		w = max_size;
+		h = (int)(((float)h / (float)w) * max_size);
+		w = (int)max_size;
 	} else {
-		w = (w / (float)h) * max_size;
-		h = max_size;
+		w = (int)(((float)w / (float)h) * max_size);
+		h = (int)max_size;
 	}
 
 	display_width = w;

@@ -5,8 +5,6 @@
 #include "../ConsoleApp.h"
 #include "../json.hpp"
 
-extern ConsoleApp console;
-
 ProjectSettings::ProjectSettings()
 	: is_open(false),
 	  next_scene_id(0),

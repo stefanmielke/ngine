@@ -8,7 +8,7 @@ extern const char *gitignore;
 extern const char *main_s_c;
 extern const char *vs_code_cpp_properties;
 
-void create_static_file(std::string filepath, const char *file_content) {
+void create_static_file(const std::string& filepath, const char *file_content) {
 	std::ofstream filestream(filepath);
 	filestream << file_content << std::endl;
 	filestream.close();

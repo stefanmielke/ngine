@@ -1,6 +1,5 @@
 #include "Libdragon.h"
 
-#include "ConsoleApp.h"
 #include "ThreadCommand.h"
 
 void Libdragon::Init(std::string folder) {

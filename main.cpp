@@ -8,9 +8,8 @@
 
 ConsoleApp console;
 
-static App app;
-
 int main() {
+	App app;
 	app.engine_settings.LoadFromDisk();
 	app.state = ProjectState(app.engine_settings);
 

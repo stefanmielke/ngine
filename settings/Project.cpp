@@ -7,8 +7,6 @@
 #include "../ConsoleApp.h"
 #include "../json.hpp"
 
-extern ConsoleApp console;
-
 void Project::SaveToDisk(std::string &project_directory) {
 	std::filesystem::path scenes_folder(project_directory + "/.ngine/scenes");
 	if (!std::filesystem::exists(scenes_folder)) {

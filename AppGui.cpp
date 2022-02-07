@@ -54,7 +54,6 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			if (ImGui::MenuItem("Exit")) {
 				app.is_running = false;
-				return;
 			}
 			ImGui::EndMenu();
 		}
