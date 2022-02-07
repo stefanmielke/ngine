@@ -10,7 +10,7 @@
 #include "ImportAssets.h"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
-#include "VSCode.h"
+#include "CodeEditor.h"
 
 static bool new_project_window_open = false;
 static bool open_project_window_open = false;
@@ -91,11 +91,11 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::EndMenu();
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
-		if (ImGui::MenuItem("Open in VSCode", nullptr, false,
+		if (ImGui::MenuItem("Open in Editor", nullptr, false,
 							app.project.project_settings.IsOpen())) {
-			console.AddLog("Opening project in VSCode...");
+			console.AddLog("Opening project in Editor...");
 
-			VSCode::OpenPath(app.project.project_settings.project_directory);
+			CodeEditor::OpenPath(&app, app.project.project_settings.project_directory);
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Run", nullptr, false,
@@ -342,7 +342,7 @@ void AppGui::RenderContentBrowser(App &app) {
 						if (ImGui::SmallButton("Edit")) {
 							std::string path = app.project.project_settings.project_directory +
 											   "/src/scripts/" + script_name + ".script.c";
-							VSCode::OpenPath(path);
+							CodeEditor::OpenPath(&app, path);
 						}
 						ImGui::PopID();
 						ImGui::SameLine();

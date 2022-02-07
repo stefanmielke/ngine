@@ -6,8 +6,6 @@
 
 #include "ConsoleApp.h"
 
-extern ConsoleApp console;
-
 static bool is_running_command;
 static std::string current_command;
 
@@ -47,4 +45,14 @@ void ThreadCommand::RunCommand(std::string command) {
 
 	is_running_command = true;
 	run_next_command();
+}
+
+static void run_command_detached(std::string command) {
+	console.AddLog("Running %s", command.c_str());
+
+	system(command.c_str());
+}
+
+void ThreadCommand::RunCommandDetached(std::string command) {
+	std::thread(run_command_detached, command).detach();
 }
