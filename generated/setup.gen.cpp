@@ -55,11 +55,17 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 			display_body << "\tscene_manager_display(scene_manager, disp);" << std::endl;
 		}
 
-		setup_end_body << "\tscene_manager = scene_manager_init(&global_memory_pool, "
-						  "&scene_memory_pool, change_scene);"
-					   << std::endl
-					   << "\tscene_manager_change_scene(scene_manager, "
-					   << settings.initial_screen_id << ");" << std::endl;
+		if (settings.modules.memory_pool) {
+			setup_end_body << "\tscene_manager = scene_manager_init(&global_memory_pool, "
+							  "&scene_memory_pool, change_scene);"
+						   << std::endl
+						   << "\tscene_manager_change_scene(scene_manager, "
+						   << settings.initial_screen_id << ");" << std::endl;
+		} else {
+			setup_end_body << "\tscene_manager = scene_manager_init(NULL, NULL, change_scene);"
+						   << std::endl
+						   << "\tscene_manager_change_scene(scene_manager, 0);" << std::endl;
+		}
 	}
 	if (settings.modules.dfs) {
 		setup_body << "\tdfs_init(DFS_DEFAULT_LOCATION);" << std::endl;
