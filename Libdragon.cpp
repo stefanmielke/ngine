@@ -3,8 +3,6 @@
 #include "ConsoleApp.h"
 #include "ThreadCommand.h"
 
-extern ConsoleApp console;
-
 void Libdragon::Init(std::string folder) {
 	char command[500];
 	snprintf(command, 500, "cd %s\nlibdragon init", folder.c_str());

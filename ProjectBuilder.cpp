@@ -11,8 +11,6 @@
 #include "generated/generated.h"
 #include "static/static.h"
 
-extern ConsoleApp console;
-
 void create_project_thread(App *app, std::string project_folder) {
 	// create folder if it doesn't exist
 	const std::filesystem::path project_path(project_folder);

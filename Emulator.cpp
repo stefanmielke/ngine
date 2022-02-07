@@ -7,8 +7,6 @@
 #include "ThreadCommand.h"
 #include "ProjectBuilder.h"
 
-extern ConsoleApp console;
-
 void Emulator::Run(App *app) {
 	std::string rom_filename = app->project.project_settings.rom_name + ".z64";
 

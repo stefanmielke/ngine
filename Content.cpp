@@ -6,8 +6,6 @@
 #include "ConsoleApp.h"
 #include "ThreadCommand.h"
 
-extern ConsoleApp console;
-
 void Content::CreateSprites(ProjectSettings &project_settings,
 							std::vector<std::unique_ptr<LibdragonImage>> &images) {
 	std::stringstream command;

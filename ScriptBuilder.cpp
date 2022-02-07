@@ -8,8 +8,6 @@
 #include "Libdragon.h"
 #include "generated/generated.h"
 
-extern ConsoleApp console;
-
 bool ScriptBuilder::CreateScriptFile(ProjectSettings &project_settings, const char *script_name) {
 	const std::string script_folder = project_settings.project_directory + "/src/scripts/";
 	const std::string script_json_folder = project_settings.project_directory + "/.ngine/scripts/";
