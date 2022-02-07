@@ -59,9 +59,9 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::EndMenu();
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
-		if (ImGui::MenuItem("Save Project", nullptr, false,
+		if (ImGui::MenuItem("Save All", nullptr, false,
 							app.project.project_settings.IsOpen())) {
-			console.AddLog("Saving app.project...");
+			console.AddLog("Saving Project...");
 
 			app.project.SaveToDisk(app.project.project_settings.project_directory);
 			app.project.project_settings.SaveToDisk();
@@ -70,14 +70,14 @@ void AppGui::RenderMenuBar(App &app) {
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Build", nullptr, false, app.project.project_settings.IsOpen())) {
-			console.AddLog("Building app.project...");
+			console.AddLog("Building Project...");
 
 			ProjectBuilder::Build(app.project);
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Tasks", app.project.project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
-				console.AddLog("Rebuilding app.project...");
+				console.AddLog("Rebuilding Project...");
 
 				ProjectBuilder::Rebuild(app.project);
 			}
