@@ -7,13 +7,21 @@ struct DroppedImage {
 	std::string image_path;
 	SDL_Texture *image_data;
 	int w, h;
+	float width_mult, height_mult;
 
 	char name[50] = "\0";
 	char dfs_folder[100] = "/\0";
 	int h_slices, v_slices;
 
 	explicit DroppedImage(const char *image_path)
-		: image_path(image_path), image_data(nullptr), w(0), h(0), h_slices(1), v_slices(1) {
+		: image_path(image_path),
+		  image_data(nullptr),
+		  w(0),
+		  h(0),
+		  width_mult(1),
+		  height_mult(1),
+		  h_slices(1),
+		  v_slices(1) {
 	}
 };
 

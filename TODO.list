@@ -42,6 +42,7 @@
 [x] [Enter] open/create project
 [x] Create "remove global script" button
 [x] Themes
+[x] Fix texture leak on exiting the app.
 
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
@@ -55,7 +56,6 @@
 [ ] Option to change Libdragon-Extensions git repo and branch
 [ ] Scene nodes
 [ ] README!
-[ ] Fix texture leak on exiting the app.
 [ ] Resize import preview image based on window
 
 Future:

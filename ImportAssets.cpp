@@ -9,6 +9,8 @@
 void ImportAssets::RenderImportScreen(App *app) {
 	if (!app->state.dropped_image_files.empty() || !app->state.dropped_sound_files.empty()) {
 		if (ImGui::Begin("Import Assets")) {
+			float window_width = ImGui::GetWindowWidth();
+			float window_height = ImGui::GetWindowHeight() - 200;
 			if (ImGui::BeginTabBar("ImportAssets")) {
 				int id = 1;
 				for (size_t i = 0; i < app->state.dropped_image_files.size(); ++i) {
@@ -16,9 +18,15 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 					ImGui::PushID(id);
 					if (ImGui::BeginTabItem("Image")) {
-						ImGui::Image((ImTextureID)(intptr_t)image_file->image_data,
-									 ImVec2((float)image_file->w, (float)image_file->h));
-
+						if (image_file->width_mult > image_file->height_mult) {
+							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data,
+										 ImVec2((float)window_width,
+												(float)image_file->height_mult * window_width));
+						} else {
+							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data,
+										 ImVec2((float)image_file->width_mult * window_height,
+												(float)window_height));
+						}
 						ImGui::Separator();
 						ImGui::Spacing();
 

@@ -46,10 +46,12 @@ int main() {
 
 							const float max_size = 300.f;
 							if (w > h) {
-								h = (int)(((float)h / (float)w) * max_size);
+								dropped_image.height_mult = (float)h / (float)w;
+								h = (int)(dropped_image.height_mult * max_size);
 								w = (int)max_size;
 							} else {
-								w = (int)(((float)w / (float)h) * max_size);
+								dropped_image.width_mult = (float)w / (float)h;
+								w = (int)(dropped_image.width_mult * max_size);
 								h = (int)max_size;
 							}
 
