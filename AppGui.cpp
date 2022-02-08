@@ -229,12 +229,14 @@ void AppGui::RenderContentBrowser(App &app) {
 					}
 					if (!app.project.project_settings.modules.display) {
 						ImGui::TextWrapped(
-							"DISPLAY MODULE IS NOT LOADED. SPRITES WILL NOT BE USABLE IN THE GAME.");
+							"DISPLAY MODULE IS NOT LOADED. SPRITES WILL NOT BE USABLE IN THE "
+							"GAME.");
 						ImGui::Separator();
 					}
 					if (!app.project.project_settings.modules.rdp) {
 						ImGui::TextWrapped(
-							"RDP MODULE IS NOT LOADED. HARDWARE RENDERING (rdp_* functions) WILL NOT BE USABLE IN THE GAME.");
+							"RDP MODULE IS NOT LOADED. HARDWARE RENDERING (rdp_* functions) WILL "
+							"NOT BE USABLE IN THE GAME.");
 						ImGui::Separator();
 					}
 
@@ -336,7 +338,8 @@ void AppGui::RenderContentBrowser(App &app) {
 					}
 					if (!app.project.project_settings.modules.audio_mixer) {
 						ImGui::TextWrapped(
-							"AUDIO MIXER MODULE IS NOT LOADED. SOME AUDIO WILL NOT BE USABLE IN THE GAME.");
+							"AUDIO MIXER MODULE IS NOT LOADED. SOME AUDIO WILL NOT BE USABLE IN "
+							"THE GAME.");
 						ImGui::Separator();
 					}
 
@@ -413,7 +416,7 @@ void AppGui::RenderSceneWindow(App &app) {
 	ImGui::SetNextWindowSize(ImVec2(300, (float)window_height - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
 	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-		if (app.state.current_scene) {
+		if (app.state.current_scene && app.project.project_settings.modules.scene_manager) {
 			if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 				//				if (ImGui::BeginTabItem("Nodes")) {
 				//					if (ImGui::TreeNodeEx("Root Node")) {
@@ -825,14 +828,15 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::InputInt("Buffers",
 												&app.project.project_settings.audio.buffers);
 
-								ImGui::EndTabItem();
-							}
-						}
-
-						if (app.project.project_settings.modules.audio_mixer) {
-							if (ImGui::BeginTabItem("Mixer")) {
+								ImGui::BeginDisabled(
+									!app.project.project_settings.modules.audio_mixer);
+								ImGui::Separator();
+								ImGui::Spacing();
+								ImGui::TextUnformatted("Mixer Settings:");
+								ImGui::Spacing();
 								ImGui::InputInt("Channels",
 												&app.project.project_settings.audio_mixer.channels);
+								ImGui::EndDisabled();
 
 								ImGui::EndTabItem();
 							}
