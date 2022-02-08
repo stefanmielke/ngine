@@ -106,7 +106,7 @@ void AppGui::RenderMenuBar(App &app) {
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Help")) {
-			ImGui::MenuItem("Version 1.0", NULL, false, false);
+			ImGui::MenuItem("Version 1.0.0", nullptr, false, false);
 			ImGui::Separator();
 			if (ImGui::MenuItem("Ngine Wiki")){
 				open_url("https://github.com/stefanmielke/ngine/projects?type=beta");
@@ -116,6 +116,12 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			if (ImGui::MenuItem("Libdragon CLI")){
 				open_url("https://github.com/anacierdem/libdragon-docker");
+			}
+			if (ImGui::MenuItem("Libdragon Extensions")){
+				open_url("https://github.com/stefanmielke/libdragon-extensions");
+			}
+			if (ImGui::MenuItem("SDL2")){
+				open_url("https://www.libsdl.org/index.php");
 			}
 			if (ImGui::MenuItem("Docker Install")){
 				open_url("https://www.docker.com/get-started");
@@ -707,19 +713,19 @@ void AppGui::RenderSettingsWindow(App &app) {
 							app.state.current_scene = &scene;
 							strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
 						}
+					}
 
-						ImGui::Separator();
-						ImGui::Spacing();
-						if (ImGui::Button("Create New Scene")) {
-							app.project.scenes.emplace_back();
-							app.state.current_scene = &app.project
-														   .scenes[app.project.scenes.size() - 1];
-							app.state.current_scene->id = app.project.project_settings
-															  .next_scene_id++;
-							app.state.current_scene->name = std::to_string(
-								app.project.scenes.size());
-							strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
-						}
+					ImGui::Separator();
+					ImGui::Spacing();
+					if (ImGui::Button("Create New Scene")) {
+						app.project.scenes.emplace_back();
+						app.state.current_scene = &app.project
+													   .scenes[app.project.scenes.size() - 1];
+						app.state.current_scene->id = app.project.project_settings
+														  .next_scene_id++;
+						app.state.current_scene->name = std::to_string(
+							app.project.scenes.size());
+						strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
 					}
 				} else if (app.project.project_settings.IsOpen()) {
 					ImGui::TextWrapped("Please enable 'Scene Manager' module to use this feature.");

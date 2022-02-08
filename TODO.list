@@ -55,7 +55,9 @@
     - Copy link to github wiki
     - Copy link to libdragon-docker
     - Copy link to docker install
+[x] Link to libdragon-extensions and SDL2
 
+[ ] Add folders inside /script into the Makefile
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import sprite fonts

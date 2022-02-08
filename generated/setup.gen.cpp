@@ -113,7 +113,7 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	}
 
 	if (!settings.global_script_name.empty()) {
-		setup_body << "\tscript_" << settings.global_script_name << "_create();" << std::endl;
+		setup_end_body << "\tscript_" << settings.global_script_name << "_create();" << std::endl;
 
 		tick_body << "\tscript_" << settings.global_script_name << "_tick();" << std::endl;
 
