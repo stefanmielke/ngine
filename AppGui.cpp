@@ -5,18 +5,21 @@
 #include "imgui.h"
 
 #include "App.h"
+#include "CodeEditor.h"
 #include "ConsoleApp.h"
 #include "Emulator.h"
 #include "ImportAssets.h"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
-#include "CodeEditor.h"
+#include "ThreadCommand.h"
 
 static bool new_project_window_open = false;
 static bool open_project_window_open = false;
 
 static int window_width, window_height;
 static bool is_output_open;
+
+void open_url(const char *url);
 
 void AppGui::Update(App &app) {
 	is_output_open = true;
@@ -100,6 +103,24 @@ void AppGui::RenderMenuBar(App &app) {
 							app.project.project_settings.IsOpen() &&
 								!app.engine_settings.GetEmulatorPath().empty())) {
 			Emulator::Run(&app);
+		}
+		ImGui::MenuItem("|", nullptr, false, false);
+		if (ImGui::BeginMenu("Help")) {
+			ImGui::MenuItem("Version 1.0", NULL, false, false);
+			ImGui::Separator();
+			if (ImGui::MenuItem("Ngine Wiki")){
+				open_url("https://github.com/stefanmielke/ngine/projects?type=beta");
+			}
+			if (ImGui::MenuItem("Libdragon")){
+				open_url("https://github.com/DragonMinded/libdragon");
+			}
+			if (ImGui::MenuItem("Libdragon CLI")){
+				open_url("https://github.com/anacierdem/libdragon-docker");
+			}
+			if (ImGui::MenuItem("Docker Install")){
+				open_url("https://www.docker.com/get-started");
+			}
+			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
@@ -958,4 +979,15 @@ void AppGui::ChangeTheme(App &app, Theme theme) {
 			ImGui::StyleColorsClassic();
 			break;
 	}
+}
+
+void open_url(const char *url) {
+#ifdef __LINUX__
+	std::string command("xdg-open ");
+#else
+	std::string command("start ");
+#endif
+	command.append(url);
+
+	ThreadCommand::RunCommandDetached(command);
 }

@@ -50,6 +50,11 @@
 [x] Make RDP module dependent of the Display module
 [x] Show message on browsers if DFS is not active
 [x] Merge Audio and Mixer module settings on the same tab
+[x] Help menu item
+    - Version
+    - Copy link to github wiki
+    - Copy link to libdragon-docker
+    - Copy link to docker install
 
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
