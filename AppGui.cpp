@@ -222,6 +222,22 @@ void AppGui::RenderContentBrowser(App &app) {
 					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
 					ImGui::Separator();
 
+					if (!app.project.project_settings.modules.dfs) {
+						ImGui::TextWrapped(
+							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
+						ImGui::Separator();
+					}
+					if (!app.project.project_settings.modules.display) {
+						ImGui::TextWrapped(
+							"DISPLAY MODULE IS NOT LOADED. SPRITES WILL NOT BE USABLE IN THE GAME.");
+						ImGui::Separator();
+					}
+					if (!app.project.project_settings.modules.rdp) {
+						ImGui::TextWrapped(
+							"RDP MODULE IS NOT LOADED. HARDWARE RENDERING (rdp_* functions) WILL NOT BE USABLE IN THE GAME.");
+						ImGui::Separator();
+					}
+
 					for (auto &image : app.project.images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
@@ -307,6 +323,22 @@ void AppGui::RenderContentBrowser(App &app) {
 
 					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
 					ImGui::Separator();
+
+					if (!app.project.project_settings.modules.dfs) {
+						ImGui::TextWrapped(
+							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
+						ImGui::Separator();
+					}
+					if (!app.project.project_settings.modules.audio) {
+						ImGui::TextWrapped(
+							"AUDIO MODULE IS NOT LOADED. AUDIO WILL NOT BE USABLE IN THE GAME.");
+						ImGui::Separator();
+					}
+					if (!app.project.project_settings.modules.audio_mixer) {
+						ImGui::TextWrapped(
+							"AUDIO MIXER MODULE IS NOT LOADED. SOME AUDIO WILL NOT BE USABLE IN THE GAME.");
+						ImGui::Separator();
+					}
 
 					for (auto &sound : app.project.sounds) {
 						if (ImGui::Selectable(sound->name.c_str())) {
@@ -753,13 +785,20 @@ void AppGui::RenderSettingsWindow(App &app) {
 								if (!app.project.project_settings.modules.audio)
 									app.project.project_settings.modules.audio_mixer = false;
 							}
-
-							if (!app.project.project_settings.modules.audio)
-								ImGui::BeginDisabled();
+							ImGui::BeginDisabled(!app.project.project_settings.modules.audio);
 							ImGui::Checkbox("Audio Mixer",
 											&app.project.project_settings.modules.audio_mixer);
-							if (!app.project.project_settings.modules.audio)
-								ImGui::EndDisabled();
+							ImGui::EndDisabled();
+
+							if (ImGui::Checkbox("Display",
+												&app.project.project_settings.modules.display)) {
+								if (!app.project.project_settings.modules.display)
+									app.project.project_settings.modules.rdp = false;
+							}
+
+							ImGui::BeginDisabled(!app.project.project_settings.modules.display);
+							ImGui::Checkbox("RDP", &app.project.project_settings.modules.rdp);
+							ImGui::EndDisabled();
 
 							ImGui::Checkbox("Console",
 											&app.project.project_settings.modules.console);
@@ -769,12 +808,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 											&app.project.project_settings.modules.debug_is_viewer);
 							ImGui::Checkbox("Debug USB",
 											&app.project.project_settings.modules.debug_usb);
-							ImGui::Checkbox("Display",
-											&app.project.project_settings.modules.display);
 							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
 							ImGui::Checkbox("Memory Pool",
 											&app.project.project_settings.modules.memory_pool);
-							ImGui::Checkbox("RDP", &app.project.project_settings.modules.rdp);
 							ImGui::Checkbox("Scene Manager",
 											&app.project.project_settings.modules.scene_manager);
 							ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer);
