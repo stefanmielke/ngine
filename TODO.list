@@ -45,11 +45,11 @@
 [x] Fix texture leak on exiting the app.
 [x] Resize import preview image based on window
 [x] Import xm sound files
+[x] Import ym sound files
+    - "--ym-compress <true|false>": Compress output file
 
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
-[ ] Import ym sound files
-    - "--ym-compress <true|false>": Compress output file
 [ ] Import sprite fonts
 [ ] Import Tiled maps
 [ ] Import LDtk maps

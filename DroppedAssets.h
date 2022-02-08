@@ -34,12 +34,11 @@ struct DroppedSound {
 	char name[50] = "\0";
 	char dfs_folder[100] = "/\0";
 
+	bool compress;
 	bool loop;
 	int loop_offset;
 
 	DroppedSound(const char *sound_path, LibdragonSoundType type)
-		: sound_path(sound_path), type(type), loop(false), loop_offset(0) {
+		: sound_path(sound_path), type(type), compress(false), loop(false), loop_offset(0) {
 	}
-
-
 };

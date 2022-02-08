@@ -58,7 +58,7 @@ void LibdragonSound::DeleteFromDisk(const std::string &project_directory) const 
 
 std::string LibdragonSound::GetTooltip() const {
 	std::string dfs_prefix;
-	if (type == SOUND_XM) {
+	if (type == SOUND_XM || type == SOUND_YM) {
 		dfs_prefix = "rom:";
 	}
 

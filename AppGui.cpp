@@ -272,7 +272,8 @@ void AppGui::RenderContentBrowser(App &app) {
 						if (ImGui::Selectable("Copy DFS Path")) {
 							if (app.state.selected_sound) {
 								std::string dfs_path;
-								if ((*app.state.selected_sound)->type == SOUND_XM) {
+								if ((*app.state.selected_sound)->type == SOUND_XM ||
+									(*app.state.selected_sound)->type == SOUND_YM) {
 									dfs_path.append("rom:");
 								}
 

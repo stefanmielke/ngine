@@ -61,8 +61,15 @@ int main() {
 							app.state.dropped_image_files.push_back(dropped_image);
 
 							ImGui::SetWindowFocus("Import Assets");
-						} else if (file.ends_with(".wav") || file.ends_with(".xm")) {
-							LibdragonSoundType type = file.ends_with(".wav") ? SOUND_WAV : SOUND_XM;
+						} else if (file.ends_with(".wav") || file.ends_with(".xm") ||
+								   file.ends_with(".ym")) {
+							LibdragonSoundType type;
+							if (file.ends_with(".wav"))
+								type = SOUND_WAV;
+							else if (file.ends_with(".xm"))
+								type = SOUND_XM;
+							else
+								type = SOUND_YM;
 
 							DroppedSound dropped_sound(event.drop.file, type);
 							std::filesystem::path filepath(event.drop.file);

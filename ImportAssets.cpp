@@ -110,6 +110,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 							if (sound_file->loop) {
 								ImGui::InputInt("Loop Offset", &sound_file->loop_offset);
 							}
+						} else if (sound_file->type == SOUND_YM) {
+							ImGui::Checkbox("Compress", &sound_file->compress);
 						}
 
 						ImGui::Separator();
@@ -140,6 +142,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 									sound->sound_path = "assets/sounds/" + name + sound->GetExtension();
 									sound->wav_loop = sound_file->loop;
 									sound->wav_loop_offset = sound_file->loop_offset;
+									sound->ym_compress = sound_file->compress;
 
 									std::filesystem::create_directories(
 										app->project.project_settings.project_directory +
