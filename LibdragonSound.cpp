@@ -57,9 +57,14 @@ void LibdragonSound::DeleteFromDisk(const std::string &project_directory) const 
 }
 
 std::string LibdragonSound::GetTooltip() const {
+	std::string dfs_prefix;
+	if (type == SOUND_XM) {
+		dfs_prefix = "rom:";
+	}
+
 	std::stringstream tooltip;
-	tooltip << name << "\nPath: " << sound_path << "\nDFS_Path: " << dfs_folder << name
-			<< ".wav64\n";
+	tooltip << name << "\nPath: " << sound_path << "\nDFS_Path: " << dfs_prefix << dfs_folder
+			<< name << GetLibdragonExtension() << "\n";
 
 	switch (type) {
 		case SOUND_UNKNOWN: {
@@ -110,5 +115,20 @@ std::string LibdragonSound::GetLibdragonGenFlags() const {
 		case SOUND_XM:
 		default:
 			return "";
+	}
+}
+
+std::string LibdragonSound::GetExtension() const {
+	switch (type) {
+		case SOUND_UNKNOWN:
+			return ".no_ext";
+		case SOUND_WAV:
+			return ".wav";
+		case SOUND_XM:
+			return ".xm";
+		case SOUND_YM:
+			return ".ym";
+		default:
+			return ".not_mapped";
 	}
 }

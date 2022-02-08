@@ -44,10 +44,10 @@
 [x] Themes
 [x] Fix texture leak on exiting the app.
 [x] Resize import preview image based on window
+[x] Import xm sound files
 
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
-[ ] Import xm sound files
 [ ] Import ym sound files
     - "--ym-compress <true|false>": Compress output file
 [ ] Import sprite fonts

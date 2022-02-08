@@ -101,12 +101,15 @@ void ImportAssets::RenderImportScreen(App *app) {
 				for (size_t i = 0; i < app->state.dropped_sound_files.size(); ++i) {
 					DroppedSound *sound_file = &app->state.dropped_sound_files[i];
 					ImGui::PushID(id);
-					if (ImGui::BeginTabItem("WAV Sound")) {
+					if (ImGui::BeginTabItem("Sound")) {
 						ImGui::InputText("Name", sound_file->name, 50);
 						ImGui::InputText("DFS Folder", sound_file->dfs_folder, 100);
-						ImGui::Checkbox("Loop", &sound_file->loop);
-						if (sound_file->loop) {
-							ImGui::InputInt("Loop Offset", &sound_file->loop_offset);
+
+						if (sound_file->type == SOUND_WAV) {
+							ImGui::Checkbox("Loop", &sound_file->loop);
+							if (sound_file->loop) {
+								ImGui::InputInt("Loop Offset", &sound_file->loop_offset);
+							}
 						}
 
 						ImGui::Separator();
@@ -131,12 +134,12 @@ void ImportAssets::RenderImportScreen(App *app) {
 										"Sound with the name already exists. Please choose a "
 										"different name.");
 								} else {
-									auto image = std::make_unique<LibdragonSound>(SOUND_WAV);
-									image->name = name;
-									image->dfs_folder = dfs_folder;
-									image->sound_path = "assets/sounds/" + name + ".wav";
-									image->wav_loop = sound_file->loop;
-									image->wav_loop_offset = sound_file->loop_offset;
+									auto sound = std::make_unique<LibdragonSound>(sound_file->type);
+									sound->name = name;
+									sound->dfs_folder = dfs_folder;
+									sound->sound_path = "assets/sounds/" + name + sound->GetExtension();
+									sound->wav_loop = sound_file->loop;
+									sound->wav_loop_offset = sound_file->loop_offset;
 
 									std::filesystem::create_directories(
 										app->project.project_settings.project_directory +
@@ -144,15 +147,15 @@ void ImportAssets::RenderImportScreen(App *app) {
 									std::filesystem::copy_file(
 										sound_file->sound_path,
 										app->project.project_settings.project_directory +
-											"/assets/sounds/" + name + ".wav");
+											"/assets/sounds/" + name + sound->GetExtension());
 
-									image->SaveToDisk(
+									sound->SaveToDisk(
 										app->project.project_settings.project_directory);
 
 									app->state.dropped_sound_files.erase(
 										app->state.dropped_sound_files.begin() + (int)i);
 
-									app->project.sounds.push_back(move(image));
+									app->project.sounds.push_back(move(sound));
 									--i;
 								}
 							}

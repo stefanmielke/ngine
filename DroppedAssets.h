@@ -3,6 +3,8 @@
 #include <string>
 #include <SDL2/SDL.h>
 
+#include "LibdragonSound.h"
+
 struct DroppedImage {
 	std::string image_path;
 	SDL_Texture *image_data;
@@ -27,6 +29,7 @@ struct DroppedImage {
 
 struct DroppedSound {
 	std::string sound_path;
+	LibdragonSoundType type;
 
 	char name[50] = "\0";
 	char dfs_folder[100] = "/\0";
@@ -34,7 +37,9 @@ struct DroppedSound {
 	bool loop;
 	int loop_offset;
 
-	explicit DroppedSound(const char *sound_path)
-		: sound_path(sound_path), loop(false), loop_offset(0) {
+	DroppedSound(const char *sound_path, LibdragonSoundType type)
+		: sound_path(sound_path), type(type), loop(false), loop_offset(0) {
 	}
+
+
 };

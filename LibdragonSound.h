@@ -31,4 +31,5 @@ class LibdragonSound {
 	[[nodiscard]] std::string GetTooltip() const;
 	[[nodiscard]] std::string GetLibdragonGenFlags() const;
 	[[nodiscard]] std::string GetLibdragonExtension() const;
+	[[nodiscard]] std::string GetExtension() const;
 };

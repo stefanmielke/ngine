@@ -127,7 +127,7 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	}
 
 	if (settings.modules.display) {
-		display_body << "display_show(disp);" << std::endl;
+		display_body << "\tdisplay_show(disp);" << std::endl;
 	}
 
 	FILE *filestream = fopen(setup_path.c_str(), "w");

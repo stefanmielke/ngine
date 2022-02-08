@@ -208,7 +208,8 @@ void AppGui::RenderContentBrowser(App &app) {
 								for (size_t i = 0; i < app.project.images.size(); ++i) {
 									if (app.project.images[i]->image_path ==
 										(*app.state.selected_image)->image_path) {
-										app.project.images.erase(app.project.images.begin() + (int)i);
+										app.project.images.erase(app.project.images.begin() +
+																 (int)i);
 										break;
 									}
 								}
@@ -270,8 +271,15 @@ void AppGui::RenderContentBrowser(App &app) {
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
 							if (app.state.selected_sound) {
-								std::string dfs_path((*app.state.selected_sound)->dfs_folder +
-													 (*app.state.selected_sound)->name + ".wav64");
+								std::string dfs_path;
+								if ((*app.state.selected_sound)->type == SOUND_XM) {
+									dfs_path.append("rom:");
+								}
+
+								dfs_path.append(
+									(*app.state.selected_sound)->dfs_folder +
+									(*app.state.selected_sound)->name +
+									(*app.state.selected_sound)->GetLibdragonExtension());
 								ImGui::SetClipboardText(dfs_path.c_str());
 								app.state.selected_sound = nullptr;
 							}
@@ -285,7 +293,8 @@ void AppGui::RenderContentBrowser(App &app) {
 								for (size_t i = 0; i < app.project.sounds.size(); ++i) {
 									if (app.project.sounds[i]->sound_path ==
 										(*app.state.selected_sound)->sound_path) {
-										app.project.sounds.erase(app.project.sounds.begin() + (int)i);
+										app.project.sounds.erase(app.project.sounds.begin() +
+																 (int)i);
 										break;
 									}
 								}
@@ -602,7 +611,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 									app.project.project_settings.project_directory + "/" +
 										(*app.state.sound_editing)->sound_path,
 									app.project.project_settings.project_directory +
-										"/assets/sounds/" + sound_edit_name + ".wav");
+										"/assets/sounds/" + sound_edit_name +
+										(*app.state.sound_editing)->GetExtension());
 								(*app.state.sound_editing)
 									->DeleteFromDisk(
 										app.project.project_settings.project_directory);
@@ -614,7 +624,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 							(*app.state.sound_editing)->dfs_folder = sound_edit_dfs_folder;
 							(*app.state.sound_editing)
 								->sound_path = "assets/sounds/" + (*app.state.sound_editing)->name +
-											   ".wav";
+											   (*app.state.sound_editing)->GetExtension();
 
 							(*app.state.sound_editing)
 								->SaveToDisk(app.project.project_settings.project_directory);
