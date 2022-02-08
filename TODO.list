@@ -49,8 +49,8 @@
     - "--ym-compress <true|false>": Compress output file
 [x] Make RDP module dependent of the Display module
 [x] Show message on browsers if DFS is not active
+[x] Merge Audio and Mixer module settings on the same tab
 
-[ ] Merge Audio and Mixer module settings on the same tab
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import sprite fonts
