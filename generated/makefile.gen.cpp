@@ -8,11 +8,14 @@ include $(N64_INST)/include/n64.mk
 N64_CFLAGS += -Ilibs/libdragon-extensions/include
 
 C_ROOT_FILES := $(wildcard src/*.c)
-C_SCENE_FILES := $(wildcard src/scenes/*.c)
-C_SCRIPT_FILES := $(wildcard src/scripts/*.c)
+C_ROOT_1_FILES := $(wildcard src/**/*.c)
+C_ROOT_2_FILES := $(wildcard src/**/**/*.c)
+C_ROOT_3_FILES := $(wildcard src/**/**/**/*.c)
+C_ROOT_4_FILES := $(wildcard src/**/**/**/**/*.c)
+C_ROOT_5_FILES := $(wildcard src/**/**/**/**/**/*.c)
 C_LIB_EXTENSIONS_FILES := $(wildcard libs/libdragon-extensions/src/*.c)
 
-SRC = $(C_ROOT_FILES) $(C_SCENE_FILES) $(C_SCRIPT_FILES) $(C_LIB_EXTENSIONS_FILES)
+SRC = $(C_ROOT_FILES) $(C_ROOT_1_FILES) $(C_ROOT_2_FILES) $(C_ROOT_3_FILES) $(C_ROOT_4_FILES) $(C_ROOT_5_FILES) $(C_LIB_EXTENSIONS_FILES)
 OBJS = $(SRC:%%.c=%%.o)
 DEPS = $(SRC:%%.c=%%.d)
 
@@ -52,11 +55,14 @@ N64_CFLAGS += -Ilibs/libdragon-extensions/include
 N64_ROM_TITLE = "%s"
 
 C_ROOT_FILES := $(wildcard src/*.c)
-C_SCENE_FILES := $(wildcard src/scenes/*.c)
-C_SCRIPT_FILES := $(wildcard src/scripts/*.c)
+C_ROOT_1_FILES := $(wildcard src/**/*.c)
+C_ROOT_2_FILES := $(wildcard src/**/**/*.c)
+C_ROOT_3_FILES := $(wildcard src/**/**/**/*.c)
+C_ROOT_4_FILES := $(wildcard src/**/**/**/**/*.c)
+C_ROOT_5_FILES := $(wildcard src/**/**/**/**/**/*.c)
 C_LIB_EXTENSIONS_FILES := $(wildcard libs/libdragon-extensions/src/*.c)
 
-SRC = $(C_ROOT_FILES) $(C_SCENE_FILES) $(C_SCRIPT_FILES) $(C_LIB_EXTENSIONS_FILES)
+SRC = $(C_ROOT_FILES) $(C_ROOT_1_FILES) $(C_ROOT_2_FILES) $(C_ROOT_3_FILES) $(C_ROOT_4_FILES) $(C_ROOT_5_FILES) $(C_LIB_EXTENSIONS_FILES)
 OBJS = $(SRC:%%.c=%%.o)
 DEPS = $(SRC:%%.c=%%.d)
 
