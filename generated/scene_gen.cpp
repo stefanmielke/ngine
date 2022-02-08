@@ -59,7 +59,7 @@ void generate_scene_gen_files(const Project &project) {
 			includes = "#include \"../scripts/" + scene.script_name + ".script.h\"";
 			create_method_impl = "script_" + scene.script_name + "_create();";
 			tick_method_impl = "short result = script_" + scene.script_name +
-							   "_tick();\n\tif (result >= 0) return result;;";
+							   "_tick();\n\tif (result >= 0) return result;";
 			display_method_impl = "script_" + scene.script_name + "_display(disp);";
 			destroy_method_impl = "script_" + scene.script_name + "_destroy();";
 		}
