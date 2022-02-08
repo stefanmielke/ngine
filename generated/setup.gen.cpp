@@ -35,7 +35,9 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 				   << std::endl;
 
 		display_body << "\tstatic display_context_t disp = 0;" << std::endl
-					 << "\twhile (!(disp = display_lock()));" << std::endl;
+					 << "\twhile (!(disp = display_lock()))" << std::endl
+					 << "\t\t;" << std::endl
+					 << std::endl;
 	}
 	if (settings.modules.memory_pool) {
 		variables << "MemZone global_memory_pool;" << std::endl
