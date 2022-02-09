@@ -14,7 +14,10 @@ set(SOURCES ${SOURCES} imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.c
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE imgui)
-target_link_libraries(${PROJECT_NAME} GL dl SDL2_image)
+
+if(__LINUX__)
+target_link_libraries(${PROJECT_NAME} GL dl)
+endif()
 
 find_package(SDL2 REQUIRED)
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2 SDL2_image)

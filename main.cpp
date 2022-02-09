@@ -8,7 +8,7 @@
 
 ConsoleApp console;
 
-int main() {
+int main(int argv, char** args) {
 	App app;
 	app.engine_settings.LoadFromDisk();
 	app.state = ProjectState(app.engine_settings);
@@ -36,7 +36,7 @@ int main() {
 
 							std::filesystem::path filepath(event.drop.file);
 							strcpy(dropped_image.name,
-								   filepath.filename().replace_extension().c_str());
+								   filepath.filename().replace_extension().string().c_str());
 
 							dropped_image.image_data = IMG_LoadTexture(app.renderer,
 																	   event.drop.file);
@@ -74,7 +74,7 @@ int main() {
 							DroppedSound dropped_sound(event.drop.file, type);
 							std::filesystem::path filepath(event.drop.file);
 							strcpy(dropped_sound.name,
-								   filepath.filename().replace_extension().c_str());
+								   filepath.filename().replace_extension().string().c_str());
 
 							app.state.dropped_sound_files.push_back(dropped_sound);
 
@@ -83,9 +83,9 @@ int main() {
 					} else {
 						std::filesystem::path dropped_path(event.drop.file);
 						if (std::filesystem::is_directory(dropped_path)) {
-							app.OpenProject(dropped_path.c_str());
+							app.OpenProject(dropped_path.string().c_str());
 						} else if (std::filesystem::is_regular_file(dropped_path)) {
-							app.OpenProject(dropped_path.parent_path().c_str());
+							app.OpenProject(dropped_path.parent_path().string().c_str());
 						}
 					}
 				} break;

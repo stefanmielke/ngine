@@ -1,5 +1,6 @@
 #include "Sdl.h"
 
+#include <cstdio>
 #include <SDL2/SDL_image.h>
 
 #include "imgui.h"

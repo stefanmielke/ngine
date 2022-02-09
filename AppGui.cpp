@@ -1,5 +1,6 @@
 #include "AppGui.h"
 
+#include <cmath>
 #include <filesystem>
 
 #include "imgui.h"

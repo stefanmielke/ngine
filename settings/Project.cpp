@@ -37,7 +37,7 @@ void Project::LoadFromDisk(const std::string &project_directory) {
 	std::filesystem::recursive_directory_iterator dir_iter(scenes_folder);
 	for (auto &file_entry : dir_iter) {
 		if (file_entry.is_regular_file()) {
-			std::string filepath(file_entry.path());
+			std::string filepath(file_entry.path().string());
 			if (filepath.ends_with(".scene.json")) {
 				nlohmann::json json;
 
@@ -98,7 +98,7 @@ void Project::ReloadImages(SDL_Renderer *renderer) {
 	std::filesystem::recursive_directory_iterator dir_iter(folder);
 	for (auto &file_entry : dir_iter) {
 		if (file_entry.is_regular_file()) {
-			std::string filepath(file_entry.path());
+			std::string filepath(file_entry.path().string());
 			if (filepath.ends_with(".sprite.json")) {
 				auto image = std::make_unique<LibdragonImage>();
 				image->LoadFromDisk(filepath);
@@ -122,7 +122,7 @@ void Project::ReloadScripts() {
 	std::filesystem::recursive_directory_iterator dir_iter(script_folder);
 	for (auto &file_entry : dir_iter) {
 		if (file_entry.is_regular_file()) {
-			std::string filepath(file_entry.path());
+			std::string filepath(file_entry.path().string());
 			if (filepath.ends_with(".script.json")) {
 				nlohmann::json json;
 
@@ -147,7 +147,7 @@ void Project::ReloadSounds() {
 	std::filesystem::recursive_directory_iterator dir_iter(folder);
 	for (auto &file_entry : dir_iter) {
 		if (file_entry.is_regular_file()) {
-			std::string filepath(file_entry.path());
+			std::string filepath(file_entry.path().string());
 			if (filepath.ends_with(".sound.json")) {
 				auto sound = std::make_unique<LibdragonSound>(SOUND_UNKNOWN);
 				sound->LoadFromDisk(filepath);
