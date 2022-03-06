@@ -45,3 +45,21 @@ void Content::CreateSounds(const ProjectSettings &project_settings,
 
 	ThreadCommand::RunCommand(command.str());
 }
+
+void Content::CreateGeneralFiles(const ProjectSettings &project_settings,
+								 const std::vector<std::unique_ptr<LibdragonFile>> &files) {
+	std::stringstream command;
+	command << "cd " << project_settings.project_directory << std::endl;
+
+	for (auto &file : files) {
+		std::string dfs_output_path = "build/filesystem" + file->dfs_folder;
+		std::filesystem::create_directories(project_settings.project_directory + "/" +
+											dfs_output_path);
+
+		command << "cp " << file->file_path << " " << dfs_output_path + file->name + file->file_type <<  std::endl;
+	}
+
+	console.AddLog("Building general files...\n%s", command.str().c_str());
+
+	ThreadCommand::RunCommand(command.str());
+}

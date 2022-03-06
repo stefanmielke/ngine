@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "LibdragonImage.h"
+#include "LibdragonFile.h"
 #include "LibdragonSound.h"
 #include "settings/ProjectSettings.h"
 
@@ -13,4 +14,6 @@ class Content {
 							  const std::vector<std::unique_ptr<LibdragonImage>> &images);
 	static void CreateSounds(const ProjectSettings &project_settings,
 							 const std::vector<std::unique_ptr<LibdragonSound>> &sounds);
+	static void CreateGeneralFiles(const ProjectSettings &project_settings,
+								   const std::vector<std::unique_ptr<LibdragonFile>> &files);
 };

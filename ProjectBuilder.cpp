@@ -86,6 +86,7 @@ void create_build_files(Project &project) {
 
 	Content::CreateSprites(project.project_settings, project.images);
 	Content::CreateSounds(project.project_settings, project.sounds);
+	Content::CreateGeneralFiles(project.project_settings, project.general_files);
 }
 
 void ProjectBuilder::Build(Project &project) {
