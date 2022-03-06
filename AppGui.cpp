@@ -435,36 +435,81 @@ void AppGui::RenderContentBrowser(App &app) {
 			}
 			if (ImGui::BeginTabItem("Content")) {
 				if (app.project.project_settings.IsOpen()) {
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("PopupContentsBrowser");
+					}
+
+					if (ImGui::BeginPopup("PopupContentsBrowser")) {
+						if (ImGui::Selectable("Refresh")) {
+							app.project.ReloadGeneralFiles();
+						}
+						ImGui::EndPopup();
+					}
+
+					int cur_i = 0;
+					if (ImGui::BeginPopup("PopupContentsBrowserContent")) {
+						if (ImGui::Selectable("Edit Settings")) {
+							if (app.state.selected_general_file) {
+								app.state.general_file_editing = app.state.selected_general_file;
+								app.state.reload_general_file_edit = true;
+								app.state.selected_general_file = nullptr;
+							}
+						}
+						if (ImGui::Selectable("Copy DFS Path")) {
+							if (app.state.selected_general_file) {
+								std::string dfs_path;
+								dfs_path.append((*app.state.selected_general_file)->dfs_folder +
+												(*app.state.selected_general_file)->name +
+												(*app.state.selected_general_file)->file_type);
+
+								ImGui::SetClipboardText(dfs_path.c_str());
+								app.state.selected_general_file = nullptr;
+							}
+						}
+						if (ImGui::Selectable("Delete")) {
+							if (app.state.selected_general_file) {
+								(*app.state.selected_general_file)
+									->DeleteFromDisk(
+										app.project.project_settings.project_directory);
+
+								for (size_t i = 0; i < app.project.general_files.size(); ++i) {
+									if (app.project.general_files[i]->name ==
+											(*app.state.selected_general_file)->name &&
+										app.project.general_files[i]->file_type ==
+											(*app.state.selected_general_file)->file_type) {
+										app.project.general_files.erase(
+											app.project.general_files.begin() + (int)i);
+
+										break;
+									}
+								}
+								app.state.selected_general_file = nullptr;
+							}
+						}
+						ImGui::EndPopup();
+					}
+
 					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
 					ImGui::Separator();
+
 					if (!app.project.project_settings.modules.dfs) {
 						ImGui::TextWrapped(
 							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
 						ImGui::Separator();
 					}
 
-					for (size_t i = 0; i < app.project.general_files.size(); ++i) {
-						auto general_file = &app.project.general_files[i];
-						ImGui::TextUnformatted((*general_file)->name.c_str());
-						ImGui::SameLine();
-						ImGui::PushID(((*general_file)->name + "D").c_str());
-						if (ImGui::SmallButton("Delete")) {
-							(*general_file)->DeleteFromDisk(
-								app.project.project_settings.project_directory);
-
-							for (size_t j = 0; j < app.project.general_files.size(); ++j) {
-								if (app.project.general_files[j]->name == (*general_file)->name &&
-									app.project.general_files[j]->file_type ==
-										(*general_file)->file_type) {
-									app.project.general_files.erase(
-										app.project.general_files.begin() + (int)j);
-
-									--i;
-									break;
-								}
-							}
+					for (auto &general_file : app.project.general_files) {
+						std::string name = general_file->name + general_file->file_type;
+						if (ImGui::Selectable(name.c_str())) {
+							app.state.selected_general_file = &general_file;
+							ImGui::OpenPopup("PopupContentsBrowserContent");
 						}
-						ImGui::PopID();
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s", general_file->GetTooltip().c_str());
+							ImGui::EndTooltip();
+						}
+						++cur_i;
 					}
 				}
 				ImGui::EndTabItem();
@@ -735,6 +780,73 @@ void AppGui::RenderSettingsWindow(App &app) {
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
 						app.state.sound_editing = nullptr;
+					}
+
+					ImGui::EndTabItem();
+				}
+			}
+			if (app.state.general_file_editing) {
+				static char edit_name[50];
+				static char edit_dfs_folder[100];
+				if (app.state.reload_general_file_edit) {
+					app.state.reload_general_file_edit = false;
+
+					strcpy(edit_name, (*app.state.general_file_editing)->name.c_str());
+					strcpy(edit_dfs_folder, (*app.state.general_file_editing)->dfs_folder.c_str());
+				}
+				if (ImGui::BeginTabItem("Content Settings")) {
+					ImGui::InputText("Name", edit_name, 50);
+					ImGui::InputText("DFS Folder", edit_dfs_folder, 100);
+
+					ImGui::Separator();
+					ImGui::Spacing();
+					if (ImGui::Button("Save")) {
+						bool will_save = true;
+						if ((*app.state.general_file_editing)->name != edit_name) {
+							std::string name_string(edit_name);
+							std::string file_type_string(
+								(*app.state.general_file_editing)->file_type);
+
+							auto find_by_name = [&name_string, &file_type_string](
+													const std::unique_ptr<LibdragonFile> &i) {
+								return i->name == name_string && i->file_type == file_type_string;
+							};
+							if (std::find_if(app.project.general_files.begin(),
+											 app.project.general_files.end(),
+											 find_by_name) != std::end(app.project.general_files)) {
+								console.AddLog(
+									"File with the name already exists. Please choose a "
+									"different name.");
+								will_save = false;
+							} else {
+								std::filesystem::copy_file(
+									app.project.project_settings.project_directory + "/" +
+										(*app.state.general_file_editing)->file_path,
+									app.project.project_settings.project_directory +
+										"/assets/general/" + edit_name + file_type_string);
+								(*app.state.general_file_editing)
+									->DeleteFromDisk(
+										app.project.project_settings.project_directory);
+							}
+						}
+
+						if (will_save) {
+							(*app.state.general_file_editing)->name = edit_name;
+							(*app.state.general_file_editing)->dfs_folder = edit_dfs_folder;
+							(*app.state.general_file_editing)
+								->file_path = "assets/general/" +
+											  (*app.state.general_file_editing)->name +
+											  (*app.state.general_file_editing)->file_type;
+
+							(*app.state.general_file_editing)
+								->SaveToDisk(app.project.project_settings.project_directory);
+
+							app.state.general_file_editing = nullptr;
+						}
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel")) {
+						app.state.general_file_editing = nullptr;
 					}
 
 					ImGui::EndTabItem();

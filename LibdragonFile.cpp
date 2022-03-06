@@ -50,8 +50,8 @@ void LibdragonFile::DeleteFromDisk(const std::string &project_directory) const {
 
 std::string LibdragonFile::GetTooltip() const {
 	std::stringstream tooltip;
-	tooltip << name << "\nPath: " << file_path << "\nDFS_Path: " << dfs_folder << name << file_type
-			<< "\n";
+	tooltip << name << file_type << "\nPath: " << file_path << "\nDFS_Path: " << dfs_folder << name
+			<< file_type << "\n";
 
 	return tooltip.str();
 }

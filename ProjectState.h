@@ -21,6 +21,10 @@ class ProjectState {
 	std::unique_ptr<LibdragonSound> *sound_editing;
 	bool reload_sound_edit;
 
+	std::unique_ptr<LibdragonFile> *selected_general_file;
+	std::unique_ptr<LibdragonFile> *general_file_editing;
+	bool reload_general_file_edit;
+
 	std::vector<DroppedImage> dropped_image_files;
 	std::vector<DroppedSound> dropped_sound_files;
 	std::vector<DroppedGeneralFile> dropped_general_files;
@@ -41,6 +45,9 @@ class ProjectState {
 		  selected_sound(nullptr),
 		  sound_editing(nullptr),
 		  reload_sound_edit(false),
+		  selected_general_file(nullptr),
+		  general_file_editing(nullptr),
+		  reload_general_file_edit(false),
 		  input_new_project(),
 		  input_open_project(),
 		  emulator_path(),

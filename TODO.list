@@ -56,9 +56,9 @@
     - Copy link to libdragon-docker
     - Copy link to docker install
 [x] Link to libdragon-extensions and SDL2
+[x] Import anything (another content window)
 
 [ ] Set path to 'libdragon' exe
-[ ] Import anything (another content window)
 [ ] Add folders inside /script into the Makefile
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
