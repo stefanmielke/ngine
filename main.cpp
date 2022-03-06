@@ -8,7 +8,7 @@
 
 ConsoleApp console;
 
-int main(int argv, char** args) {
+int main(int argv, char **args) {
 	App app;
 	app.engine_settings.LoadFromDisk();
 	app.state = ProjectState(app.engine_settings);
@@ -79,13 +79,24 @@ int main(int argv, char** args) {
 							app.state.dropped_sound_files.push_back(dropped_sound);
 
 							ImGui::SetWindowFocus("Import Assets");
+						} else {
+							DroppedGeneralFile dropped_file(event.drop.file);
+
+							std::filesystem::path filepath(event.drop.file);
+							strcpy(dropped_file.name,
+								   filepath.filename().replace_extension().string().c_str());
+							strcpy(dropped_file.extension, filepath.extension().c_str());
+
+							app.state.dropped_general_files.push_back(dropped_file);
+
+							ImGui::SetWindowFocus("Import Assets");
 						}
 					} else {
 						std::filesystem::path dropped_path(event.drop.file);
 						if (std::filesystem::is_directory(dropped_path)) {
-							app.OpenProject(dropped_path.string().c_str());
+							app.OpenProject(dropped_path.string());
 						} else if (std::filesystem::is_regular_file(dropped_path)) {
-							app.OpenProject(dropped_path.parent_path().string().c_str());
+							app.OpenProject(dropped_path.parent_path().string());
 						}
 					}
 				} break;

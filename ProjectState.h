@@ -5,6 +5,7 @@
 
 #include "DroppedAssets.h"
 #include "LibdragonImage.h"
+#include "LibdragonFile.h"
 #include "LibdragonSound.h"
 #include "settings/EngineSettings.h"
 #include "settings/ProjectSettingsScreen.h"
@@ -22,6 +23,7 @@ class ProjectState {
 
 	std::vector<DroppedImage> dropped_image_files;
 	std::vector<DroppedSound> dropped_sound_files;
+	std::vector<DroppedGeneralFile> dropped_general_files;
 
 	char input_new_project[255];
 	char input_open_project[255];
@@ -60,6 +62,7 @@ class ProjectState {
 				SDL_DestroyTexture(image.image_data);
 		}
 
+		dropped_general_files.clear();
 		dropped_sound_files.clear();
 		dropped_image_files.clear();
 	}

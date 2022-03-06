@@ -42,3 +42,14 @@ struct DroppedSound {
 		: sound_path(sound_path), type(type), compress(false), loop(false), loop_offset(0) {
 	}
 };
+
+struct DroppedGeneralFile {
+	std::string file_path;
+
+	char name[50] = "\0";
+	char extension[10] = "\0";
+	char dfs_folder[100] = "/\0";
+
+	explicit DroppedGeneralFile(const char *file_path) : file_path(file_path) {
+	}
+};

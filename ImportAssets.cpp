@@ -7,7 +7,8 @@
 #include "imgui.h"
 
 void ImportAssets::RenderImportScreen(App *app) {
-	if (!app->state.dropped_image_files.empty() || !app->state.dropped_sound_files.empty()) {
+	if (!app->state.dropped_image_files.empty() || !app->state.dropped_sound_files.empty() ||
+		!app->state.dropped_general_files.empty()) {
 		if (ImGui::Begin("Import Assets")) {
 			float window_width = ImGui::GetWindowWidth();
 			float window_height = ImGui::GetWindowHeight() - 200;
@@ -139,7 +140,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 									auto sound = std::make_unique<LibdragonSound>(sound_file->type);
 									sound->name = name;
 									sound->dfs_folder = dfs_folder;
-									sound->sound_path = "assets/sounds/" + name + sound->GetExtension();
+									sound->sound_path = "assets/sounds/" + name +
+														sound->GetExtension();
 									sound->wav_loop = sound_file->loop;
 									sound->wav_loop_offset = sound_file->loop_offset;
 									sound->ym_compress = sound_file->compress;
@@ -167,6 +169,73 @@ void ImportAssets::RenderImportScreen(App *app) {
 						if (ImGui::Button("Cancel")) {
 							app->state.dropped_sound_files.erase(
 								app->state.dropped_sound_files.begin() + (int)i);
+							--i;
+						}
+
+						ImGui::EndTabItem();
+					}
+					ImGui::PopID();
+					++id;
+				}
+				for (size_t i = 0; i < app->state.dropped_general_files.size(); ++i) {
+					DroppedGeneralFile *general_file = &app->state.dropped_general_files[i];
+					ImGui::PushID(id);
+					if (ImGui::BeginTabItem("General")) {
+						ImGui::BeginDisabled();
+						ImGui::InputText("Type", general_file->extension, 50);
+						ImGui::EndDisabled();
+
+						ImGui::InputText("Name", general_file->name, 50);
+						ImGui::InputText("DFS Folder", general_file->dfs_folder, 100);
+
+						ImGui::Separator();
+						ImGui::Spacing();
+
+						if (ImGui::Button("Import")) {
+							std::string name(general_file->name);
+							std::string dfs_folder(general_file->dfs_folder);
+
+							if (name.empty() || dfs_folder.empty()) {
+								console.AddLog(
+									"[error] Please fill both 'name' and 'dfs folder' fields");
+							} else {
+								if (std::filesystem::exists(
+										app->project.project_settings.project_directory +
+										"/assets/general/" + name + general_file->extension)) {
+									console.AddLog(
+										"File with the name already exists. Please choose a "
+										"different name.");
+								} else {
+									auto file = std::make_unique<LibdragonFile>();
+									file->name = name;
+									file->dfs_folder = dfs_folder;
+									file->file_path = "assets/general/" + name +
+													  general_file->extension;
+									file->file_type = general_file->extension;
+
+									std::filesystem::create_directories(
+										app->project.project_settings.project_directory +
+										"/assets/general");
+									std::filesystem::copy_file(
+										general_file->file_path,
+										app->project.project_settings.project_directory +
+											"/assets/general/" + name + general_file->extension);
+
+									file->SaveToDisk(
+										app->project.project_settings.project_directory);
+
+									app->state.dropped_general_files.erase(
+										app->state.dropped_general_files.begin() + (int)i);
+
+									app->project.general_files.push_back(move(file));
+									--i;
+								}
+							}
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel")) {
+							app->state.dropped_general_files.erase(
+								app->state.dropped_general_files.begin() + (int)i);
 							--i;
 						}
 
