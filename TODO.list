@@ -58,6 +58,10 @@
 [x] Link to libdragon-extensions and SDL2
 [x] Import anything (another content window)
 
+[ ] Add bash script to content build (for custom import pipeline)
+    - Under project/general create a button to 'Edit Custom Content Build Script' that will create/open '.ngine/pipeline/content_pipeline_end.term'
+    - Content of the script will be read and executed at the end of 'ProjectBuild::create_build_files'
+    - If the editor is not setup, print message with the file location
 [ ] Set path to 'libdragon' exe
 [ ] Add folders inside /script into the Makefile
 [ ] Set DFS location
