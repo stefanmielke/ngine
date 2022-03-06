@@ -63,7 +63,6 @@
     - Content of the script will be read and executed at the end of 'ProjectBuild::create_build_files'
     - If the editor is not setup, print message with the file location
 [ ] Set path to 'libdragon' exe
-[ ] Add folders inside /script into the Makefile
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import sprite fonts
