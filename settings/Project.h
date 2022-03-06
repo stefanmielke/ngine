@@ -32,6 +32,7 @@ class Project {
 	void ReloadImages(SDL_Renderer *renderer);
 	void ReloadScripts();
 	void ReloadSounds();
+	void ReloadGeneralFiles();
 
 	Project() = default;
 	Project(Project const &) = delete;

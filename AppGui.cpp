@@ -435,6 +435,37 @@ void AppGui::RenderContentBrowser(App &app) {
 			}
 			if (ImGui::BeginTabItem("Content")) {
 				if (app.project.project_settings.IsOpen()) {
+					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+					ImGui::Separator();
+					if (!app.project.project_settings.modules.dfs) {
+						ImGui::TextWrapped(
+							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
+						ImGui::Separator();
+					}
+
+					for (size_t i = 0; i < app.project.general_files.size(); ++i) {
+						auto general_file = &app.project.general_files[i];
+						ImGui::TextUnformatted((*general_file)->name.c_str());
+						ImGui::SameLine();
+						ImGui::PushID(((*general_file)->name + "D").c_str());
+						if (ImGui::SmallButton("Delete")) {
+							(*general_file)->DeleteFromDisk(
+								app.project.project_settings.project_directory);
+
+							for (size_t j = 0; j < app.project.general_files.size(); ++j) {
+								if (app.project.general_files[j]->name == (*general_file)->name &&
+									app.project.general_files[j]->file_type ==
+										(*general_file)->file_type) {
+									app.project.general_files.erase(
+										app.project.general_files.begin() + (int)j);
+
+									--i;
+									break;
+								}
+							}
+						}
+						ImGui::PopID();
+					}
 				}
 				ImGui::EndTabItem();
 			}

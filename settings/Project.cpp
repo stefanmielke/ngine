@@ -81,6 +81,7 @@ bool Project::Open(const char *path, App *app) {
 	ReloadScripts();
 	ReloadImages(app->renderer);
 	ReloadSounds();
+	ReloadGeneralFiles();
 
 	console.AddLog("Project opened.");
 
@@ -153,6 +154,29 @@ void Project::ReloadSounds() {
 				sound->LoadFromDisk(filepath);
 
 				sounds.push_back(move(sound));
+			}
+		}
+	}
+}
+
+void Project::ReloadGeneralFiles() {
+	general_files.clear();
+
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/general";
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path().string());
+			if (filepath.ends_with(".general.json")) {
+				auto file = std::make_unique<LibdragonFile>();
+				file->LoadFromDisk(filepath);
+
+				general_files.push_back(move(file));
 			}
 		}
 	}
