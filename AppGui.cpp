@@ -109,22 +109,22 @@ void AppGui::RenderMenuBar(App &app) {
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem("Version 1.0.0", nullptr, false, false);
 			ImGui::Separator();
-			if (ImGui::MenuItem("Ngine Wiki")){
+			if (ImGui::MenuItem("Ngine Wiki")) {
 				open_url("https://github.com/stefanmielke/ngine/projects?type=beta");
 			}
-			if (ImGui::MenuItem("Libdragon")){
+			if (ImGui::MenuItem("Libdragon")) {
 				open_url("https://github.com/DragonMinded/libdragon");
 			}
-			if (ImGui::MenuItem("Libdragon CLI")){
+			if (ImGui::MenuItem("Libdragon CLI")) {
 				open_url("https://github.com/anacierdem/libdragon-docker");
 			}
-			if (ImGui::MenuItem("Libdragon Extensions")){
+			if (ImGui::MenuItem("Libdragon Extensions")) {
 				open_url("https://github.com/stefanmielke/libdragon-extensions");
 			}
-			if (ImGui::MenuItem("SDL2")){
+			if (ImGui::MenuItem("SDL2")) {
 				open_url("https://www.libsdl.org/index.php");
 			}
-			if (ImGui::MenuItem("Docker Install")){
+			if (ImGui::MenuItem("Docker Install")) {
 				open_url("https://www.docker.com/get-started");
 			}
 			ImGui::EndMenu();
@@ -192,7 +192,7 @@ void AppGui::RenderContentBrowser(App &app) {
 					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
 		if (ImGui::BeginTabBar("CenterContentTabs",
 							   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
-			if (ImGui::BeginTabItem("Sprites Browser")) {
+			if (ImGui::BeginTabItem("Sprites")) {
 				if (app.project.project_settings.IsOpen()) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup("PopupSpritesBrowser");
@@ -293,7 +293,7 @@ void AppGui::RenderContentBrowser(App &app) {
 				}
 				ImGui::EndTabItem();
 			}
-			if (ImGui::BeginTabItem("Sounds Browser")) {
+			if (ImGui::BeginTabItem("Sounds")) {
 				if (app.project.project_settings.IsOpen()) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup("PopupSoundsBrowser");
@@ -386,7 +386,7 @@ void AppGui::RenderContentBrowser(App &app) {
 				}
 				ImGui::EndTabItem();
 			}
-			if (ImGui::BeginTabItem("Script Browser")) {
+			if (ImGui::BeginTabItem("Scripts")) {
 				if (app.project.project_settings.IsOpen()) {
 					static char script_name_input[100] = {};
 					bool create_script;
@@ -430,6 +430,11 @@ void AppGui::RenderContentBrowser(App &app) {
 						}
 						ImGui::PopID();
 					}
+				}
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Content")) {
+				if (app.project.project_settings.IsOpen()) {
 				}
 				ImGui::EndTabItem();
 			}
@@ -722,10 +727,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 						app.project.scenes.emplace_back();
 						app.state.current_scene = &app.project
 													   .scenes[app.project.scenes.size() - 1];
-						app.state.current_scene->id = app.project.project_settings
-														  .next_scene_id++;
-						app.state.current_scene->name = std::to_string(
-							app.project.scenes.size());
+						app.state.current_scene->id = app.project.project_settings.next_scene_id++;
+						app.state.current_scene->name = std::to_string(app.project.scenes.size());
 						strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
 					}
 				} else if (app.project.project_settings.IsOpen()) {
