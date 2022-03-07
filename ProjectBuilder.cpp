@@ -104,7 +104,7 @@ void create_build_files(App *app) {
 					 app->project.project_settings.project_directory.c_str(), line.c_str());
 			ThreadCommand::RunCommand(line);
 
-			console.AddLog(command);
+			console.AddLog("%s", command);
 		}
 
 		content_end_script.close();

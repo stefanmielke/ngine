@@ -4,7 +4,7 @@
 
 #include "json.hpp"
 
-LibdragonFile::LibdragonFile() : dfs_folder("/") {
+LibdragonFile::LibdragonFile() : dfs_folder("/"), copy_to_filesystem(true) {
 }
 
 void LibdragonFile::SaveToDisk(const std::string &project_directory) {
@@ -13,6 +13,7 @@ void LibdragonFile::SaveToDisk(const std::string &project_directory) {
 		{"file_type", file_type},
 		{"file_path", file_path},
 		{"dfs_folder", dfs_folder},
+		{"copy_to_filesystem", copy_to_filesystem},
 	};
 
 	std::string directory = project_directory + "/.ngine/general/";
@@ -37,6 +38,7 @@ void LibdragonFile::LoadFromDisk(const std::string &filepath) {
 	file_type = json["file_type"];
 	file_path = json["file_path"];
 	dfs_folder = json["dfs_folder"];
+	copy_to_filesystem = json["copy_to_filesystem"];
 }
 
 void LibdragonFile::DeleteFromDisk(const std::string &project_directory) const {
@@ -51,7 +53,7 @@ void LibdragonFile::DeleteFromDisk(const std::string &project_directory) const {
 std::string LibdragonFile::GetTooltip() const {
 	std::stringstream tooltip;
 	tooltip << name << file_type << "\nPath: " << file_path << "\nDFS_Path: " << dfs_folder << name
-			<< file_type << "\n";
+			<< file_type << "\nCopy to Filesystem: " << (copy_to_filesystem ? "yes" : "no") << "\n";
 
 	return tooltip.str();
 }

@@ -789,15 +789,19 @@ void AppGui::RenderSettingsWindow(App &app) {
 			if (app.state.general_file_editing) {
 				static char edit_name[50];
 				static char edit_dfs_folder[100];
+				static bool edit_copy_to_filesystem;
+
 				if (app.state.reload_general_file_edit) {
 					app.state.reload_general_file_edit = false;
 
 					strcpy(edit_name, (*app.state.general_file_editing)->name.c_str());
 					strcpy(edit_dfs_folder, (*app.state.general_file_editing)->dfs_folder.c_str());
+					edit_copy_to_filesystem = (*app.state.general_file_editing)->copy_to_filesystem;
 				}
 				if (ImGui::BeginTabItem("Content Settings")) {
 					ImGui::InputText("Name", edit_name, 50);
 					ImGui::InputText("DFS Folder", edit_dfs_folder, 100);
+					ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
 
 					ImGui::Separator();
 					ImGui::Spacing();
@@ -834,6 +838,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 						if (will_save) {
 							(*app.state.general_file_editing)->name = edit_name;
 							(*app.state.general_file_editing)->dfs_folder = edit_dfs_folder;
+							(*app.state.general_file_editing)->copy_to_filesystem = edit_copy_to_filesystem;
 							(*app.state.general_file_editing)
 								->file_path = "assets/general/" +
 											  (*app.state.general_file_editing)->name +

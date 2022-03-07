@@ -49,7 +49,8 @@ struct DroppedGeneralFile {
 	char name[50] = "\0";
 	char extension[10] = "\0";
 	char dfs_folder[100] = "/\0";
+	bool copy_to_filesystem;
 
-	explicit DroppedGeneralFile(const char *file_path) : file_path(file_path) {
+	explicit DroppedGeneralFile(const char *file_path) : file_path(file_path), copy_to_filesystem(true) {
 	}
 };

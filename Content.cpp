@@ -52,11 +52,14 @@ void Content::CreateGeneralFiles(const ProjectSettings &project_settings,
 	command << "cd " << project_settings.project_directory << std::endl;
 
 	for (auto &file : files) {
-		std::string dfs_output_path = "build/filesystem" + file->dfs_folder;
-		std::filesystem::create_directories(project_settings.project_directory + "/" +
-											dfs_output_path);
+		if (file->copy_to_filesystem) {
+			std::string dfs_output_path = "build/filesystem" + file->dfs_folder;
+			std::filesystem::create_directories(project_settings.project_directory + "/" +
+												dfs_output_path);
 
-		command << "cp " << file->file_path << " " << dfs_output_path + file->name + file->file_type <<  std::endl;
+			command << "cp " << file->file_path << " "
+					<< dfs_output_path + file->name + file->file_type << std::endl;
+		}
 	}
 
 	console.AddLog("Building general files...\n%s", command.str().c_str());

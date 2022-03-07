@@ -187,6 +187,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 						ImGui::InputText("Name", general_file->name, 50);
 						ImGui::InputText("DFS Folder", general_file->dfs_folder, 100);
+						ImGui::Checkbox("Copy to Filesystem", &general_file->copy_to_filesystem);
 
 						ImGui::Separator();
 						ImGui::Spacing();
@@ -209,6 +210,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 									auto file = std::make_unique<LibdragonFile>();
 									file->name = name;
 									file->dfs_folder = dfs_folder;
+									file->dfs_folder = dfs_folder;
+									file->copy_to_filesystem = general_file->copy_to_filesystem;
 									file->file_path = "assets/general/" + name +
 													  general_file->extension;
 									file->file_type = general_file->extension;

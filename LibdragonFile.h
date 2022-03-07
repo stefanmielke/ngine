@@ -8,6 +8,7 @@ class LibdragonFile {
 	std::string file_type;
 	std::string file_path;
 	std::string dfs_folder;
+	bool copy_to_filesystem;
 
 	LibdragonFile();
 

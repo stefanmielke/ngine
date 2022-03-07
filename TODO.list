@@ -58,12 +58,12 @@
 [x] Link to libdragon-extensions and SDL2
 [x] Import anything (another content window)
 [x] Set path to 'libdragon' exe
+[x] Add bash script to content build (for custom import pipeline)
+    x Under project/general create a button to 'Edit Custom Content Build Script' that will create/open '.ngine/pipeline/content_pipeline_end.term'
+    x Content of the script will be read and executed at the end of 'ProjectBuild::create_build_files'
+    x If the editor is not setup, print message with the file location
+    x For general content, checkbox to 'copy to filesystem'.
 
-[ ] Add bash script to content build (for custom import pipeline)
-    - Under project/general create a button to 'Edit Custom Content Build Script' that will create/open '.ngine/pipeline/content_pipeline_end.term'
-    - Content of the script will be read and executed at the end of 'ProjectBuild::create_build_files'
-    - If the editor is not setup, print message with the file location
-    - For general content, checkbox to 'copy to filesystem'.
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import sprite fonts
