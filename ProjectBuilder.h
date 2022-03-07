@@ -10,8 +10,8 @@
 class ProjectBuilder {
    public:
 	static void Create(App *app, std::string project_folder);
-	static void Build(Project &project);
-	static void Rebuild(Project &project);
+	static void Build(App *app);
+	static void Rebuild(App *app);
 
 	static void GenerateStaticFiles(const std::string& project_folder);
 };

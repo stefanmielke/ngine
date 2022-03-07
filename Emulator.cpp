@@ -15,7 +15,7 @@ void Emulator::Run(App *app) {
 
 	if (!std::filesystem::exists(app->project.project_settings.project_directory + "/" + rom_filename)) {
 		console.AddLog("Rom file was not created. Triggering build before running...");
-		ProjectBuilder::Build(app->project);
+		ProjectBuilder::Build(app);
 	}
 
 	char cmd[255];

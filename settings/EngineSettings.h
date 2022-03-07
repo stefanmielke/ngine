@@ -35,9 +35,15 @@ class EngineSettings {
 		return theme;
 	};
 
+	void SetLibdragonExeLocation(std::string path);
+	std::string GetLibdragonExeLocation() {
+		return libdragon_exe_location;
+	};
+
    private:
 	std::string last_opened_project;
 	std::string emulator_location;
 	std::string editor_location;
+	std::string libdragon_exe_location;
 	Theme theme;
 };

@@ -22,7 +22,7 @@ void create_project_thread(App *app, std::string project_folder) {
 	console.AddLog("Running 'libdragon init' at '%s'...", project_folder.c_str());
 	console.AddLog("Check output on the console...");
 
-	Libdragon::InitSync(project_folder);
+	Libdragon::InitSync(project_folder, app->engine_settings.GetLibdragonExeLocation());
 
 	console.AddLog("Libdragon initialized.");
 
@@ -89,18 +89,18 @@ void create_build_files(Project &project) {
 	Content::CreateGeneralFiles(project.project_settings, project.general_files);
 }
 
-void ProjectBuilder::Build(Project &project) {
-	create_build_files(project);
+void ProjectBuilder::Build(App *app) {
+	create_build_files(app->project);
 
-	Libdragon::Build(project.project_settings.project_directory);
+	Libdragon::Build(app->project.project_settings.project_directory, app->engine_settings.GetLibdragonExeLocation());
 }
 
-void ProjectBuilder::Rebuild(Project &project) {
-	Libdragon::CleanSync(project.project_settings.project_directory);
+void ProjectBuilder::Rebuild(App *app) {
+	Libdragon::CleanSync(app->project.project_settings.project_directory, app->engine_settings.GetLibdragonExeLocation());
 
-	create_build_files(project);
+	create_build_files(app->project);
 
-	Libdragon::Build(project.project_settings.project_directory);
+	Libdragon::Build(app->project.project_settings.project_directory, app->engine_settings.GetLibdragonExeLocation());
 }
 
 void ProjectBuilder::GenerateStaticFiles(const std::string& project_folder) {

@@ -33,6 +33,7 @@ class ProjectState {
 	char input_open_project[255];
 	char emulator_path[255];
 	char editor_path[255];
+	char libdragon_exe_path[255];
 	ProjectSettingsScreen project_settings_screen;
 
 	Scene *current_scene;
@@ -52,6 +53,7 @@ class ProjectState {
 		  input_open_project(),
 		  emulator_path(),
 		  editor_path(),
+		  libdragon_exe_path(),
 		  project_settings_screen(),
 		  current_scene(nullptr),
 		  scene_name() {
@@ -61,6 +63,7 @@ class ProjectState {
 		strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
 		strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
 		strcpy(editor_path, engine_settings.GetEditorLocation().c_str());
+		strcpy(libdragon_exe_path, engine_settings.GetLibdragonExeLocation().c_str());
 	}
 
 	~ProjectState() {

@@ -74,14 +74,14 @@ void AppGui::RenderMenuBar(App &app) {
 		if (ImGui::MenuItem("Build", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Building Project...");
 
-			ProjectBuilder::Build(app.project);
+			ProjectBuilder::Build(&app);
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Tasks", app.project.project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding Project...");
 
-				ProjectBuilder::Rebuild(app.project);
+				ProjectBuilder::Rebuild(&app);
 			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");
@@ -419,7 +419,7 @@ void AppGui::RenderContentBrowser(App &app) {
 						ImGui::SameLine();
 						ImGui::PushID((script_name + "D").c_str());
 						if (ImGui::SmallButton("Delete")) {
-							ScriptBuilder::DeleteScriptFile(app.project, script_name.c_str());
+							ScriptBuilder::DeleteScriptFile(&app, script_name.c_str());
 
 							for (size_t i = 0; i < app.project.script_files.size(); ++i) {
 								if (app.project.script_files[i] == script_name) {
@@ -1096,6 +1096,14 @@ void AppGui::RenderSettingsWindow(App &app) {
 				ImGui::InputTextWithHint("##EditorPath", "use 'code' for VSCode",
 										 app.state.editor_path, 255);
 
+				ImGui::TextUnformatted("Libdragon Exe Path (?)");
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip(
+						"We will run the libdragon-docker exe from this path.\n\nYou can use PATH vars by leaving only the exe name.");
+				}
+				ImGui::InputTextWithHint("##LibdragonExePath", "/path/to/libdragon/folder/libdragon",
+										 app.state.libdragon_exe_path, 255);
+
 				{
 					ImGui::TextUnformatted("Theme");
 					static int selected_theme = (int)app.engine_settings.GetTheme();
@@ -1108,6 +1116,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 				if (ImGui::Button("Save")) {
 					app.engine_settings.SetEmulatorPath(app.state.emulator_path);
 					app.engine_settings.SetEditorLocation(app.state.editor_path);
+					app.engine_settings.SetLibdragonExeLocation(app.state.libdragon_exe_path);
 				}
 
 				ImGui::EndTabItem();
