@@ -6,6 +6,6 @@ class App;
 
 class CodeEditor {
    public:
-	static void OpenPath(App *app, const std::string& path);
+	static bool OpenPath(App *app, const std::string& path);
 };
 

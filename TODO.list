@@ -63,6 +63,7 @@
     - Under project/general create a button to 'Edit Custom Content Build Script' that will create/open '.ngine/pipeline/content_pipeline_end.term'
     - Content of the script will be read and executed at the end of 'ProjectBuild::create_build_files'
     - If the editor is not setup, print message with the file location
+    - For general content, checkbox to 'copy to filesystem'.
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import sprite fonts

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <filesystem>
+#include <fstream>
 
 #include "imgui.h"
 
@@ -890,6 +891,24 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 							ImGui::Separator();
 							{
+								ImGui::TextUnformatted("Custom Content Pipeline");
+								if (ImGui::Button("Edit Custom Content Build Script")) {
+									std::string path_to_script(
+										app.project.project_settings.project_directory +
+										"/.ngine/pipeline/content_pipeline_end.term");
+									if (!std::filesystem::exists(path_to_script)) {
+										std::ofstream filestream(path_to_script);
+										filestream.close();
+									}
+
+									if (!CodeEditor::OpenPath(&app, path_to_script)) {
+										console.AddLog("You can edit the file at %s.", path_to_script.c_str());
+									}
+								}
+							}
+
+							ImGui::Separator();
+							{
 								ImGui::TextUnformatted("Global Script");
 								if (ImGui::BeginCombo(
 										"##GlobalScript",
@@ -1099,9 +1118,11 @@ void AppGui::RenderSettingsWindow(App &app) {
 				ImGui::TextUnformatted("Libdragon Exe Path (?)");
 				if (ImGui::IsItemHovered()) {
 					ImGui::SetTooltip(
-						"We will run the libdragon-docker exe from this path.\n\nYou can use PATH vars by leaving only the exe name.");
+						"We will run the libdragon-docker exe from this path.\n\nYou can use PATH "
+						"vars by leaving only the exe name.");
 				}
-				ImGui::InputTextWithHint("##LibdragonExePath", "/path/to/libdragon/folder/libdragon",
+				ImGui::InputTextWithHint("##LibdragonExePath",
+										 "/path/to/libdragon/folder/libdragon",
 										 app.state.libdragon_exe_path, 255);
 
 				{
