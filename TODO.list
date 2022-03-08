@@ -63,7 +63,12 @@
     x Content of the script will be read and executed at the end of 'ProjectBuild::create_build_files'
     x If the editor is not setup, print message with the file location
     x For general content, checkbox to 'copy to filesystem'.
+[x] README!
 
+[ ] Improve UI
+    [ ] Add sprites
+    [ ] Change font
+    [ ] Custom themes
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import sprite fonts
@@ -72,7 +77,6 @@
 [ ] Option to change Libdragon git repo and branch
 [ ] Option to change Libdragon-Extensions git repo and branch
 [ ] Scene nodes
-[ ] README!
 
 Future:
 [ ] Import 3d models
