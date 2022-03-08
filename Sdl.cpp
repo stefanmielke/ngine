@@ -21,7 +21,7 @@ void Sdl::Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_
 	IMG_Init(IMG_INIT_PNG);
 
 	*window = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024,
-							  768, windowFlags);
+							   768, windowFlags);
 
 	if (!*window) {
 		printf("Failed to open window: %s\n", SDL_GetError());
@@ -40,6 +40,9 @@ void Sdl::Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_
 	ImGui::CreateContext();
 	ImGui_ImplSDL2_InitForSDLRenderer(*window);
 	ImGui_ImplSDLRenderer_Init(*renderer);
+
+	ImGuiIO &io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("montserrat.ttf", 14.0f);
 }
 
 void Sdl::Quit(SDL_Window *window, SDL_Renderer *renderer) {

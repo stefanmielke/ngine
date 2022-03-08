@@ -21,3 +21,10 @@ endif()
 
 find_package(SDL2 REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2 SDL2_image)
+
+add_custom_command(
+        TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/montserrat.ttf
+        ${CMAKE_CURRENT_BINARY_DIR}/montserrat.ttf
+)

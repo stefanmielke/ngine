@@ -65,13 +65,17 @@
     x For general content, checkbox to 'copy to filesystem'.
 [x] README!
 
+[ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Improve UI
+    [x] Change font
     [ ] Add sprites
-    [ ] Change font
+    [ ] Icon
     [ ] Custom themes
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Import sprite fonts
+    - Import ttf, setting size and characters (with default being the whole range)
+    - During build, create texture with the characters and import as sprite
 [ ] Import Tiled maps
 [ ] Import LDtk maps
 [ ] Option to change Libdragon git repo and branch
