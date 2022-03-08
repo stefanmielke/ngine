@@ -24,7 +24,7 @@ Also Libdragon still has no support for 3D (but should have soon), so that is al
 
 ### How to use it
 
-Refer to this project's [wiki]() for more information (under construction).
+Refer to this project's [wiki](https://github.com/stefanmielke/ngine/wiki) for more information (under construction).
 
 ### Functionalities Supported
 

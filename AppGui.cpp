@@ -111,7 +111,7 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::MenuItem("Version 1.0.0", nullptr, false, false);
 			ImGui::Separator();
 			if (ImGui::MenuItem("Ngine Wiki")) {
-				open_url("https://github.com/stefanmielke/ngine/projects?type=beta");
+				open_url("https://github.com/stefanmielke/ngine/wiki");
 			}
 			if (ImGui::MenuItem("Libdragon")) {
 				open_url("https://github.com/DragonMinded/libdragon");
