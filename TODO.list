@@ -69,6 +69,12 @@
 [ ] Improve UI
     [x] Change font
     [ ] Add sprites
+        - Save
+        - Build
+        - Tasks
+        - Open in Editor
+        - Run
+        - Help
     [ ] Icon
     [ ] Custom themes
 [ ] Set DFS location
