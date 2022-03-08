@@ -85,7 +85,7 @@ int main(int argv, char **args) {
 							std::filesystem::path filepath(event.drop.file);
 							strcpy(dropped_file.name,
 								   filepath.filename().replace_extension().string().c_str());
-							strcpy(dropped_file.extension, filepath.extension().c_str());
+							strcpy(dropped_file.extension, filepath.extension().string().c_str());
 
 							app.state.dropped_general_files.push_back(dropped_file);
 
