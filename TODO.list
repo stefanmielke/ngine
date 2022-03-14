@@ -64,8 +64,42 @@
     x If the editor is not setup, print message with the file location
     x For general content, checkbox to 'copy to filesystem'.
 [x] README!
+[x] Add SDL2_image refs on README and HELP
 
+[ ] Wiki
+    [ ] Project creation / opening
+    [ ] Building / Tasks
+    [ ] Engine Settings
+        - Open in editor
+        - Emulator / Run
+        - Libdragon
+    [ ] Project Settings
+        - General settings
+        - Custom content pipeline
+        - Global script
+        - Initial screen
+        - Memory reserve
+        - Modules (plus audio and display tabs)
+    [ ] Sprite import
+        - Content browser
+        - Editing
+    [ ] Sounds import
+        - Content browser
+        - Editing
+    [ ] General content import
+        - Content browser
+        - Editing
+        - Copy to filesystem
+    [ ] Scripts
+        - Creation
+        - Use on scenes / global
+    [ ] Scenes
+        - Creation
+        - Settings
+        - Script use
 [ ] Add makefile that is included that can be used to run custom mk commands
+[ ] GIF import
+    - Create tilesheet based on the images
 [ ] Improve UI
     [x] Change font
     [ ] Add sprites

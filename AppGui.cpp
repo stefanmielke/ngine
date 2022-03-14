@@ -125,6 +125,9 @@ void AppGui::RenderMenuBar(App &app) {
 			if (ImGui::MenuItem("SDL2")) {
 				open_url("https://www.libsdl.org/index.php");
 			}
+			if (ImGui::MenuItem("SDL2 Image")) {
+				open_url("https://www.libsdl.org/projects/SDL_image/");
+			}
 			if (ImGui::MenuItem("Docker Install")) {
 				open_url("https://www.docker.com/get-started");
 			}

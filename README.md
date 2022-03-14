@@ -5,6 +5,7 @@
 ### Requirements
 
 - [SDL2](https://www.libsdl.org/index.php) (bundled on Windows)
+- [SDL2_Image](https://www.libsdl.org/projects/SDL_image/) (bundled on Windows)
 - [Docker](https://www.docker.com/get-started)
 - [Libdragon CLI](https://github.com/anacierdem/libdragon-docker)
 
