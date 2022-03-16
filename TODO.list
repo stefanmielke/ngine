@@ -65,15 +65,17 @@
     x For general content, checkbox to 'copy to filesystem'.
 [x] README!
 [x] Add SDL2_image refs on README and HELP
+[x] Link for development resources (eg.: N64 Wiki)
+[ ] Save Type and Region Free setting
 
 [ ] Wiki
     [ ] Project creation / opening
     [ ] Building / Tasks
-    [ ] Engine Settings
+    [x] Engine Settings
         - Open in editor
         - Emulator / Run
         - Libdragon
-    [ ] Project Settings
+    [x] Project Settings
         - General settings
         - Custom content pipeline
         - Global script
@@ -98,6 +100,7 @@
         - Settings
         - Script use
 [ ] Add makefile that is included that can be used to run custom mk commands
+[ ] Pre-made executables for Linux and Windows.
 [ ] GIF import
     - Create tilesheet based on the images
 [ ] Improve UI

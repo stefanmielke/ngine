@@ -110,6 +110,23 @@ void AppGui::RenderMenuBar(App &app) {
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem("Version 1.0.0", nullptr, false, false);
 			ImGui::Separator();
+			ImGui::MenuItem("Development Resources", nullptr, false, false);
+			ImGui::Separator();
+			if (ImGui::MenuItem("N64Brew Wiki")) {
+				open_url("https://n64brew.dev/wiki/Main_Page");
+			}
+			if (ImGui::MenuItem("N64Brew Discord")) {
+				open_url("https://discord.gg/WqFgNWf");
+			}
+			if (ImGui::MenuItem("Awesome N64 Development List")) {
+				open_url("https://n64.dev/");
+			}
+			if (ImGui::MenuItem("N64 Dev Manual - Libultra")) {
+				open_url("https://ultra64.ca/resources/documentation/");
+			}
+			ImGui::Separator();
+			ImGui::MenuItem("Engine Resources", nullptr, false, false);
+			ImGui::Separator();
 			if (ImGui::MenuItem("Ngine Wiki")) {
 				open_url("https://github.com/stefanmielke/ngine/wiki");
 			}
