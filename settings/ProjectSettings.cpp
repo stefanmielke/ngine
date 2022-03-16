@@ -10,6 +10,8 @@ ProjectSettings::ProjectSettings()
 	  next_scene_id(0),
 	  project_name("Hello NGine"),
 	  rom_name("hello_ngine"),
+	  save_type(0),
+	  region_free(true),
 	  initial_screen_id(0),
 	  global_mem_alloc_size(1024),
 	  scene_mem_alloc_size(1024 * 2) {
@@ -32,6 +34,8 @@ bool ProjectSettings::LoadFromFile(const std::string &folder) {
 	project_name = json["project"]["name"];
 	next_scene_id = json["project"]["next_scene_id"];
 	rom_name = json["project"]["rom"];
+	save_type = json["project"]["save_type"];
+	region_free = json["project"]["region_free"];
 	global_script_name = json["project"]["global_script_name"];
 
 	global_mem_alloc_size = json["project"]["global_mem_alloc_size"];
@@ -75,6 +79,8 @@ void ProjectSettings::SaveToDisk() {
 	json["project"]["name"] = project_name;
 	json["project"]["next_scene_id"] = next_scene_id;
 	json["project"]["rom"] = rom_name;
+	json["project"]["save_type"] = save_type;
+	json["project"]["region_free"] = region_free;
 	json["project"]["global_mem_alloc_size"] = global_mem_alloc_size;
 	json["project"]["scene_mem_alloc_size"] = scene_mem_alloc_size;
 	json["project"]["initial_screen_id"] = initial_screen_id;

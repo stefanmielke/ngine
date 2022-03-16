@@ -72,10 +72,7 @@ void create_build_files(App *app) {
 
 	generate_game_gen_h(app->project);
 
-	std::string makefile_path(app->project.project_settings.project_directory + "/Makefile");
-	generate_makefile_gen(makefile_path, app->project.project_settings.rom_name.c_str(),
-						  app->project.project_settings.project_name.c_str(),
-						  !app->project.images.empty());
+	generate_makefile_gen(app->project);
 
 	std::string setup_path(app->project.project_settings.project_directory + "/src/setup.gen.c");
 	generate_setup_gen_c(setup_path, app->project.project_settings);

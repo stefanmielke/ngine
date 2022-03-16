@@ -858,7 +858,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 						if (will_save) {
 							(*app.state.general_file_editing)->name = edit_name;
 							(*app.state.general_file_editing)->dfs_folder = edit_dfs_folder;
-							(*app.state.general_file_editing)->copy_to_filesystem = edit_copy_to_filesystem;
+							(*app.state.general_file_editing)
+								->copy_to_filesystem = edit_copy_to_filesystem;
 							(*app.state.general_file_editing)
 								->file_path = "assets/general/" +
 											  (*app.state.general_file_editing)->name +
@@ -914,6 +915,15 @@ void AppGui::RenderSettingsWindow(App &app) {
 							ImGui::InputText("Rom", app.state.project_settings_screen.rom_name,
 											 100);
 
+							const char *save_type_items[] = {"none",	 "eeprom4k", "eeprom16",
+															 "sram256k", "sram768k", "sram1m",
+															 "flashram"};
+							ImGui::Combo("Save Type", &app.state.project_settings_screen.save_type,
+										 save_type_items, 7);
+
+							ImGui::Checkbox("Region Free",
+											&app.state.project_settings_screen.region_free);
+
 							ImGui::Separator();
 							{
 								ImGui::TextUnformatted("Custom Content Pipeline");
@@ -927,7 +937,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 									}
 
 									if (!CodeEditor::OpenPath(&app, path_to_script)) {
-										console.AddLog("You can edit the file at %s.", path_to_script.c_str());
+										console.AddLog("You can edit the file at %s.",
+													   path_to_script.c_str());
 									}
 								}
 							}

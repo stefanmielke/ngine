@@ -16,6 +16,8 @@ class ProjectSettings {
 	std::string project_name;
 	std::string rom_name;
 	std::string project_directory;
+	int save_type;
+	bool region_free;
 
 	int initial_screen_id;
 	std::string global_script_name;
