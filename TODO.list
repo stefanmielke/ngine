@@ -103,6 +103,7 @@
 [ ] Pre-made executables for Linux and Windows.
 [ ] GIF import
     - Create tilesheet based on the images
+    - Preview gif file (animation?)
 [ ] Improve UI
     [x] Change font
     [ ] Add sprites
@@ -120,10 +121,14 @@
     - Import ttf, setting size and characters (with default being the whole range)
     - During build, create texture with the characters and import as sprite
 [ ] Import Tiled maps
+    - Custom export to use with libdragon-extensions
 [ ] Import LDtk maps
+    - Custom export to use with libdragon-extensions
 [ ] Option to change Libdragon git repo and branch
 [ ] Option to change Libdragon-Extensions git repo and branch
 [ ] Scene nodes
+[ ] Audio preview
+[ ] Add image slices preview on import/edit
 
 Future:
-[ ] Import 3d models
+[ ] Import/View 3d models
