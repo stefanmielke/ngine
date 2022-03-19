@@ -99,6 +99,25 @@
         - Creation
         - Settings
         - Script use
+[ ] Video demo
+    - Engine Overview
+    - UI Overview
+    - New Project
+        - Real console output
+        - Build and libdragon path
+        - Run and emulator path
+    - Console ROM
+        - Global scripts
+        - Open in Editor
+    - Project Structure
+    - Adding sprites
+        - DFS, Display and RDP modules
+    - Adding sounds
+        - Audio and Mixer modules
+    - Adding general files
+    - Adding scenes
+        - Scene settings
+        - Scene scripts
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Pre-made executables for Linux and Windows.
 [ ] GIF import
