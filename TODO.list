@@ -120,6 +120,7 @@
         - Scene scripts
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Pre-made executables for Linux and Windows.
+    - For linux use 'Github Actions'
 [ ] GIF import
     - Create tilesheet based on the images
     - Preview gif file (animation?)
