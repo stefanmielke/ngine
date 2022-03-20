@@ -60,6 +60,8 @@
 [ ] Scene nodes
 [ ] Audio preview
 [ ] Add image slices preview on import/edit
+[ ] Clean project after changing modules
+[ ] Rename 'Initial Screen' to 'Initial Scene'
 
 Future:
 [ ] Import/View 3d models
