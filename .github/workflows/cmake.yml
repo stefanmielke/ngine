@@ -22,12 +22,10 @@ jobs:
 
     - name: Install SDL2
       run: |
-        sudo apt install wget
-        sudo apt install tar
         mkdir SDL2
         cd SDL2
         wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
-        tar –xzf SDL2-2.0.20.tar.gz
+        tar -xzf SDL2-2.0.20.tar.gz
         ./configure
         make all
         sudo make install
