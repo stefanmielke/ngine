@@ -20,6 +20,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install SDL2
+      run: |
+        sudo apt install wget
+        mkdir SDL2
+        cd SDL2
+        wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
+        tar –xzf SDL2-2.0.20.tar.gz
+        ./configure
+        make all
+        sudo make install
+        cd ..
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
