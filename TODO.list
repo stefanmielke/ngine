@@ -1,3 +1,70 @@
+[ ] Wiki
+    [ ] Project creation / opening
+    [ ] Building / Tasks
+    [x] Engine Settings
+        - Open in editor
+        - Emulator / Run
+        - Libdragon
+    [x] Project Settings
+        - General settings
+        - Custom content pipeline
+        - Global script
+        - Initial screen
+        - Memory reserve
+        - Modules (plus audio and display tabs)
+    [ ] Sprite import
+        - Content browser
+        - Editing
+    [ ] Sounds import
+        - Content browser
+        - Editing
+    [ ] General content import
+        - Content browser
+        - Editing
+        - Copy to filesystem
+    [ ] Scripts
+        - Creation
+        - Use on scenes / global
+    [ ] Scenes
+        - Creation
+        - Settings
+        - Script use
+[ ] Add makefile that is included that can be used to run custom mk commands
+[ ] Pre-made executables for Linux and Windows.
+    - For linux use 'Github Actions'
+[ ] GIF import
+    - Create tilesheet based on the images
+    - Preview gif file (animation?)
+[ ] Improve UI
+    [x] Change font
+    [ ] Add sprites
+        - Save
+        - Build
+        - Tasks
+        - Open in Editor
+        - Run
+        - Help
+    [ ] Icon
+    [ ] Custom themes
+[ ] Set DFS location
+    - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
+[ ] Import sprite fonts
+    - Import ttf, setting size and characters (with default being the whole range)
+    - During build, create texture with the characters and import as sprite
+[ ] Import Tiled maps
+    - Custom export to use with libdragon-extensions
+[ ] Import LDtk maps
+    - Custom export to use with libdragon-extensions
+[ ] Option to change Libdragon git repo and branch
+[ ] Option to change Libdragon-Extensions git repo and branch
+[ ] Scene nodes
+[ ] Audio preview
+[ ] Add image slices preview on import/edit
+
+Future:
+[ ] Import/View 3d models
+
+Done:
 [x] Tabbed content in the middle part
 [x] Content Browser in the middle part
 [x] Script Browser in the middle part
@@ -67,39 +134,7 @@
 [x] Add SDL2_image refs on README and HELP
 [x] Link for development resources (eg.: N64 Wiki)
 [x] Save Type and Region Free setting
-
-[ ] Wiki
-    [ ] Project creation / opening
-    [ ] Building / Tasks
-    [x] Engine Settings
-        - Open in editor
-        - Emulator / Run
-        - Libdragon
-    [x] Project Settings
-        - General settings
-        - Custom content pipeline
-        - Global script
-        - Initial screen
-        - Memory reserve
-        - Modules (plus audio and display tabs)
-    [ ] Sprite import
-        - Content browser
-        - Editing
-    [ ] Sounds import
-        - Content browser
-        - Editing
-    [ ] General content import
-        - Content browser
-        - Editing
-        - Copy to filesystem
-    [ ] Scripts
-        - Creation
-        - Use on scenes / global
-    [ ] Scenes
-        - Creation
-        - Settings
-        - Script use
-[ ] Video demo
+[x] Video demo
     - Engine Overview
     - UI Overview
     - New Project
@@ -118,37 +153,3 @@
     - Adding scenes
         - Scene settings
         - Scene scripts
-[ ] Add makefile that is included that can be used to run custom mk commands
-[ ] Pre-made executables for Linux and Windows.
-    - For linux use 'Github Actions'
-[ ] GIF import
-    - Create tilesheet based on the images
-    - Preview gif file (animation?)
-[ ] Improve UI
-    [x] Change font
-    [ ] Add sprites
-        - Save
-        - Build
-        - Tasks
-        - Open in Editor
-        - Run
-        - Help
-    [ ] Icon
-    [ ] Custom themes
-[ ] Set DFS location
-    - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
-[ ] Import sprite fonts
-    - Import ttf, setting size and characters (with default being the whole range)
-    - During build, create texture with the characters and import as sprite
-[ ] Import Tiled maps
-    - Custom export to use with libdragon-extensions
-[ ] Import LDtk maps
-    - Custom export to use with libdragon-extensions
-[ ] Option to change Libdragon git repo and branch
-[ ] Option to change Libdragon-Extensions git repo and branch
-[ ] Scene nodes
-[ ] Audio preview
-[ ] Add image slices preview on import/edit
-
-Future:
-[ ] Import/View 3d models
