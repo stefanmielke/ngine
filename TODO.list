@@ -1,4 +1,3 @@
-[ ] Add RSPQ module support
 [ ] Better Libdragon integration
     [ ] Pull on libdragon branch
     [ ] Build libdragon branch - 'libdragon update'
