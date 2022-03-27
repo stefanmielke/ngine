@@ -108,7 +108,7 @@ void AppGui::RenderMenuBar(App &app) {
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Help")) {
-			ImGui::MenuItem("Version 1.0.0", nullptr, false, false);
+			ImGui::MenuItem("Version 1.1.0", nullptr, false, false);
 			ImGui::Separator();
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
 			ImGui::Separator();
@@ -1012,6 +1012,11 @@ void AppGui::RenderSettingsWindow(App &app) {
 						}
 
 						if (ImGui::BeginTabItem("Modules")) {
+							ImGui::BeginDisabled();
+							ImGui::TextWrapped("Libdragon");
+							ImGui::EndDisabled();
+							ImGui::Separator();
+
 							if (ImGui::Checkbox("Audio",
 												&app.project.project_settings.modules.audio)) {
 								if (!app.project.project_settings.modules.audio)
@@ -1041,11 +1046,18 @@ void AppGui::RenderSettingsWindow(App &app) {
 							ImGui::Checkbox("Debug USB",
 											&app.project.project_settings.modules.debug_usb);
 							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
+							ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer);
+
+							ImGui::Spacing();
+							ImGui::BeginDisabled();
+							ImGui::TextWrapped("Libdragon Extensions");
+							ImGui::EndDisabled();
+							ImGui::Separator();
+
 							ImGui::Checkbox("Memory Pool",
 											&app.project.project_settings.modules.memory_pool);
 							ImGui::Checkbox("Scene Manager",
 											&app.project.project_settings.modules.scene_manager);
-							ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer);
 
 							ImGui::EndTabItem();
 						}
