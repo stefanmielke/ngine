@@ -1,5 +1,5 @@
 [ ] Better Libdragon integration
-    [ ] Option to change Libdragon git repo and branch
+    [ ] Option to change Libdragon git repo
     [ ] Option to change Libdragon-Extensions git repo and branch
     [ ] Possible to not compile libdragon-extensions at all
 [ ] Wiki
@@ -17,6 +17,7 @@
         - Memory reserve
         - Modules (plus audio and display tabs)
             [ ] RTC module
+        [ ] Libdragon tab
     [ ] Sprite import
         - Content browser
         - Editing
@@ -76,6 +77,7 @@ Done:
     - Setup: rtc_init() into a boolean variable so that the user can check if it succeeded
 [x] Pull on libdragon branch - 'libdragon update'
 [x] Build libdragon branch - 'libdragon install'
+[x] Option to change Libdragon git branch
 
 - 1.0.0:
 [x] Tabbed content in the middle part

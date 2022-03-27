@@ -1021,7 +1021,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::Separator();
 
 								if (ImGui::Button("Update Libdragon")) {
-									console.AddLog("Running 'libdragon update'...\nCheck output on the console.");
+									console.AddLog(
+										"Running 'libdragon update'...\nCheck output on the "
+										"console.");
 									Libdragon::Update(
 										app.project.project_settings.project_directory,
 										app.engine_settings.GetLibdragonExeLocation());
@@ -1032,7 +1034,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::EndDisabled();
 
 								if (ImGui::Button("Re-Build Libdragon")) {
-									console.AddLog("Running 'libdragon install'...\nCheck output on the console.");
+									console.AddLog(
+										"Running 'libdragon install'...\nCheck output on the "
+										"console.");
 									Libdragon::Install(
 										app.project.project_settings.project_directory,
 										app.engine_settings.GetLibdragonExeLocation());
@@ -1042,36 +1046,46 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::TextUnformatted("- libdragon install");
 								ImGui::EndDisabled();
 
-//								ImGui::TextUnformatted("Repository URL");
-//								char repo_buf[255] = "\0";
-//								ImGui::InputText("###Repo", repo_buf, 255);
-//								ImGui::SameLine();
-//								ImGui::Button("Update");
-//
-//								ImGui::TextUnformatted("Branch");
-//								char branch_buf[50] = "\0";
-//								ImGui::InputText("###Branch", branch_buf, 50);
-//								ImGui::SameLine();
-//								ImGui::Button("Update");
+								//								ImGui::TextUnformatted("Repository
+								//URL"); 								char repo_buf[255] = "\0"; 								ImGui::InputText("###Repo",
+								//repo_buf, 255); 								ImGui::SameLine(); 								ImGui::Button("Update");
+								//
+								ImGui::Spacing();
+								ImGui::TextUnformatted("Branch");
+								ImGui::SameLine();
+								if (ImGui::Button("Reset")) {
+									strcpy(app.state.project_settings_screen.libdragon_branch,
+										   "trunk\0");
+								}
+
+								ImGui::InputText("###Branch",
+												 app.state.project_settings_screen.libdragon_branch,
+												 50);
+								ImGui::SameLine();
+								if (ImGui::Button("Update")) {
+									std::string dir(app.project.project_settings.project_directory);
+									dir.append("/libdragon");
+
+									char cmd[255];
+									snprintf(cmd, 255, "cd %s\n%s %s", dir.c_str(), "git checkout",
+											 app.state.project_settings_screen.libdragon_branch);
+									ThreadCommand::RunCommand(cmd);
+								}
 							}
 							{
-//								ImGui::Spacing();
-//								ImGui::BeginDisabled();
-//								ImGui::TextUnformatted("Libdragon Extensions");
-//								ImGui::EndDisabled();
-//								ImGui::Separator();
+								//								ImGui::Spacing();
+								//								ImGui::BeginDisabled();
+								//								ImGui::TextUnformatted("Libdragon
+								//Extensions"); 								ImGui::EndDisabled(); 								ImGui::Separator();
 
-//								ImGui::TextUnformatted("Repository URL");
-//								char repo_buf[255] = "\0";
-//								ImGui::InputText("###Repo", repo_buf, 255);
-//								ImGui::SameLine();
-//								ImGui::Button("Update");
-//
-//								ImGui::TextUnformatted("Branch");
-//								char branch_buf[50] = "\0";
-//								ImGui::InputText("###Branch", branch_buf, 50);
-//								ImGui::SameLine();
-//								ImGui::Button("Update");
+								//								ImGui::TextUnformatted("Repository
+								//URL"); 								char repo_buf[255] = "\0"; 								ImGui::InputText("###Repo",
+								//repo_buf, 255); 								ImGui::SameLine(); 								ImGui::Button("Update");
+								//
+								//								ImGui::TextUnformatted("Branch");
+								//								char branch_buf[50] = "\0";
+								//								ImGui::InputText("###Branch", branch_buf,
+								//50); 								ImGui::SameLine(); 								ImGui::Button("Update");
 							}
 							ImGui::EndTabItem();
 						}

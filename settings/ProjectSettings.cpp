@@ -66,6 +66,11 @@ bool ProjectSettings::LoadFromFile(const std::string &folder) {
 	modules.scene_manager = json["modules"]["scene_manager"];
 	modules.timer = json["modules"]["timer"];
 
+	if (!json["libdragon"]["branch"].is_null())
+		libdragon_branch = json["libdragon"]["branch"];
+	else
+		libdragon_branch = "trunk";
+
 	if (!json["modules"]["rtc"].is_null())
 		modules.rtc = json["modules"]["rtc"];
 
@@ -113,6 +118,8 @@ void ProjectSettings::SaveToDisk() {
 	json["modules"]["rtc"] = modules.rtc;
 	json["modules"]["scene_manager"] = modules.scene_manager;
 	json["modules"]["timer"] = modules.timer;
+
+	json["libdragon"]["branch"] = libdragon_branch;
 
 	std::ofstream project_file(project_directory + "/ngine.project.json");
 	project_file << json.dump(4);

@@ -14,6 +14,8 @@ struct ProjectSettingsScreen {
 	char display_gamma[100];
 	char display_resolution[100];
 
+	char libdragon_branch[50];
+
 	void FromProjectSettings(ProjectSettings &project_settings) {
 		strcpy(project_name, project_settings.project_name.c_str());
 		strcpy(rom_name, project_settings.rom_name.c_str());
@@ -25,6 +27,8 @@ struct ProjectSettingsScreen {
 		display_buffers = project_settings.display.buffers;
 		save_type = project_settings.save_type;
 		region_free = project_settings.region_free;
+
+		strcpy(libdragon_branch, project_settings.libdragon_branch.c_str());
 	}
 
 	void ToProjectSettings(ProjectSettings &project_settings) {
@@ -38,5 +42,7 @@ struct ProjectSettingsScreen {
 		project_settings.display.SetBitDepth(display_bit_depth);
 		project_settings.display.SetGamma(display_gamma);
 		project_settings.display.SetResolution(display_resolution);
+
+		project_settings.libdragon_branch = libdragon_branch;
 	}
 };

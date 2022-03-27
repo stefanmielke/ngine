@@ -30,6 +30,8 @@ class ProjectSettings {
 	DisplaySettings display;
 	ModulesSettings modules;
 
+	std::string libdragon_branch;
+
 	ProjectSettings();
 
 	bool LoadFromFile(const std::string &folder);
