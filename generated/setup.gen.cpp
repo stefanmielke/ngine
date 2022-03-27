@@ -62,7 +62,7 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 							  "&scene_memory_pool, change_scene);"
 						   << std::endl
 						   << "\tscene_manager_change_scene(scene_manager, "
-						   << settings.initial_screen_id << ");" << std::endl;
+						   << settings.initial_scene_id << ");" << std::endl;
 		} else {
 			setup_end_body << "\tscene_manager = scene_manager_init(NULL, NULL, change_scene);"
 						   << std::endl

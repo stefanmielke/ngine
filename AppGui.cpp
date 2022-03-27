@@ -974,21 +974,21 @@ void AppGui::RenderSettingsWindow(App &app) {
 								std::string current_selected("None");
 								for (auto &scene : app.project.scenes) {
 									if (scene.id ==
-										app.project.project_settings.initial_screen_id) {
+										app.project.project_settings.initial_scene_id) {
 										current_selected = scene.name;
 										break;
 									}
 								}
-								ImGui::TextUnformatted("Initial Screen");
-								if (ImGui::BeginCombo("##InitialScreen",
+								ImGui::TextUnformatted("Initial Scene");
+								if (ImGui::BeginCombo("##InitialScene",
 													  current_selected.c_str())) {
 									for (auto &scene : app.project.scenes) {
 										if (ImGui::Selectable(
 												scene.name.c_str(),
 												scene.id == app.project.project_settings
-																.initial_screen_id)) {
+																.initial_scene_id)) {
 											app.project.project_settings
-												.initial_screen_id = scene.id;
+												.initial_scene_id = scene.id;
 										}
 									}
 									ImGui::EndCombo();

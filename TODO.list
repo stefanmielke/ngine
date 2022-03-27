@@ -64,7 +64,6 @@
 [ ] Audio preview
 [ ] Add image slices preview on import/edit
 [ ] Clean project after changing modules
-[ ] Rename 'Initial Screen' to 'Initial Scene'
 
 Future:
 [ ] Import/View 3d models
@@ -78,6 +77,7 @@ Done:
 [x] Pull on libdragon branch - 'libdragon update'
 [x] Build libdragon branch - 'libdragon install'
 [x] Option to change Libdragon git branch
+[x] Rename 'Initial Screen' to 'Initial Scene'
 
 - 1.0.0:
 [x] Tabbed content in the middle part

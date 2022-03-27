@@ -19,7 +19,7 @@ class ProjectSettings {
 	int save_type;
 	bool region_free;
 
-	int initial_screen_id;
+	int initial_scene_id;
 	std::string global_script_name;
 
 	int global_mem_alloc_size;
