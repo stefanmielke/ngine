@@ -10,6 +10,8 @@ class ModulesSettings {
 	bool console;
 	bool audio;
 	bool audio_mixer;
+	bool rtc;
+
 	bool scene_manager;
 	bool memory_pool;
 

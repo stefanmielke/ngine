@@ -1046,7 +1046,15 @@ void AppGui::RenderSettingsWindow(App &app) {
 							ImGui::Checkbox("Debug USB",
 											&app.project.project_settings.modules.debug_usb);
 							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
-							ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer);
+
+							if (ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer)) {
+								if (!app.project.project_settings.modules.timer)
+									app.project.project_settings.modules.rtc = false;
+							}
+
+							ImGui::BeginDisabled(!app.project.project_settings.modules.timer);
+							ImGui::Checkbox("Real-Time Clock (RTC)", &app.project.project_settings.modules.rtc);
+							ImGui::EndDisabled();
 
 							ImGui::Spacing();
 							ImGui::BeginDisabled();

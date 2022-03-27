@@ -27,9 +27,12 @@ void generate_game_gen_h(const Project &project) {
 				  << "extern struct controller_data keys_down;" << std::endl
 				  << "extern struct controller_data keys_pressed;" << std::endl;
 	}
+	if (project.project_settings.modules.rtc) {
+		variables << "extern bool rtc_initialized;" << std::endl;
+	}
 
-	FILE *filestream = fopen((project.project_settings.project_directory + "/src/game.gen.h").c_str(),
-							 "w");
+	FILE *filestream = fopen(
+		(project.project_settings.project_directory + "/src/game.gen.h").c_str(), "w");
 	fprintf(filestream, game_gen_h, includes.str().c_str(), variables.str().c_str());
 	fclose(filestream);
 }

@@ -1,8 +1,4 @@
 [ ] Add RSPQ module support
-    - Mixer requires it and already calls init, remember that
-[ ] RTC support (via flag) - https://github.com/DragonMinded/libdragon/tree/trunk/examples/rtctest
-    - Makefile: N64_ROM_RTC = true
-    - Setup: rtc_init() into a boolean variable so that the user can check if it succeeded
 [ ] Better Libdragon integration
     [ ] Pull on libdragon branch
     [ ] Build libdragon branch - 'libdragon update'
@@ -78,6 +74,9 @@ Future:
 Done:
 - 1.1.0:
 [x] Split libdragon-extension modules
+[x] RTC support (via flag) - https://github.com/DragonMinded/libdragon/tree/trunk/examples/rtctest
+    - Makefile: N64_ROM_RTC = true
+    - Setup: rtc_init() into a boolean variable so that the user can check if it succeeded
 
 - 1.0.0:
 [x] Tabbed content in the middle part

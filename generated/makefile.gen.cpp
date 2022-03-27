@@ -7,6 +7,7 @@ include $(N64_INST)/include/n64.mk
 
 N64_ROM_SAVETYPE = %s
 N64_ROM_REGIONFREE = %s
+N64_ROM_RTC = %s
 
 N64_CFLAGS += -Ilibs/libdragon-extensions/include
 
@@ -58,6 +59,7 @@ N64_CFLAGS += -Ilibs/libdragon-extensions/include
 N64_ROM_TITLE = "%s"
 N64_ROM_SAVETYPE = %s
 N64_ROM_REGIONFREE = %s
+N64_ROM_RTC = %s
 
 C_ROOT_FILES := $(wildcard src/*.c)
 C_ROOT_1_FILES := $(wildcard src/**/*.c)
@@ -104,7 +106,8 @@ void generate_makefile_gen(const Project &project) {
 	std::string makefile_path(project.project_settings.project_directory + "/Makefile");
 	const char *rom_title = project.project_settings.project_name.c_str();
 	const char *rom_filename = project.project_settings.rom_name.c_str();
-	bool has_content = !project.images.empty() || !project.sounds.empty() || !project.general_files.empty();
+	bool has_content = !project.images.empty() || !project.sounds.empty() ||
+					   !project.general_files.empty();
 
 	FILE *filestream = fopen(makefile_path.c_str(), "w");
 
@@ -112,13 +115,15 @@ void generate_makefile_gen(const Project &project) {
 									 "sram768k", "sram1m",	 "flashram"};
 	const char *save_type_text = save_type_items[project.project_settings.save_type];
 	const char *region_free_text = project.project_settings.region_free ? "true" : "false";
+	const char *rtc_enabled_text = project.project_settings.modules.rtc ? "true" : "false";
 
 	if (has_content) {
 		fprintf(filestream, makefile_gen_content, rom_title, save_type_text, region_free_text,
-				rom_filename, rom_filename, rom_filename, rom_filename, rom_filename);
+				rtc_enabled_text, rom_filename, rom_filename, rom_filename, rom_filename,
+				rom_filename);
 	} else {
-		fprintf(filestream, makefile_gen, save_type_text, region_free_text, rom_filename,
-				rom_filename, rom_title, rom_filename, rom_filename);
+		fprintf(filestream, makefile_gen, save_type_text, region_free_text, rtc_enabled_text,
+				rom_filename, rom_filename, rom_title, rom_filename, rom_filename);
 	}
 
 	fclose(filestream);

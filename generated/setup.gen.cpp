@@ -132,6 +132,11 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 		display_body << "\tdisplay_show(disp);" << std::endl;
 	}
 
+	if (settings.modules.rtc) {
+		variables << "bool rtc_initialized;" << std::endl;
+		setup_body << "\trtc_initialized = rtc_init();" << std::endl;
+	}
+
 	FILE *filestream = fopen(setup_path.c_str(), "w");
 	fprintf(filestream, setup_gen_c, includes.str().c_str(), variables.str().c_str(),
 			setup_body.str().c_str(), setup_end_body.str().c_str(), tick_body.str().c_str(),

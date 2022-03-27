@@ -66,6 +66,9 @@ bool ProjectSettings::LoadFromFile(const std::string &folder) {
 	modules.scene_manager = json["modules"]["scene_manager"];
 	modules.timer = json["modules"]["timer"];
 
+	if (!json["modules"]["rtc"].is_null())
+		modules.rtc = json["modules"]["rtc"];
+
 	is_open = true;
 	return true;
 }
@@ -107,6 +110,7 @@ void ProjectSettings::SaveToDisk() {
 	json["modules"]["display"] = modules.display;
 	json["modules"]["memory_pool"] = modules.memory_pool;
 	json["modules"]["rdp"] = modules.rdp;
+	json["modules"]["rtc"] = modules.rtc;
 	json["modules"]["scene_manager"] = modules.scene_manager;
 	json["modules"]["timer"] = modules.timer;
 
