@@ -30,3 +30,15 @@ void Libdragon::CleanSync(const std::string& folder, const std::string& libdrago
 	snprintf(command, 500, "cd %s\n%s exec make clean > build.log", folder.c_str(), libdragon_exe_folder.c_str());
 	system(command);
 }
+
+void Libdragon::Update(const std::string &folder, const std::string &libdragon_exe_folder) {
+	char command[500];
+	snprintf(command, 500, "cd %s\n%s update > build.log", folder.c_str(), libdragon_exe_folder.c_str());
+	ThreadCommand::RunCommand(command);
+}
+
+void Libdragon::Install(const std::string &folder, const std::string &libdragon_exe_folder) {
+	char command[500];
+	snprintf(command, 500, "cd %s\n%s install > build.log", folder.c_str(), libdragon_exe_folder.c_str());
+	ThreadCommand::RunCommand(command);
+}

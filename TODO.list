@@ -1,7 +1,7 @@
 [ ] Better Libdragon integration
-    [ ] Pull on libdragon branch
-    [ ] Build libdragon branch - 'libdragon update'
-[ ] Possible to not compile libdragon-extensions at all
+    [ ] Option to change Libdragon git repo and branch
+    [ ] Option to change Libdragon-Extensions git repo and branch
+    [ ] Possible to not compile libdragon-extensions at all
 [ ] Wiki
     [ ] Project creation / opening
     [ ] Building / Tasks
@@ -59,8 +59,6 @@
     - Custom export to use with libdragon-extensions
 [ ] Import LDtk maps
     - Custom export to use with libdragon-extensions
-[ ] Option to change Libdragon git repo and branch
-[ ] Option to change Libdragon-Extensions git repo and branch
 [ ] Scene nodes
 [ ] Audio preview
 [ ] Add image slices preview on import/edit
@@ -76,6 +74,8 @@ Done:
 [x] RTC support (via flag) - https://github.com/DragonMinded/libdragon/tree/trunk/examples/rtctest
     - Makefile: N64_ROM_RTC = true
     - Setup: rtc_init() into a boolean variable so that the user can check if it succeeded
+[x] Pull on libdragon branch - 'libdragon update'
+[x] Build libdragon branch - 'libdragon install'
 
 - 1.0.0:
 [x] Tabbed content in the middle part

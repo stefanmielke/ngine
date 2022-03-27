@@ -11,6 +11,7 @@
 #include "ConsoleApp.h"
 #include "Emulator.h"
 #include "ImportAssets.h"
+#include "Libdragon.h"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
 #include "ThreadCommand.h"
@@ -205,7 +206,7 @@ void AppGui::RenderOpenProjectWindow(App &app) {
 }
 
 void AppGui::RenderContentBrowser(App &app) {
-	const float center_x_size = (float)window_width - 600;
+	const float center_x_size = (float)window_width - 620;
 	const float center_y_offset = is_output_open ? 219 : 38;
 	ImGui::SetNextWindowSize(ImVec2(center_x_size, (float)window_height - center_y_offset));
 	ImGui::SetNextWindowPos(ImVec2(300, 19));
@@ -650,7 +651,7 @@ void AppGui::RenderSceneWindow(App &app) {
 }
 
 void AppGui::RenderSettingsWindow(App &app) {
-	const float prop_x_size = 300;
+	const float prop_x_size = 320;
 	const float prop_y_size = is_output_open ? 219 : 38;
 	ImGui::SetNextWindowSize(ImVec2(prop_x_size, (float)window_height - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2((float)window_width - prop_x_size, 19));
@@ -1011,6 +1012,70 @@ void AppGui::RenderSettingsWindow(App &app) {
 							ImGui::EndTabItem();
 						}
 
+						if (ImGui::BeginTabItem("Libdragon")) {
+							{
+								ImGui::Spacing();
+								ImGui::BeginDisabled();
+								ImGui::TextUnformatted("Libdragon");
+								ImGui::EndDisabled();
+								ImGui::Separator();
+
+								if (ImGui::Button("Update Libdragon")) {
+									console.AddLog("Running 'libdragon update'...\nCheck output on the console.");
+									Libdragon::Update(
+										app.project.project_settings.project_directory,
+										app.engine_settings.GetLibdragonExeLocation());
+								}
+								ImGui::SameLine();
+								ImGui::BeginDisabled();
+								ImGui::TextUnformatted("- libdragon update");
+								ImGui::EndDisabled();
+
+								if (ImGui::Button("Re-Build Libdragon")) {
+									console.AddLog("Running 'libdragon install'...\nCheck output on the console.");
+									Libdragon::Install(
+										app.project.project_settings.project_directory,
+										app.engine_settings.GetLibdragonExeLocation());
+								}
+								ImGui::SameLine();
+								ImGui::BeginDisabled();
+								ImGui::TextUnformatted("- libdragon install");
+								ImGui::EndDisabled();
+
+//								ImGui::TextUnformatted("Repository URL");
+//								char repo_buf[255] = "\0";
+//								ImGui::InputText("###Repo", repo_buf, 255);
+//								ImGui::SameLine();
+//								ImGui::Button("Update");
+//
+//								ImGui::TextUnformatted("Branch");
+//								char branch_buf[50] = "\0";
+//								ImGui::InputText("###Branch", branch_buf, 50);
+//								ImGui::SameLine();
+//								ImGui::Button("Update");
+							}
+							{
+//								ImGui::Spacing();
+//								ImGui::BeginDisabled();
+//								ImGui::TextUnformatted("Libdragon Extensions");
+//								ImGui::EndDisabled();
+//								ImGui::Separator();
+
+//								ImGui::TextUnformatted("Repository URL");
+//								char repo_buf[255] = "\0";
+//								ImGui::InputText("###Repo", repo_buf, 255);
+//								ImGui::SameLine();
+//								ImGui::Button("Update");
+//
+//								ImGui::TextUnformatted("Branch");
+//								char branch_buf[50] = "\0";
+//								ImGui::InputText("###Branch", branch_buf, 50);
+//								ImGui::SameLine();
+//								ImGui::Button("Update");
+							}
+							ImGui::EndTabItem();
+						}
+
 						if (ImGui::BeginTabItem("Modules")) {
 							ImGui::BeginDisabled();
 							ImGui::TextWrapped("Libdragon");
@@ -1047,13 +1112,15 @@ void AppGui::RenderSettingsWindow(App &app) {
 											&app.project.project_settings.modules.debug_usb);
 							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
 
-							if (ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer)) {
+							if (ImGui::Checkbox("Timer",
+												&app.project.project_settings.modules.timer)) {
 								if (!app.project.project_settings.modules.timer)
 									app.project.project_settings.modules.rtc = false;
 							}
 
 							ImGui::BeginDisabled(!app.project.project_settings.modules.timer);
-							ImGui::Checkbox("Real-Time Clock (RTC)", &app.project.project_settings.modules.rtc);
+							ImGui::Checkbox("Real-Time Clock (RTC)",
+											&app.project.project_settings.modules.rtc);
 							ImGui::EndDisabled();
 
 							ImGui::Spacing();
