@@ -48,6 +48,6 @@ if(WIN32)
             TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/deps/windows_dll
-            ${CMAKE_CURRENT_BINARY_DIR}/deps
+            ${CMAKE_CURRENT_BINARY_DIR}/
     )
 endif()
