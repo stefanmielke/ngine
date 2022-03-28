@@ -18,25 +18,16 @@ jobs:
       matrix:
         config:
           - {
-            name: "Windows Latest MinGW", artifact: "Windows.7z",
-            os: windows-latest,
-            cc: "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-gcc.exe",
-            cxx: "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-g++.exe"
+            name: "Windows Latest", artifact: "Windows.7z",
+            os: windows-latest
           }
           - {
             name: "Ubuntu Latest GCC", artifact: "Linux.7z",
-            os: ubuntu-latest,
-            cc: "gcc", cxx: "g++"
+            os: ubuntu-latest
           }
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set up MinGW on Windows
-        uses: egor-tensin/setup-mingw@v2
-        if: ${{ runner.os == 'Windows'}}
-        with:
-          platform: x64
 
       - name: Install SDL2 and SDL2_image on Windows
         if: ${{ runner.os == 'Windows'}}
@@ -44,21 +35,15 @@ jobs:
           mkdir SDL2
           cd SDL2
           
-          curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz -O SDL2-devel-2.0.20-mingw.tar.gz
-          curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz -O SDL2_image-devel-2.0.5-mingw.tar.gz
+          curl -o SDL2.zip https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip
+          curl -o SDL2_image.zip https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip
           
-          tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
-          tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
+          Expand-Archive SDL2.zip .
+          Expand-Archive SDL2_image.zip .
           
-          cd SDL2-2.0.20
-          make native
-          cd ..
+          set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
           
-          cd SDL2_image-2.0.5
-          make native
-          cd ..
-          
-          cd ..
+          cd .. 
 
       - name: Install SDL2 and SDL2_image on Linux
         if: ${{ runner.os == 'Linux'}}
@@ -77,12 +62,10 @@ jobs:
 
       - name: Configure CMake
         shell: cmake -P {0}
-        run: |
-          execute_process(COMMAND cmake -S . -B D:/a/ngine/ngine/build -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -G "MinGW Makefiles")
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: |
-          cmake --build D:/a/ngine/ngine/build --config ${{env.BUILD_TYPE}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Archive
         uses: actions/upload-artifact@v3
