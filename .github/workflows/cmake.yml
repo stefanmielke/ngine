@@ -77,7 +77,12 @@ jobs:
 
       - name: Configure CMake
         shell: cmake -P {0}
-        run: execute_process(COMMAND cmake -S . -B D:/a/ngine/ngine/build -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -G "MinGW Makefiles")
+        run: |
+          if(UNIX)
+            execute_process(COMMAND cmake -S . -B ${{github.workspace}}/build -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE})
+          else()
+            execute_process(COMMAND cmake -S . -B D:/a/ngine/ngine/build -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -G "MinGW Makefiles")
+          endif()
 
       - name: Build
         run: |
