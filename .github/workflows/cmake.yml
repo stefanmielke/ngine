@@ -32,8 +32,6 @@ jobs:
       - name: Install SDL2 and SDL2_image on Windows
         if: ${{ runner.os == 'Windows'}}
         run: |
-#          vcpkg install sdl2
-#          vcpkg install sdl2-image
           mkdir download
           cd download
           curl -o SDL2.zip https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip
