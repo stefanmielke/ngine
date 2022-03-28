@@ -19,36 +19,46 @@ jobs:
         config:
           - {
             name: "Windows Latest", artifact: "Windows.7z",
-            os: windows-latest
+            os: windows-latest,
+            cc: "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-gcc.exe",
+            cxx: "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-g++.exe"
           }
           - {
             name: "Ubuntu Latest GCC", artifact: "Linux.7z",
-            os: ubuntu-latest
+            os: ubuntu-latest,
+            cc: "gcc", cxx: "g++"
           }
 
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set up MinGW on Windows
+        uses: egor-tensin/setup-mingw@v2
+        if: ${{ runner.os == 'Windows'}}
+        with:
+          platform: x64
+
       - name: Install SDL2 and SDL2_image on Windows
         if: ${{ runner.os == 'Windows'}}
         run: |
-          mkdir download
-          cd download
-          curl -o SDL2.zip https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip
-          curl -o SDL2_image.zip https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip
-
-          Expand-Archive SDL2.zip .
-          Expand-Archive SDL2_image.zip .
-
+          mkdir SDL2
+          cd SDL2
+          
+          curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz -O SDL2-devel-2.0.20-mingw.tar.gz
+          curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz -O SDL2_image-devel-2.0.5-mingw.tar.gz
+          
+          tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
+          tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
+          
+          cd SDL2-2.0.20
+          make native
           cd ..
-
-          xcopy download\SDL2-2.0.20\include\ SDL2\include\SDL2\
-          xcopy download\SDL2-2.0.20\lib\x64\ SDL2\bin\
-          xcopy download\SDL2-2.0.20\lib\x64\ SDL2\lib\
-
-          xcopy download\SDL2_image-2.0.5\include\ SDL2\include\SDL2\
-          xcopy download\SDL2_image-2.0.5\lib\x64\ SDL2\bin\
-          xcopy download\SDL2_image-2.0.5\lib\x64\ SDL2\lib\
+          
+          cd SDL2_image-2.0.5
+          make native
+          cd ..
+          
+          cd ..
 
       - name: Install SDL2 and SDL2_image on Linux
         if: ${{ runner.os == 'Linux'}}
@@ -66,9 +76,7 @@ jobs:
           cd ../..
 
       - name: Configure CMake
-        run: |
-          set SDL2DIR="${{github.workspace}}\SDL2"
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DSDL2_PATH="${{github.workspace}}\SDL2"
+        run: execute_process(COMMAND cmake -S . -B D:/a/ngine/ngine/build -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -G "MinGW Makefiles")
 
       - name: Build
         run: |
