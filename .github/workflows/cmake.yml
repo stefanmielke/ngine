@@ -97,4 +97,4 @@ jobs:
             ${{github.workspace}}/build/ngine
             ${{github.workspace}}/build/ngine.exe
             ${{github.workspace}}/build/montserrat.ttf
-            ${{github.workspace}}/build/deps/
+            ${{github.workspace}}/build/deps/*
