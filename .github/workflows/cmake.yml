@@ -18,67 +18,87 @@ jobs:
       matrix:
         config:
           - {
-            name: "Windows Latest", artifact: "Windows.7z",
-            os: windows-latest
+            name: "Windows Latest MinGW", artifact: "Windows.7z",
+            os: windows-latest,
+            cc: "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin\x86_64-w64-mingw32-gcc.exe",
+            cxx: "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin\x86_64-w64-mingw32-g++.exe"
           }
           - {
             name: "Ubuntu Latest GCC", artifact: "Linux.7z",
-            os: ubuntu-latest
+            os: ubuntu-latest,
+            cc: "gcc", cxx: "g++"
           }
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Install SDL2 and SDL2_image on Windows
-      if: ${{ runner.os == 'Windows'}}
-      run: |
-        mkdir SDL2
-        cd SDL2
-        
-        curl -o SDL2.zip https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip
-        curl -o SDL2_image.zip https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip
-        
-        Expand-Archive SDL2.zip .
-        Expand-Archive SDL2_image.zip .
-      
-        set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
-        set SDL2DIR="${{github.workspace}}\SDL2\SDL2-2.0.20"
-      
-        cd ..
+      - name: Set up MinGW on Windows
+        uses: egor-tensin/setup-mingw@v2
+        if: ${{ runner.os == 'Windows'}}
+        with:
+          platform: x64
 
-    - name: Install SDL2 and SDL2_image on Linux
-      if: ${{ runner.os == 'Linux'}}
-      run: |
-        sudo apt-get update
-        sudo apt-get install libsdl2-image-dev
-        mkdir SDL2
-        cd SDL2
-        wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
-        tar -xzf SDL2-2.0.20.tar.gz
-        cd SDL2-2.0.20
-        ./configure
-        make all -j
-        sudo make install
-        cd ../..
+      - name: Install SDL2 and SDL2_image on Windows
+        if: ${{ runner.os == 'Windows'}}
+        run: |
+          set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
+          
+          mkdir SDL2
+          cd SDL2
+          
+          curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz -O SDL2-devel-2.0.20-mingw.tar.gz
+          curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz -O SDL2_image-devel-2.0.5-mingw.tar.gz
+          
+          tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
+          tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
+          
+          cd SDL2-2.0.20
+          make native
+          cd ..
+          
+          cd SDL2_image-2.0.5
+          make native
+          cd ..
+          
+          cd ..
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Install SDL2 and SDL2_image on Linux
+        if: ${{ runner.os == 'Linux'}}
+        run: |
+          sudo apt-get update
+          sudo apt-get install libsdl2-image-dev
+          mkdir SDL2
+          cd SDL2
+          wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
+          tar -xzf SDL2-2.0.20.tar.gz
+          cd SDL2-2.0.20
+          ./configure
+          make all -j
+          sudo make install
+          cd ../..
 
-    - name: Build
-      # Build your program with the given configuration
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Configure CMake
+        shell: cmake -P {0}
+        run: |
+          set(ENV{CC} ${{ matrix.config.cc }})
+          set(ENV{CXX} ${{ matrix.config.cxx }})
+          execute_process(COMMAND cmake -S . -B ${{github.workspace}}/build -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }})
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.  
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{env.BUILD_TYPE}}
+      - name: Build
+        # Build your program with the given configuration
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-    - name: Archive
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{matrix.config.artifact}}
-        path: |
-          ${{github.workspace}}/build/ngine
-          ${{github.workspace}}/build/ngine.exe
-          ${{github.workspace}}/build/montserrat.ttf
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        # Execute tests defined by the CMake configuration.
+        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+        run: ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Archive
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{matrix.config.artifact}}
+          path: |
+            ${{github.workspace}}/build/ngine
+            ${{github.workspace}}/build/ngine.exe
+            ${{github.workspace}}/build/montserrat.ttf
