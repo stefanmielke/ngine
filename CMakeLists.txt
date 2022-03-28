@@ -31,7 +31,7 @@ if(UNIX)
 elseif(WIN32)
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
-    target_include_directories(${PROJECT_NAME} PRIVATE D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/include/)
+    target_include_directories(${PROJECT_NAME} PRIVATE D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/include/ D:/a/ngine/ngine/SDL2/SDL2_image-2.0.5/x86_64-w64-mingw32/include/)
     target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2 SDL2_image)
 endif()
 
