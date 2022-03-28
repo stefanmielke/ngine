@@ -1,9 +1,3 @@
-if(MSVC)
-    if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
-        set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "The vcpkg triplet")
-    endif()
-endif()
-
 cmake_minimum_required(VERSION 3.21)
 project(ngine)
 
@@ -35,6 +29,8 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(SDL2 REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2 SDL2_image)
 elseif(MSVC)
+include(C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
+
 find_package(SDL2 CONFIG REQUIRED)
 target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
 

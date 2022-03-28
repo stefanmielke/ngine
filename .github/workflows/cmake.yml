@@ -19,13 +19,11 @@ jobs:
         config:
           - {
             name: "Windows Latest", artifact: "Windows.7z",
-            os: windows-latest,
-            vcpkgCommitId: '5568f110b509a9fd90711978a7cb76bae75bb092'
+            os: windows-latest
           }
           - {
             name: "Ubuntu Latest GCC", artifact: "Linux.7z",
-            os: ubuntu-latest,
-            vcpkgCommitId: '5568f110b509a9fd90711978a7cb76bae75bb092'
+            os: ubuntu-latest
           }
 
     steps:
@@ -33,20 +31,9 @@ jobs:
 
       - name: Install SDL2 and SDL2_image on Windows
         if: ${{ runner.os == 'Windows'}}
-        uses: lukka/run-vcpkg@main
-        id: runvcpkg
-        with:
-          vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
-          vcpkgGitCommitId: '${{ matrix.config.vcpkgCommitId }}'
-          runVcpkgInstall: true
-          vcpkgJsonGlob: '**/cmake/vcpkg.json'
-          appendedCacheKey: vcpkginstall
-
-#      - name: Install SDL2 and SDL2_image on Windows
-#        if: ${{ runner.os == 'Windows'}}
-#        run: |
-#          vcpkg install sdl2
-#          vcpkg install sdl2-image
+        run: |
+          vcpkg install sdl2
+          vcpkg install sdl2-image
 #          mkdir download
 #          cd download
 #          curl -o SDL2.zip https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip
@@ -80,22 +67,12 @@ jobs:
           sudo make install
           cd ../..
 
-      - name: Run CMake on Windows
-        if: ${{ runner.os == 'Windows'}}
-        uses: lukka/run-cmake@v10
-        with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
-          buildPreset: 'ninja-multi-vcpkg'
-
       - name: Configure CMake
-        if: ${{ runner.os == 'Linux'}}
         run: |
           set SDL2DIR="${{github.workspace}}\SDL2"
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        if: ${{ runner.os == 'Linux'}}
         run: |
           set SDL2DIR="${{github.workspace}}\SDL2"
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
