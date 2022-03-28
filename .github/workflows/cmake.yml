@@ -32,16 +32,23 @@ jobs:
       - name: Install SDL2 and SDL2_image on Windows
         if: ${{ runner.os == 'Windows'}}
         run: |
-          mkdir SDL2
-          cd SDL2
-          
+          mkdir download
+          cd download
           curl -o SDL2.zip https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip
           curl -o SDL2_image.zip https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip
           
           Expand-Archive SDL2.zip .
           Expand-Archive SDL2_image.zip .
           
-          cd .. 
+          cd ..
+          
+          xcopy download\SDL2-2.0.20\include\ SDL2\include\SDL2\
+          xcopy download\SDL2-2.0.20\lib\x64\ SDL2\bin\
+          xcopy download\SDL2-2.0.20\lib\x64\ SDL2\lib\
+          
+          xcopy download\SDL2_image-2.0.5\include\ SDL2\include\SDL2\
+          xcopy download\SDL2_image-2.0.5\lib\x64\ SDL2\bin\
+          xcopy download\SDL2_image-2.0.5\lib\x64\ SDL2\lib\
 
       - name: Install SDL2 and SDL2_image on Linux
         if: ${{ runner.os == 'Linux'}}
@@ -60,14 +67,12 @@ jobs:
 
       - name: Configure CMake
         run: |
-          set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
-          set SDL2DIR="${{github.workspace}}\SDL2\SDL2-2.0.20"
+          set SDL2DIR="${{github.workspace}}\SDL2"
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
         run: |
-          set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
-          set SDL2DIR="${{github.workspace}}\SDL2\SDL2-2.0.20"
+          set SDL2DIR="${{github.workspace}}\SDL2"
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Archive
