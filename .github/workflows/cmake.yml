@@ -43,19 +43,13 @@ jobs:
         mkdir SDL2
         cd SDL2
         
-        curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz -O SDL2-devel-2.0.20-mingw.tar.gz
-        curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz -O SDL2_image-devel-2.0.5-mingw.tar.gz
+        curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip -O SDL2.zip
+        curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip -O SDL2_image.zip
       
-        tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
-        tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
+        tar -xf SDL2.zip
+        tar -xf SDL2_image.zip
       
-        cd SDL2-2.0.20
-        make native
-        cd ..
-      
-        cd SDL2_image-2.0.5
-        make native
-        cd ..
+        set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
       
         cd ..
 
@@ -75,11 +69,7 @@ jobs:
         cd ../..
 
     - name: Configure CMake
-      shell: cmake -P {0}
-      run: |
-        set(ENV{CC} ${{ matrix.config.cc }})
-        set(ENV{CXX} ${{ matrix.config.cxx }})
-        execute_process(COMMAND cmake -S . -B ${{github.workspace}}/build -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE})
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
