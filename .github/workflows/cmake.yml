@@ -31,7 +31,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install SDL2 and SDL2_image
+    - name: Install SDL2 and SDL2_image on Windows
+      if: ${{ runner.os == 'Windows'}}
       shell: cmake -P {0}
       run: |
         message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
@@ -41,32 +42,34 @@ jobs:
           file(DOWNLOAD "https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz" ./SDL2/SDL2.tar.gz SHOW_PROGRESS)
           file(DOWNLOAD "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz" ./SDL2/SDL2_image.tar.gz SHOW_PROGRESS)
         
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd SDL2)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xzf SDL2.tar.gz)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xzf SDL2_image.tar.gz)
+          cd SDL2
+          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ./SDL2/SDL2.tar.gz)
+          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ./SDL2/SDL2_image.tar.gz)
         
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd SDL2-2.0.20)
+          cd SDL2-2.0.20
           execute_process(COMMAND ${CMAKE_COMMAND} -E make native)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd ..)
+          cd ..
         
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd SDL2_image-2.0.5)
+          cd SDL2_image-2.0.5
           execute_process(COMMAND ${CMAKE_COMMAND} -E make native)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd ..)
+          cd ..
         
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd ..)
-        elseif ("${{ runner.os }}" STREQUAL "Linux")
-          execute_process(COMMAND ${CMAKE_COMMAND} -E sudo apt-get update)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E sudo apt-get install libsdl2-image-dev)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E mkdir SDL2)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd SDL2)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xzf SDL2-2.0.20.tar.gz)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd SDL2-2.0.20)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E ./configure)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E make all -j)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E sudo make install)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd ../..)
-        endif()
+          cd ..
+
+    - name: Install SDL2 and SDL2_image on Linux
+      if: ${{ runner.os == 'Linux'}}
+      run: |
+        sudo apt-get update
+        sudo apt-get install libsdl2-image-dev
+        mkdir SDL2
+        cd SDL2
+        wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
+        tar -xzf SDL2-2.0.20.tar.gz
+        cd SDL2-2.0.20
+        ./configure
+        make all -j
+        sudo make install
+        cd ../..
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
