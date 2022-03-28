@@ -35,12 +35,13 @@ jobs:
       if: ${{ runner.os == 'Windows'}}
       run: |
         mkdir SDL2
-        curl "https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz" -O ./SDL2/SDL2.tar.gz
-        curl "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz" -O ./SDL2/SDL2_image.tar.gz
-      
         cd SDL2
-        tar xzf ./SDL2/SDL2.tar.gz
-        tar xzf ./SDL2/SDL2_image.tar.gz
+        
+        curl https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz
+        curl https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz
+      
+        tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
+        tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
       
         cd SDL2-2.0.20
         make native
