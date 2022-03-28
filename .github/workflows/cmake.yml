@@ -18,24 +18,16 @@ jobs:
       matrix:
         config:
           - {
-            name: "Windows Latest MinGW", artifact: "Windows.7z",
-            os: windows-latest,
-            cc: "gcc", cxx: "g++"
+            name: "Windows Latest", artifact: "Windows.7z",
+            os: windows-latest
           }
           - {
             name: "Ubuntu Latest GCC", artifact: "Linux.7z",
-            os: ubuntu-latest,
-            cc: "gcc", cxx: "g++"
+            os: ubuntu-latest
           }
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Set up MinGW on Windows
-      uses: egor-tensin/setup-mingw@v2
-      if: ${{ runner.os == 'Windows'}}
-      with:
-        platform: x64
 
     - name: Install SDL2 and SDL2_image on Windows
       if: ${{ runner.os == 'Windows'}}
@@ -43,8 +35,8 @@ jobs:
         mkdir SDL2
         cd SDL2
         
-        curl https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip -O SDL2.zip
-        curl https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip -O SDL2_image.zip
+        curl -o SDL2.zip https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip
+        curl -o SDL2_image.zip https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip
         
         Expand-Archive SDL2.zip .
         Expand-Archive SDL2_image.zip .
