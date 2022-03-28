@@ -2,6 +2,8 @@
 
 #include <string>
 
+extern char separator[];
+
 class ThreadCommand {
    public:
 	static void RunCommand(std::string command);

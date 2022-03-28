@@ -45,9 +45,9 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	char cmd[500];
 	snprintf(cmd, 500,
-			 "cd %s\ngit submodule add git@github.com:stefanmielke/libdragon-extensions.git "
+			 "cd %s%sgit submodule add git@github.com:stefanmielke/libdragon-extensions.git "
 			 "libs/libdragon-extensions",
-			 project_folder.c_str());
+			 project_folder.c_str(), separator);
 	system(cmd);
 
 	console.AddLog("Creating project settings file...");
@@ -97,8 +97,9 @@ void create_build_files(App *app) {
 		std::string line;
 		while (std::getline(content_end_script, line)) {
 			char command[500];
-			snprintf(command, 500, "cd %s\n%s",
-					 app->project.project_settings.project_directory.c_str(), line.c_str());
+			snprintf(command, 500, "cd %s%s%s",
+					 app->project.project_settings.project_directory.c_str(), separator,
+					 line.c_str());
 			ThreadCommand::RunCommand(line);
 
 			console.AddLog("%s", command);

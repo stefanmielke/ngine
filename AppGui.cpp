@@ -973,22 +973,20 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 								std::string current_selected("None");
 								for (auto &scene : app.project.scenes) {
-									if (scene.id ==
-										app.project.project_settings.initial_scene_id) {
+									if (scene.id == app.project.project_settings.initial_scene_id) {
 										current_selected = scene.name;
 										break;
 									}
 								}
 								ImGui::TextUnformatted("Initial Scene");
-								if (ImGui::BeginCombo("##InitialScene",
-													  current_selected.c_str())) {
+								if (ImGui::BeginCombo("##InitialScene", current_selected.c_str())) {
 									for (auto &scene : app.project.scenes) {
 										if (ImGui::Selectable(
 												scene.name.c_str(),
 												scene.id == app.project.project_settings
 																.initial_scene_id)) {
-											app.project.project_settings
-												.initial_scene_id = scene.id;
+											app.project.project_settings.initial_scene_id = scene
+																								.id;
 										}
 									}
 									ImGui::EndCombo();
@@ -1047,8 +1045,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::EndDisabled();
 
 								//								ImGui::TextUnformatted("Repository
-								//URL"); 								char repo_buf[255] = "\0"; 								ImGui::InputText("###Repo",
-								//repo_buf, 255); 								ImGui::SameLine(); 								ImGui::Button("Update");
+								// URL"); 								char repo_buf[255] = "\0";
+								// ImGui::InputText("###Repo", repo_buf, 255);
+								// ImGui::SameLine(); ImGui::Button("Update");
 								//
 								ImGui::Spacing();
 								ImGui::TextUnformatted("Branch");
@@ -1067,7 +1066,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 									dir.append("/libdragon");
 
 									char cmd[255];
-									snprintf(cmd, 255, "cd %s\n%s %s", dir.c_str(), "git checkout",
+									snprintf(cmd, 255, "cd %s%s%s %s", dir.c_str(), separator,
+											 "git checkout",
 											 app.state.project_settings_screen.libdragon_branch);
 									ThreadCommand::RunCommand(cmd);
 								}
@@ -1076,16 +1076,19 @@ void AppGui::RenderSettingsWindow(App &app) {
 								//								ImGui::Spacing();
 								//								ImGui::BeginDisabled();
 								//								ImGui::TextUnformatted("Libdragon
-								//Extensions"); 								ImGui::EndDisabled(); 								ImGui::Separator();
+								// Extensions"); 								ImGui::EndDisabled();
+								// ImGui::Separator();
 
 								//								ImGui::TextUnformatted("Repository
-								//URL"); 								char repo_buf[255] = "\0"; 								ImGui::InputText("###Repo",
-								//repo_buf, 255); 								ImGui::SameLine(); 								ImGui::Button("Update");
+								// URL"); 								char repo_buf[255] = "\0";
+								// ImGui::InputText("###Repo", repo_buf, 255);
+								// ImGui::SameLine(); ImGui::Button("Update");
 								//
 								//								ImGui::TextUnformatted("Branch");
 								//								char branch_buf[50] = "\0";
-								//								ImGui::InputText("###Branch", branch_buf,
-								//50); 								ImGui::SameLine(); 								ImGui::Button("Update");
+								//								ImGui::InputText("###Branch",
+								//branch_buf, 50); 								ImGui::SameLine();
+								// ImGui::Button("Update");
 							}
 							ImGui::EndTabItem();
 						}

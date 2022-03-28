@@ -13,13 +13,14 @@ void Emulator::Run(App *app) {
 	console.AddLog("Opening rom in emulator as '%s %s'...",
 				   app->engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
 
-	if (!std::filesystem::exists(app->project.project_settings.project_directory + "/" + rom_filename)) {
+	if (!std::filesystem::exists(app->project.project_settings.project_directory + "/" +
+								 rom_filename)) {
 		console.AddLog("Rom file was not created. Triggering build before running...");
 		ProjectBuilder::Build(app);
 	}
 
 	char cmd[255];
-	snprintf(cmd, 255, "cd %s\n%s %s", app->project.project_settings.project_directory.c_str(),
-			 app->engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
+	snprintf(cmd, 255, "cd %s%s%s %s", app->project.project_settings.project_directory.c_str(),
+			 separator, app->engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
 	ThreadCommand::RunCommand(cmd);
 }
