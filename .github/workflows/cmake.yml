@@ -41,7 +41,7 @@ jobs:
           file(DOWNLOAD "https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz" ./SDL2/SDL2.tar.gz SHOW_PROGRESS)
           file(DOWNLOAD "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz" ./SDL2/SDL2_image.tar.gz SHOW_PROGRESS)
         
-          execute_process(COMMAND ${CMAKE_COMMAND} -E cd SDL2
+          execute_process(COMMAND ${CMAKE_COMMAND} -E cd SDL2)
           execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xzf SDL2.tar.gz)
           execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xzf SDL2_image.tar.gz)
         
