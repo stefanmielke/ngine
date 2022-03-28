@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set up MinGW on Windows
-        uses: conradhuebler/setup-mingw
+        uses: conradhuebler/setup-mingw@master
         if: ${{ runner.os == 'Windows'}}
         with:
           platform: x64
