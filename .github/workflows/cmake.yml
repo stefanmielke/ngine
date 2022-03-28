@@ -33,7 +33,7 @@ jobs:
 
     - name: Install SDL2 and SDL2_image
       run: |
-        message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
+        echo "Using host CMake version: ${CMAKE_VERSION}"
         
         if ("${{ runner.os }}" STREQUAL "Windows")
           mkdir SDL2
