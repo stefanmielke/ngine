@@ -33,7 +33,7 @@ elseif(WIN32)
     find_package(SDL2_image REQUIRED)
     target_include_directories(${PROJECT_NAME} PRIVATE D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/include/ D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/include/SDL2/ D:/a/ngine/ngine/SDL2/SDL2_image-2.0.5/x86_64-w64-mingw32/include/)
     target_link_directories(${PROJECT_NAME} PRIVATE D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/lib/ D:/a/ngine/ngine/SDL2/SDL2_image-2.0.5/x86_64-w64-mingw32/lib/)
-    target_link_libraries(${PROJECT_NAME} SDL2 SDL2_image)
+    target_link_libraries(${PROJECT_NAME} mingw32 SDL2main SDL2 -mwindows SDL2_image)
 endif()
 
 add_custom_command(
