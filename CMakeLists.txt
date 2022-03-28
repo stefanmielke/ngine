@@ -42,3 +42,12 @@ add_custom_command(
         ${CMAKE_SOURCE_DIR}/montserrat.ttf
         ${CMAKE_CURRENT_BINARY_DIR}/montserrat.ttf
 )
+
+if(WIN32)
+    add_custom_command(
+            TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/deps/windows_dll
+            ${CMAKE_CURRENT_BINARY_DIR}/deps
+    )
+endif()
