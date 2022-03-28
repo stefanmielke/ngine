@@ -91,7 +91,6 @@ jobs:
 
       - name: Archive
         uses: actions/upload-artifact@v3
-        if: ${{ runner.os == 'Linux'}}
         with:
           name: ${{matrix.config.artifact}}
           path: |
