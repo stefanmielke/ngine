@@ -7,32 +7,63 @@ on:
     branches: [ main ]
 
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-latest
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            name: "Windows Latest MinGW", artifact: "Windows.7z",
+            os: windows-latest,
+            cc: "gcc", cxx: "g++"
+          }
+          - {
+            name: "Ubuntu Latest GCC", artifact: "Linux.7z",
+            os: ubuntu-latest,
+            cc: "gcc", cxx: "g++"
+          }
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Install SDL2 and SDL2_image
       run: |
-        sudo apt-get update
-        sudo apt-get install libsdl2-image-dev
-        mkdir SDL2
-        cd SDL2
-        wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
-        tar -xzf SDL2-2.0.20.tar.gz
-        cd SDL2-2.0.20
-        ./configure
-        make all -j
-        sudo make install
-        cd ../..
+        if ("${{ runner.os }}" STREQUAL "Windows")
+          mkdir SDL2
+          file(DOWNLOAD "https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz" ./SDL2/SDL2.tar.gz SHOW_PROGRESS)
+          file(DOWNLOAD "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz" ./SDL2/SDL2_image.tar.gz SHOW_PROGRESS)
+        
+          cd SDL2
+          tar -xzf SDL2.tar.gz
+          tar -xzf SDL2_image.tar.gz
+        
+          cd SDL2-2.0.20
+          execute_process(COMMAND ${CMAKE_COMMAND} -E make native)
+          cd ..
+        
+          cd SDL2_image-2.0.5
+          execute_process(COMMAND ${CMAKE_COMMAND} -E make native)
+          cd ..
+        
+          cd ..
+        elseif ("${{ runner.os }}" STREQUAL "Linux")
+          sudo apt-get update
+          sudo apt-get install libsdl2-image-dev
+          mkdir SDL2
+          cd SDL2
+          wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
+          tar -xzf SDL2-2.0.20.tar.gz
+          cd SDL2-2.0.20
+          ./configure
+          make all -j
+          sudo make install
+          cd ../..
+        endif()
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -43,7 +74,9 @@ jobs:
       # Build your program with the given configuration
       run: |
         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-        chmod +x ${{github.workspace}}/build/ngine
+        if (NOT "${{ runner.os }}" STREQUAL "Windows")
+          chmod +x ${{github.workspace}}/build/ngine
+        endif()
 
     - name: Test
       working-directory: ${{github.workspace}}/build
@@ -54,7 +87,8 @@ jobs:
     - name: Archive
       uses: actions/upload-artifact@v3
       with:
-        name: dist
+        name: ${{matrix.config.artifact}}
         path: |
           ${{github.workspace}}/build/ngine
+          ${{github.workspace}}/build/ngine.exe
           ${{github.workspace}}/build/montserrat.ttf
