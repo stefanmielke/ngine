@@ -45,9 +45,9 @@ jobs:
         
         curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip -O SDL2.zip
         curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip -O SDL2_image.zip
-      
-        tar -xf SDL2.zip
-        tar -xf SDL2_image.zip
+        
+        Expand-Archive SDL2.zip .
+        Expand-Archive SDL2_image.zip .
       
         set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
       
