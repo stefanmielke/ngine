@@ -42,6 +42,7 @@ jobs:
         Expand-Archive SDL2_image.zip .
       
         set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
+        set SDL2DIR="${{github.workspace}}\SDL2\SDL2-2.0.20"
       
         cd ..
 
