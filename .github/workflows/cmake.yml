@@ -41,9 +41,6 @@ jobs:
           Expand-Archive SDL2.zip .
           Expand-Archive SDL2_image.zip .
           
-          set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
-          set SDL2DIR="${{github.workspace}}\SDL2\SDL2-2.0.20"
-          
           cd .. 
 
       - name: Install SDL2 and SDL2_image on Linux
@@ -62,10 +59,16 @@ jobs:
           cd ../..
 
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: |
+          set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
+          set SDL2DIR="${{github.workspace}}\SDL2\SDL2-2.0.20"
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: |
+          set PATH="%PATH%;${{github.workspace}}\SDL2\SDL2-2.0.20;${{github.workspace}}\SDL2\SDL2_image-2.0.5"
+          set SDL2DIR="${{github.workspace}}\SDL2\SDL2-2.0.20"
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Archive
         uses: actions/upload-artifact@v3
