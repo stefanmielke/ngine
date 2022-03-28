@@ -9,7 +9,7 @@
 #ifdef __WIN32__
 char separator[] = " && \0";
 #else
-char *separator[] = "\n\0";
+char separator[] = "\n\0";
 #endif
 
 static bool is_running_command;
