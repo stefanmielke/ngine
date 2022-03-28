@@ -4,9 +4,7 @@ project(ngine)
 set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wall)
 
-if(WIN32)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-endif()
 
 set(SOURCES main.cpp ProjectBuilder.cpp Libdragon.cpp CodeEditor.cpp ScriptBuilder.cpp ThreadCommand.cpp Emulator.cpp LibdragonImage.cpp Content.cpp LibdragonSound.cpp App.cpp ImportAssets.cpp Sdl.cpp AppGui.cpp LibdragonFile.cpp)
 set(SOURCES ${SOURCES} generated/makefile.gen.cpp generated/setup.gen.cpp generated/change_scene.gen.cpp generated/scene_gen.cpp generated/script_blank.gen.cpp)
