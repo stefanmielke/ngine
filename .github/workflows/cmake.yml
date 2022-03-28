@@ -37,7 +37,7 @@ jobs:
         id: runvcpkg
         with:
           vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
-          vcpkgGitCommitId: '${{ matrix.vcpkgCommitId }}'
+          vcpkgGitCommitId: '${{ matrix.config.vcpkgCommitId }}'
           runVcpkgInstall: true
           vcpkgJsonGlob: '**/cmake/vcpkg.json'
           appendedCacheKey: vcpkginstall
