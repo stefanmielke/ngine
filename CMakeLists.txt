@@ -25,7 +25,7 @@ set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 endif(UNIX)
 if(WIN32)
-target_include_directories(${PROJECT_NAME} PRIVATE /usr/include)
+target_include_directories(${PROJECT_NAME} PRIVATE D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/include)
 endif(WIN32)
 
 find_package(SDL2 REQUIRED)
