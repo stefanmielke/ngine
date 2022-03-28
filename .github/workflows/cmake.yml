@@ -68,12 +68,12 @@ jobs:
       - name: Configure CMake
         run: |
           set SDL2DIR="${{github.workspace}}\SDL2"
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DSDL2_PATH="${{github.workspace}}/SDL2"
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DSDL2_PATH="${{github.workspace}}\SDL2"
 
       - name: Build
         run: |
           set SDL2DIR="${{github.workspace}}\SDL2"
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Archive
         uses: actions/upload-artifact@v3
