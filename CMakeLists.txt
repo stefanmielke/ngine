@@ -25,10 +25,19 @@ set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_WIN32_THREADS_INIT 0)
 set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-endif(UNIX)
 
 find_package(SDL2 REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2 SDL2_image)
+elseif(MSVC)
+find_package(SDL2 CONFIG REQUIRED)
+target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main)
+
+find_package(sdl2-image CONFIG REQUIRED)
+target_link_libraries(main PRIVATE SDL2::SDL2_image)
+elseif(WIN32)
+find_package(SDL2 REQUIRED)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2 SDL2_image)
+endif()
 
 add_custom_command(
         TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
