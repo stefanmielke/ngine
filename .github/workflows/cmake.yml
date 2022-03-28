@@ -33,6 +33,8 @@ jobs:
 
     - name: Install SDL2 and SDL2_image
       run: |
+        message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
+        
         if ("${{ runner.os }}" STREQUAL "Windows")
           mkdir SDL2
           file(DOWNLOAD "https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz" ./SDL2/SDL2.tar.gz SHOW_PROGRESS)
