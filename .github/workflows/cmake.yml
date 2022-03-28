@@ -37,8 +37,8 @@ jobs:
         mkdir SDL2
         cd SDL2
         
-        curl https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz
-        curl https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz
+        curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz -O SDL2-devel-2.0.20-mingw.tar.gz
+        curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz -O SDL2_image-devel-2.0.5-mingw.tar.gz
       
         tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
         tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
