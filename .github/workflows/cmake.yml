@@ -35,26 +35,23 @@ jobs:
       if: ${{ runner.os == 'Windows'}}
       shell: cmake -P {0}
       run: |
-        message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
-        
-        if ("${{ runner.os }}" STREQUAL "Windows")
-          execute_process(COMMAND ${CMAKE_COMMAND} -E mkdir SDL2)
-          file(DOWNLOAD "https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz" ./SDL2/SDL2.tar.gz SHOW_PROGRESS)
-          file(DOWNLOAD "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz" ./SDL2/SDL2_image.tar.gz SHOW_PROGRESS)
-        
-          cd SDL2
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ./SDL2/SDL2.tar.gz)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ./SDL2/SDL2_image.tar.gz)
-        
-          cd SDL2-2.0.20
-          execute_process(COMMAND ${CMAKE_COMMAND} -E make native)
-          cd ..
-        
-          cd SDL2_image-2.0.5
-          execute_process(COMMAND ${CMAKE_COMMAND} -E make native)
-          cd ..
-        
-          cd ..
+        mkdir SDL2
+        curl "https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz" -O ./SDL2/SDL2.tar.gz
+        curl "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz" -O ./SDL2/SDL2_image.tar.gz
+      
+        cd SDL2
+        tar xzf ./SDL2/SDL2.tar.gz
+        tar xzf ./SDL2/SDL2_image.tar.gz
+      
+        cd SDL2-2.0.20
+        make native
+        cd ..
+      
+        cd SDL2_image-2.0.5
+        make native
+        cd ..
+      
+        cd ..
 
     - name: Install SDL2 and SDL2_image on Linux
       if: ${{ runner.os == 'Linux'}}
