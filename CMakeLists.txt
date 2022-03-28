@@ -1,3 +1,9 @@
+if(MSVC)
+    if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+        set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "The vcpkg triplet")
+    endif()
+endif()
+
 cmake_minimum_required(VERSION 3.21)
 project(ngine)
 
