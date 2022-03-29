@@ -1094,6 +1094,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 						}
 
 						if (ImGui::BeginTabItem("Modules")) {
+							ImGui::TextWrapped("IF YOU CHANGE MODULES, CONSIDER RUNNING THE CLEAN/BUILD TASK.");
+							ImGui::Separator();
+
 							ImGui::BeginDisabled();
 							ImGui::TextWrapped("Libdragon");
 							ImGui::EndDisabled();
