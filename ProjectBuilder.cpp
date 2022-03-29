@@ -45,7 +45,7 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	char cmd[500];
 	snprintf(cmd, 500,
-			 "cd %s%sgit submodule add git@github.com:stefanmielke/libdragon-extensions.git "
+			 "cd %s%sgit submodule add https://github.com/stefanmielke/libdragon-extensions.git "
 			 "libs/libdragon-extensions",
 			 project_folder.c_str(), separator);
 	system(cmd);

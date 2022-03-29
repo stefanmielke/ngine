@@ -61,16 +61,35 @@
     - Custom export to use with libdragon-extensions
 [ ] Scene nodes
 [ ] Audio preview
+[ ] Script preview (show text)
+[ ] Migrate script content window to look like the other content windows
 [ ] Add image slices preview on import/edit
 [ ] Clean project after changing modules
 [ ] File picker on new/open project
     - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
-[ ] Integrate system commands on the console.
+[ ] Integrate system commands on the console
     - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
     - https://www.onlinegdb.com/HJY9Ay2vm
+[ ] Running ROM through USB
+[ ] Check limits of output window (saw a crash once)
+[ ] Single content window that resembles the DFS output (with folders and 'files')
+[ ] Better input module (using names instead of buttons to ease button remapping)
+    - Create on 'libdragon-extensions'
+[ ] Generate package with emulator+ROM+shortcut to run the game automatically on PC
+[ ] Correctly grab the font when running the exe from another directory on cmd
+    - Saw on windows 11
 
 Future:
 [ ] Import/View 3d models
+[ ] Generate PC port?
+    - Possibility to run/debug locally
+[ ] MacOS port?
+    - Need someone with a Mac
+[ ] Custom engine extensions
+    - Custom content import/editor
+    - Need to wait for 'Single content window'
+[ ] Tools
+    [ ] PIF Dump
 
 Done:
 - 1.1.0:
@@ -84,6 +103,7 @@ Done:
 [x] Rename 'Initial Screen' to 'Initial Scene'
 [x] Pre-made executables for Windows.
 [x] Warning on modules tab to clean/build project when changing modules.
+[x] Change SSH to HTTPS when adding libdragon-extensions as a submodule.
 
 - 1.0.0:
 [x] Tabbed content in the middle part
