@@ -83,9 +83,11 @@ void create_build_files(App *app) {
 
 	generate_scene_gen_files(app->project);
 
-	Content::CreateSprites(app->project.project_settings, app->project.images);
-	Content::CreateSounds(app->project.project_settings, app->project.sounds);
-	Content::CreateGeneralFiles(app->project.project_settings, app->project.general_files);
+	Content::CreateSprites(app->engine_settings, app->project.project_settings,
+						   app->project.images);
+	Content::CreateSounds(app->engine_settings, app->project.project_settings, app->project.sounds);
+	Content::CreateGeneralFiles(app->engine_settings, app->project.project_settings,
+								app->project.general_files);
 
 	std::string path_to_content_script(app->project.project_settings.project_directory +
 									   "/.ngine/pipeline/content_pipeline_end.term");

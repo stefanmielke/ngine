@@ -14,7 +14,8 @@ ProjectSettings::ProjectSettings()
 	  region_free(true),
 	  initial_scene_id(0),
 	  global_mem_alloc_size(1024),
-	  scene_mem_alloc_size(1024 * 2) {
+	  scene_mem_alloc_size(1024 * 2),
+	  libdragon_branch("trunk") {
 }
 
 bool ProjectSettings::LoadFromFile(const std::string &folder) {

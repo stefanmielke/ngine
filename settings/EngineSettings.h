@@ -16,27 +16,27 @@ class EngineSettings {
 	void LoadFromDisk();
 
 	void SetEmulatorPath(std::string path);
-	std::string GetEmulatorPath() {
+	[[nodiscard]] std::string GetEmulatorPath() const {
 		return emulator_location;
 	};
 
 	void SetLastOpenedProject(std::string path);
-	std::string GetLastOpenedProject() {
+	[[nodiscard]] std::string GetLastOpenedProject() const {
 		return last_opened_project;
 	};
 
 	void SetEditorLocation(std::string path);
-	std::string GetEditorLocation() {
+	[[nodiscard]] std::string GetEditorLocation() const {
 		return editor_location;
 	};
 
 	void SetTheme(Theme theme_id);
-	Theme GetTheme() {
+	[[nodiscard]] Theme GetTheme() const {
 		return theme;
 	};
 
 	void SetLibdragonExeLocation(std::string path);
-	std::string GetLibdragonExeLocation() {
+	[[nodiscard]] std::string GetLibdragonExeLocation() const {
 		return libdragon_exe_location;
 	};
 
