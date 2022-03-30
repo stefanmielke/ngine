@@ -16,8 +16,6 @@
 #include "ScriptBuilder.h"
 #include "ThreadCommand.h"
 
-static bool open_project_window_open = false;
-
 static int window_width, window_height;
 static bool is_output_open;
 
@@ -52,7 +50,9 @@ void AppGui::RenderMenuBar(App &app) {
 														nullptr, ".");
 			}
 			if (ImGui::MenuItem("Open Project")) {
-				open_project_window_open = true;
+				ImGuiFileDialog::Instance()->OpenDialog("OpenProjectDlgKey", "Choose Folder",
+														nullptr,
+														app.engine_settings.GetLastOpenedProject());
 			}
 			if (ImGui::MenuItem("Close Project", nullptr, false,
 								app.project.project_settings.IsOpen())) {
@@ -167,26 +167,13 @@ void AppGui::RenderNewProjectWindow(App &app) {
 }
 
 void AppGui::RenderOpenProjectWindow(App &app) {
-	if (open_project_window_open) {
-		ImGui::SetNextWindowSize(ImVec2(300, 80));
-		if (ImGui::Begin("Open Project", &open_project_window_open)) {
-			ImGui::TextUnformatted("Folder");
-			ImGui::SameLine();
-			bool open_project;
-			open_project = ImGui::InputTextWithHint("##", "/path/to/project/folder",
-													app.state.input_open_project, 255,
-													ImGuiInputTextFlags_EnterReturnsTrue);
-			if (ImGui::Button("Open", ImVec2(50, 20)) || open_project) {
-				if (app.OpenProject(app.state.input_open_project)) {
-					open_project_window_open = false;
-				}
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Cancel", ImVec2(50, 20))) {
-				open_project_window_open = false;
-			}
-			ImGui::End();
+	ImGui::SetNextWindowSize(ImVec2(680, 330), ImGuiCond_Once);
+	if (ImGuiFileDialog::Instance()->Display("OpenProjectDlgKey")) {
+		if (ImGuiFileDialog::Instance()->IsOk()) {
+			app.OpenProject(ImGuiFileDialog::Instance()->GetCurrentPath());
 		}
+
+		ImGuiFileDialog::Instance()->Close();
 	}
 }
 

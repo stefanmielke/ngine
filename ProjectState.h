@@ -29,8 +29,6 @@ class ProjectState {
 	std::vector<DroppedSound> dropped_sound_files;
 	std::vector<DroppedGeneralFile> dropped_general_files;
 
-	char input_new_project[255];
-	char input_open_project[255];
 	char emulator_path[255];
 	char editor_path[255];
 	char libdragon_exe_path[255];
@@ -49,18 +47,14 @@ class ProjectState {
 		  selected_general_file(nullptr),
 		  general_file_editing(nullptr),
 		  reload_general_file_edit(false),
-		  input_new_project(),
-		  input_open_project(),
 		  emulator_path(),
 		  editor_path(),
 		  libdragon_exe_path(),
 		  project_settings_screen(),
 		  current_scene(nullptr),
 		  scene_name() {
-		memset(input_new_project, 0, 255);
 		memset(scene_name, 0, 100);
 
-		strcpy(input_open_project, engine_settings.GetLastOpenedProject().c_str());
 		strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
 		strcpy(editor_path, engine_settings.GetEditorLocation().c_str());
 		strcpy(libdragon_exe_path, engine_settings.GetLibdragonExeLocation().c_str());
