@@ -17,8 +17,15 @@ class App {
 
 	bool is_running;
 
-	App();
+	explicit App(std::string engine_directory);
 
-	bool OpenProject(const std::string& path);
+	bool OpenProject(const std::string &path);
 	void CloseProject();
+
+	[[nodiscard]] std::string GetEngineDirectory() const {
+		return engine_directory;
+	}
+
+   private:
+	std::string engine_directory;
 };

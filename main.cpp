@@ -6,14 +6,35 @@
 #include "DroppedAssets.h"
 #include "Sdl.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
 ConsoleApp console;
 
+std::string GetExeDirectory() {
+#ifdef _WIN32
+	wchar_t szPath[MAX_PATH];
+	GetModuleFileNameW(NULL, szPath, MAX_PATH);
+#else
+	char szPath[PATH_MAX];
+	ssize_t count = readlink("/proc/self/exe", szPath, PATH_MAX);
+	if (count < 0 || count >= PATH_MAX)
+		return {};
+	szPath[count] = '\0';
+#endif
+	return std::filesystem::path{szPath}
+		.parent_path().string();
+}
+
 int main(int argv, char **args) {
-	App app;
+	App app(GetExeDirectory());
 	app.engine_settings.LoadFromDisk();
 	app.state = ProjectState(app.engine_settings);
 
-	Sdl::Init(&app.window, &app.renderer, app.default_title);
+	Sdl::Init(&app);
 
 	AppGui::ChangeTheme(app, app.engine_settings.GetTheme());
 

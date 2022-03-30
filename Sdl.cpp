@@ -1,13 +1,16 @@
 #include "Sdl.h"
 
 #include <cstdio>
+#include <string>
 #include <SDL2/SDL_image.h>
 
 #include "imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_sdlrenderer.h"
 
-void Sdl::Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_title) {
+#include "App.h"
+
+void Sdl::Init(App *app) {
 	int rendererFlags, windowFlags;
 
 	rendererFlags = SDL_RENDERER_ACCELERATED;
@@ -20,29 +23,32 @@ void Sdl::Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_
 
 	IMG_Init(IMG_INIT_PNG);
 
-	*window = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024,
+	app->window = SDL_CreateWindow(app->default_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024,
 							   768, windowFlags);
 
-	if (!*window) {
+	if (!app->window) {
 		printf("Failed to open window: %s\n", SDL_GetError());
 		exit(1);
 	}
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-	*renderer = SDL_CreateRenderer(*window, -1, rendererFlags);
+	app->renderer = SDL_CreateRenderer(app->window, -1, rendererFlags);
 
-	if (!*renderer) {
+	if (!app->renderer) {
 		printf("Failed to create renderer: %s\n", SDL_GetError());
 		exit(1);
 	}
 
 	ImGui::CreateContext();
-	ImGui_ImplSDL2_InitForSDLRenderer(*window);
-	ImGui_ImplSDLRenderer_Init(*renderer);
+	ImGui_ImplSDL2_InitForSDLRenderer(app->window);
+	ImGui_ImplSDLRenderer_Init(app->renderer);
+
+	std::string font_path(app->GetEngineDirectory());
+	font_path.append("/montserrat.ttf");
 
 	ImGuiIO &io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("montserrat.ttf", 14.0f);
+	io.Fonts->AddFontFromFileTTF(font_path.c_str(), 14.0f);
 }
 
 void Sdl::Quit(SDL_Window *window, SDL_Renderer *renderer) {

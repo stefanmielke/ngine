@@ -2,9 +2,11 @@
 
 #include <SDL2/SDL.h>
 
+class App;
+
 class Sdl {
    public:
-	static void Init(SDL_Window **window, SDL_Renderer **renderer, const char *window_title);
+	static void Init(App *app);
 	static void Quit(SDL_Window *window, SDL_Renderer *renderer);
 
 	static void ProcessEvent(SDL_Event *event);

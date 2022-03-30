@@ -34,8 +34,6 @@ To Do:
         - Settings
         - Script use
 [ ] Add makefile that is included that can be used to run custom mk commands
-[ ] Correctly grab the font when running the exe from another directory on cmd
-    - Saw on windows 11
 [ ] Integrate system commands on the console
     - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
     - https://www.onlinegdb.com/HJY9Ay2vm
@@ -73,6 +71,8 @@ To Do:
     - Create tilesheet based on the images
     - Preview gif file (animation?)
 [ ] Add image slices preview on import/edit
+[ ] File Picker for importing content
+    - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
 
 Later:
 [ ] Clean project after changing modules
@@ -107,6 +107,7 @@ Done:
 [x] Warning on modules tab to clean/build project when changing modules.
 [x] Change SSH to HTTPS when adding libdragon-extensions as a submodule.
 [x] File picker on new/open project
+[x] Correctly grab the font when running the exe from another directory on terminal; Also fixes Linux crash.
 
 - 1.0.0:
 [x] Tabbed content in the middle part
