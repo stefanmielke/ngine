@@ -16,12 +16,12 @@ ConsoleApp console;
 
 std::string GetExeDirectory() {
 #ifdef _WIN32
-	wchar_t szPath[MAX_PATH];
-	GetModuleFileNameW(NULL, szPath, MAX_PATH);
+	wchar_t szPath[4096];
+	GetModuleFileNameW(NULL, szPath, 4096);
 #else
-	char szPath[PATH_MAX];
-	ssize_t count = readlink("/proc/self/exe", szPath, PATH_MAX);
-	if (count < 0 || count >= PATH_MAX)
+	char szPath[4096];
+	ssize_t count = readlink("/proc/self/exe", szPath, 4096);
+	if (count < 0 || count >= 4096)
 		return {};
 	szPath[count] = '\0';
 #endif
