@@ -1,7 +1,5 @@
-[ ] Better Libdragon integration
-    [ ] Option to change Libdragon git repo
-    [ ] Option to change Libdragon-Extensions git repo and branch
-    [ ] Possible to not compile libdragon-extensions at all
+To Do:
+1.1.0:
 [ ] Wiki
     [ ] Project creation / opening
     [ ] Building / Tasks
@@ -36,9 +34,16 @@
         - Settings
         - Script use
 [ ] Add makefile that is included that can be used to run custom mk commands
-[ ] GIF import
-    - Create tilesheet based on the images
-    - Preview gif file (animation?)
+[ ] Correctly grab the font when running the exe from another directory on cmd
+    - Saw on windows 11
+[ ] File picker on new/open project
+    - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
+[ ] Integrate system commands on the console
+    - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
+    - https://www.onlinegdb.com/HJY9Ay2vm
+[ ] Check limits of output window (saw a crash once)
+
+1.2.0:
 [ ] Improve UI
     [x] Change font
     [ ] Add sprites
@@ -52,6 +57,13 @@
     [ ] Custom themes
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
+[ ] Audio preview
+[ ] Migrate script content window to look like the other content windows
+[ ] Script preview (show text)
+
+2.0.0:
+[ ] Single content window that resembles the DFS output (with folders and 'files')
+[ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)
     - During build, create texture with the characters and import as sprite
@@ -59,25 +71,17 @@
     - Custom export to use with libdragon-extensions
 [ ] Import LDtk maps
     - Custom export to use with libdragon-extensions
-[ ] Scene nodes
-[ ] Audio preview
-[ ] Script preview (show text)
-[ ] Migrate script content window to look like the other content windows
+[ ] GIF import
+    - Create tilesheet based on the images
+    - Preview gif file (animation?)
 [ ] Add image slices preview on import/edit
+
+Later:
 [ ] Clean project after changing modules
-[ ] File picker on new/open project
-    - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
-[ ] Integrate system commands on the console
-    - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
-    - https://www.onlinegdb.com/HJY9Ay2vm
 [ ] Running ROM through USB
-[ ] Check limits of output window (saw a crash once)
-[ ] Single content window that resembles the DFS output (with folders and 'files')
 [ ] Better input module (using names instead of buttons to ease button remapping)
     - Create on 'libdragon-extensions'
 [ ] Generate package with emulator+ROM+shortcut to run the game automatically on PC
-[ ] Correctly grab the font when running the exe from another directory on cmd
-    - Saw on windows 11
 
 Future:
 [ ] Import/View 3d models
