@@ -31,6 +31,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Set up MinGW on Windows
         uses: conradhuebler/setup-mingw@master
