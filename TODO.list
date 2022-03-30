@@ -36,8 +36,6 @@ To Do:
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Correctly grab the font when running the exe from another directory on cmd
     - Saw on windows 11
-[ ] File picker on new/open project
-    - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
 [ ] Integrate system commands on the console
     - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
     - https://www.onlinegdb.com/HJY9Ay2vm
@@ -108,6 +106,7 @@ Done:
 [x] Pre-made executables for Windows.
 [x] Warning on modules tab to clean/build project when changing modules.
 [x] Change SSH to HTTPS when adding libdragon-extensions as a submodule.
+[x] File picker on new/open project
 
 - 1.0.0:
 [x] Tabbed content in the middle part
