@@ -12,6 +12,7 @@ set(SOURCES ${SOURCES} settings/DisplaySettings.cpp settings/ProjectSettings.cpp
 set(SOURCES ${SOURCES} static/main.s.cpp static/vscode_c_cpp_properties.cpp static/gitignore.cpp static/clang_format.cpp generated/game.gen.h.cpp static/change_scene.s.h.cpp)
 
 set(SOURCES ${SOURCES} imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/imgui_impl_sdl.cpp imgui/imgui_impl_sdlrenderer.cpp)
+set(SOURCES ${SOURCES} imgui/ImGuiFileDialog/ImGuiFileDialog.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 

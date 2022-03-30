@@ -41,7 +41,7 @@ To Do:
 [ ] Integrate system commands on the console
     - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
     - https://www.onlinegdb.com/HJY9Ay2vm
-[ ] Check limits of output window (saw a crash once)
+[ ] Update README
 
 1.2.0:
 [ ] Improve UI

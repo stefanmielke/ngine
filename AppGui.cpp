@@ -2,9 +2,9 @@
 
 #include <cmath>
 #include <filesystem>
-#include <fstream>
 
 #include "imgui.h"
+#include "imgui/ImGuiFileDialog/ImGuiFileDialog.h"
 
 #include "App.h"
 #include "CodeEditor.h"
@@ -16,7 +16,6 @@
 #include "ScriptBuilder.h"
 #include "ThreadCommand.h"
 
-static bool new_project_window_open = false;
 static bool open_project_window_open = false;
 
 static int window_width, window_height;
@@ -49,7 +48,8 @@ void AppGui::RenderMenuBar(App &app) {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("New Project")) {
-				new_project_window_open = true;
+				ImGuiFileDialog::Instance()->OpenDialog("NewProjectDlgKey", "Choose Folder",
+														nullptr, ".");
 			}
 			if (ImGui::MenuItem("Open Project")) {
 				open_project_window_open = true;
@@ -156,28 +156,13 @@ void AppGui::RenderMenuBar(App &app) {
 }
 
 void AppGui::RenderNewProjectWindow(App &app) {
-	if (new_project_window_open) {
-		ImGui::SetNextWindowSize(ImVec2(300, 80));
-		if (ImGui::Begin("New Project", &new_project_window_open)) {
-			ImGui::TextUnformatted("Folder");
-			ImGui::SameLine();
-			bool create_project;
-			create_project = ImGui::InputTextWithHint("##", "/path/to/project/folder",
-													  app.state.input_new_project, 255,
-													  ImGuiInputTextFlags_EnterReturnsTrue);
-			if (ImGui::Button("Create", ImVec2(50, 20)) || create_project) {
-				std::string new_project_folder(app.state.input_new_project);
-
-				ProjectBuilder::Create(&app, new_project_folder);
-
-				new_project_window_open = false;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Cancel", ImVec2(50, 20))) {
-				new_project_window_open = false;
-			}
-			ImGui::End();
+	ImGui::SetNextWindowSize(ImVec2(680, 330), ImGuiCond_Once);
+	if (ImGuiFileDialog::Instance()->Display("NewProjectDlgKey")) {
+		if (ImGuiFileDialog::Instance()->IsOk()) {
+			ProjectBuilder::Create(&app, ImGuiFileDialog::Instance()->GetCurrentPath());
 		}
+
+		ImGuiFileDialog::Instance()->Close();
 	}
 }
 
@@ -1076,8 +1061,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 								//								ImGui::Spacing();
 								//								ImGui::BeginDisabled();
 								//								ImGui::TextUnformatted("Libdragon
-								// Extensions"); 								ImGui::EndDisabled();
-								// ImGui::Separator();
+								// Extensions"); ImGui::EndDisabled(); ImGui::Separator();
 
 								//								ImGui::TextUnformatted("Repository
 								// URL"); 								char repo_buf[255] = "\0";
@@ -1087,14 +1071,15 @@ void AppGui::RenderSettingsWindow(App &app) {
 								//								ImGui::TextUnformatted("Branch");
 								//								char branch_buf[50] = "\0";
 								//								ImGui::InputText("###Branch",
-								//branch_buf, 50); 								ImGui::SameLine();
+								// branch_buf, 50); ImGui::SameLine();
 								// ImGui::Button("Update");
 							}
 							ImGui::EndTabItem();
 						}
 
 						if (ImGui::BeginTabItem("Modules")) {
-							ImGui::TextWrapped("IF YOU CHANGE MODULES, CONSIDER RUNNING THE CLEAN/BUILD TASK.");
+							ImGui::TextWrapped(
+								"IF YOU CHANGE MODULES, CONSIDER RUNNING THE CLEAN/BUILD TASK.");
 							ImGui::Separator();
 
 							ImGui::BeginDisabled();

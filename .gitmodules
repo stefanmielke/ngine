@@ -1,0 +1,5 @@
+[submodule "imgui/ImGuiFileDialog"]
+	path = imgui/ImGuiFileDialog
+	url = git@github.com:aiekick/ImGuiFileDialog.git
+[submodule "imgui/ImGuiFileDialog/"]
+	branch = Lib_Only
