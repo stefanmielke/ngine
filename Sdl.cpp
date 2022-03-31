@@ -23,8 +23,8 @@ void Sdl::Init(App *app) {
 
 	IMG_Init(IMG_INIT_PNG);
 
-	app->window = SDL_CreateWindow(app->default_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024,
-							   768, windowFlags);
+	app->window = SDL_CreateWindow(app->default_title, SDL_WINDOWPOS_CENTERED,
+								   SDL_WINDOWPOS_CENTERED, 1024, 768, windowFlags);
 
 	if (!app->window) {
 		printf("Failed to open window: %s\n", SDL_GetError());
@@ -48,6 +48,7 @@ void Sdl::Init(App *app) {
 	font_path.append("/montserrat.ttf");
 
 	ImGuiIO &io = ImGui::GetIO();
+	io.IniFilename = nullptr;
 	io.Fonts->AddFontFromFileTTF(font_path.c_str(), 14.0f);
 }
 
