@@ -1,11 +1,5 @@
 const char *main_s_c =
-	R"(#include <stdio.h>
-#include <libdragon.h>
-
-#include <mem_pool.h>
-#include <scene_manager.h>
-
-void setup();
+	R"(void setup();
 void tick();
 void display();
 
