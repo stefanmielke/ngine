@@ -991,9 +991,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::Separator();
 
 								if (ImGui::Button("Update Libdragon")) {
-									console.AddLog(
-										"Running 'libdragon update'...\nCheck output on the "
-										"console.");
+									console.AddLog("Running 'libdragon update'...");
 									Libdragon::Update(
 										app.project.project_settings.project_directory,
 										app.engine_settings.GetLibdragonExeLocation());
@@ -1004,9 +1002,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::EndDisabled();
 
 								if (ImGui::Button("Re-Build Libdragon")) {
-									console.AddLog(
-										"Running 'libdragon install'...\nCheck output on the "
-										"console.");
+									console.AddLog("Running 'libdragon install'...");
 									Libdragon::Install(
 										app.project.project_settings.project_directory,
 										app.engine_settings.GetLibdragonExeLocation());

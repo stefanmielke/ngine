@@ -22,8 +22,8 @@ void Content::CreateSprites(const EngineSettings &engine_settings,
 
 		command << engine_settings.GetLibdragonExeLocation() << " exec /n64_toolchain/bin/mksprite "
 				<< (project_settings.display.bit_depth == DEPTH_16_BPP ? 16 : 32) << " "
-				<< image->h_slices << " " << image->v_slices << " " << image->image_path << " "
-				<< dfs_output_path + image->name + ".sprite" << std::endl;
+				<< image->h_slices << " " << image->v_slices << " \"" << image->image_path << "\" \""
+				<< dfs_output_path + image->name + ".sprite\"" << std::endl;
 	}
 
 	console.AddLog("Building assets...\n%s", command.str().c_str());

@@ -16,8 +16,8 @@ ConsoleApp console;
 
 std::string GetExeDirectory() {
 #ifdef _WIN32
-	wchar_t szPath[4096];
-	GetModuleFileNameW(NULL, szPath, 4096);
+	wchar_t szPath[MAX_PATH];
+	GetModuleFileNameW(NULL, szPath, MAX_PATH);
 #else
 	char szPath[4096];
 	ssize_t count = readlink("/proc/self/exe", szPath, 4096);

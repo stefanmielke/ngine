@@ -21,7 +21,6 @@ void create_project_thread(App *app, std::string project_folder) {
 	}
 
 	console.AddLog("Running 'libdragon init' at '%s'...", project_folder.c_str());
-	console.AddLog("Check output on the console...");
 
 	Libdragon::InitSync(project_folder, app->engine_settings.GetLibdragonExeLocation());
 

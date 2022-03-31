@@ -33,10 +33,13 @@ To Do:
         - Creation
         - Settings
         - Script use
-[ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Integrate system commands on the console
     - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
     - https://www.onlinegdb.com/HJY9Ay2vm
+    [x] Linux
+    [ ] Windows
+[ ] Replace ' ' to '_' when importing content
+    - Do not allow spaces when naming
 [ ] Update README
 
 1.2.0:
@@ -56,6 +59,7 @@ To Do:
 [ ] Audio preview
 [ ] Migrate script content window to look like the other content windows
 [ ] Script preview (show text)
+[ ] Add makefile that is included that can be used to run custom mk commands
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')

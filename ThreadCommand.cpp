@@ -4,12 +4,41 @@
 #include <thread>
 #include <utility>
 
+#include <iostream>
+#include <sstream>
+
 #include "ConsoleApp.h"
 
 #ifdef __WIN32__
 char separator[] = " && \0";
+
+#define exec system
 #else
+#include <unistd.h>
+
 char separator[] = "\n\0";
+
+int exec(std::string cmd) {
+	std::array<char, 128> buffer{};
+	std::string result;
+
+	cmd.append(" 2>&1 &");
+
+	auto pipe = popen(cmd.c_str(), "r");
+	if (!pipe)
+		throw std::runtime_error("popen() failed!");
+
+	while (!feof(pipe)) {
+		if (fgets(buffer.data(), 128, pipe) != nullptr)
+			result += buffer.data();
+	}
+
+	if (!result.empty()) {
+		console.AddLog("%s", result.c_str());
+	}
+
+	return pclose(pipe);
+}
 #endif
 
 static bool is_running_command;
@@ -20,7 +49,7 @@ static std::queue<std::string> command_queue;
 static void run_next_command();
 
 static void command_thread(const char *command) {
-	int result = system(command);
+	int result = exec(command);
 
 	if (command_queue.empty()) {
 		is_running_command = false;
@@ -28,7 +57,7 @@ static void command_thread(const char *command) {
 		run_next_command();
 	}
 
-	if (result == 0)
+	if (result == EXIT_SUCCESS)
 		console.AddLog("Finished successfully.");
 	else
 		console.AddLog(
