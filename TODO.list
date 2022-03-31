@@ -35,8 +35,10 @@ To Do:
         - Script use
 [ ] Replace ' ' to '_' when importing content
     - Do not allow spaces when naming
-[ ] Remove opening cmd window for every command on Windows
 [ ] Update README
+[ ] Improve project creation error handling
+    - Libdragon init might fail
+    - Installing libdragon-extensions might fail
 
 1.2.0:
 [ ] Improve UI
@@ -56,6 +58,7 @@ To Do:
 [ ] Migrate script content window to look like the other content windows
 [ ] Script preview (show text)
 [ ] Add makefile that is included that can be used to run custom mk commands
+[ ] Remove opening cmd window for every command on Windows
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
@@ -110,6 +113,9 @@ Done:
 [x] File picker on new/open project
 [x] Correctly grab the font when running the exe from another directory on terminal; Also fixes Linux crash.
 [x] Integrate system commands on the console
+[x] Removed imgui.ini file
+[x] Fixed build error when removing libdragon-extensions (or when it failed to download on init)
+[x] Removed "cd" into project directory to use "chdir" instead. This solves a Windows issue when using projects on a different driver than the engine
 
 - 1.0.0:
 [x] Tabbed content in the middle part

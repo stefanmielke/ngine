@@ -13,6 +13,8 @@
 #include "static/static.h"
 
 void create_project_thread(App *app, std::string project_folder) {
+	app->project.project_settings.project_directory = project_folder;
+
 	// create folder if it doesn't exist
 	const std::filesystem::path project_path(project_folder);
 	if (!std::filesystem::exists(project_path)) {
@@ -42,12 +44,9 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Adding libdragon-extensions...");
 
-	char cmd[500];
-	snprintf(cmd, 500,
-			 "cd %s%sgit submodule add https://github.com/stefanmielke/libdragon-extensions.git "
-			 "libs/libdragon-extensions",
-			 project_folder.c_str(), separator);
-	system(cmd);
+	ThreadCommand::RunCommand(
+		"git submodule add https://github.com/stefanmielke/libdragon-extensions.git "
+		"libs/libdragon-extensions");
 
 	console.AddLog("Creating project settings file...");
 
@@ -98,10 +97,8 @@ void create_build_files(App *app) {
 		std::string line;
 		while (std::getline(content_end_script, line)) {
 			char command[500];
-			snprintf(command, 500, "cd %s%s%s",
-					 app->project.project_settings.project_directory.c_str(), separator,
-					 line.c_str());
-			ThreadCommand::RunCommand(line);
+			snprintf(command, 500, "%s", line.c_str());
+			ThreadCommand::QueueCommand(line);
 
 			console.AddLog("%s", command);
 		}

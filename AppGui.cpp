@@ -1034,10 +1034,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 									dir.append("/libdragon");
 
 									char cmd[255];
-									snprintf(cmd, 255, "cd %s%s%s %s", dir.c_str(), separator,
-											 "git checkout",
+									snprintf(cmd, 255, "git checkout %s",
 											 app.state.project_settings_screen.libdragon_branch);
-									ThreadCommand::RunCommand(cmd);
+									ThreadCommand::QueueCommand(cmd);
 								}
 							}
 							{

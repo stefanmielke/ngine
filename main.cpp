@@ -14,6 +14,8 @@
 
 ConsoleApp console;
 
+App *g_app;
+
 std::string GetExeDirectory() {
 #ifdef _WIN32
 	wchar_t szPath[MAX_PATH];
@@ -33,6 +35,8 @@ int main(int argv, char **args) {
 	App app(GetExeDirectory());
 	app.engine_settings.LoadFromDisk();
 	app.state = ProjectState(app.engine_settings);
+
+	g_app = &app;
 
 	Sdl::Init(&app);
 

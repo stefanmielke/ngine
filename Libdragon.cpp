@@ -4,48 +4,41 @@
 
 void Libdragon::Init(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s%s%s init", folder.c_str(), separator,
-			 libdragon_exe_folder.c_str());
-	ThreadCommand::RunCommand(command);
+	snprintf(command, 500, "%s init", libdragon_exe_folder.c_str());
+	ThreadCommand::QueueCommand(command);
 }
 void Libdragon::InitSync(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s%s%s init", folder.c_str(), separator,
-			 libdragon_exe_folder.c_str());
-	system(command);
+	snprintf(command, 500, "%s init", libdragon_exe_folder.c_str());
+	ThreadCommand::RunCommand(command);
 }
 
 void Libdragon::Build(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s%s%s make -j", folder.c_str(), separator,
-			 libdragon_exe_folder.c_str());
-	ThreadCommand::RunCommand(command);
+	snprintf(command, 500, "%s make -j", libdragon_exe_folder.c_str());
+	ThreadCommand::QueueCommand(command);
 }
 
 void Libdragon::Clean(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s%s%s exec make clean", folder.c_str(), separator,
-			 libdragon_exe_folder.c_str());
-	ThreadCommand::RunCommand(command);
+	snprintf(command, 500, "%s exec make clean", libdragon_exe_folder.c_str());
+	ThreadCommand::QueueCommand(command);
 }
 
 void Libdragon::CleanSync(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s%s%s exec make clean", folder.c_str(), separator,
-			 libdragon_exe_folder.c_str());
-	system(command);
+	snprintf(command, 500, "%s exec make clean", libdragon_exe_folder.c_str());
+	ThreadCommand::RunCommand(command);
 }
 
 void Libdragon::Update(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s%s%s update", folder.c_str(), separator,
-			 libdragon_exe_folder.c_str());
-	ThreadCommand::RunCommand(command);
+	snprintf(command, 500, "%s update", libdragon_exe_folder.c_str());
+	ThreadCommand::QueueCommand(command);
 }
 
 void Libdragon::Install(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
-	snprintf(command, 500, "cd %s%s%s install", folder.c_str(), separator,
-			 libdragon_exe_folder.c_str());
-	ThreadCommand::RunCommand(command);
+	snprintf(command, 500, "%s install", libdragon_exe_folder.c_str());
+	ThreadCommand::QueueCommand(command);
 }

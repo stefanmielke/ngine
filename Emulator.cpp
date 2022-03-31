@@ -20,7 +20,7 @@ void Emulator::Run(App *app) {
 	}
 
 	char cmd[255];
-	snprintf(cmd, 255, "cd %s%s%s %s", app->project.project_settings.project_directory.c_str(),
-			 separator, app->engine_settings.GetEmulatorPath().c_str(), rom_filename.c_str());
-	ThreadCommand::RunCommand(cmd);
+	snprintf(cmd, 255, "%s %s", app->engine_settings.GetEmulatorPath().c_str(),
+			 rom_filename.c_str());
+	ThreadCommand::QueueCommand(cmd);
 }
