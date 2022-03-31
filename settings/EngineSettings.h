@@ -46,4 +46,9 @@ class EngineSettings {
 	std::string editor_location;
 	std::string libdragon_exe_location;
 	Theme theme;
+
+	std::string engine_settings_folder;
+	std::string engine_settings_filepath;
+
+	void LoadFromDisk(const std::string& path);
 };

@@ -116,6 +116,9 @@ Done:
 [x] Removed imgui.ini file
 [x] Fixed build error when removing libdragon-extensions (or when it failed to download on init)
 [x] Removed "cd" into project directory to use "chdir" instead. This solves a Windows issue when using projects on a different driver than the engine
+[x] Save 'ngine.engine.json' file on another folder
+    - Windows: %AppData%/ngine/
+    - Linux: ~/.ngine/
 
 - 1.0.0:
 [x] Tabbed content in the middle part

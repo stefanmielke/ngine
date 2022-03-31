@@ -5,7 +5,24 @@
 
 #include "../json.hpp"
 
-EngineSettings::EngineSettings() : editor_location("code"), libdragon_exe_location("libdragon"), theme(THEME_DARK) {
+#ifdef WIN32
+const char *ngine_settings_folder = "%AppData%/ngine/";
+const char *ngine_settings_path = "%AppData%/ngine/ngine.engine.json";
+#else
+const char *ngine_settings_folder = "~/.ngine/";
+const char *ngine_settings_path = "~/.ngine/ngine.engine.json";
+#endif
+
+EngineSettings::EngineSettings()
+	: editor_location("code"),
+	  libdragon_exe_location("libdragon"),
+	  theme(THEME_DARK),
+	  engine_settings_folder(ngine_settings_folder),
+	  engine_settings_filepath(ngine_settings_path) {
+#ifdef WIN32
+	engine_settings_folder = getenv("APPDATA") + std::string("\\ngine\\");
+	engine_settings_filepath = getenv("APPDATA") + std::string("\\ngine\\ngine.engine.json");
+#endif
 }
 
 void EngineSettings::SaveToDisk() {
@@ -22,16 +39,35 @@ void EngineSettings::SaveToDisk() {
 		},
 	};
 
-	std::ofstream filestream("ngine.engine.json");
+	if (!std::filesystem::exists(engine_settings_folder)) {
+		std::filesystem::create_directories(engine_settings_folder);
+		return;
+	}
+
+	std::ofstream filestream(engine_settings_filepath);
 	filestream << json.dump(4);
 	filestream.close();
 }
 
 void EngineSettings::LoadFromDisk() {
-	if (!std::filesystem::exists("ngine.engine.json"))
-		return;
+	// TODO: old location, remove on 2.0.0
+	if (std::filesystem::exists("ngine.engine.json")) {
+		LoadFromDisk("ngine.engine.json");
+		SaveToDisk();  // save on new location
 
-	std::ifstream filestream("ngine.engine.json");
+		std::filesystem::remove("ngine.engine.json");
+		return;
+	}
+
+	if (!std::filesystem::exists(engine_settings_filepath)) {
+		return;
+	}
+
+	LoadFromDisk(ngine_settings_path);
+}
+
+void EngineSettings::LoadFromDisk(const std::string &path) {
+	std::ifstream filestream(path);
 
 	nlohmann::json json;
 	filestream >> json;
