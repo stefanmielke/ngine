@@ -9,7 +9,7 @@ N64_ROM_SAVETYPE = %s
 N64_ROM_REGIONFREE = %s
 N64_ROM_RTC = %s
 
-N64_CFLAGS += -Ilibs/libdragon-extensions/include
+N64_CFLAGS += -Ilibs/libdragon-extensions/include -fdiagnostics-color=never
 
 C_ROOT_FILES := $(wildcard src/*.c)
 C_ROOT_1_FILES := $(wildcard src/**/*.c)
@@ -54,7 +54,7 @@ SOURCE_DIR=src
 BUILD_DIR=build
 include $(N64_INST)/include/n64.mk
 
-N64_CFLAGS += -Ilibs/libdragon-extensions/include
+N64_CFLAGS += -Ilibs/libdragon-extensions/include -fdiagnostics-color=never
 
 N64_ROM_TITLE = "%s"
 N64_ROM_SAVETYPE = %s

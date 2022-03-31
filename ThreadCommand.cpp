@@ -4,42 +4,36 @@
 #include <thread>
 #include <utility>
 
-#include <iostream>
-#include <sstream>
-
 #include "ConsoleApp.h"
 
 #ifdef __WIN32__
 char separator[] = " && \0";
-
-#define exec system
 #else
-#include <unistd.h>
-
 char separator[] = "\n\0";
+#endif
 
 int exec(std::string cmd) {
-	std::array<char, 128> buffer{};
-	std::string result;
+	char buffer[128];
+	std::string output;
 
-	cmd.append(" 2>&1 &");
+	cmd.append(" 2>&1");
 
 	auto pipe = popen(cmd.c_str(), "r");
 	if (!pipe)
 		throw std::runtime_error("popen() failed!");
 
 	while (!feof(pipe)) {
-		if (fgets(buffer.data(), 128, pipe) != nullptr)
-			result += buffer.data();
+		if (fgets(buffer, 128, pipe) != nullptr) {
+			output += buffer;
+		}
 	}
 
-	if (!result.empty()) {
-		console.AddLog("%s", result.c_str());
+	if (!output.empty()) {
+		console.AddLog("%s", output.c_str());
 	}
 
 	return pclose(pipe);
 }
-#endif
 
 static bool is_running_command;
 static std::string current_command;
@@ -60,10 +54,7 @@ static void command_thread(const char *command) {
 	if (result == EXIT_SUCCESS)
 		console.AddLog("Finished successfully.");
 	else
-		console.AddLog(
-			"[error] Process returned %d. Check 'build.log' inside the project folder for more "
-			"info.",
-			result);
+		console.AddLog("[error] Process returned %d.", result);
 }
 
 static void run_next_command() {

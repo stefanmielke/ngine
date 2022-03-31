@@ -33,13 +33,9 @@ To Do:
         - Creation
         - Settings
         - Script use
-[ ] Integrate system commands on the console
-    - https://stackoverflow.com/questions/52164723/how-to-execute-a-command-and-get-return-code-stdout-and-stderr-of-command-in-c
-    - https://www.onlinegdb.com/HJY9Ay2vm
-    [x] Linux
-    [ ] Windows
 [ ] Replace ' ' to '_' when importing content
     - Do not allow spaces when naming
+[ ] Remove opening cmd window for every command on Windows
 [ ] Update README
 
 1.2.0:
@@ -77,6 +73,7 @@ To Do:
 [ ] Add image slices preview on import/edit
 [ ] File Picker for importing content
     - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
+[ ] Resize output window
 
 Later:
 [ ] Clean project after changing modules
@@ -112,6 +109,7 @@ Done:
 [x] Change SSH to HTTPS when adding libdragon-extensions as a submodule.
 [x] File picker on new/open project
 [x] Correctly grab the font when running the exe from another directory on terminal; Also fixes Linux crash.
+[x] Integrate system commands on the console
 
 - 1.0.0:
 [x] Tabbed content in the middle part
