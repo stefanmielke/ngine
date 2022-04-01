@@ -10,6 +10,7 @@ const char *ngine_settings_folder = "%AppData%/ngine/";
 const char *ngine_settings_path = "%AppData%/ngine/ngine.engine.json";
 #else
 #include <pwd.h>
+#include <unistd.h>
 const char *ngine_settings_folder = "~/.ngine/";
 const char *ngine_settings_path = "~/.ngine/ngine.engine.json";
 #endif
