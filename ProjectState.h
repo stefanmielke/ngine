@@ -37,7 +37,7 @@ class ProjectState {
 	Scene *current_scene;
 	char scene_name[100];
 
-	explicit ProjectState(EngineSettings &engine_settings)
+	explicit ProjectState(const EngineSettings &engine_settings)
 		: selected_image(nullptr),
 		  image_editing(nullptr),
 		  reload_image_edit(false),
