@@ -9,6 +9,7 @@
 const char *ngine_settings_folder = "%AppData%/ngine/";
 const char *ngine_settings_path = "%AppData%/ngine/ngine.engine.json";
 #else
+#include <pwd.h>
 const char *ngine_settings_folder = "~/.ngine/";
 const char *ngine_settings_path = "~/.ngine/ngine.engine.json";
 #endif
@@ -22,6 +23,14 @@ EngineSettings::EngineSettings()
 #ifdef WIN32
 	engine_settings_folder = getenv("APPDATA") + std::string("\\ngine\\");
 	engine_settings_filepath = getenv("APPDATA") + std::string("\\ngine\\ngine.engine.json");
+#else
+	const char *homedir = getenv("HOME");
+	if (!homedir) {
+		homedir = getpwuid(getuid())->pw_dir;
+	}
+
+	engine_settings_folder = homedir + std::string("/ngine/");
+	engine_settings_filepath = homedir + std::string("/ngine/ngine.engine.json");
 #endif
 }
 
