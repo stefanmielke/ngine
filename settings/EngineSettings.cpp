@@ -5,22 +5,17 @@
 
 #include "../json.hpp"
 
-#ifdef WIN32
-const char *ngine_settings_folder = "%AppData%/ngine/";
-const char *ngine_settings_path = "%AppData%/ngine/ngine.engine.json";
-#else
+#ifdef __linux__
 #include <pwd.h>
 #include <unistd.h>
-const char *ngine_settings_folder = "~/.ngine/";
-const char *ngine_settings_path = "~/.ngine/ngine.engine.json";
 #endif
 
 EngineSettings::EngineSettings()
 	: editor_location("code"),
 	  libdragon_exe_location("libdragon"),
 	  theme(THEME_DARK),
-	  engine_settings_folder(ngine_settings_folder),
-	  engine_settings_filepath(ngine_settings_path) {
+	  engine_settings_folder(),
+	  engine_settings_filepath() {
 #ifdef WIN32
 	engine_settings_folder = getenv("APPDATA") + std::string("\\ngine\\");
 	engine_settings_filepath = getenv("APPDATA") + std::string("\\ngine\\ngine.engine.json");
@@ -73,7 +68,7 @@ void EngineSettings::LoadFromDisk() {
 		return;
 	}
 
-	LoadFromDisk(ngine_settings_path);
+	LoadFromDisk(engine_settings_filepath);
 }
 
 void EngineSettings::LoadFromDisk(const std::string &path) {
