@@ -36,11 +36,17 @@ To Do:
 [ ] Replace ' ' to '_' when importing content
     - Do not allow spaces when naming
 [ ] Update README
+
+1.2.0:
+[ ] Migrate script content window to look like the other content windows
+[ ] Script preview (show text)
+[ ] Add makefile that is included that can be used to run custom mk commands
+[ ] During build, do not start a new command if the previous failed
 [ ] Improve project creation error handling
     - Libdragon init might fail
     - Installing libdragon-extensions might fail
 
-1.2.0:
+1.3.0:
 [ ] Improve UI
     [x] Change font
     [ ] Add sprites
@@ -55,10 +61,6 @@ To Do:
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Audio preview
-[ ] Migrate script content window to look like the other content windows
-[ ] Script preview (show text)
-[ ] Add makefile that is included that can be used to run custom mk commands
-[ ] Remove opening cmd window for every command on Windows
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
@@ -77,6 +79,7 @@ To Do:
 [ ] File Picker for importing content
     - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
 [ ] Resize output window
+[ ] Remove opening cmd window for every command on Windows
 
 Later:
 [ ] Clean project after changing modules
