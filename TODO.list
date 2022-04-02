@@ -33,8 +33,6 @@ To Do:
         - Creation
         - Settings
         - Script use
-[ ] Replace ' ' to '_' when importing content
-    - Do not allow spaces when naming
 [ ] Update README
 
 1.2.0:
@@ -126,6 +124,7 @@ Done:
     - Linux: ~/.ngine/
 [x] New scripts come with more information on how to use them.
 [x] Remove script build files when deleting a script
+[x] Do not allow spaces when naming assets
 
 - 1.0.0:
 [x] Tabbed content in the middle part
