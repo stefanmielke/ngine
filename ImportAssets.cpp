@@ -32,12 +32,22 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::Spacing();
 
 						ImGui::InputText("Name", image_file->name, 50);
+						bool has_space_on_name = strpbrk(image_file->name, " ") != nullptr;
+						if (has_space_on_name) {
+							ImGui::TextWrapped("DO NOT USE SPACE.");
+						}
 						ImGui::InputText("DFS Folder", image_file->dfs_folder, 100);
+						bool has_space_on_dfs = strpbrk(image_file->dfs_folder, " ") != nullptr;
+						if (has_space_on_dfs) {
+							ImGui::TextWrapped("DO NOT USE SPACE.");
+						}
 						ImGui::InputInt("H Slices", &image_file->h_slices);
 						ImGui::InputInt("V Slices", &image_file->v_slices);
 
 						ImGui::Separator();
 						ImGui::Spacing();
+
+						ImGui::BeginDisabled(has_space_on_name || has_space_on_dfs);
 						if (ImGui::Button("Import")) {
 							std::string name(image_file->name);
 							std::string dfs_folder(image_file->dfs_folder);
@@ -87,6 +97,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
+
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
 							app->state.dropped_image_files.erase(
@@ -104,7 +116,15 @@ void ImportAssets::RenderImportScreen(App *app) {
 					ImGui::PushID(id);
 					if (ImGui::BeginTabItem("Sound")) {
 						ImGui::InputText("Name", sound_file->name, 50);
+						bool has_space_on_name = strpbrk(sound_file->name, " ") != nullptr;
+						if (has_space_on_name) {
+							ImGui::TextWrapped("DO NOT USE SPACE.");
+						}
 						ImGui::InputText("DFS Folder", sound_file->dfs_folder, 100);
+						bool has_space_on_dfs = strpbrk(sound_file->dfs_folder, " ") != nullptr;
+						if (has_space_on_dfs) {
+							ImGui::TextWrapped("DO NOT USE SPACE.");
+						}
 
 						if (sound_file->type == SOUND_WAV) {
 							ImGui::Checkbox("Loop", &sound_file->loop);
@@ -117,6 +137,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 						ImGui::Separator();
 						ImGui::Spacing();
+
+						ImGui::BeginDisabled(has_space_on_name || has_space_on_dfs);
 						if (ImGui::Button("Import")) {
 							std::string name(sound_file->name);
 							std::string dfs_folder(sound_file->dfs_folder);
@@ -165,6 +187,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
+
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
 							app->state.dropped_sound_files.erase(
@@ -186,12 +210,21 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::EndDisabled();
 
 						ImGui::InputText("Name", general_file->name, 50);
+						bool has_space_on_name = strpbrk(general_file->name, " ") != nullptr;
+						if (has_space_on_name) {
+							ImGui::TextWrapped("DO NOT USE SPACE.");
+						}
 						ImGui::InputText("DFS Folder", general_file->dfs_folder, 100);
+						bool has_space_on_dfs = strpbrk(general_file->dfs_folder, " ") != nullptr;
+						if (has_space_on_dfs) {
+							ImGui::TextWrapped("DO NOT USE SPACE.");
+						}
 						ImGui::Checkbox("Copy to Filesystem", &general_file->copy_to_filesystem);
 
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						ImGui::BeginDisabled(has_space_on_name || has_space_on_dfs);
 						if (ImGui::Button("Import")) {
 							std::string name(general_file->name);
 							std::string dfs_folder(general_file->dfs_folder);
@@ -235,6 +268,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
+
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
 							app->state.dropped_general_files.erase(
