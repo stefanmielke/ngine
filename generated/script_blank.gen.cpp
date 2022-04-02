@@ -64,7 +64,7 @@ void script_%s_create() {
  *
  * @remark See https://github.com/stefanmielke/ngine/wiki/Scripts for more information.
  *
- * @return The scene_id it should change to, or -1 to not change scenes.
+ * @return The scene_id it should change to, or -1 to not change scenes. Only used in scene scripts.
  */
 short script_%s_tick() {
 	// return '>= 0' to change to that screen (the value is the screen id).
