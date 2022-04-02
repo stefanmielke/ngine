@@ -35,9 +35,12 @@ To Do:
         - Script use
 [ ] Replace ' ' to '_' when importing content
     - Do not allow spaces when naming
+[ ] Remove script build files when deleting a script
 [ ] Update README
 
 1.2.0:
+[ ] Order scripts by name
+[ ] After creating a script, put the focus back on the 'script_name' input (to create multiple scripts)
 [ ] Migrate script content window to look like the other content windows
 [ ] Script preview (show text)
 [ ] Add makefile that is included that can be used to run custom mk commands
@@ -122,6 +125,7 @@ Done:
 [x] Save 'ngine.engine.json' file on another folder
     - Windows: %AppData%/ngine/
     - Linux: ~/.ngine/
+[x] New scripts come with more information on how to use them.
 
 - 1.0.0:
 [x] Tabbed content in the middle part
