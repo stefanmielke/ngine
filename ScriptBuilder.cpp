@@ -65,6 +65,12 @@ void ScriptBuilder::DeleteScriptFile(App *app, const char *script_name) {
 
 		std::string c_name = filepath + ".script.c";
 		std::filesystem::remove(c_name);
+
+		std::string o_name = filepath + ".script.o";
+		std::filesystem::remove(o_name);
+
+		std::string d_name = filepath + ".script.d";
+		std::filesystem::remove(d_name);
 	}
 	bool removed_from_scene = false;
 	{

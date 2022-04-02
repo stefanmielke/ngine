@@ -14,8 +14,8 @@ To Do:
         - Initial screen
         - Memory reserve
         - Modules (plus audio and display tabs)
-            [ ] RTC module
-        [ ] Libdragon tab
+            [x] RTC module
+        [x] Libdragon tab
     [ ] Sprite import
         - Content browser
         - Editing
@@ -26,7 +26,7 @@ To Do:
         - Content browser
         - Editing
         - Copy to filesystem
-    [ ] Scripts
+    [x] Scripts
         - Creation
         - Use on scenes / global
     [ ] Scenes
@@ -35,7 +35,6 @@ To Do:
         - Script use
 [ ] Replace ' ' to '_' when importing content
     - Do not allow spaces when naming
-[ ] Remove script build files when deleting a script
 [ ] Update README
 
 1.2.0:
@@ -84,7 +83,7 @@ To Do:
 [ ] Resize output window
 [ ] Remove opening cmd window for every command on Windows
 
-Later:
+2.1.0:
 [ ] Clean project after changing modules
 [ ] Running ROM through USB
 [ ] Better input module (using names instead of buttons to ease button remapping)
@@ -126,6 +125,7 @@ Done:
     - Windows: %AppData%/ngine/
     - Linux: ~/.ngine/
 [x] New scripts come with more information on how to use them.
+[x] Remove script build files when deleting a script
 
 - 1.0.0:
 [x] Tabbed content in the middle part
