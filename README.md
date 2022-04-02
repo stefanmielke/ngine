@@ -1,6 +1,6 @@
 # NGine - N64 Engine Powered by Libdragon
 
-#### Engine to create N64 games powered by [Libdragon](https://github.com/DragonMinded/libdragon).
+#### Engine to create N64 games powered by [Libdragon](https://github.com/DragonMinded/libdragon) for Windows and Linux.
 
 ### Requirements
 
@@ -8,6 +8,7 @@
 - [SDL2_Image](https://www.libsdl.org/projects/SDL_image/) (bundled on Windows)
 - [Docker](https://www.docker.com/get-started)
 - [Libdragon CLI](https://github.com/anacierdem/libdragon-docker)
+- [GIT](https://git-scm.com/downloads)
 
 ### What it is
 
@@ -34,6 +35,7 @@ Refer to this project's [wiki](https://github.com/stefanmielke/ngine/wiki) for m
 - Display / RDP
 - Console
 - Libdragon's Debug Modules
+- Real-Time Clock
 - Scene Manager (from [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
 - Memory Pool (from [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
 - Imports
@@ -43,9 +45,14 @@ Refer to this project's [wiki](https://github.com/stefanmielke/ngine/wiki) for m
 - Scenes
 - Scripts (can attach to scenes or globally)
 
+### Overview Video
+
+[![Watch the video](https://img.youtube.com/vi/jswC7u4MbQ0/default.jpg)](https://youtu.be/jswC7u4MbQ0)
+
 ### Building
 
 - Install SDL2 and SDL2_image
     - Windows: has to be discoverable by CMake
     - Linux: download/install latest from source
-- Run `cmake` and `make` on the project folder
+- Run `cmake` and `make` on the project folder.
+    - You can see the build process inside `/.github/workflows/cmake.yml` to understand how to build based on your OS.
