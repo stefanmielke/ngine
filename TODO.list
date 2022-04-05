@@ -34,6 +34,9 @@ To Do:
         - Script use
 
 1.2.0:
+[ ] Move Scenes window to the right
+[ ] Move 'Initial Scene' to scenes window
+[ ] Show 'Initial Scene' badge on 'Scenes' window
 [ ] Double click to edit assets, right click for more options
     [x] Scripts
     [ ] General
@@ -47,6 +50,8 @@ To Do:
 [ ] Improve project creation error handling
     - Libdragon init might fail
     - Installing libdragon-extensions might fail
+[ ] Update README
+[ ] Update Wiki
 
 1.3.0:
 [ ] Improve UI
