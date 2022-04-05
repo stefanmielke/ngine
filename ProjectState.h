@@ -6,6 +6,7 @@
 #include "DroppedAssets.h"
 #include "LibdragonImage.h"
 #include "LibdragonFile.h"
+#include "LibdragonScript.h"
 #include "LibdragonSound.h"
 #include "settings/EngineSettings.h"
 #include "settings/ProjectSettingsScreen.h"
@@ -25,7 +26,7 @@ class ProjectState {
 	std::unique_ptr<LibdragonFile> *general_file_editing;
 	bool reload_general_file_edit;
 
-	std::string *selected_script;
+	std::unique_ptr<LibdragonScript> *selected_script;
 
 	std::vector<DroppedImage> dropped_image_files;
 	std::vector<DroppedSound> dropped_sound_files;
@@ -55,6 +56,7 @@ class ProjectState {
 		  selected_general_file(nullptr),
 		  general_file_editing(nullptr),
 		  reload_general_file_edit(false),
+		  selected_script(nullptr),
 		  emulator_path(),
 		  editor_path(),
 		  libdragon_exe_path(),

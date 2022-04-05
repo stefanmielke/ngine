@@ -479,7 +479,7 @@ void AppGui::RenderContentBrowser(App &app) {
 																script_name_input)) {
 								memset(script_name_input, 0, 100);
 
-								app.project.ReloadScripts();
+								app.project.ReloadScripts(&app);
 							}
 						}
 					}
@@ -491,7 +491,7 @@ void AppGui::RenderContentBrowser(App &app) {
 
 					if (ImGui::BeginPopup("PopupScriptsBrowser")) {
 						if (ImGui::Selectable("Refresh")) {
-							app.project.ReloadScripts();
+							app.project.ReloadScripts(&app);
 						}
 						ImGui::EndPopup();
 					}
@@ -499,17 +499,13 @@ void AppGui::RenderContentBrowser(App &app) {
 					if (ImGui::BeginPopup("PopupScriptsBrowserScript")) {
 						if (ImGui::Selectable("Edit")) {
 							if (app.state.selected_script) {
-								std::string path = app.project.project_settings.project_directory +
-												   "/src/scripts/" + *app.state.selected_script +
-												   ".script.c";
+								std::string path = (*app.state.selected_script)->GetFilePath(&app);
 								CodeEditor::OpenPath(&app, path);
-								app.state.selected_script = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
 							if (app.state.selected_script) {
-								ScriptBuilder::DeleteScriptFile(&app,
-																app.state.selected_script->c_str());
+								(*app.state.selected_script)->DeleteFromDisk(&app);
 
 								for (size_t i = 0; i < app.project.script_files.size(); ++i) {
 									if (app.project.script_files[i] == *app.state.selected_script) {
@@ -525,15 +521,17 @@ void AppGui::RenderContentBrowser(App &app) {
 
 					int cur_i = 0;
 					for (auto &script : app.project.script_files) {
-						ImGui::Selectable(script.c_str(), false,
-										  ImGuiSelectableFlags_AllowDoubleClick);
+						bool selected = app.state.selected_script &&
+										script->name == (*app.state.selected_script)->name;
+						if (ImGui::Selectable(script->name.c_str(), selected,
+										  ImGuiSelectableFlags_AllowDoubleClick)){
+							app.state.selected_script = &script;
+						}
 
 						if (ImGui::IsItemHovered() &&
 							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-							std::string path = app.project.project_settings.project_directory +
-											   "/src/scripts/" + script + ".script.c";
+							std::string path = script->GetFilePath(&app);
 							CodeEditor::OpenPath(&app, path);
-							app.state.selected_script = nullptr;
 						}
 
 						if (ImGui::IsItemHovered() &&
@@ -544,7 +542,7 @@ void AppGui::RenderContentBrowser(App &app) {
 
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
-							ImGui::Text("%s", script.c_str());
+							ImGui::Text("%s", script->text.c_str());
 							ImGui::EndTooltip();
 						}
 						++cur_i;
@@ -680,9 +678,11 @@ void AppGui::RenderSceneWindow(App &app) {
 										if (ImGui::BeginCombo("##AttachedScript",
 															  current_selected.c_str())) {
 											for (auto &script : app.project.script_files) {
-												if (ImGui::Selectable(script.c_str(),
-																	  script == current_selected)) {
-													app.state.current_scene->script_name = script;
+												if (ImGui::Selectable(
+														script->name.c_str(),
+														script->name == current_selected)) {
+													app.state.current_scene
+														->script_name = script->name;
 												}
 											}
 											ImGui::EndCombo();
@@ -1030,11 +1030,12 @@ void AppGui::RenderSettingsWindow(App &app) {
 										"##GlobalScript",
 										app.project.project_settings.global_script_name.c_str())) {
 									for (auto &script : app.project.script_files) {
-										if (ImGui::Selectable(script.c_str(),
-															  script == app.project.project_settings
-																			.global_script_name)) {
+										if (ImGui::Selectable(
+												script->name.c_str(),
+												script->name == app.project.project_settings
+																	.global_script_name)) {
 											app.project.project_settings
-												.global_script_name = script;
+												.global_script_name = script->name;
 										}
 									}
 									ImGui::EndCombo();

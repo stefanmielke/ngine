@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "../LibdragonImage.h"
 #include "../LibdragonFile.h"
+#include "../LibdragonScript.h"
 #include "../LibdragonSound.h"
 
 class App;
@@ -16,7 +17,7 @@ class Project {
    public:
 	std::vector<Scene> scenes;
 
-	std::vector<std::string> script_files;
+	std::vector<std::unique_ptr<LibdragonScript>> script_files;
 	std::vector<std::unique_ptr<LibdragonSound>> sounds;
 	std::vector<std::unique_ptr<LibdragonImage>> images;
 	std::vector<std::unique_ptr<LibdragonFile>> general_files;
@@ -30,7 +31,7 @@ class Project {
 	void Close();
 
 	void ReloadImages(SDL_Renderer *renderer);
-	void ReloadScripts();
+	void ReloadScripts(App *app);
 	void ReloadSounds();
 	void ReloadGeneralFiles();
 

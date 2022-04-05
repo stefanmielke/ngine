@@ -71,14 +71,14 @@ bool Project::Open(const char *path, App *app) {
 	LoadFromDisk(project_settings.project_directory);
 
 	SDL_SetWindowTitle(app->window, ("NGine - " + project_settings.project_name + " - " +
-									project_settings.project_directory)
-									   .c_str());
+									 project_settings.project_directory)
+										.c_str());
 
 	app->state.project_settings_screen.FromProjectSettings(project_settings);
 
 	app->engine_settings.SetLastOpenedProject(project_filepath);
 
-	ReloadScripts();
+	ReloadScripts(app);
 	ReloadImages(app->renderer);
 	ReloadSounds();
 	ReloadGeneralFiles();
@@ -111,11 +111,10 @@ void Project::ReloadImages(SDL_Renderer *renderer) {
 	}
 }
 
-void Project::ReloadScripts() {
+void Project::ReloadScripts(App *app) {
 	script_files.clear();
 
 	std::filesystem::path script_folder = project_settings.project_directory + "/.ngine/scripts";
-
 	if (!std::filesystem::exists(script_folder)) {
 		return;
 	}
@@ -125,13 +124,11 @@ void Project::ReloadScripts() {
 		if (file_entry.is_regular_file()) {
 			std::string filepath(file_entry.path().string());
 			if (filepath.ends_with(".script.json")) {
-				nlohmann::json json;
+				auto script = std::make_unique<LibdragonScript>();
+				script->LoadFromDisk(filepath);
+				script->LoadText(app);
 
-				std::ifstream filestream(file_entry.path());
-				filestream >> json;
-				filestream.close();
-
-				script_files.emplace_back(json["name"]);
+				script_files.push_back(move(script));
 			}
 		}
 	}
@@ -161,7 +158,6 @@ void Project::ReloadSounds() {
 
 void Project::ReloadGeneralFiles() {
 	general_files.clear();
-
 
 	std::filesystem::path folder = project_settings.project_directory + "/.ngine/general";
 	if (!std::filesystem::exists(folder)) {

@@ -41,7 +41,6 @@ To Do:
     [ ] Sounds
 [ ] Add refresh button back to content windows
 [ ] Order assets by name
-[ ] Script preview (show text)
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] During build, do not start a new command if the previous failed
 [ ] Improve project creation error handling
@@ -108,6 +107,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Script preview; Keep script selection after clicking.
 [x] Removing unused tabs when no project is open; Reorder "Content" and "Scripts" tabs; Rename "Content" tab to "Other Content"
 [x] Show 'Initial Scene' badge on 'Scenes' window
 [x] Move 'Initial Scene' to scenes window
