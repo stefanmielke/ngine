@@ -72,9 +72,10 @@ void ScriptBuilder::DeleteScriptFile(App *app, const char *script_name) {
 		std::string d_name = filepath + ".script.d";
 		std::filesystem::remove(d_name);
 	}
+
+	std::string script_name_str(script_name);
 	bool removed_from_scene = false;
 	{
-		std::string script_name_str(script_name);
 		for (auto &scene : app->project.scenes) {
 			if (scene.script_name == script_name_str) {
 				scene.script_name = "";
@@ -84,9 +85,15 @@ void ScriptBuilder::DeleteScriptFile(App *app, const char *script_name) {
 	}
 	app->project.SaveToDisk(app->project.project_settings.project_directory);
 
+	bool removed_from_global = (app->project.project_settings.global_script_name == script_name_str);
+	if (removed_from_global) {
+		app->project.project_settings.global_script_name = "";
+		app->project.project_settings.SaveToDisk();
+	}
+
 	// force clean if the script was referenced on a scene to stop build errors
-	if (removed_from_scene) {
-		console.AddLog("Script was referenced by a Scene. Cleaning the project...");
+	if (removed_from_scene || removed_from_global) {
+		console.AddLog("Script was referenced by a Scene or Globally. Cleaning the project...");
 
 		Libdragon::Clean(app->project.project_settings.project_directory, app->engine_settings.GetLibdragonExeLocation());
 	}

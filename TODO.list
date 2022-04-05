@@ -94,6 +94,7 @@ To Do:
 [ ] Generate package with emulator+ROM+shortcut to run the game automatically on PC
 
 Future:
+[ ] Syntax highlight on script previews
 [ ] Import/View 3d models
 [ ] Generate PC port?
     - Possibility to run/debug locally
@@ -107,6 +108,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Remove 'Global Script' when the referenced script is deleted.
 [x] Script preview; Keep script selection after clicking.
 [x] Removing unused tabs when no project is open; Reorder "Content" and "Scripts" tabs; Rename "Content" tab to "Other Content"
 [x] Show 'Initial Scene' badge on 'Scenes' window
