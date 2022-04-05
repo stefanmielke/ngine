@@ -405,29 +405,70 @@ void AppGui::RenderContentBrowser(App &app) {
 						}
 					}
 					ImGui::Separator();
-					for (auto &script_name : app.project.script_files) {
-						ImGui::TextUnformatted(script_name.c_str());
-						ImGui::SameLine();
-						ImGui::PushID(script_name.c_str());
-						if (ImGui::SmallButton("Edit")) {
-							std::string path = app.project.project_settings.project_directory +
-											   "/src/scripts/" + script_name + ".script.c";
-							CodeEditor::OpenPath(&app, path);
-						}
-						ImGui::PopID();
-						ImGui::SameLine();
-						ImGui::PushID((script_name + "D").c_str());
-						if (ImGui::SmallButton("Delete")) {
-							ScriptBuilder::DeleteScriptFile(&app, script_name.c_str());
 
-							for (size_t i = 0; i < app.project.script_files.size(); ++i) {
-								if (app.project.script_files[i] == script_name) {
-									app.project.script_files.erase(
-										app.project.script_files.begin() + (int)i);
-								}
+					//					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+					//						ImGui::OpenPopup("PopupScriptsBrowser");
+					//					}
+
+					if (ImGui::BeginPopup("PopupScriptsBrowser")) {
+						if (ImGui::Selectable("Refresh")) {
+							app.project.ReloadScripts();
+						}
+						ImGui::EndPopup();
+					}
+
+					if (ImGui::BeginPopup("PopupScriptsBrowserScript")) {
+						if (ImGui::Selectable("Edit")) {
+							if (app.state.selected_script) {
+								std::string path = app.project.project_settings.project_directory +
+												   "/src/scripts/" + *app.state.selected_script +
+												   ".script.c";
+								CodeEditor::OpenPath(&app, path);
+								app.state.selected_script = nullptr;
 							}
 						}
-						ImGui::PopID();
+						if (ImGui::Selectable("Delete")) {
+							if (app.state.selected_script) {
+								ScriptBuilder::DeleteScriptFile(&app,
+																app.state.selected_script->c_str());
+
+								for (size_t i = 0; i < app.project.script_files.size(); ++i) {
+									if (app.project.script_files[i] == *app.state.selected_script) {
+										app.project.script_files.erase(
+											app.project.script_files.begin() + (int)i);
+									}
+								}
+								app.state.selected_script = nullptr;
+							}
+						}
+						ImGui::EndPopup();
+					}
+
+					int cur_i = 0;
+					for (auto &script : app.project.script_files) {
+						ImGui::Selectable(script.c_str(), false,
+										  ImGuiSelectableFlags_AllowDoubleClick);
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							std::string path = app.project.project_settings.project_directory +
+											   "/src/scripts/" + script + ".script.c";
+							CodeEditor::OpenPath(&app, path);
+							app.state.selected_script = nullptr;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.selected_script = &script;
+							ImGui::OpenPopup("PopupScriptsBrowserScript");
+						}
+
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s", script.c_str());
+							ImGui::EndTooltip();
+						}
+						++cur_i;
 					}
 				}
 				ImGui::EndTabItem();
@@ -557,7 +598,8 @@ void AppGui::RenderSceneWindow(App &app) {
 					ImGui::Separator();
 
 					ImGui::Spacing();
-					ImGui::InputText("Name", app.state.scene_name, 100, ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("Name", app.state.scene_name, 100,
+									 ImGuiInputTextFlags_CharsFileName);
 
 					ImGui::Spacing();
 					ImGui::TextUnformatted("Background Fill Color");
@@ -655,8 +697,10 @@ void AppGui::RenderSettingsWindow(App &app) {
 										(float)(*app.state.image_editing)->display_height * 2.f));
 					ImGui::Separator();
 					ImGui::Spacing();
-					ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-					ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
+					ImGui::InputText("Name", image_edit_name, 50,
+									 ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
+									 ImGuiInputTextFlags_CharsFilePath);
 					ImGui::InputInt("H Slices", &image_edit_h_slices);
 					ImGui::InputInt("V Slices", &image_edit_v_slices);
 
@@ -723,8 +767,10 @@ void AppGui::RenderSettingsWindow(App &app) {
 					strcpy(sound_edit_dfs_folder, (*app.state.sound_editing)->dfs_folder.c_str());
 				}
 				if (ImGui::BeginTabItem("Sound Settings")) {
-					ImGui::InputText("Name", sound_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-					ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
+					ImGui::InputText("Name", sound_edit_name, 50,
+									 ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100,
+									 ImGuiInputTextFlags_CharsFilePath);
 
 					if ((*app.state.sound_editing)->type == SOUND_WAV) {
 						ImGui::Checkbox("Loop", &(*app.state.sound_editing)->wav_loop);
@@ -801,7 +847,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 				}
 				if (ImGui::BeginTabItem("Content Settings")) {
 					ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-					ImGui::InputText("DFS Folder", edit_dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
+					ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
+									 ImGuiInputTextFlags_CharsFilePath);
 					ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
 
 					ImGui::Separator();

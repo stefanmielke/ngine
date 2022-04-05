@@ -34,8 +34,13 @@ To Do:
         - Script use
 
 1.2.0:
+[ ] Double click to edit assets, right click for more options
+    [x] Scripts
+    [ ] General
+    [ ] Sprites
+    [ ] Sounds
+[ ] Add refresh button back to content windows
 [ ] Order assets by name
-[ ] Migrate script content window to look like the other content windows
 [ ] Script preview (show text)
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] During build, do not start a new command if the previous failed
@@ -99,6 +104,8 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Double click to open script, right-click to open more options
+[x] Migrate script content window to look like the other content windows
 [x] After creating a script, put the focus back on the 'script_name' input (to create multiple scripts)
 [x] Button to open/reload engine settings file
 [x] Better handling of spaces on inputs

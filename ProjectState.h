@@ -25,6 +25,8 @@ class ProjectState {
 	std::unique_ptr<LibdragonFile> *general_file_editing;
 	bool reload_general_file_edit;
 
+	std::string *selected_script;
+
 	std::vector<DroppedImage> dropped_image_files;
 	std::vector<DroppedSound> dropped_sound_files;
 	std::vector<DroppedGeneralFile> dropped_general_files;
