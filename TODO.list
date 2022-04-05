@@ -1,5 +1,4 @@
 To Do:
-1.1.0:
 [ ] Wiki
     [ ] Project creation / opening
     [ ] Building / Tasks
@@ -36,7 +35,7 @@ To Do:
 
 1.2.0:
 [ ] Do not allow spaces on script and scene names
-[ ] Order scripts by name
+[ ] Order assets by name
 [ ] After creating a script, put the focus back on the 'script_name' input (to create multiple scripts)
 [ ] Migrate script content window to look like the other content windows
 [ ] Script preview (show text)
