@@ -388,6 +388,10 @@ void AppGui::RenderContentBrowser(App &app) {
 						"##ScriptName", "script_name", script_name_input, 100,
 						ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsFileName |
 							ImGuiInputTextFlags_AutoSelectAll);
+					if (create_script) {
+						ImGui::SetKeyboardFocusHere(-1);
+					}
+
 					ImGui::SameLine();
 					if (ImGui::Button("Create Script") || create_script) {
 						std::string script_name(script_name_input);
