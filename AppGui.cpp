@@ -572,11 +572,20 @@ void AppGui::RenderSceneWindow(App &app) {
 				if (ImGui::BeginTabBar("#ScenesTabBar", ImGuiTabBarFlags_AutoSelectNewTabs)) {
 					if (ImGui::BeginTabItem("Scenes")) {
 						for (auto &scene : app.project.scenes) {
+							bool is_initial_scene = (scene.id ==
+													 app.project.project_settings.initial_scene_id);
 							if (ImGui::Selectable(scene.name.c_str(),
 												  app.state.current_scene &&
 													  scene.id == app.state.current_scene->id)) {
 								app.state.current_scene = &scene;
 								strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
+							}
+							if (is_initial_scene) {
+								ImGui::SameLine(300 - 40);
+								ImGui::TextColored(ImVec4(.4f, 1.f, .4f, 1.f), "start");
+							}
+							if (is_initial_scene && ImGui::IsItemHovered()) {
+								ImGui::SetTooltip("Initial Scene");
 							}
 						}
 
@@ -632,7 +641,7 @@ void AppGui::RenderSceneWindow(App &app) {
 								//						}
 								//						{
 								//							if (ImGui::Selectable("Test Node
-								//Press"))
+								// Press"))
 								//{
 								//								// do whatever
 								//							}

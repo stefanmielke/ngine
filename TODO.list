@@ -34,7 +34,6 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Show 'Initial Scene' badge on 'Scenes' window
 [ ] Double click to edit assets, right click for more options
     [x] Scripts
     [ ] General
@@ -52,6 +51,7 @@ To Do:
 [ ] Update Wiki
 
 1.3.0:
+[ ] Save project settings when saving project
 [ ] Improve UI
     [x] Change font
     [ ] Add sprites
@@ -108,6 +108,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Show 'Initial Scene' badge on 'Scenes' window
 [x] Move 'Initial Scene' to scenes window
 [x] Move Scenes window to the left panel
 [x] Double click to open script, right-click to open more options
