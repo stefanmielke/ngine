@@ -34,7 +34,6 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Move 'Initial Scene' to scenes window
 [ ] Show 'Initial Scene' badge on 'Scenes' window
 [ ] Double click to edit assets, right click for more options
     [x] Scripts
@@ -64,6 +63,7 @@ To Do:
         - Help
     [ ] Icon
     [ ] Custom themes
+    [ ] More distinct color on selected tab
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Audio preview
@@ -108,6 +108,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Move 'Initial Scene' to scenes window
 [x] Move Scenes window to the left panel
 [x] Double click to open script, right-click to open more options
 [x] Migrate script content window to look like the other content windows
