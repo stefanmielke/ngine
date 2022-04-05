@@ -2,6 +2,11 @@
 
 #### Engine to create N64 games powered by [Libdragon](https://github.com/DragonMinded/libdragon) for Windows and Linux.
 
+### Download
+
+- [Latest Release](https://github.com/stefanmielke/ngine/releases/latest)
+- [Latest Builds](https://github.com/stefanmielke/ngine/actions) (Unstable)
+
 ### Requirements
 
 - [SDL2](https://www.libsdl.org/index.php) (bundled on Windows)
