@@ -3846,9 +3846,9 @@ static bool InputTextFilterCharacter(unsigned int* p_char, ImGuiInputTextFlags f
         ImGuiContext& g = *GImGui;
         const unsigned c_decimal_point = (unsigned int)g.PlatformLocaleDecimalPoint;
 
-		// Allow Allow 0..9a..zA..z
+		// Allow Allow 0..9a..zA..z-_
 		if (flags & ImGuiInputTextFlags_CharsFileName)
-			if (!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z'))
+			if (!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z') && (c != '_') && (c != '-'))
 				return false;
 
 		// Allow 0..9 a..z A..z / \ _ - .
