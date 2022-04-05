@@ -553,7 +553,7 @@ void AppGui::RenderSceneWindow(App &app) {
 					ImGui::Separator();
 
 					ImGui::Spacing();
-					ImGui::InputText("Name", app.state.scene_name, 100);
+					ImGui::InputText("Name", app.state.scene_name, 100, ImGuiInputTextFlags_CharsFileName);
 
 					ImGui::Spacing();
 					ImGui::TextUnformatted("Background Fill Color");
