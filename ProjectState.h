@@ -37,6 +37,12 @@ class ProjectState {
 	Scene *current_scene;
 	char scene_name[100];
 
+	void LoadEngineSetings(const EngineSettings &engine_settings) {
+		strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
+		strcpy(editor_path, engine_settings.GetEditorLocation().c_str());
+		strcpy(libdragon_exe_path, engine_settings.GetLibdragonExeLocation().c_str());
+	}
+
 	explicit ProjectState(const EngineSettings &engine_settings)
 		: selected_image(nullptr),
 		  image_editing(nullptr),
@@ -55,9 +61,7 @@ class ProjectState {
 		  scene_name() {
 		memset(scene_name, 0, 100);
 
-		strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
-		strcpy(editor_path, engine_settings.GetEditorLocation().c_str());
-		strcpy(libdragon_exe_path, engine_settings.GetLibdragonExeLocation().c_str());
+		LoadEngineSetings(engine_settings);
 	}
 
 	~ProjectState() {

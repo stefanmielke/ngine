@@ -40,6 +40,10 @@ class EngineSettings {
 		return libdragon_exe_location;
 	};
 
+	[[nodiscard]] std::string GetEngineSettingsFilepath() const {
+		return engine_settings_filepath;
+	};
+
    private:
 	std::string last_opened_project;
 	std::string emulator_location;

@@ -1255,6 +1255,19 @@ void AppGui::RenderSettingsWindow(App &app) {
 					app.engine_settings.SetLibdragonExeLocation(app.state.libdragon_exe_path);
 				}
 
+				ImGui::Separator();
+				ImGui::Spacing();
+				ImGui::TextWrapped("Edit Engine Settings File:");
+				ImGui::SameLine();
+				if (ImGui::Button("Open File")) {
+					CodeEditor::OpenPath(&app, app.engine_settings.GetEngineSettingsFilepath());
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Reload File")) {
+					app.engine_settings.LoadFromDisk();
+					app.state.LoadEngineSetings(app.engine_settings);
+				}
+
 				ImGui::EndTabItem();
 			}
 		}
