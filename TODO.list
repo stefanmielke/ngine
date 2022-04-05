@@ -34,6 +34,7 @@ To Do:
         - Script use
 
 1.2.0:
+[ ] Button to open engine settings file
 [ ] Do not allow spaces on script and scene names
 [ ] Order assets by name
 [ ] After creating a script, put the focus back on the 'script_name' input (to create multiple scripts)

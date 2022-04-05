@@ -384,9 +384,10 @@ void AppGui::RenderContentBrowser(App &app) {
 				if (app.project.project_settings.IsOpen()) {
 					static char script_name_input[100] = {};
 					bool create_script;
-					create_script = ImGui::InputTextWithHint("##ScriptName", "script_name",
-															 script_name_input, 100,
-															 ImGuiInputTextFlags_EnterReturnsTrue);
+					create_script = ImGui::InputTextWithHint(
+						"##ScriptName", "script_name", script_name_input, 100,
+						ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsFileName |
+							ImGuiInputTextFlags_AutoSelectAll);
 					ImGui::SameLine();
 					if (ImGui::Button("Create Script") || create_script) {
 						std::string script_name(script_name_input);
@@ -650,23 +651,14 @@ void AppGui::RenderSettingsWindow(App &app) {
 										(float)(*app.state.image_editing)->display_height * 2.f));
 					ImGui::Separator();
 					ImGui::Spacing();
-					ImGui::InputText("Name", image_edit_name, 50);
-					bool has_space_on_name = strpbrk(image_edit_name, " ") != nullptr;
-					if (has_space_on_name) {
-						ImGui::TextWrapped("DO NOT USE SPACE.");
-					}
-					ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100);
-					bool has_space_on_dfs = strpbrk(image_edit_dfs_folder, " ") != nullptr;
-					if (has_space_on_dfs) {
-						ImGui::TextWrapped("DO NOT USE SPACE.");
-					}
+					ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
 					ImGui::InputInt("H Slices", &image_edit_h_slices);
 					ImGui::InputInt("V Slices", &image_edit_v_slices);
 
 					ImGui::Separator();
 					ImGui::Spacing();
 
-					ImGui::BeginDisabled(has_space_on_name || has_space_on_dfs);
 					if (ImGui::Button("Save")) {
 						bool will_save = true;
 						if ((*app.state.image_editing)->name != image_edit_name) {
@@ -708,7 +700,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 							app.state.image_editing = nullptr;
 						}
 					}
-					ImGui::EndDisabled();
 
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
@@ -728,16 +719,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 					strcpy(sound_edit_dfs_folder, (*app.state.sound_editing)->dfs_folder.c_str());
 				}
 				if (ImGui::BeginTabItem("Sound Settings")) {
-					ImGui::InputText("Name", sound_edit_name, 50);
-					bool has_space_on_name = strpbrk(sound_edit_name, " ") != nullptr;
-					if (has_space_on_name) {
-						ImGui::TextWrapped("DO NOT USE SPACE.");
-					}
-					ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100);
-					bool has_space_on_dfs = strpbrk(sound_edit_dfs_folder, " ") != nullptr;
-					if (has_space_on_dfs) {
-						ImGui::TextWrapped("DO NOT USE SPACE.");
-					}
+					ImGui::InputText("Name", sound_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
 
 					if ((*app.state.sound_editing)->type == SOUND_WAV) {
 						ImGui::Checkbox("Loop", &(*app.state.sound_editing)->wav_loop);
@@ -751,7 +734,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 					ImGui::Separator();
 					ImGui::Spacing();
-					ImGui::BeginDisabled(has_space_on_name || has_space_on_dfs);
 					if (ImGui::Button("Save")) {
 						bool will_save = true;
 						if ((*app.state.sound_editing)->name != sound_edit_name) {
@@ -792,7 +774,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 							app.state.sound_editing = nullptr;
 						}
 					}
-					ImGui::EndDisabled();
 
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
@@ -815,21 +796,12 @@ void AppGui::RenderSettingsWindow(App &app) {
 					edit_copy_to_filesystem = (*app.state.general_file_editing)->copy_to_filesystem;
 				}
 				if (ImGui::BeginTabItem("Content Settings")) {
-					ImGui::InputText("Name", edit_name, 50);
-					bool has_space_on_name = strpbrk(edit_name, " ") != nullptr;
-					if (has_space_on_name) {
-						ImGui::TextWrapped("DO NOT USE SPACE.");
-					}
-					ImGui::InputText("DFS Folder", edit_dfs_folder, 100);
-					bool has_space_on_dfs = strpbrk(edit_dfs_folder, " ") != nullptr;
-					if (has_space_on_dfs) {
-						ImGui::TextWrapped("DO NOT USE SPACE.");
-					}
+					ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("DFS Folder", edit_dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
 					ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
 
 					ImGui::Separator();
 					ImGui::Spacing();
-					ImGui::BeginDisabled(has_space_on_name || has_space_on_dfs);
 					if (ImGui::Button("Save")) {
 						bool will_save = true;
 						if ((*app.state.general_file_editing)->name != edit_name) {
@@ -876,7 +848,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 							app.state.general_file_editing = nullptr;
 						}
 					}
-					ImGui::EndDisabled();
 
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
