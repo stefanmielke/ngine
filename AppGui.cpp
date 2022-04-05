@@ -184,10 +184,10 @@ void AppGui::RenderContentBrowser(App &app) {
 	ImGui::SetNextWindowPos(ImVec2(300, 19));
 	if (ImGui::Begin("ContentBrowser", nullptr,
 					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
-		if (ImGui::BeginTabBar("CenterContentTabs",
-							   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
-			if (ImGui::BeginTabItem("Sprites")) {
-				if (app.project.project_settings.IsOpen()) {
+		if (app.project.project_settings.IsOpen()) {
+			if (ImGui::BeginTabBar("CenterContentTabs",
+								   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
+				if (ImGui::BeginTabItem("Sprites")) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup("PopupSpritesBrowser");
 					}
@@ -284,11 +284,9 @@ void AppGui::RenderContentBrowser(App &app) {
 						if (cur_i % items_per_line != 0)
 							ImGui::SameLine();
 					}
+					ImGui::EndTabItem();
 				}
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Sounds")) {
-				if (app.project.project_settings.IsOpen()) {
+				if (ImGui::BeginTabItem("Sounds")) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup("PopupSoundsBrowser");
 					}
@@ -350,17 +348,20 @@ void AppGui::RenderContentBrowser(App &app) {
 
 					if (!app.project.project_settings.modules.dfs) {
 						ImGui::TextWrapped(
-							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
+							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE "
+							"GAME.");
 						ImGui::Separator();
 					}
 					if (!app.project.project_settings.modules.audio) {
 						ImGui::TextWrapped(
-							"AUDIO MODULE IS NOT LOADED. AUDIO WILL NOT BE USABLE IN THE GAME.");
+							"AUDIO MODULE IS NOT LOADED. AUDIO WILL NOT BE USABLE IN THE "
+							"GAME.");
 						ImGui::Separator();
 					}
 					if (!app.project.project_settings.modules.audio_mixer) {
 						ImGui::TextWrapped(
-							"AUDIO MIXER MODULE IS NOT LOADED. SOME AUDIO WILL NOT BE USABLE IN "
+							"AUDIO MIXER MODULE IS NOT LOADED. SOME AUDIO WILL NOT BE USABLE "
+							"IN "
 							"THE GAME.");
 						ImGui::Separator();
 					}
@@ -377,11 +378,89 @@ void AppGui::RenderContentBrowser(App &app) {
 						}
 						++cur_i;
 					}
+					ImGui::EndTabItem();
 				}
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Scripts")) {
-				if (app.project.project_settings.IsOpen()) {
+				if (ImGui::BeginTabItem("Other Content")) {
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+						ImGui::OpenPopup("PopupContentsBrowser");
+					}
+
+					if (ImGui::BeginPopup("PopupContentsBrowser")) {
+						if (ImGui::Selectable("Refresh")) {
+							app.project.ReloadGeneralFiles();
+						}
+						ImGui::EndPopup();
+					}
+
+					int cur_i = 0;
+					if (ImGui::BeginPopup("PopupContentsBrowserContent")) {
+						if (ImGui::Selectable("Edit Settings")) {
+							if (app.state.selected_general_file) {
+								app.state.general_file_editing = app.state.selected_general_file;
+								app.state.reload_general_file_edit = true;
+								app.state.selected_general_file = nullptr;
+							}
+						}
+						if (ImGui::Selectable("Copy DFS Path")) {
+							if (app.state.selected_general_file) {
+								std::string dfs_path;
+								dfs_path.append((*app.state.selected_general_file)->dfs_folder +
+												(*app.state.selected_general_file)->name +
+												(*app.state.selected_general_file)->file_type);
+
+								ImGui::SetClipboardText(dfs_path.c_str());
+								app.state.selected_general_file = nullptr;
+							}
+						}
+						if (ImGui::Selectable("Delete")) {
+							if (app.state.selected_general_file) {
+								(*app.state.selected_general_file)
+									->DeleteFromDisk(
+										app.project.project_settings.project_directory);
+
+								for (size_t i = 0; i < app.project.general_files.size(); ++i) {
+									if (app.project.general_files[i]->name ==
+											(*app.state.selected_general_file)->name &&
+										app.project.general_files[i]->file_type ==
+											(*app.state.selected_general_file)->file_type) {
+										app.project.general_files.erase(
+											app.project.general_files.begin() + (int)i);
+
+										break;
+									}
+								}
+								app.state.selected_general_file = nullptr;
+							}
+						}
+						ImGui::EndPopup();
+					}
+
+					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+					ImGui::Separator();
+
+					if (!app.project.project_settings.modules.dfs) {
+						ImGui::TextWrapped(
+							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE "
+							"GAME.");
+						ImGui::Separator();
+					}
+
+					for (auto &general_file : app.project.general_files) {
+						std::string name = general_file->name + general_file->file_type;
+						if (ImGui::Selectable(name.c_str())) {
+							app.state.selected_general_file = &general_file;
+							ImGui::OpenPopup("PopupContentsBrowserContent");
+						}
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s", general_file->GetTooltip().c_str());
+							ImGui::EndTooltip();
+						}
+						++cur_i;
+					}
+					ImGui::EndTabItem();
+				}
+				if (ImGui::BeginTabItem("Scripts")) {
 					static char script_name_input[100] = {};
 					bool create_script;
 					create_script = ImGui::InputTextWithHint(
@@ -470,91 +549,10 @@ void AppGui::RenderContentBrowser(App &app) {
 						}
 						++cur_i;
 					}
+					ImGui::EndTabItem();
 				}
-				ImGui::EndTabItem();
+				ImGui::EndTabBar();
 			}
-			if (ImGui::BeginTabItem("Content")) {
-				if (app.project.project_settings.IsOpen()) {
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-						ImGui::OpenPopup("PopupContentsBrowser");
-					}
-
-					if (ImGui::BeginPopup("PopupContentsBrowser")) {
-						if (ImGui::Selectable("Refresh")) {
-							app.project.ReloadGeneralFiles();
-						}
-						ImGui::EndPopup();
-					}
-
-					int cur_i = 0;
-					if (ImGui::BeginPopup("PopupContentsBrowserContent")) {
-						if (ImGui::Selectable("Edit Settings")) {
-							if (app.state.selected_general_file) {
-								app.state.general_file_editing = app.state.selected_general_file;
-								app.state.reload_general_file_edit = true;
-								app.state.selected_general_file = nullptr;
-							}
-						}
-						if (ImGui::Selectable("Copy DFS Path")) {
-							if (app.state.selected_general_file) {
-								std::string dfs_path;
-								dfs_path.append((*app.state.selected_general_file)->dfs_folder +
-												(*app.state.selected_general_file)->name +
-												(*app.state.selected_general_file)->file_type);
-
-								ImGui::SetClipboardText(dfs_path.c_str());
-								app.state.selected_general_file = nullptr;
-							}
-						}
-						if (ImGui::Selectable("Delete")) {
-							if (app.state.selected_general_file) {
-								(*app.state.selected_general_file)
-									->DeleteFromDisk(
-										app.project.project_settings.project_directory);
-
-								for (size_t i = 0; i < app.project.general_files.size(); ++i) {
-									if (app.project.general_files[i]->name ==
-											(*app.state.selected_general_file)->name &&
-										app.project.general_files[i]->file_type ==
-											(*app.state.selected_general_file)->file_type) {
-										app.project.general_files.erase(
-											app.project.general_files.begin() + (int)i);
-
-										break;
-									}
-								}
-								app.state.selected_general_file = nullptr;
-							}
-						}
-						ImGui::EndPopup();
-					}
-
-					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
-					ImGui::Separator();
-
-					if (!app.project.project_settings.modules.dfs) {
-						ImGui::TextWrapped(
-							"DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
-						ImGui::Separator();
-					}
-
-					for (auto &general_file : app.project.general_files) {
-						std::string name = general_file->name + general_file->file_type;
-						if (ImGui::Selectable(name.c_str())) {
-							app.state.selected_general_file = &general_file;
-							ImGui::OpenPopup("PopupContentsBrowserContent");
-						}
-						if (ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							ImGui::Text("%s", general_file->GetTooltip().c_str());
-							ImGui::EndTooltip();
-						}
-						++cur_i;
-					}
-				}
-				ImGui::EndTabItem();
-			}
-			ImGui::EndTabBar();
 		}
 		ImGui::End();
 	}
@@ -988,7 +986,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 					ImGui::EndTabItem();
 				}
 			}
-			if (ImGui::BeginTabItem("Project")) {
+			if (app.project.project_settings.IsOpen() && ImGui::BeginTabItem("Project")) {
 				if (app.project.project_settings.IsOpen()) {
 					if (ImGui::BeginTabBar("ProjectAllSettings")) {
 						if (ImGui::BeginTabItem("General")) {

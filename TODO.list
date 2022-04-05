@@ -108,6 +108,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Removing unused tabs when no project is open; Reorder "Content" and "Scripts" tabs; Rename "Content" tab to "Other Content"
 [x] Show 'Initial Scene' badge on 'Scenes' window
 [x] Move 'Initial Scene' to scenes window
 [x] Move Scenes window to the left panel
