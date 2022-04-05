@@ -564,106 +564,150 @@ void AppGui::RenderSceneWindow(App &app) {
 	const float prop_y_size = is_output_open ? 219 : 38;
 	ImGui::SetNextWindowSize(ImVec2(300, (float)window_height - prop_y_size));
 	ImGui::SetNextWindowPos(ImVec2(0, 19));
-	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-		if (app.state.current_scene && app.project.project_settings.modules.scene_manager) {
-			if (ImGui::BeginTabBar("Properties", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
-				//				if (ImGui::BeginTabItem("Nodes")) {
-				//					if (ImGui::TreeNodeEx("Root Node")) {
-				//						{
-				//							ImGui::SameLine();
-				//							if (ImGui::Selectable("Props")) {
-				//								// do whatever
-				//							}
-				//						}
-				//						{
-				//							if (ImGui::Selectable("Test Node Press")) {
-				//								// do whatever
-				//							}
-				//						}
-				//
-				//						if (ImGui::TreeNode("Test Node")) {
-				//							ImGui::TreePop();
-				//						}
-				//						if (ImGui::TreeNode("Test Node 2")) {
-				//							ImGui::TreePop();
-				//						}
-				//						ImGui::TreePop();
-				//					}
-				//					ImGui::EndTabItem();
-				//				}
-				if (ImGui::BeginTabItem("Settings")) {
-					ImGui::TextColored(ImColor(100, 100, 255), "Id: %d",
-									   app.state.current_scene->id);
-					ImGui::Spacing();
-					ImGui::Separator();
-
-					ImGui::Spacing();
-					ImGui::InputText("Name", app.state.scene_name, 100,
-									 ImGuiInputTextFlags_CharsFileName);
-
-					ImGui::Spacing();
-					ImGui::TextUnformatted("Background Fill Color");
-					ImGui::ColorPicker3("##FillColor", app.state.current_scene->fill_color);
-
-					ImGui::Spacing();
-					ImGui::Separator();
-					ImGui::Spacing();
-					{
-						std::string current_selected(app.state.current_scene->script_name);
-						ImGui::TextUnformatted("Attached Script");
-						if (ImGui::BeginCombo("##AttachedScript", current_selected.c_str())) {
-							for (auto &script : app.project.script_files) {
-								if (ImGui::Selectable(script.c_str(), script == current_selected)) {
-									app.state.current_scene->script_name = script;
-								}
-							}
-							ImGui::EndCombo();
-						}
-						ImGui::SameLine();
-						if (ImGui::SmallButton("Remove")) {
-							app.state.current_scene->script_name.clear();
-						}
-					}
-					ImGui::Spacing();
-
-					ImGui::Separator();
-					ImGui::Spacing();
-					if (ImGui::Button("Save")) {
-						app.state.current_scene->name = app.state.scene_name;
-						app.project.SaveToDisk(app.project.project_settings.project_directory);
-						app.project.project_settings.SaveToDisk();
-					}
-					ImGui::Spacing();
-
-					ImGui::Separator();
-					ImGui::Spacing();
-					if (ImGui::Button("Delete Scene")) {
-						for (size_t i = 0; i < app.project.scenes.size(); ++i) {
-							if (app.project.scenes[i].id == app.state.current_scene->id) {
-								app.project.scenes.erase(app.project.scenes.begin() + (int)i);
-								std::string filename = app.project.project_settings
-														   .project_directory +
-													   "/.ngine/scenes/" +
-													   std::to_string(app.state.current_scene->id) +
-													   ".scene.json";
-								std::filesystem::remove(filename);
-
-								app.state.current_scene = nullptr;
-								break;
+	if (ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)) {
+		if (app.project.project_settings.IsOpen()) {
+			if (ImGui::BeginTabBar("#ScenesTabBar", ImGuiTabBarFlags_AutoSelectNewTabs)) {
+				if (ImGui::BeginTabItem("Scenes")) {
+					if (app.project.project_settings.IsOpen() &&
+						app.project.project_settings.modules.scene_manager) {
+						for (auto &scene : app.project.scenes) {
+							if (ImGui::Selectable(scene.name.c_str(),
+												  app.state.current_scene &&
+													  scene.id == app.state.current_scene->id)) {
+								app.state.current_scene = &scene;
+								strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
 							}
 						}
-					}
 
+						ImGui::Separator();
+						ImGui::Spacing();
+						if (ImGui::Button("Create New Scene")) {
+							app.project.scenes.emplace_back();
+							auto scene = &app.project.scenes[app.project.scenes.size() - 1];
+							scene->id = app.project.project_settings.next_scene_id++;
+							scene->name = std::to_string(app.project.scenes.size());
+							//							strcpy(app.state.scene_name,
+							//app.state.current_scene->name.c_str());
+						}
+					} else if (app.project.project_settings.IsOpen()) {
+						ImGui::TextWrapped(
+							"Please enable 'Scene Manager' module to use this feature.");
+					}
 					ImGui::EndTabItem();
 				}
+
+				if (app.state.current_scene && app.project.project_settings.modules.scene_manager) {
+					if (ImGui::BeginTabItem(app.state.current_scene->name.c_str())) {
+						if (ImGui::BeginTabBar("Properties",
+											   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
+							//				if (ImGui::BeginTabItem("Nodes")) {
+							//					if (ImGui::TreeNodeEx("Root Node")) {
+							//						{
+							//							ImGui::SameLine();
+							//							if (ImGui::Selectable("Props")) {
+							//								// do whatever
+							//							}
+							//						}
+							//						{
+							//							if (ImGui::Selectable("Test Node Press")) {
+							//								// do whatever
+							//							}
+							//						}
+							//
+							//						if (ImGui::TreeNode("Test Node")) {
+							//							ImGui::TreePop();
+							//						}
+							//						if (ImGui::TreeNode("Test Node 2")) {
+							//							ImGui::TreePop();
+							//						}
+							//						ImGui::TreePop();
+							//					}
+							//					ImGui::EndTabItem();
+							//				}
+							if (ImGui::BeginTabItem("Settings")) {
+								ImGui::TextColored(ImColor(100, 100, 255), "Id: %d",
+												   app.state.current_scene->id);
+								ImGui::Spacing();
+								ImGui::Separator();
+
+								ImGui::Spacing();
+								ImGui::InputText("Name", app.state.scene_name, 100,
+												 ImGuiInputTextFlags_CharsFileName);
+
+								ImGui::Spacing();
+								ImGui::TextUnformatted("Background Fill Color");
+								ImGui::ColorPicker3("##FillColor",
+													app.state.current_scene->fill_color);
+
+								ImGui::Spacing();
+								ImGui::Separator();
+								ImGui::Spacing();
+								{
+									std::string current_selected(
+										app.state.current_scene->script_name);
+									ImGui::TextUnformatted("Attached Script");
+									if (ImGui::BeginCombo("##AttachedScript",
+														  current_selected.c_str())) {
+										for (auto &script : app.project.script_files) {
+											if (ImGui::Selectable(script.c_str(),
+																  script == current_selected)) {
+												app.state.current_scene->script_name = script;
+											}
+										}
+										ImGui::EndCombo();
+									}
+									ImGui::SameLine();
+									if (ImGui::SmallButton("Remove")) {
+										app.state.current_scene->script_name.clear();
+									}
+								}
+								ImGui::Spacing();
+
+								ImGui::Separator();
+								ImGui::Spacing();
+								if (ImGui::Button("Save")) {
+									app.state.current_scene->name = app.state.scene_name;
+									app.project.SaveToDisk(
+										app.project.project_settings.project_directory);
+									app.project.project_settings.SaveToDisk();
+								}
+								ImGui::SameLine();
+								if (ImGui::Button("Cancel")) {
+									app.state.current_scene = nullptr;
+								}
+								ImGui::Spacing();
+
+								ImGui::Separator();
+								ImGui::Spacing();
+								if (ImGui::Button("Delete Scene")) {
+									for (size_t i = 0; i < app.project.scenes.size(); ++i) {
+										if (app.project.scenes[i].id ==
+											app.state.current_scene->id) {
+											app.project.scenes.erase(app.project.scenes.begin() +
+																	 (int)i);
+											std::string filename =
+												app.project.project_settings.project_directory +
+												"/.ngine/scenes/" +
+												std::to_string(app.state.current_scene->id) +
+												".scene.json";
+											std::filesystem::remove(filename);
+
+											app.state.current_scene = nullptr;
+											break;
+										}
+									}
+								}
+
+								ImGui::EndTabItem();
+							}
+						}
+						ImGui::EndTabBar();
+						ImGui::EndTabItem();
+					}
+				}
+
+				ImGui::EndTabBar();
 			}
-			ImGui::EndTabBar();
-		} else if (app.project.project_settings.IsOpen() &&
-				   app.project.project_settings.modules.scene_manager) {
-			ImGui::TextWrapped("Load a scene on the right side under 'Scenes' tab.");
-		} else if (app.project.project_settings.IsOpen() &&
-				   !app.project.project_settings.modules.scene_manager) {
-			ImGui::TextWrapped("Please enable 'Scene Manager' module to use this feature.");
 		}
 	}
 	ImGui::End();
@@ -907,33 +951,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 					ImGui::EndTabItem();
 				}
-			}
-			if (ImGui::BeginTabItem("Scenes")) {
-				if (app.project.project_settings.IsOpen() &&
-					app.project.project_settings.modules.scene_manager) {
-					for (auto &scene : app.project.scenes) {
-						if (ImGui::Selectable(scene.name.c_str(),
-											  app.state.current_scene &&
-												  scene.id == app.state.current_scene->id)) {
-							app.state.current_scene = &scene;
-							strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
-						}
-					}
-
-					ImGui::Separator();
-					ImGui::Spacing();
-					if (ImGui::Button("Create New Scene")) {
-						app.project.scenes.emplace_back();
-						app.state.current_scene = &app.project
-													   .scenes[app.project.scenes.size() - 1];
-						app.state.current_scene->id = app.project.project_settings.next_scene_id++;
-						app.state.current_scene->name = std::to_string(app.project.scenes.size());
-						strcpy(app.state.scene_name, app.state.current_scene->name.c_str());
-					}
-				} else if (app.project.project_settings.IsOpen()) {
-					ImGui::TextWrapped("Please enable 'Scene Manager' module to use this feature.");
-				}
-				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Project")) {
 				if (app.project.project_settings.IsOpen()) {

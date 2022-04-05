@@ -34,7 +34,6 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Move Scenes window to the right
 [ ] Move 'Initial Scene' to scenes window
 [ ] Show 'Initial Scene' badge on 'Scenes' window
 [ ] Double click to edit assets, right click for more options
@@ -109,6 +108,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Move Scenes window to the left panel
 [x] Double click to open script, right-click to open more options
 [x] Migrate script content window to look like the other content windows
 [x] After creating a script, put the focus back on the 'script_name' input (to create multiple scripts)
