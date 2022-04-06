@@ -34,8 +34,6 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Add makefile that is included that can be used to run custom mk commands
-[ ] Replace ' ' to '_' when importing content.
 [ ] During build, do not start a new command if the previous failed
 [ ] Improve project creation error handling
     - Libdragon init might fail
@@ -57,6 +55,7 @@ To Do:
     [ ] Icon
     [ ] Custom themes
     [ ] More distinct color on selected tab
+[ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Audio preview
@@ -102,6 +101,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Replace ' ' to '_' when importing content.
 [x] Order assets by name
 [x] Add reload content button on content windows
 [x] Double click to edit assets, right click for more options

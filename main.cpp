@@ -27,8 +27,7 @@ std::string GetExeDirectory() {
 		return {};
 	szPath[count] = '\0';
 #endif
-	return std::filesystem::path{szPath}
-		.parent_path().string();
+	return std::filesystem::path{szPath}.parent_path().string();
 }
 
 int main(int argv, char **args) {
@@ -60,8 +59,10 @@ int main(int argv, char **args) {
 							DroppedImage dropped_image(event.drop.file);
 
 							std::filesystem::path filepath(event.drop.file);
-							strcpy(dropped_image.name,
-								   filepath.filename().replace_extension().string().c_str());
+							std::string filename = filepath.filename().replace_extension().string();
+							std::replace(filename.begin(), filename.end(), ' ', '_');
+
+							strcpy(dropped_image.name, filename.c_str());
 
 							dropped_image.image_data = IMG_LoadTexture(app.renderer,
 																	   event.drop.file);
@@ -98,8 +99,10 @@ int main(int argv, char **args) {
 
 							DroppedSound dropped_sound(event.drop.file, type);
 							std::filesystem::path filepath(event.drop.file);
-							strcpy(dropped_sound.name,
-								   filepath.filename().replace_extension().string().c_str());
+							std::string filename = filepath.filename().replace_extension().string();
+							std::replace(filename.begin(), filename.end(), ' ', '_');
+
+							strcpy(dropped_sound.name, filename.c_str());
 
 							app.state.dropped_sound_files.push_back(dropped_sound);
 
@@ -108,8 +111,10 @@ int main(int argv, char **args) {
 							DroppedGeneralFile dropped_file(event.drop.file);
 
 							std::filesystem::path filepath(event.drop.file);
-							strcpy(dropped_file.name,
-								   filepath.filename().replace_extension().string().c_str());
+							std::string filename = filepath.filename().replace_extension().string();
+							std::replace(filename.begin(), filename.end(), ' ', '_');
+
+							strcpy(dropped_file.name, filename.c_str());
 							strcpy(dropped_file.extension, filepath.extension().string().c_str());
 
 							app.state.dropped_general_files.push_back(dropped_file);
