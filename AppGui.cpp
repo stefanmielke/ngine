@@ -287,24 +287,11 @@ void AppGui::RenderContentBrowser(App &app) {
 					ImGui::EndTabItem();
 				}
 				if (ImGui::BeginTabItem("Sounds")) {
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-						ImGui::OpenPopup("PopupSoundsBrowser");
-					}
-
-					if (ImGui::BeginPopup("PopupSoundsBrowser")) {
-						if (ImGui::Selectable("Refresh")) {
-							app.project.ReloadSounds();
-						}
-						ImGui::EndPopup();
-					}
-
-					int cur_i = 0;
 					if (ImGui::BeginPopup("PopupSoundsBrowserSound")) {
 						if (ImGui::Selectable("Edit Settings")) {
 							if (app.state.selected_sound) {
 								app.state.sound_editing = app.state.selected_sound;
 								app.state.reload_sound_edit = true;
-								app.state.selected_sound = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
@@ -320,7 +307,6 @@ void AppGui::RenderContentBrowser(App &app) {
 									(*app.state.selected_sound)->name +
 									(*app.state.selected_sound)->GetLibdragonExtension());
 								ImGui::SetClipboardText(dfs_path.c_str());
-								app.state.selected_sound = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
@@ -366,11 +352,27 @@ void AppGui::RenderContentBrowser(App &app) {
 						ImGui::Separator();
 					}
 
+					int cur_i = 0;
 					for (auto &sound : app.project.sounds) {
-						if (ImGui::Selectable(sound->name.c_str())) {
+						bool selected = app.state.selected_sound &&
+										sound->name == (*app.state.selected_sound)->name;
+						if (ImGui::Selectable(sound->name.c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.selected_sound = &sound;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.sound_editing = app.state.selected_sound;
+							app.state.reload_sound_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 							app.state.selected_sound = &sound;
 							ImGui::OpenPopup("PopupSoundsBrowserSound");
 						}
+
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
 							ImGui::Text("%s", sound->GetTooltip().c_str());
@@ -381,17 +383,6 @@ void AppGui::RenderContentBrowser(App &app) {
 					ImGui::EndTabItem();
 				}
 				if (ImGui::BeginTabItem("Other Content")) {
-					//					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					//						ImGui::OpenPopup("PopupContentsBrowser");
-					//					}
-
-					//					if (ImGui::BeginPopup("PopupContentsBrowser")) {
-					//						if (ImGui::Selectable("Refresh")) {
-					//							app.project.ReloadGeneralFiles();
-					//						}
-					//						ImGui::EndPopup();
-					//					}
-
 					int cur_i = 0;
 					if (ImGui::BeginPopup("PopupContentsBrowserContent")) {
 						if (ImGui::Selectable("Edit Settings")) {
@@ -495,17 +486,6 @@ void AppGui::RenderContentBrowser(App &app) {
 						}
 					}
 					ImGui::Separator();
-
-					//					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					//						ImGui::OpenPopup("PopupScriptsBrowser");
-					//					}
-
-					if (ImGui::BeginPopup("PopupScriptsBrowser")) {
-						if (ImGui::Selectable("Refresh")) {
-							app.project.ReloadScripts(&app);
-						}
-						ImGui::EndPopup();
-					}
 
 					if (ImGui::BeginPopup("PopupScriptsBrowserScript")) {
 						if (ImGui::Selectable("Edit")) {
@@ -948,10 +928,10 @@ void AppGui::RenderSettingsWindow(App &app) {
 							std::string name_string(edit_name);
 							name_string.append((*app.state.general_file_editing)->file_type);
 
-							auto find_by_name = [&name_string](
-													const std::unique_ptr<LibdragonFile> &i) {
-								return i->GetFilename() == name_string;
-							};
+							auto find_by_name =
+								[&name_string](const std::unique_ptr<LibdragonFile> &i) {
+									return i->GetFilename() == name_string;
+								};
 							if (std::find_if(app.project.general_files.begin(),
 											 app.project.general_files.end(),
 											 find_by_name) != std::end(app.project.general_files)) {
