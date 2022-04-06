@@ -188,29 +188,16 @@ void AppGui::RenderContentBrowser(App &app) {
 			if (ImGui::BeginTabBar("CenterContentTabs",
 								   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 				if (ImGui::BeginTabItem("Sprites")) {
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-						ImGui::OpenPopup("PopupSpritesBrowser");
-					}
-
-					if (ImGui::BeginPopup("PopupSpritesBrowser")) {
-						if (ImGui::Selectable("Refresh")) {
-							app.project.ReloadImages(app.renderer);
-						}
-						ImGui::EndPopup();
-					}
-
 					const int item_size = 100;
 					int items_per_line = std::floor(ImGui::GetWindowWidth() / (float)item_size);
 					if (items_per_line < 1)
 						items_per_line = 1;
 
-					int cur_i = 0;
 					if (ImGui::BeginPopup("PopupSpritesBrowserImage")) {
 						if (ImGui::Selectable("Edit Settings")) {
 							if (app.state.selected_image) {
 								app.state.image_editing = app.state.selected_image;
 								app.state.reload_image_edit = true;
-								app.state.selected_image = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
@@ -218,7 +205,6 @@ void AppGui::RenderContentBrowser(App &app) {
 								std::string dfs_path((*app.state.selected_image)->dfs_folder +
 													 (*app.state.selected_image)->name + ".sprite");
 								ImGui::SetClipboardText(dfs_path.c_str());
-								app.state.selected_image = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
@@ -262,19 +248,28 @@ void AppGui::RenderContentBrowser(App &app) {
 						ImGui::Separator();
 					}
 
+					int cur_i = 0;
 					for (auto &image : app.project.images) {
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)image->loaded_image,
 											   ImVec2(item_size, item_size))) {
 							app.state.selected_image = &image;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.image_editing = app.state.selected_image;
+							app.state.reload_image_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.selected_image = &image;
 							ImGui::OpenPopup("PopupSpritesBrowserImage");
 						}
+
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
-							ImGui::Text(
-								"%s\nPath: %s\nDFS Path: %s%s.sprite\nSize: %dx%d\nSlices: %dx%d\n",
-								image->name.c_str(), image->image_path.c_str(),
-								image->dfs_folder.c_str(), image->name.c_str(), image->width,
-								image->height, image->h_slices, image->v_slices);
+							ImGui::Text("%s", image->GetTooltip().c_str());
 							ImGui::Image((ImTextureID)(intptr_t)image->loaded_image,
 										 ImVec2((float)image->width, (float)image->height));
 							ImGui::EndTooltip();

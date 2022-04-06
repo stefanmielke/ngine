@@ -84,3 +84,12 @@ void LibdragonImage::LoadImage(const std::string &project_directory, SDL_Rendere
 	display_width = w;
 	display_height = h;
 }
+
+std::string LibdragonImage::GetTooltip() const {
+	std::stringstream tooltip;
+	tooltip << name << "\nPath: " << image_path << "\nDFS_Path: " << dfs_folder << name
+			<< ".sprite\nSize: " << width << "x" << height << "\nSlices: " << h_slices << "x"
+			<< v_slices << "\n";
+
+	return tooltip.str();
+}

@@ -34,11 +34,6 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Double click to edit assets, right click for more options
-    [x] Scripts
-    [x] General
-    [ ] Sprites
-    [ ] Sounds
 [ ] Add refresh button back to content windows
 [ ] Order assets by name
 [ ] Add makefile that is included that can be used to run custom mk commands
@@ -109,6 +104,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Double click to edit assets, right click for more options
 [x] Remove 'Global Script' when the referenced script is deleted.
 [x] Script preview; Keep script selection after clicking.
 [x] Removing unused tabs when no project is open; Reorder "Content" and "Scripts" tabs; Rename "Content" tab to "Other Content"
