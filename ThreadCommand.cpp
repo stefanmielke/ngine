@@ -73,6 +73,8 @@ static void command_thread(const char *command) {
 				command_queue.pop();
 			}
 		}
+
+		is_running_command = false;
 	}
 
 }
