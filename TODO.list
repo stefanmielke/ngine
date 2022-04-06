@@ -34,7 +34,6 @@ To Do:
         - Script use
 
 1.3.0:
-[ ] Rename scripts
 [ ] Save project settings when saving project
 [ ] Improve UI
     [x] Change font
@@ -94,6 +93,9 @@ Future:
     [ ] PIF Dump
 
 Done:
+- 1.3.0:
+[x] Rename scripts
+
 - 1.2.0:
 [x] During build, do not start a new command if the previous failed
 [x] Improve project creation error handling

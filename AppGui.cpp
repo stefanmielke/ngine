@@ -504,6 +504,12 @@ void AppGui::RenderContentBrowser(App &app) {
 								CodeEditor::OpenPath(&app, path);
 							}
 						}
+						if (ImGui::Selectable("Edit Settings")) {
+							if (app.state.selected_script) {
+								app.state.script_editing = app.state.selected_script;
+								app.state.reload_script_edit = true;
+							}
+						}
 						if (ImGui::Selectable("Delete")) {
 							if (app.state.selected_script) {
 								(*app.state.selected_script)->DeleteFromDisk(&app);
@@ -986,6 +992,51 @@ void AppGui::RenderSettingsWindow(App &app) {
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
 						app.state.general_file_editing = nullptr;
+					}
+
+					ImGui::EndTabItem();
+				}
+			}
+			if (app.state.script_editing) {
+				static char edit_name[50];
+
+				if (app.state.reload_script_edit) {
+					app.state.reload_script_edit = false;
+
+					strcpy(edit_name, (*app.state.script_editing)->name.c_str());
+				}
+				if (ImGui::BeginTabItem("Script Settings")) {
+					ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+
+					ImGui::Separator();
+					ImGui::Spacing();
+					if (ImGui::Button("Save")) {
+						if ((*app.state.script_editing)->name != edit_name) {
+							std::string name_string(edit_name);
+
+							auto find_by_name =
+								[&name_string](const std::unique_ptr<LibdragonScript> &i) {
+									return i->name == name_string;
+								};
+							if (std::find_if(app.project.script_files.begin(),
+											 app.project.script_files.end(),
+											 find_by_name) != std::end(app.project.script_files)) {
+								console.AddLog(
+									"Script with the name already exists. Please choose a "
+									"different name.");
+							} else {
+								(*app.state.script_editing)->RenameAs(&app, name_string);
+
+								std::sort(app.project.script_files.begin(),
+										  app.project.script_files.end(),
+										  libdragon_script_comparison);
+							}
+						}
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel")) {
+						app.state.script_editing = nullptr;
 					}
 
 					ImGui::EndTabItem();

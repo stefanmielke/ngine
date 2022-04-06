@@ -27,6 +27,8 @@ class ProjectState {
 	bool reload_general_file_edit;
 
 	std::unique_ptr<LibdragonScript> *selected_script;
+	std::unique_ptr<LibdragonScript> *script_editing;
+	bool reload_script_edit;
 
 	std::vector<DroppedImage> dropped_image_files;
 	std::vector<DroppedSound> dropped_sound_files;
@@ -57,6 +59,8 @@ class ProjectState {
 		  general_file_editing(nullptr),
 		  reload_general_file_edit(false),
 		  selected_script(nullptr),
+		  script_editing(nullptr),
+		  reload_script_edit(false),
 		  emulator_path(),
 		  editor_path(),
 		  libdragon_exe_path(),

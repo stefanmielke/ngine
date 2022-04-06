@@ -20,8 +20,10 @@ class LibdragonScript {
 
 	void LoadText(App *app);
 
+	void SaveToDisk(App *app);
 	void LoadFromDisk(const std::string &filepath);
 	void DeleteFromDisk(App *app) const;
+	void RenameAs(App *app, const std::string &new_name);
 
 	bool operator<(const LibdragonScript &other) const {
 		return (name < other.name);
