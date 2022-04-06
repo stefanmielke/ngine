@@ -31,8 +31,10 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::Separator();
 						ImGui::Spacing();
 
-						ImGui::InputText("Name", image_file->name, 50, ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", image_file->dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
+						ImGui::InputText("Name", image_file->name, 50,
+										 ImGuiInputTextFlags_CharsFileName);
+						ImGui::InputText("DFS Folder", image_file->dfs_folder, 100,
+										 ImGuiInputTextFlags_CharsFilePath);
 						ImGui::InputInt("H Slices", &image_file->h_slices);
 						ImGui::InputInt("V Slices", &image_file->v_slices);
 
@@ -84,6 +86,9 @@ void ImportAssets::RenderImportScreen(App *app) {
 										app->state.dropped_image_files.begin() + (int)i);
 
 									app->project.images.push_back(move(image));
+									std::sort(app->project.images.begin(),
+											  app->project.images.end(),
+											  libdragon_image_comparison);
 									--i;
 								}
 							}
@@ -105,8 +110,10 @@ void ImportAssets::RenderImportScreen(App *app) {
 					DroppedSound *sound_file = &app->state.dropped_sound_files[i];
 					ImGui::PushID(id);
 					if (ImGui::BeginTabItem("Sound")) {
-						ImGui::InputText("Name", sound_file->name, 50, ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", sound_file->dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
+						ImGui::InputText("Name", sound_file->name, 50,
+										 ImGuiInputTextFlags_CharsFileName);
+						ImGui::InputText("DFS Folder", sound_file->dfs_folder, 100,
+										 ImGuiInputTextFlags_CharsFilePath);
 
 						if (sound_file->type == SOUND_WAV) {
 							ImGui::Checkbox("Loop", &sound_file->loop);
@@ -164,6 +171,9 @@ void ImportAssets::RenderImportScreen(App *app) {
 										app->state.dropped_sound_files.begin() + (int)i);
 
 									app->project.sounds.push_back(move(sound));
+									std::sort(app->project.sounds.begin(),
+											  app->project.sounds.end(),
+											  libdragon_sound_comparison);
 									--i;
 								}
 							}
@@ -189,8 +199,10 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Type", general_file->extension, 50);
 						ImGui::EndDisabled();
 
-						ImGui::InputText("Name", general_file->name, 50, ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", general_file->dfs_folder, 100, ImGuiInputTextFlags_CharsFilePath);
+						ImGui::InputText("Name", general_file->name, 50,
+										 ImGuiInputTextFlags_CharsFileName);
+						ImGui::InputText("DFS Folder", general_file->dfs_folder, 100,
+										 ImGuiInputTextFlags_CharsFilePath);
 						ImGui::Checkbox("Copy to Filesystem", &general_file->copy_to_filesystem);
 
 						ImGui::Separator();
@@ -235,6 +247,9 @@ void ImportAssets::RenderImportScreen(App *app) {
 										app->state.dropped_general_files.begin() + (int)i);
 
 									app->project.general_files.push_back(move(file));
+									std::sort(app->project.general_files.begin(),
+											  app->project.general_files.end(),
+											  libdragon_file_comparison);
 
 									--i;
 								}

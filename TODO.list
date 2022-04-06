@@ -34,10 +34,9 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Order assets by name
 [ ] Add makefile that is included that can be used to run custom mk commands
-[ ] During build, do not start a new command if the previous failed
 [ ] Replace ' ' to '_' when importing content.
+[ ] During build, do not start a new command if the previous failed
 [ ] Improve project creation error handling
     - Libdragon init might fail
     - Installing libdragon-extensions might fail
@@ -103,6 +102,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Order assets by name
 [x] Add reload content button on content windows
 [x] Double click to edit assets, right click for more options
 [x] Remove 'Global Script' when the referenced script is deleted.
