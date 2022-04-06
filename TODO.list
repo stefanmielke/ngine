@@ -36,13 +36,14 @@ To Do:
 1.2.0:
 [ ] Double click to edit assets, right click for more options
     [x] Scripts
-    [ ] General
+    [x] General
     [ ] Sprites
     [ ] Sounds
 [ ] Add refresh button back to content windows
 [ ] Order assets by name
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] During build, do not start a new command if the previous failed
+[ ] Replace ' ' to '_' when importing content.
 [ ] Improve project creation error handling
     - Libdragon init might fail
     - Installing libdragon-extensions might fail

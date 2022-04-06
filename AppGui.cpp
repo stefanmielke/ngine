@@ -381,16 +381,16 @@ void AppGui::RenderContentBrowser(App &app) {
 					ImGui::EndTabItem();
 				}
 				if (ImGui::BeginTabItem("Other Content")) {
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-						ImGui::OpenPopup("PopupContentsBrowser");
-					}
+					//					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+					//						ImGui::OpenPopup("PopupContentsBrowser");
+					//					}
 
-					if (ImGui::BeginPopup("PopupContentsBrowser")) {
-						if (ImGui::Selectable("Refresh")) {
-							app.project.ReloadGeneralFiles();
-						}
-						ImGui::EndPopup();
-					}
+					//					if (ImGui::BeginPopup("PopupContentsBrowser")) {
+					//						if (ImGui::Selectable("Refresh")) {
+					//							app.project.ReloadGeneralFiles();
+					//						}
+					//						ImGui::EndPopup();
+					//					}
 
 					int cur_i = 0;
 					if (ImGui::BeginPopup("PopupContentsBrowserContent")) {
@@ -398,18 +398,15 @@ void AppGui::RenderContentBrowser(App &app) {
 							if (app.state.selected_general_file) {
 								app.state.general_file_editing = app.state.selected_general_file;
 								app.state.reload_general_file_edit = true;
-								app.state.selected_general_file = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Copy DFS Path")) {
 							if (app.state.selected_general_file) {
 								std::string dfs_path;
 								dfs_path.append((*app.state.selected_general_file)->dfs_folder +
-												(*app.state.selected_general_file)->name +
-												(*app.state.selected_general_file)->file_type);
+												(*app.state.selected_general_file)->GetFilename());
 
 								ImGui::SetClipboardText(dfs_path.c_str());
-								app.state.selected_general_file = nullptr;
 							}
 						}
 						if (ImGui::Selectable("Delete")) {
@@ -419,10 +416,8 @@ void AppGui::RenderContentBrowser(App &app) {
 										app.project.project_settings.project_directory);
 
 								for (size_t i = 0; i < app.project.general_files.size(); ++i) {
-									if (app.project.general_files[i]->name ==
-											(*app.state.selected_general_file)->name &&
-										app.project.general_files[i]->file_type ==
-											(*app.state.selected_general_file)->file_type) {
+									if (app.project.general_files[i]->GetFilename() ==
+										(*app.state.selected_general_file)->GetFilename()) {
 										app.project.general_files.erase(
 											app.project.general_files.begin() + (int)i);
 
@@ -446,11 +441,27 @@ void AppGui::RenderContentBrowser(App &app) {
 					}
 
 					for (auto &general_file : app.project.general_files) {
-						std::string name = general_file->name + general_file->file_type;
-						if (ImGui::Selectable(name.c_str())) {
+						std::string name = general_file->GetFilename();
+
+						bool selected = app.state.selected_general_file &&
+										name == (*app.state.selected_general_file)->GetFilename();
+						if (ImGui::Selectable(name.c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.selected_general_file = &general_file;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.general_file_editing = &general_file;
+							app.state.reload_general_file_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 							app.state.selected_general_file = &general_file;
 							ImGui::OpenPopup("PopupContentsBrowserContent");
 						}
+
 						if (ImGui::IsItemHovered()) {
 							ImGui::BeginTooltip();
 							ImGui::Text("%s", general_file->GetTooltip().c_str());
@@ -524,7 +535,7 @@ void AppGui::RenderContentBrowser(App &app) {
 						bool selected = app.state.selected_script &&
 										script->name == (*app.state.selected_script)->name;
 						if (ImGui::Selectable(script->name.c_str(), selected,
-										  ImGuiSelectableFlags_AllowDoubleClick)){
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
 							app.state.selected_script = &script;
 						}
 
@@ -935,12 +946,11 @@ void AppGui::RenderSettingsWindow(App &app) {
 						bool will_save = true;
 						if ((*app.state.general_file_editing)->name != edit_name) {
 							std::string name_string(edit_name);
-							std::string file_type_string(
-								(*app.state.general_file_editing)->file_type);
+							name_string.append((*app.state.general_file_editing)->file_type);
 
-							auto find_by_name = [&name_string, &file_type_string](
+							auto find_by_name = [&name_string](
 													const std::unique_ptr<LibdragonFile> &i) {
-								return i->name == name_string && i->file_type == file_type_string;
+								return i->GetFilename() == name_string;
 							};
 							if (std::find_if(app.project.general_files.begin(),
 											 app.project.general_files.end(),
@@ -954,7 +964,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 									app.project.project_settings.project_directory + "/" +
 										(*app.state.general_file_editing)->file_path,
 									app.project.project_settings.project_directory +
-										"/assets/general/" + edit_name + file_type_string);
+										"/assets/general/" + name_string);
 								(*app.state.general_file_editing)
 									->DeleteFromDisk(
 										app.project.project_settings.project_directory);
@@ -968,8 +978,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 								->copy_to_filesystem = edit_copy_to_filesystem;
 							(*app.state.general_file_editing)
 								->file_path = "assets/general/" +
-											  (*app.state.general_file_editing)->name +
-											  (*app.state.general_file_editing)->file_type;
+											  (*app.state.general_file_editing)->GetFilename();
 
 							(*app.state.general_file_editing)
 								->SaveToDisk(app.project.project_settings.project_directory);

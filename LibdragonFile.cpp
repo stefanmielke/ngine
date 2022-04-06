@@ -20,7 +20,7 @@ void LibdragonFile::SaveToDisk(const std::string &project_directory) {
 	if (!std::filesystem::exists(directory))
 		std::filesystem::create_directories(directory);
 
-	std::string filepath = directory + name + file_type + ".general.json";
+	std::string filepath = directory + GetFilename() + ".general.json";
 
 	std::ofstream filestream(filepath);
 	filestream << json.dump(4) << std::endl;
@@ -42,7 +42,7 @@ void LibdragonFile::LoadFromDisk(const std::string &filepath) {
 }
 
 void LibdragonFile::DeleteFromDisk(const std::string &project_directory) const {
-	std::string json_filepath = project_directory + "/.ngine/general/" + name + file_type +
+	std::string json_filepath = project_directory + "/.ngine/general/" + GetFilename() +
 								".general.json";
 	std::filesystem::remove(json_filepath);
 
@@ -50,10 +50,15 @@ void LibdragonFile::DeleteFromDisk(const std::string &project_directory) const {
 	std::filesystem::remove(filepath);
 }
 
+std::string LibdragonFile::GetFilename() const {
+	return name + file_type;
+}
+
 std::string LibdragonFile::GetTooltip() const {
 	std::stringstream tooltip;
-	tooltip << name << file_type << "\nPath: " << file_path << "\nDFS_Path: " << dfs_folder << name
-			<< file_type << "\nCopy to Filesystem: " << (copy_to_filesystem ? "yes" : "no") << "\n";
+	tooltip << GetFilename() << "\nPath: " << file_path << "\nDFS_Path: " << dfs_folder
+			<< GetFilename() << "\nCopy to Filesystem: " << (copy_to_filesystem ? "yes" : "no")
+			<< "\n";
 
 	return tooltip.str();
 }
