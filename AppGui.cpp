@@ -776,7 +776,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 										(float)(*app.state.image_editing)->display_height * 2.f));
 					ImGui::Separator();
 					ImGui::Spacing();
-					ImGui::InputText("Name", image_edit_name, 50);
+					ImGui::InputText("Name", image_edit_name, 50,
+									 ImGuiInputTextFlags_CharsFilePath);
 					ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
 									 ImGuiInputTextFlags_CharsFilePath);
 					ImGui::InputInt("H Slices", &image_edit_h_slices);
@@ -824,6 +825,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 								->SaveToDisk(app.project.project_settings.project_directory);
 
 							app.state.image_editing = nullptr;
+							std::sort(app.project.images.begin(), app.project.images.end(),
+									  libdragon_image_comparison);
 						}
 					}
 
@@ -900,6 +903,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 								->SaveToDisk(app.project.project_settings.project_directory);
 
 							app.state.sound_editing = nullptr;
+							std::sort(app.project.sounds.begin(), app.project.sounds.end(),
+									  libdragon_sound_comparison);
 						}
 					}
 
@@ -973,6 +978,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 								->SaveToDisk(app.project.project_settings.project_directory);
 
 							app.state.general_file_editing = nullptr;
+							std::sort(app.project.general_files.begin(),
+									  app.project.general_files.end(), libdragon_file_comparison);
 						}
 					}
 
