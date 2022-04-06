@@ -109,7 +109,7 @@ void AppGui::RenderMenuBar(App &app) {
 		}
 		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Help")) {
-			ImGui::MenuItem("Version 1.2.0-pre", nullptr, false, false);
+			ImGui::MenuItem("Version 1.2.0", nullptr, false, false);
 			ImGui::Separator();
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
 			ImGui::Separator();
