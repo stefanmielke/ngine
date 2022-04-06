@@ -68,11 +68,13 @@ static void command_thread(const char *command) {
 		if (!command_queue.empty()) {
 			console.AddLog("# Command failed. Stopping further commands.");
 
-			// on failyre stop all other queued commands
+			// on failure stop all other queued commands
 			while (!command_queue.empty()) {
 				command_queue.pop();
 			}
 		}
+
+		is_running_command = false;
 	}
 
 }
