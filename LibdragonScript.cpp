@@ -34,3 +34,8 @@ void LibdragonScript::LoadFromDisk(const std::string &filepath) {
 void LibdragonScript::DeleteFromDisk(App *app) const {
 	ScriptBuilder::DeleteScriptFile(app, name.c_str());
 }
+
+bool libdragon_script_comparison(const std::unique_ptr<LibdragonScript> &s1,
+								 const std::unique_ptr<LibdragonScript> &s2) {
+	return (*s1) < (*s2);
+}

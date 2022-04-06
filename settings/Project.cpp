@@ -132,6 +132,7 @@ void Project::ReloadScripts(App *app) {
 			}
 		}
 	}
+	std::sort(script_files.begin(), script_files.end(), libdragon_script_comparison);
 }
 
 void Project::ReloadSounds() {
