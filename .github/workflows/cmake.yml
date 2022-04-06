@@ -18,13 +18,13 @@ jobs:
       matrix:
         config:
           - {
-            name: "Windows Latest", artifact: "Windows.7z",
+            name: "Windows Latest", artifact: "Windows",
             os: windows-latest,
             cc: "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-gcc.exe",
             cxx: "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-g++.exe"
           }
           - {
-            name: "Ubuntu Latest GCC", artifact: "Linux.7z",
+            name: "Ubuntu Latest GCC", artifact: "Linux",
             os: ubuntu-latest,
             cc: "gcc", cxx: "g++"
           }
