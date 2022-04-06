@@ -228,6 +228,10 @@ void AppGui::RenderContentBrowser(App &app) {
 					}
 
 					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+					ImGui::SameLine();
+					if (ImGui::Button("Refresh Assets")) {
+						app.project.ReloadImages(app.renderer);
+					}
 					ImGui::Separator();
 
 					if (!app.project.project_settings.modules.dfs) {
@@ -325,6 +329,10 @@ void AppGui::RenderContentBrowser(App &app) {
 					}
 
 					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+					ImGui::SameLine();
+					if (ImGui::Button("Refresh Assets")) {
+						app.project.ReloadSounds();
+					}
 					ImGui::Separator();
 
 					if (!app.project.project_settings.modules.dfs) {
@@ -417,6 +425,10 @@ void AppGui::RenderContentBrowser(App &app) {
 					}
 
 					ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+					ImGui::SameLine();
+					if (ImGui::Button("Refresh Assets")) {
+						app.project.ReloadGeneralFiles();
+					}
 					ImGui::Separator();
 
 					if (!app.project.project_settings.modules.dfs) {
@@ -479,6 +491,9 @@ void AppGui::RenderContentBrowser(App &app) {
 								app.project.ReloadScripts(&app);
 							}
 						}
+					}
+					if (ImGui::Button("Reload Scripts")) {
+						app.project.ReloadScripts(&app);
 					}
 					ImGui::Separator();
 

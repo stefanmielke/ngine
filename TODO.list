@@ -34,7 +34,6 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Add refresh button back to content windows
 [ ] Order assets by name
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] During build, do not start a new command if the previous failed
@@ -104,6 +103,7 @@ Future:
 
 Done:
 - 1.2.0:
+[x] Add reload content button on content windows
 [x] Double click to edit assets, right click for more options
 [x] Remove 'Global Script' when the referenced script is deleted.
 [x] Script preview; Keep script selection after clicking.
