@@ -34,10 +34,11 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] Update README
 [ ] Update Wiki
 
 1.3.0:
+[ ] Remove '7z' on build assets
+[ ] Rename scripts
 [ ] Save project settings when saving project
 [ ] Improve UI
     [x] Change font
@@ -58,6 +59,7 @@ To Do:
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
+    - https://docs.unrealengine.com/5.0/en-US/content-browser-interface-in-unreal-engine/
 [ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)
