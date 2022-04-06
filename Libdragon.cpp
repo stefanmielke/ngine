@@ -7,10 +7,10 @@ void Libdragon::Init(const std::string &folder, const std::string &libdragon_exe
 	snprintf(command, 500, "%s init", libdragon_exe_folder.c_str());
 	ThreadCommand::QueueCommand(command);
 }
-void Libdragon::InitSync(const std::string &folder, const std::string &libdragon_exe_folder) {
+bool Libdragon::InitSync(const std::string &folder, const std::string &libdragon_exe_folder) {
 	char command[500];
 	snprintf(command, 500, "%s init", libdragon_exe_folder.c_str());
-	ThreadCommand::RunCommand(command);
+	return ThreadCommand::RunCommand(command) == EXIT_SUCCESS;
 }
 
 void Libdragon::Build(const std::string &folder, const std::string &libdragon_exe_folder) {

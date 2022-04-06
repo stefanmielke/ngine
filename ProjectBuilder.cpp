@@ -24,7 +24,10 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Running 'libdragon init' at '%s'...", project_folder.c_str());
 
-	Libdragon::InitSync(project_folder, app->engine_settings.GetLibdragonExeLocation());
+	if (!Libdragon::InitSync(project_folder, app->engine_settings.GetLibdragonExeLocation())) {
+		console.AddLog("[error] Failed to initialize libdragon.");
+		return;
+	}
 
 	console.AddLog("Libdragon initialized.");
 
@@ -44,9 +47,15 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Adding libdragon-extensions...");
 
-	ThreadCommand::RunCommand(
+	const char *lib_ext_submodule_cmd =
 		"git submodule add https://github.com/stefanmielke/libdragon-extensions.git "
-		"libs/libdragon-extensions");
+		"libs/libdragon-extensions";
+	if (ThreadCommand::RunCommand(lib_ext_submodule_cmd) != EXIT_SUCCESS) {
+		console.AddLog(
+			"[error] Error adding libdragon-extensions. Please use the command below to add it "
+			"manually.\n%s",
+			lib_ext_submodule_cmd);
+	}
 
 	console.AddLog("Creating project settings file...");
 

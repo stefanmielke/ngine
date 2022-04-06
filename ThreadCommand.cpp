@@ -53,17 +53,28 @@ static void run_next_command();
 
 static void command_thread(const char *command) {
 	int result = exec(command);
+	bool success = result == EXIT_SUCCESS;
 
-	if (command_queue.empty()) {
-		is_running_command = false;
+	if (success) {
+		console.AddLog("Finished successfully.");
+
+		if (command_queue.empty()) {
+			is_running_command = false;
+		} else {
+			run_next_command();
+		}
 	} else {
-		run_next_command();
+		console.AddLog("[error] Process returned %d.", result);
+		if (!command_queue.empty()) {
+			console.AddLog("# Command failed. Stopping further commands.");
+
+			// on failyre stop all other queued commands
+			while (!command_queue.empty()) {
+				command_queue.pop();
+			}
+		}
 	}
 
-	if (result == EXIT_SUCCESS)
-		console.AddLog("Finished successfully.");
-	else
-		console.AddLog("[error] Process returned %d.", result);
 }
 
 static void run_next_command() {
@@ -82,15 +93,15 @@ void ThreadCommand::QueueCommand(std::string command) {
 	run_next_command();
 }
 
-static void run_command_detached(std::string command) {
+static int run_command(std::string command) {
 	console.AddLog("Running %s", command.c_str());
 
-	exec(command);
+	return exec(command);
 }
 
-void ThreadCommand::RunCommand(std::string command) {
-	run_command_detached(std::move(command));
+int ThreadCommand::RunCommand(std::string command) {
+	return run_command(std::move(command));
 }
 void ThreadCommand::RunCommandDetached(std::string command) {
-	std::thread(run_command_detached, command).detach();
+	std::thread(run_command, command).detach();
 }

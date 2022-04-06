@@ -776,8 +776,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 										(float)(*app.state.image_editing)->display_height * 2.f));
 					ImGui::Separator();
 					ImGui::Spacing();
-					ImGui::InputText("Name", image_edit_name, 50,
-									 ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("Name", image_edit_name, 50);
 					ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
 									 ImGuiInputTextFlags_CharsFilePath);
 					ImGui::InputInt("H Slices", &image_edit_h_slices);

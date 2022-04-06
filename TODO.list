@@ -34,10 +34,7 @@ To Do:
         - Script use
 
 1.2.0:
-[ ] During build, do not start a new command if the previous failed
-[ ] Improve project creation error handling
-    - Libdragon init might fail
-    - Installing libdragon-extensions might fail
+[ ] Reorder assets after editing
 [ ] Update README
 [ ] Update Wiki
 
@@ -101,6 +98,10 @@ Future:
 
 Done:
 - 1.2.0:
+[x] During build, do not start a new command if the previous failed
+[x] Improve project creation error handling
+    - Libdragon init might fail
+    - Installing libdragon-extensions might fail
 [x] Replace ' ' to '_' when importing content.
 [x] Order assets by name
 [x] Add reload content button on content windows
