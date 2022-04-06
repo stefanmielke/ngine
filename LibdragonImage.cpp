@@ -93,3 +93,8 @@ std::string LibdragonImage::GetTooltip() const {
 
 	return tooltip.str();
 }
+
+bool libdragon_image_comparison(const std::unique_ptr<LibdragonImage> &i1,
+								const std::unique_ptr<LibdragonImage> &i2) {
+	return (*i1) < (*i2);
+}

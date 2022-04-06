@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 enum LibdragonSoundType {
@@ -32,4 +33,11 @@ class LibdragonSound {
 	[[nodiscard]] std::string GetLibdragonGenFlags() const;
 	[[nodiscard]] std::string GetLibdragonExtension() const;
 	[[nodiscard]] std::string GetExtension() const;
+
+	bool operator<(const LibdragonSound &other) const {
+		return (name < other.name);
+	}
 };
+
+bool libdragon_sound_comparison(const std::unique_ptr<LibdragonSound> &s1,
+								const std::unique_ptr<LibdragonSound> &s2);

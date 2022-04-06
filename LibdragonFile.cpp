@@ -62,3 +62,8 @@ std::string LibdragonFile::GetTooltip() const {
 
 	return tooltip.str();
 }
+
+bool libdragon_file_comparison(const std::unique_ptr<LibdragonFile> &f1,
+							   const std::unique_ptr<LibdragonFile> &f2) {
+	return (*f1) < (*f2);
+}

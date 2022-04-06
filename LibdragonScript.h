@@ -23,10 +23,6 @@ class LibdragonScript {
 	void LoadFromDisk(const std::string &filepath);
 	void DeleteFromDisk(App *app) const;
 
-	bool operator()(const LibdragonScript &i, const LibdragonScript &j) {
-		return (i.name < j.name);
-	}
-
 	bool operator<(const LibdragonScript &other) const {
 		return (name < other.name);
 	}

@@ -235,6 +235,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 										app->state.dropped_general_files.begin() + (int)i);
 
 									app->project.general_files.push_back(move(file));
+
 									--i;
 								}
 							}

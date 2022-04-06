@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 class LibdragonFile {
@@ -18,4 +19,11 @@ class LibdragonFile {
 
 	[[nodiscard]] std::string GetFilename() const;
 	[[nodiscard]] std::string GetTooltip() const;
+
+	bool operator<(const LibdragonFile &other) const {
+		return (name < other.name);
+	}
 };
+
+bool libdragon_file_comparison(const std::unique_ptr<LibdragonFile> &f1,
+							   const std::unique_ptr<LibdragonFile> &f2);

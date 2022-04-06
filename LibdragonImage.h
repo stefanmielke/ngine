@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <SDL2/SDL_image.h>
 
@@ -28,4 +29,11 @@ class LibdragonImage {
 	void DeleteFromDisk(const std::string &project_directory) const;
 
 	[[nodiscard]] std::string GetTooltip() const;
+
+	bool operator<(const LibdragonImage &other) const {
+		return (name < other.name);
+	}
 };
+
+bool libdragon_image_comparison(const std::unique_ptr<LibdragonImage> &i1,
+								const std::unique_ptr<LibdragonImage> &i2);
