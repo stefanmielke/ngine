@@ -52,6 +52,8 @@ Refer to this project's [wiki](https://github.com/stefanmielke/ngine/wiki) for m
 
 ### Overview Video
 
+> Version 1.0
+
 [![Watch the video](https://img.youtube.com/vi/jswC7u4MbQ0/default.jpg)](https://youtu.be/jswC7u4MbQ0)
 
 ### Building
