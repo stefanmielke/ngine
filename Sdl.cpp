@@ -13,7 +13,7 @@
 void Sdl::Init(App *app) {
 	int rendererFlags, windowFlags;
 
-	rendererFlags = SDL_RENDERER_ACCELERATED;
+	rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 	windowFlags = SDL_WINDOW_RESIZABLE;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
