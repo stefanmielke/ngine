@@ -99,4 +99,6 @@ jobs:
             ${{github.workspace}}/build/ngine
             ${{github.workspace}}/build/ngine.exe
             ${{github.workspace}}/build/montserrat.ttf
+            ${{github.workspace}}/build/sheet.png
+            ${{github.workspace}}/build/sheet.json
             ${{github.workspace}}/build/*.dll

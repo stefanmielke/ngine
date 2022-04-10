@@ -37,17 +37,15 @@ To Do:
 [ ] Save project settings when saving project
 [ ] Improve UI
     [x] Change font
-    [ ] Add sprites
-        - Save
-        - Build
-        - Tasks
-        - Open in Editor
-        - Run
-        - Help
+    [x] Add sprites
+        * Save
+        * Build
+        * Open in Editor
+        * Run
     [ ] Icon
     [ ] Custom themes
     [ ] More distinct color on selected tab
-    [ ] Better buttons
+    [x] Better buttons
         - Rounded
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Set DFS location
@@ -57,6 +55,7 @@ To Do:
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
+    - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
 [ ] Scene nodes
 [ ] Import sprite fonts

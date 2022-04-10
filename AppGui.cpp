@@ -63,25 +63,7 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			ImGui::EndMenu();
 		}
-		if (ImGui::MenuItem("Save All", nullptr, false, app.project.project_settings.IsOpen())) {
-			console.AddLog("Saving Project...");
-
-			app.project.SaveToDisk(app.project.project_settings.project_directory);
-			app.project.project_settings.SaveToDisk();
-
-			console.AddLog("Project saved.");
-		}
-		if (ImGui::MenuItem("Build", nullptr, false, app.project.project_settings.IsOpen())) {
-			console.AddLog("Building Project...");
-
-			ProjectBuilder::Build(&app);
-		}
 		if (ImGui::BeginMenu("Tasks", app.project.project_settings.IsOpen())) {
-			if (ImGui::MenuItem("Clean/Build")) {
-				console.AddLog("Rebuilding Project...");
-
-				ProjectBuilder::Rebuild(&app);
-			}
 			if (ImGui::MenuItem("Regen Static Files")) {
 				console.AddLog("Regenerating static files...");
 
@@ -90,17 +72,6 @@ void AppGui::RenderMenuBar(App &app) {
 				console.AddLog("Files regenerated.");
 			}
 			ImGui::EndMenu();
-		}
-		if (ImGui::MenuItem("Open in Editor", nullptr, false,
-							app.project.project_settings.IsOpen())) {
-			console.AddLog("Opening project in Editor...");
-
-			CodeEditor::OpenPath(&app, app.project.project_settings.project_directory);
-		}
-		if (ImGui::MenuItem("Run", nullptr, false,
-							app.project.project_settings.IsOpen() &&
-								!app.engine_settings.GetEmulatorPath().empty())) {
-			Emulator::Run(&app);
 		}
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem("Version 1.3.0-pre", nullptr, false, false);
@@ -565,6 +536,99 @@ void AppGui::RenderSceneWindow(App &app) {
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
 						 ImGuiWindowFlags_NoTitleBar)) {
 		if (app.project.project_settings.IsOpen()) {
+			{
+				ImVec2 button_uv0;
+				ImVec2 button_uv1;
+				const ImVec2 button_size(19, 20);
+
+				ImGui::PushID(0);
+				app.GetImagePosition("Save.png", button_uv0, button_uv1);
+				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
+									   button_uv0, button_uv1, -1)) {
+					console.AddLog("Saving Project...");
+
+					app.project.SaveToDisk(app.project.project_settings.project_directory);
+					app.project.project_settings.SaveToDisk();
+
+					console.AddLog("Project saved.");
+				}
+				ImGui::PopID();
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Save All");
+				}
+
+				ImGui::SameLine();
+				ImGui::PushID(5);
+				app.GetImagePosition("Editor.png", button_uv0, button_uv1);
+				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
+									   button_uv0, button_uv1, -1)) {
+					console.AddLog("Opening project in Editor...");
+
+					CodeEditor::OpenPath(&app, app.project.project_settings.project_directory);
+				}
+				ImGui::PopID();
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Open in Editor");
+				}
+
+				ImGui::SameLine();
+				ImGui::PushID(1);
+				app.GetImagePosition("Build.png", button_uv0, button_uv1);
+				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
+									   button_uv0, button_uv1, -1)) {
+					console.AddLog("Building Project...");
+
+					ProjectBuilder::Build(&app);
+				}
+				ImGui::PopID();
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Build");
+				}
+
+				ImGui::SameLine();
+				ImGui::PushID(3);
+				app.GetImagePosition("Clean_Build.png", button_uv0, button_uv1);
+				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
+									   button_uv0, button_uv1, -1)) {
+					console.AddLog("Rebuilding Project...");
+
+					ProjectBuilder::Rebuild(&app);
+				}
+				ImGui::PopID();
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Clean and Build");
+				}
+
+				ImGui::SameLine();
+				ImGui::PushID(2);
+				app.GetImagePosition("Run.png", button_uv0, button_uv1);
+				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
+									   button_uv0, button_uv1, -1)) {
+					Emulator::Run(&app);
+				}
+				ImGui::PopID();
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Run");
+				}
+
+				ImGui::SameLine();
+				ImGui::PushID(4);
+				app.GetImagePosition("Build_Run.png", button_uv0, button_uv1);
+				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
+									   button_uv0, button_uv1, -1)) {
+					console.AddLog("Building Project...");
+
+					ProjectBuilder::Build(&app);
+					Emulator::Run(&app);
+				}
+				ImGui::PopID();
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Build and Run");
+				}
+
+				ImGui::Separator();
+			}
+
 			if (app.project.project_settings.modules.scene_manager) {
 				if (ImGui::BeginTabBar("#ScenesTabBar", ImGuiTabBarFlags_AutoSelectNewTabs)) {
 					if (ImGui::BeginTabItem("Scenes")) {

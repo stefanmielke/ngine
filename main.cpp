@@ -39,6 +39,8 @@ int main(int argv, char **args) {
 
 	Sdl::Init(&app);
 
+	app.LoadAssets();
+
 	AppGui::ChangeTheme(app, app.engine_settings.GetTheme());
 
 	while (app.is_running) {

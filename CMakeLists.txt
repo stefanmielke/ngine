@@ -43,6 +43,18 @@ add_custom_command(
         ${CMAKE_SOURCE_DIR}/montserrat.ttf
         ${CMAKE_CURRENT_BINARY_DIR}/montserrat.ttf
 )
+add_custom_command(
+        TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/sheet.png
+        ${CMAKE_CURRENT_BINARY_DIR}/sheet.png
+)
+add_custom_command(
+        TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/sheet.json
+        ${CMAKE_CURRENT_BINARY_DIR}/sheet.json
+)
 
 if(WIN32)
     add_custom_command(
