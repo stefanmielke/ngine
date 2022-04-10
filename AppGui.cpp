@@ -63,7 +63,6 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Save All", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Saving Project...");
 
@@ -72,13 +71,11 @@ void AppGui::RenderMenuBar(App &app) {
 
 			console.AddLog("Project saved.");
 		}
-		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Build", nullptr, false, app.project.project_settings.IsOpen())) {
 			console.AddLog("Building Project...");
 
 			ProjectBuilder::Build(&app);
 		}
-		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Tasks", app.project.project_settings.IsOpen())) {
 			if (ImGui::MenuItem("Clean/Build")) {
 				console.AddLog("Rebuilding Project...");
@@ -94,20 +91,17 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Open in Editor", nullptr, false,
 							app.project.project_settings.IsOpen())) {
 			console.AddLog("Opening project in Editor...");
 
 			CodeEditor::OpenPath(&app, app.project.project_settings.project_directory);
 		}
-		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::MenuItem("Run", nullptr, false,
 							app.project.project_settings.IsOpen() &&
 								!app.engine_settings.GetEmulatorPath().empty())) {
 			Emulator::Run(&app);
 		}
-		ImGui::MenuItem("|", nullptr, false, false);
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem("Version 1.3.0-pre", nullptr, false, false);
 			ImGui::Separator();
