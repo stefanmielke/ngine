@@ -14,7 +14,7 @@ set(SOURCES ${SOURCES} static/main.s.cpp static/vscode_c_cpp_properties.cpp stat
 set(SOURCES ${SOURCES} imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/imgui_impl_sdl.cpp imgui/imgui_impl_sdlrenderer.cpp)
 set(SOURCES ${SOURCES} imgui/ImGuiFileDialog/ImGuiFileDialog.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ngine.rc)
 
 target_include_directories(${PROJECT_NAME} PRIVATE imgui)
 
