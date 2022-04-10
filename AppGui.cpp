@@ -1415,6 +1415,9 @@ void AppGui::ChangeTheme(App &app, Theme theme) {
 			ImGui::StyleColorsClassic();
 			break;
 	}
+
+	ImGuiStyle *style = &ImGui::GetStyle();
+	style->FrameRounding = 3.f;
 }
 
 void open_url(const char *url) {
