@@ -307,6 +307,7 @@ namespace ImGui
 
     // Styles
     IMGUI_API void          StyleColorsDark(ImGuiStyle* dst = NULL);    // new, recommended style (default)
+	IMGUI_API void          StyleColorsDarkGray(ImGuiStyle* dst = NULL);    // new style, gray version
     IMGUI_API void          StyleColorsLight(ImGuiStyle* dst = NULL);   // best used with borders and a custom, thicker font
     IMGUI_API void          StyleColorsClassic(ImGuiStyle* dst = NULL); // classic imgui style
 

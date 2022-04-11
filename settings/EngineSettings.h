@@ -6,6 +6,7 @@ enum Theme {
 	THEME_DARK,
 	THEME_LIGHT,
 	THEME_CLASSIC,
+	THEME_DARKGRAY,
 };
 
 class EngineSettings {

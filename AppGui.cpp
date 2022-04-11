@@ -1432,7 +1432,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 				{
 					ImGui::TextUnformatted("Theme");
 					static int selected_theme = (int)app.engine_settings.GetTheme();
-					if (ImGui::Combo("##Theme", &selected_theme, "Dark\0Light\0Classic\0")) {
+					if (ImGui::Combo("##Theme", &selected_theme, "Dark\0Light\0Classic\0Dark Gray\0")) {
 						ChangeTheme(app, (Theme)selected_theme);
 					}
 				}
@@ -1477,6 +1477,9 @@ void AppGui::ChangeTheme(App &app, Theme theme) {
 			break;
 		case THEME_CLASSIC:
 			ImGui::StyleColorsClassic();
+			break;
+		case THEME_DARKGRAY:
+			ImGui::StyleColorsDarkGray();
 			break;
 	}
 

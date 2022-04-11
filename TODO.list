@@ -34,18 +34,6 @@ To Do:
         - Script use
 
 1.3.0:
-[ ] Improve UI
-    [x] Change font
-    [x] Add sprites
-        * Save
-        * Build
-        * Open in Editor
-        * Run
-    [x] Icon (Windows only)
-    [ ] Custom themes
-    [ ] More distinct color on selected tab
-    [x] Better buttons
-        - Rounded
 [ ] Add makefile that is included that can be used to run custom mk commands
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
@@ -56,6 +44,9 @@ To Do:
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
+[ ] Settings window inside the content window
+    - sprites should not have preview
+    - audio preview inside
 [ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)
@@ -103,6 +94,18 @@ Future:
 
 Done:
 - 1.3.0:
+[x] Improve UI
+    [x] Change font
+    [x] Add sprites
+        * Save
+        * Build
+        * Open in Editor
+        * Run
+    [x] Icon (Windows only)
+    [x] Custom themes
+    [x] More distinct color on selected tab
+    [x] Better buttons
+        - Rounded
 [x] Rename scripts
 [x] Reduced deps size on Windows
 [x] Save project settings when saving project
