@@ -34,7 +34,6 @@ To Do:
         - Script use
 
 1.3.0:
-[ ] Save project settings when saving project
 [ ] Improve UI
     [x] Change font
     [x] Add sprites
@@ -42,7 +41,7 @@ To Do:
         * Build
         * Open in Editor
         * Run
-    [ ] Icon
+    [x] Icon (Windows only)
     [ ] Custom themes
     [ ] More distinct color on selected tab
     [x] Better buttons
@@ -105,6 +104,8 @@ Future:
 Done:
 - 1.3.0:
 [x] Rename scripts
+[x] Reduced deps size on Windows
+[x] Save project settings when saving project
 
 - 1.2.0:
 [x] During build, do not start a new command if the previous failed
