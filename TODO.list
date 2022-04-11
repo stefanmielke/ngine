@@ -38,6 +38,7 @@ To Do:
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Audio preview
+[ ] Selectable text on console
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
@@ -106,6 +107,7 @@ Done:
     [x] More distinct color on selected tab
     [x] Better buttons
         - Rounded
+    [x] Border on controls
 [x] Rename scripts
 [x] Reduced deps size on Windows
 [x] Save project settings when saving project
