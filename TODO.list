@@ -38,6 +38,7 @@ To Do:
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Audio preview
+[ ] Add engine version on project file (for updates to formats)
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
@@ -94,6 +95,7 @@ Future:
 
 Done:
 - 1.3.0:
+[x] Fix custom pipeline file not being created when clicking the button
 [x] Copy text on console
 [x] Improve UI
     [x] Change font

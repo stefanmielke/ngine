@@ -1122,9 +1122,15 @@ void AppGui::RenderSettingsWindow(App &app) {
 							{
 								ImGui::TextUnformatted("Custom Content Pipeline");
 								if (ImGui::Button("Edit Custom Content Build Script")) {
-									std::string path_to_script(
+									std::string path_to_pipeline(
 										app.project.project_settings.project_directory +
-										"/.ngine/pipeline/content_pipeline_end.term");
+										"/.ngine/pipeline/");
+									if (!std::filesystem::exists(path_to_pipeline)) {
+										std::filesystem::create_directories(path_to_pipeline);
+									}
+
+									std::string path_to_script(path_to_pipeline +
+															   "content_pipeline_end.term");
 									if (!std::filesystem::exists(path_to_script)) {
 										std::ofstream filestream(path_to_script);
 										filestream.close();
@@ -1432,7 +1438,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 				{
 					ImGui::TextUnformatted("Theme");
 					static int selected_theme = (int)app.engine_settings.GetTheme();
-					if (ImGui::Combo("##Theme", &selected_theme, "Dark\0Light\0Classic\0Dark Gray\0")) {
+					if (ImGui::Combo("##Theme", &selected_theme,
+									 "Dark\0Light\0Classic\0Dark Gray\0")) {
 						ChangeTheme(app, (Theme)selected_theme);
 					}
 				}
