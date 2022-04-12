@@ -15,7 +15,10 @@ ProjectSettings::ProjectSettings()
 	  initial_scene_id(0),
 	  global_mem_alloc_size(1024),
 	  scene_mem_alloc_size(1024 * 2),
-	  libdragon_branch("trunk") {
+	  libdragon_branch("trunk"),
+	  ngine_version_major(1),
+	  ngine_version_minor(3),
+	  ngine_version_is_pre_release(true) {
 }
 
 bool ProjectSettings::LoadFromFile(const std::string &folder) {
@@ -75,6 +78,13 @@ bool ProjectSettings::LoadFromFile(const std::string &folder) {
 	if (!json["modules"]["rtc"].is_null())
 		modules.rtc = json["modules"]["rtc"];
 
+	if (!json["project"]["ngine"]["version"]["major"].is_null())
+		ngine_version_major = json["project"]["ngine"]["version"]["major"];
+	if (!json["project"]["ngine"]["version"]["minor"].is_null())
+		ngine_version_minor = json["project"]["ngine"]["version"]["minor"];
+	if (!json["project"]["ngine"]["version"]["is_pre"].is_null())
+		ngine_version_is_pre_release = json["project"]["ngine"]["version"]["is_pre"];
+
 	is_open = true;
 	return true;
 }
@@ -94,6 +104,9 @@ void ProjectSettings::SaveToDisk() {
 	json["project"]["scene_mem_alloc_size"] = scene_mem_alloc_size;
 	json["project"]["initial_screen_id"] = initial_scene_id;
 	json["project"]["global_script_name"] = global_script_name;
+	json["project"]["ngine"]["version"]["major"] = ngine_version_major;
+	json["project"]["ngine"]["version"]["minor"] = ngine_version_minor;
+	json["project"]["ngine"]["version"]["is_pre"] = ngine_version_is_pre_release;
 
 	json["audio"]["buffers"] = audio.buffers;
 	json["audio"]["frequency"] = audio.frequency;

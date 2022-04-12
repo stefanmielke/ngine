@@ -32,6 +32,10 @@ class ProjectSettings {
 
 	std::string libdragon_branch;
 
+	int ngine_version_major;
+	int ngine_version_minor;
+	bool ngine_version_is_pre_release;
+
 	ProjectSettings();
 
 	bool LoadFromFile(const std::string &folder);
