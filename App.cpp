@@ -10,7 +10,7 @@ App::App(std::string engine_directory)
 	: renderer(nullptr),
 	  window(nullptr),
 	  engine_settings(),
-	  project(),
+	  project(this),
 	  state(engine_settings),
 	  audio_sample(nullptr),
 	  audio_state(SS_STOPPED),
@@ -84,7 +84,7 @@ bool App::OpenProject(const std::string &path) {
 void App::CloseProject() {
 	console.AddLog("Closing Project...");
 
-	project.Close();
+	project.Close(this);
 	state = ProjectState(engine_settings);
 
 	SDL_SetWindowTitle(window, default_title);

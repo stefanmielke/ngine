@@ -28,14 +28,14 @@ class Project {
 	void LoadFromDisk(const std::string &project_directory);
 
 	bool Open(const char *path, App *app);
-	void Close();
+	void Close(App *app);
 
 	void ReloadImages(SDL_Renderer *renderer);
 	void ReloadScripts(App *app);
 	void ReloadSounds();
 	void ReloadGeneralFiles();
 
-	Project() = default;
+	explicit Project(App *app);
 	Project(Project const &) = delete;
 	Project &operator=(Project const &) = delete;
 

@@ -62,7 +62,7 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Creating project settings file...");
 
-	ProjectSettings default_project_settings;
+	ProjectSettings default_project_settings(app);
 	default_project_settings.project_directory = project_folder;
 	default_project_settings.SaveToDisk();
 

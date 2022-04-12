@@ -2,10 +2,11 @@
 
 #include <fstream>
 
+#include "../App.h"
 #include "../ConsoleApp.h"
 #include "../json.hpp"
 
-ProjectSettings::ProjectSettings()
+ProjectSettings::ProjectSettings(App *app)
 	: is_open(false),
 	  next_scene_id(0),
 	  project_name("Hello NGine"),
@@ -16,12 +17,12 @@ ProjectSettings::ProjectSettings()
 	  global_mem_alloc_size(1024),
 	  scene_mem_alloc_size(1024 * 2),
 	  libdragon_branch("trunk"),
-	  ngine_version_major(1),
-	  ngine_version_minor(3),
-	  ngine_version_is_pre_release(true) {
+	  ngine_version_major(app->engine_version.major),
+	  ngine_version_minor(app->engine_version.minor),
+	  ngine_version_is_pre_release(app->engine_version.is_pre_release) {
 }
 
-bool ProjectSettings::LoadFromFile(const std::string &folder) {
+bool ProjectSettings::LoadFromFile(App *app, const std::string &folder) {
 	project_directory = folder;
 
 	if (!std::filesystem::exists(project_directory + "/ngine.project.json")) {
@@ -84,6 +85,13 @@ bool ProjectSettings::LoadFromFile(const std::string &folder) {
 		ngine_version_minor = json["project"]["ngine"]["version"]["minor"];
 	if (!json["project"]["ngine"]["version"]["is_pre"].is_null())
 		ngine_version_is_pre_release = json["project"]["ngine"]["version"]["is_pre"];
+
+	// use here to convert from engine versions
+
+	// reset version to current
+	ngine_version_major = app->engine_version.major;
+	ngine_version_minor = app->engine_version.minor;
+	ngine_version_is_pre_release = app->engine_version.is_pre_release;
 
 	is_open = true;
 	return true;

@@ -7,6 +7,8 @@
 #include "DisplaySettings.h"
 #include "ModulesSettings.h"
 
+class App;
+
 class ProjectSettings {
    private:
 	bool is_open;
@@ -36,9 +38,9 @@ class ProjectSettings {
 	int ngine_version_minor;
 	bool ngine_version_is_pre_release;
 
-	ProjectSettings();
+	explicit ProjectSettings(App *app);
 
-	bool LoadFromFile(const std::string &folder);
+	bool LoadFromFile(App *app, const std::string &folder);
 	void SaveToDisk();
 
 	[[nodiscard]] bool IsOpen() const {

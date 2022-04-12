@@ -151,7 +151,7 @@ int main(int argv, char **args) {
 		Sdl::RenderEnd(app.renderer);
 	}
 
-	app.project.Close();
+	app.project.Close(&app);
 
 	Sdl::Quit(&app, app.window, app.renderer);
 

@@ -75,7 +75,7 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help")) {
-			ImGui::MenuItem("Version 1.3.0-pre", nullptr, false, false);
+			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
 			ImGui::Separator();
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
 			ImGui::Separator();

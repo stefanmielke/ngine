@@ -7,6 +7,9 @@
 #include "../ConsoleApp.h"
 #include "../json.hpp"
 
+Project::Project(App *app) : project_settings(app) {
+}
+
 void Project::SaveToDisk(const std::string &project_directory) {
 	std::filesystem::path scenes_folder(project_directory + "/.ngine/scenes");
 	if (!std::filesystem::exists(scenes_folder)) {
@@ -64,7 +67,7 @@ bool Project::Open(const char *path, App *app) {
 	console.AddLog("Opening project at '%s'...", path);
 
 	std::string project_filepath(path);
-	if (!project_settings.LoadFromFile(project_filepath)) {
+	if (!project_settings.LoadFromFile(app, project_filepath)) {
 		return false;
 	}
 
@@ -82,6 +85,9 @@ bool Project::Open(const char *path, App *app) {
 	ReloadImages(app->renderer);
 	ReloadSounds();
 	ReloadGeneralFiles();
+
+	SaveToDisk(project_settings.project_directory);
+	project_settings.SaveToDisk();
 
 	console.AddLog("Project opened.");
 
@@ -182,13 +188,13 @@ void Project::ReloadGeneralFiles() {
 	std::sort(general_files.begin(), general_files.end(), libdragon_file_comparison);
 }
 
-void Project::Close() {
+void Project::Close(App *app) {
 	scenes.clear();
 	script_files.clear();
 	images.clear();
 	sounds.clear();
 
-	project_settings = ProjectSettings();
+	project_settings = ProjectSettings(app);
 }
 
 Project::~Project() {

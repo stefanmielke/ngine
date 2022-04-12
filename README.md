@@ -11,6 +11,7 @@
 
 - [SDL2](https://www.libsdl.org/index.php) (bundled on Windows)
 - [SDL2_Image](https://www.libsdl.org/projects/SDL_image/) (bundled on Windows)
+- [SDL2_Mixer](https://www.libsdl.org/projects/SDL_mixer/) (bundled on Windows)
 - [Docker](https://www.docker.com/get-started)
 - [Libdragon CLI](https://github.com/anacierdem/libdragon-docker)
 - [GIT](https://git-scm.com/downloads)
@@ -58,7 +59,7 @@ Refer to this project's [wiki](https://github.com/stefanmielke/ngine/wiki) for m
 
 ### Building
 
-- Install SDL2 and SDL2_image
+- Install SDL2, SDL2_image, SDL2_mixer
     - Windows: has to be discoverable by CMake
     - Linux: download/install latest from source
 - Run `cmake` and `make` on the project folder.

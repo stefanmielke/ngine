@@ -8,14 +8,25 @@
 #include "settings/Project.h"
 #include "GUIImage.h"
 
-enum SoundState {
-	SS_STOPPED,
-	SS_PLAYING,
-	SS_PAUSED
+enum SoundState { SS_STOPPED, SS_PLAYING, SS_PAUSED };
+
+struct EngineVersion {
+	int major;
+	int minor;
+	bool is_pre_release;
+
+	std::string version_string;
+
+	EngineVersion() : major(1), minor(3), is_pre_release(false), version_string("Version ") {
+		version_string += std::to_string(major) + "." + std::to_string(minor) + ".0";
+		if (is_pre_release)
+			version_string.append("-pre");
+	};
 };
 
 class App {
    public:
+	EngineVersion engine_version;
 	SDL_Renderer *renderer;
 	SDL_Window *window;
 	EngineSettings engine_settings;
