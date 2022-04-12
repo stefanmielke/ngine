@@ -37,6 +37,7 @@ To Do:
 [ ] Update Wiki
 
 2.0.0:
+[ ] Add button to open Makefile_custom.mk
 [ ] Keyboard shortcuts
     - F5 -> Build/Run
     - Shift+F5 -> Run
