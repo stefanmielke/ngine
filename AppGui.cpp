@@ -1010,12 +1010,12 @@ void AppGui::RenderSettingsWindow(App &app) {
 							if (ImGui::Button(app.audio_state == SS_STOPPED ? "Play" : "Restart")) {
 								switch (app.audio_state) {
 									case SS_STOPPED:
-										Mix_PlayChannel(0, app.audio_sample, 1);
+										Mix_PlayChannel(0, app.audio_sample, 0);
 										break;
 									case SS_PAUSED:
 									case SS_PLAYING:
 										Mix_HaltChannel(0);
-										Mix_PlayChannel(0, app.audio_sample, 1);
+										Mix_PlayChannel(0, app.audio_sample, 0);
 										break;
 								}
 								app.audio_state = SS_PLAYING;
