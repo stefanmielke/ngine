@@ -4,6 +4,7 @@ const char *makefile_gen = R"(V=1
 SOURCE_DIR=src
 BUILD_DIR=build
 include $(N64_INST)/include/n64.mk
+include Makefile_custom.mk
 
 N64_ROM_SAVETYPE = %s
 N64_ROM_REGIONFREE = %s
@@ -53,6 +54,7 @@ const char *makefile_gen_content = R"(V=1
 SOURCE_DIR=src
 BUILD_DIR=build
 include $(N64_INST)/include/n64.mk
+include Makefile_custom.mk
 
 N64_CFLAGS += -Ilibs/libdragon-extensions/include -fdiagnostics-color=never
 

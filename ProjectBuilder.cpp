@@ -45,6 +45,9 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	ProjectBuilder::GenerateStaticFiles(project_folder);
 
+	// this file should not be touched later
+	create_static_file(project_folder + "/Makefile_custom.mk", makefile_custom_mk);
+
 	console.AddLog("Adding libdragon-extensions...");
 
 	const char *lib_ext_submodule_cmd =

@@ -9,7 +9,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(SOURCES main.cpp ProjectBuilder.cpp Libdragon.cpp CodeEditor.cpp ConsoleApp.cpp ScriptBuilder.cpp ThreadCommand.cpp Emulator.cpp LibdragonImage.cpp Content.cpp LibdragonSound.cpp App.cpp ImportAssets.cpp Sdl.cpp AppGui.cpp LibdragonFile.cpp LibdragonScript.cpp)
 set(SOURCES ${SOURCES} generated/makefile.gen.cpp generated/setup.gen.cpp generated/change_scene.gen.cpp generated/scene_gen.cpp generated/script_blank.gen.cpp)
 set(SOURCES ${SOURCES} settings/DisplaySettings.cpp settings/ProjectSettings.cpp settings/ModulesSettings.cpp settings/EngineSettings.cpp settings/Scene.cpp settings/Project.cpp settings/AudioSettings.cpp settings/AudioMixerSettings.cpp)
-set(SOURCES ${SOURCES} static/main.s.cpp static/vscode_c_cpp_properties.cpp static/gitignore.cpp static/clang_format.cpp generated/game.gen.h.cpp static/change_scene.s.h.cpp)
+set(SOURCES ${SOURCES} static/main.s.cpp static/vscode_c_cpp_properties.cpp static/gitignore.cpp static/clang_format.cpp generated/game.gen.h.cpp static/change_scene.s.h.cpp static/makefile_custom.mk.cpp)
 
 set(SOURCES ${SOURCES} imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/imgui_impl_sdl.cpp imgui/imgui_impl_sdlrenderer.cpp)
 set(SOURCES ${SOURCES} imgui/ImGuiFileDialog/ImGuiFileDialog.cpp)

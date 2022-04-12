@@ -1,0 +1,1 @@
+const char *makefile_custom_mk = "# Add custom rules here\n";

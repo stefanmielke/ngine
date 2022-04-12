@@ -34,10 +34,9 @@ To Do:
         - Script use
 
 1.3.0:
-[ ] Add makefile that is included that can be used to run custom mk commands
-[ ] Set DFS location
-    - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Audio preview
+[ ] Update README
+[ ] Update Wiki
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
@@ -65,6 +64,8 @@ To Do:
 [ ] Remove opening cmd window for every command on Windows
 [ ] Show Libdragon-CLI version - 'libdragon version'
 [ ] Disasm button to file - 'libdragon disasm'
+[ ] Update README
+[ ] Update Wiki
 
 2.1.0:
 [ ] Clean project after changing modules
@@ -72,14 +73,21 @@ To Do:
 [ ] Better input module (using names instead of buttons to ease button remapping)
     - Create on 'libdragon-extensions'
 [ ] Generate package with emulator+ROM+shortcut to run the game automatically on PC
+[ ] Update README
+[ ] Update Wiki
 
 3.0.0:
 [ ] Localization files
     - en-us
     - pt-br
     - jp?
+[ ] Update README
+[ ] Update Wiki
 
 Future:
+[ ] Set DFS location
+    - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
+    - Wait for better support for this on libdragon?
 [ ] Syntax highlight on script previews
 [ ] Import/View 3d models
 [ ] Generate PC port?
@@ -94,6 +102,7 @@ Future:
 
 Done:
 - 1.3.0:
+[x] Add makefile that is included that can be used to run custom mk commands
 [x] Add engine version on project file (for updates to formats)
 [x] Fix custom pipeline file not being created when clicking the button
 [x] Copy text on console
