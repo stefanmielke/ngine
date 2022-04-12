@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <filesystem>
+#include <SDL2/SDL.h>
 
 #include "imgui.h"
 #include "imgui/ImGuiFileDialog/ImGuiFileDialog.h"
@@ -910,6 +911,25 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 					strcpy(sound_edit_name, (*app.state.sound_editing)->name.c_str());
 					strcpy(sound_edit_dfs_folder, (*app.state.sound_editing)->dfs_folder.c_str());
+
+					if ((*app.state.sound_editing)->type == SOUND_WAV) {
+						std::string sound_path = app.project.project_settings.project_directory +
+												 "/" + (*app.state.sound_editing)->sound_path;
+
+						if (app.audio_state == SS_PLAYING || app.audio_state == SS_PAUSED) {
+							Mix_HaltChannel(-1);
+							app.audio_state = SS_STOPPED;
+						}
+						if (app.audio_sample) {
+							Mix_FreeChunk(app.audio_sample);
+						}
+
+						app.audio_sample = Mix_LoadWAV(sound_path.c_str());
+						if (!app.audio_sample) {
+							console.AddLog("[error] Unable to load wave file: %s\n",
+										   sound_path.c_str());
+						}
+					}
 				}
 				if (ImGui::BeginTabItem("Sound Settings")) {
 					ImGui::InputText("Name", sound_edit_name, 50,
@@ -975,6 +995,61 @@ void AppGui::RenderSettingsWindow(App &app) {
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel")) {
 						app.state.sound_editing = nullptr;
+					}
+
+					// audio preview
+					if (app.state.sound_editing) {
+						ImGui::Spacing();
+						ImGui::Separator();
+						ImGui::Spacing();
+
+						ImGui::TextUnformatted("Audio Preview");
+						ImGui::Spacing();
+
+						if ((*app.state.sound_editing)->type == SOUND_WAV) {
+							if (ImGui::Button(app.audio_state == SS_STOPPED ? "Play" : "Restart")) {
+								switch (app.audio_state) {
+									case SS_STOPPED:
+										Mix_PlayChannel(0, app.audio_sample, 1);
+										break;
+									case SS_PAUSED:
+									case SS_PLAYING:
+										Mix_HaltChannel(0);
+										Mix_PlayChannel(0, app.audio_sample, 1);
+										break;
+								}
+								app.audio_state = SS_PLAYING;
+							}
+							ImGui::SameLine();
+							ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
+							if (ImGui::Button(app.audio_state == SS_PAUSED ? "Resume" : "Pause")) {
+								if (app.audio_state == SS_PAUSED) {
+									Mix_Resume(0);
+									app.audio_state = SS_PLAYING;
+								} else {
+									Mix_Pause(0);
+									app.audio_state = SS_PAUSED;
+								}
+							}
+							ImGui::EndDisabled();
+
+							ImGui::SameLine();
+							ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
+							if (ImGui::Button("Stop")) {
+								Mix_HaltChannel(0);
+								app.audio_state = SS_STOPPED;
+							}
+							ImGui::EndDisabled();
+
+							static int volume = MIX_MAX_VOLUME;
+							if (ImGui::SliderInt("Volume", &volume, 0, MIX_MAX_VOLUME)) {
+								Mix_Volume(0, volume);
+							}
+						} else {
+							ImGui::TextWrapped("Preview is not supported for this audio type.");
+						}
+					} else if (app.audio_state != SS_STOPPED) {
+						Mix_HaltChannel(0);
 					}
 
 					ImGui::EndTabItem();

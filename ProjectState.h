@@ -66,7 +66,7 @@ class ProjectState {
 		  libdragon_exe_path(),
 		  project_settings_screen(),
 		  current_scene(nullptr),
-		  scene_name() {
+		  scene_name(){
 		memset(scene_name, 0, 100);
 
 		LoadEngineSetings(engine_settings);

@@ -1,10 +1,18 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+
 #include "ProjectState.h"
 #include "settings/EngineSettings.h"
 #include "settings/Project.h"
 #include "GUIImage.h"
+
+enum SoundState {
+	SS_STOPPED,
+	SS_PLAYING,
+	SS_PAUSED
+};
 
 class App {
    public:
@@ -14,6 +22,10 @@ class App {
 	Project project;
 	ProjectState state;
 	SDL_Texture *app_texture;
+
+	// audio
+	Mix_Chunk *audio_sample;
+	SoundState audio_state;
 
 	const char *default_title = "NGine - N64 Engine Powered by Libdragon";
 

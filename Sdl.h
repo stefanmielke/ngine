@@ -7,7 +7,7 @@ class App;
 class Sdl {
    public:
 	static void Init(App *app);
-	static void Quit(SDL_Window *window, SDL_Renderer *renderer);
+	static void Quit(App* app, SDL_Window *window, SDL_Renderer *renderer);
 
 	static void ProcessEvent(SDL_Event *event);
 

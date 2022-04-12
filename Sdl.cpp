@@ -50,9 +50,24 @@ void Sdl::Init(App *app) {
 	ImGuiIO &io = ImGui::GetIO();
 	io.IniFilename = nullptr;
 	io.Fonts->AddFontFromFileTTF(font_path.c_str(), 14.0f);
+
+	if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 512) < 0) {
+		fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
+		exit(-1);
+	}
+
+	if (Mix_AllocateChannels(4) < 0) {
+		fprintf(stderr, "Unable to allocate mixing channels: %s\n", SDL_GetError());
+		exit(-1);
+	}
 }
 
-void Sdl::Quit(SDL_Window *window, SDL_Renderer *renderer) {
+void Sdl::Quit(App *app, SDL_Window *window, SDL_Renderer *renderer) {
+	if (app->audio_sample) {
+		Mix_FreeChunk(app->audio_sample);
+	}
+	Mix_CloseAudio();
+
 	ImGui_ImplSDLRenderer_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();

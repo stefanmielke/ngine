@@ -40,7 +40,7 @@ jobs:
         with:
           platform: x64
 
-      - name: Install SDL2 and SDL2_image on Windows
+      - name: Install SDL2, SDL2_image and SDL2_mixer on Windows
         if: ${{ runner.os == 'Windows'}}
         run: |
           mkdir SDL2
@@ -48,9 +48,11 @@ jobs:
           
           curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz -O SDL2-devel-2.0.20-mingw.tar.gz
           curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz -O SDL2_image-devel-2.0.5-mingw.tar.gz
+          curl -s https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.0.4-mingw.tar.gz -O SDL2_mixer-devel-2.0.4-mingw.tar.gz
           
           tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
           tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
+          tar -xzf SDL2_mixer-devel-2.0.4-mingw.tar.gz
           
           cd SDL2-2.0.20
           make native
@@ -60,13 +62,17 @@ jobs:
           make native
           cd ..
           
+          cd SDL2_mixer-2.0.4
+          make native
+          cd ..
+          
           cd ..
 
-      - name: Install SDL2 and SDL2_image on Linux
+      - name: Install SDL2, SDL2_image and SDL2_mixer on Linux
         if: ${{ runner.os == 'Linux'}}
         run: |
           sudo apt-get update
-          sudo apt-get install libsdl2-image-dev
+          sudo apt-get install libsdl2-image-dev libsdl2-mixer-dev
           mkdir SDL2
           cd SDL2
           wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz

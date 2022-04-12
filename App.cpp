@@ -12,6 +12,8 @@ App::App(std::string engine_directory)
 	  engine_settings(),
 	  project(),
 	  state(engine_settings),
+	  audio_sample(nullptr),
+	  audio_state(SS_STOPPED),
 	  is_running(true),
 	  engine_directory(std::move(engine_directory)) {
 }

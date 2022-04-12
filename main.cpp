@@ -153,7 +153,7 @@ int main(int argv, char **args) {
 
 	app.project.Close();
 
-	Sdl::Quit(app.window, app.renderer);
+	Sdl::Quit(&app, app.window, app.renderer);
 
 	return 0;
 }
