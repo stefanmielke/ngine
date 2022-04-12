@@ -38,7 +38,6 @@ To Do:
 [ ] Set DFS location
     - Copy n64.mk adding VAR to set offset (from the hardcoded 1M) and use that file to include
 [ ] Audio preview
-[ ] Selectable text on console
 
 2.0.0:
 [ ] Single content window that resembles the DFS output (with folders and 'files')
@@ -95,6 +94,7 @@ Future:
 
 Done:
 - 1.3.0:
+[x] Copy text on console
 [x] Improve UI
     [x] Change font
     [x] Add sprites
