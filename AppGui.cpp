@@ -72,6 +72,15 @@ void AppGui::RenderMenuBar(App &app) {
 
 				console.AddLog("Files regenerated.");
 			}
+			if (ImGui::MenuItem("Disassembly ROM")) {
+				console.AddLog("Building Project...");
+				ProjectBuilder::Build(&app);
+				Libdragon::Disasm(
+					app.project.project_settings.project_directory,
+					app.engine_settings.GetLibdragonExeLocation());
+
+				console.AddLog("Assembly output to 'rom.asm' file.");
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help")) {

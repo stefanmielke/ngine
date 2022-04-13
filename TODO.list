@@ -64,8 +64,6 @@ To Do:
     - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
 [ ] Resize output window
 [ ] Remove opening cmd window for every command on Windows
-[ ] Show Libdragon-CLI version - 'libdragon version'
-[ ] Disasm button to file - 'libdragon disasm'
 [ ] Update README
 [ ] Update Wiki
 
@@ -104,6 +102,8 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Libdragon Disasm as a task - 'libdragon disasm'
+[x] Show Libdragon-CLI version - 'libdragon version'
 [x] Add button to open Makefile_custom.mk
 
 - 1.3.0:

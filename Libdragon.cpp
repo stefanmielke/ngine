@@ -43,6 +43,12 @@ void Libdragon::Install(const std::string &folder, const std::string &libdragon_
 	ThreadCommand::QueueCommand(command);
 }
 
+void Libdragon::Disasm(const std::string &folder, const std::string &libdragon_exe_folder) {
+	char command[500];
+	snprintf(command, 500, "%s disasm > rom.asm", libdragon_exe_folder.c_str());
+	ThreadCommand::QueueCommand(command);
+}
+
 std::string Libdragon::GetVersion(const std::string& libdragon_exe_folder) {
 	char command[500];
 	snprintf(command, 500, "%s version", libdragon_exe_folder.c_str());
