@@ -33,11 +33,7 @@ To Do:
         - Settings
         - Script use
 
-1.3.0:
-[ ] Update Wiki
-
 2.0.0:
-[ ] Add button to open Makefile_custom.mk
 [ ] Keyboard shortcuts
     - F5 -> Build/Run
     - Shift+F5 -> Run
@@ -107,6 +103,9 @@ Future:
     [ ] PIF Dump
 
 Done:
+- 2.0.0:
+[x] Add button to open Makefile_custom.mk
+
 - 1.3.0:
 [x] Audio preview
 [x] Add makefile that is included that can be used to run custom mk commands

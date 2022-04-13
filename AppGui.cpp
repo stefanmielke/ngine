@@ -1216,6 +1216,16 @@ void AppGui::RenderSettingsWindow(App &app) {
 													   path_to_script.c_str());
 									}
 								}
+								if (ImGui::Button("Edit Custom Makefile")) {
+									std::string path_to_makefile(
+										app.project.project_settings.project_directory +
+										"/Makefile_custom.mk");
+
+									if (!CodeEditor::OpenPath(&app, path_to_makefile)) {
+										console.AddLog("You can edit the file at %s.",
+													   path_to_makefile.c_str());
+									}
+								}
 							}
 
 							ImGui::Separator();
