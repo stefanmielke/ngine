@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "../json.hpp"
+#include "../Libdragon.h"
 
 #ifdef __linux__
 #include <pwd.h>
@@ -84,6 +85,10 @@ void EngineSettings::LoadFromDisk(const std::string &path) {
 	theme = json["engine"]["theme"];
 
 	filestream.close();
+
+	if (!libdragon_exe_location.empty()) {
+		libdragon_version = Libdragon::GetVersion(libdragon_exe_location);
+	}
 }
 
 void EngineSettings::SetLastOpenedProject(std::string path) {
@@ -114,4 +119,8 @@ void EngineSettings::SetLibdragonExeLocation(std::string path) {
 	libdragon_exe_location = std::move(path);
 
 	SaveToDisk();
+
+	if (!libdragon_exe_location.empty()) {
+		libdragon_version = Libdragon::GetVersion(libdragon_exe_location);
+	}
 }

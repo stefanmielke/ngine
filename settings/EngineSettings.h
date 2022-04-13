@@ -45,6 +45,10 @@ class EngineSettings {
 		return engine_settings_filepath;
 	};
 
+	[[nodiscard]] std::string GetLibdragonVersion() const {
+		return libdragon_version;
+	};
+
    private:
 	std::string last_opened_project;
 	std::string emulator_location;
@@ -54,6 +58,8 @@ class EngineSettings {
 
 	std::string engine_settings_folder;
 	std::string engine_settings_filepath;
+
+	std::string libdragon_version;
 
 	void LoadFromDisk(const std::string& path);
 };

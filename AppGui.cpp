@@ -76,6 +76,9 @@ void AppGui::RenderMenuBar(App &app) {
 		}
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
+			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false, app.engine_settings.GetLibdragonVersion().starts_with("Update"))) {
+				open_url("https://github.com/anacierdem/libdragon-docker/releases/latest");
+			}
 			ImGui::Separator();
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
 			ImGui::Separator();
