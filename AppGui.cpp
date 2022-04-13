@@ -75,9 +75,8 @@ void AppGui::RenderMenuBar(App &app) {
 			if (ImGui::MenuItem("Disassembly ROM")) {
 				console.AddLog("Building Project...");
 				ProjectBuilder::Build(&app);
-				Libdragon::Disasm(
-					app.project.project_settings.project_directory,
-					app.engine_settings.GetLibdragonExeLocation());
+				Libdragon::Disasm(app.project.project_settings.project_directory,
+								  app.engine_settings.GetLibdragonExeLocation());
 
 				console.AddLog("Assembly output to 'rom.asm' file.");
 			}
@@ -85,7 +84,8 @@ void AppGui::RenderMenuBar(App &app) {
 		}
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
-			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false, app.engine_settings.GetLibdragonVersion().starts_with("Update"))) {
+			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false,
+								app.engine_settings.GetLibdragonVersion().starts_with("Update"))) {
 				open_url("https://github.com/anacierdem/libdragon-docker/releases/latest");
 			}
 			ImGui::Separator();
@@ -557,7 +557,10 @@ void AppGui::RenderSceneWindow(App &app) {
 				ImGui::PushID(0);
 				app.GetImagePosition("Save.png", button_uv0, button_uv1);
 				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
-									   button_uv0, button_uv1, -1)) {
+									   button_uv0, button_uv1, -1) ||
+					((ImGui::IsKeyDown(ImGuiKey_RightCtrl) ||
+					  ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) &&
+					 ImGui::IsKeyPressed(ImGuiKey_S, false))) {
 					console.AddLog("Saving Project...");
 
 					app.project.SaveToDisk(app.project.project_settings.project_directory);
@@ -567,68 +570,77 @@ void AppGui::RenderSceneWindow(App &app) {
 				}
 				ImGui::PopID();
 				if (ImGui::IsItemHovered()) {
-					ImGui::SetTooltip("Save All");
+					ImGui::SetTooltip("Save All [Ctrl+S]");
 				}
 
 				ImGui::SameLine();
 				ImGui::PushID(5);
 				app.GetImagePosition("Editor.png", button_uv0, button_uv1);
 				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
-									   button_uv0, button_uv1, -1)) {
+									   button_uv0, button_uv1, -1) ||
+					ImGui::IsKeyPressed(ImGuiKey_F9, false)) {
 					console.AddLog("Opening project in Editor...");
 
 					CodeEditor::OpenPath(&app, app.project.project_settings.project_directory);
 				}
 				ImGui::PopID();
 				if (ImGui::IsItemHovered()) {
-					ImGui::SetTooltip("Open in Editor");
+					ImGui::SetTooltip("Open in Editor [F9]");
 				}
 
 				ImGui::SameLine();
 				ImGui::PushID(1);
 				app.GetImagePosition("Build.png", button_uv0, button_uv1);
 				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
-									   button_uv0, button_uv1, -1)) {
+									   button_uv0, button_uv1, -1) ||
+					ImGui::IsKeyPressed(ImGuiKey_F6, false)) {
 					console.AddLog("Building Project...");
 
 					ProjectBuilder::Build(&app);
 				}
 				ImGui::PopID();
 				if (ImGui::IsItemHovered()) {
-					ImGui::SetTooltip("Build");
+					ImGui::SetTooltip("Build [F6]");
 				}
 
 				ImGui::SameLine();
 				ImGui::PushID(3);
 				app.GetImagePosition("Clean_Build.png", button_uv0, button_uv1);
 				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
-									   button_uv0, button_uv1, -1)) {
+									   button_uv0, button_uv1, -1) ||
+					ImGui::IsKeyPressed(ImGuiKey_F7, false)) {
 					console.AddLog("Rebuilding Project...");
 
 					ProjectBuilder::Rebuild(&app);
 				}
 				ImGui::PopID();
 				if (ImGui::IsItemHovered()) {
-					ImGui::SetTooltip("Clean and Build");
+					ImGui::SetTooltip("Clean and Build [F7]");
 				}
 
 				ImGui::SameLine();
 				ImGui::PushID(2);
 				app.GetImagePosition("Run.png", button_uv0, button_uv1);
 				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
-									   button_uv0, button_uv1, -1)) {
+									   button_uv0, button_uv1, -1) ||
+					((ImGui::IsKeyDown(ImGuiKey_LeftShift) ||
+					  ImGui::IsKeyDown(ImGuiKey_RightShift)) &&
+					 ImGui::IsKeyPressed(ImGuiKey_F5, false))) {
 					Emulator::Run(&app);
 				}
 				ImGui::PopID();
 				if (ImGui::IsItemHovered()) {
-					ImGui::SetTooltip("Run");
+					ImGui::SetTooltip("Run [Shift+F5]");
 				}
 
 				ImGui::SameLine();
 				ImGui::PushID(4);
 				app.GetImagePosition("Build_Run.png", button_uv0, button_uv1);
 				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
-									   button_uv0, button_uv1, -1)) {
+									   button_uv0, button_uv1, -1) ||
+					(!ImGui::IsKeyDown(ImGuiKey_LeftShift) &&
+					 !ImGui::IsKeyDown(ImGuiKey_RightShift) &&
+					 ImGui::IsKeyPressed(ImGuiKey_F5, false))) {
 					console.AddLog("Building Project...");
 
 					ProjectBuilder::Build(&app);
@@ -636,7 +648,7 @@ void AppGui::RenderSceneWindow(App &app) {
 				}
 				ImGui::PopID();
 				if (ImGui::IsItemHovered()) {
-					ImGui::SetTooltip("Build and Run");
+					ImGui::SetTooltip("Build and Run [F5]");
 				}
 
 				ImGui::Separator();

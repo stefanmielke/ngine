@@ -34,13 +34,6 @@ To Do:
         - Script use
 
 2.0.0:
-[ ] Keyboard shortcuts
-    - F5 -> Build/Run
-    - Shift+F5 -> Run
-    - F6 -> Build
-    - F9 -> Open in Editor
-    - F7 -> Clean/Build
-    - Ctrl+S -> Save All
 [ ] Single content window that resembles the DFS output (with folders and 'files')
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
@@ -102,6 +95,13 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Keyboard shortcuts
+    * F5 -> Build/Run
+    * Shift+F5 -> Run
+    * F6 -> Build
+    * F9 -> Open in Editor
+    * F7 -> Clean/Build
+    - Ctrl+S -> Save All
 [x] Libdragon Disasm as a task - 'libdragon disasm'
 [x] Show Libdragon-CLI version - 'libdragon version'
 [x] Add button to open Makefile_custom.mk
