@@ -89,6 +89,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 									std::sort(app->project.images.begin(),
 											  app->project.images.end(),
 											  libdragon_image_comparison);
+									app->project.ReloadAssets();
 									--i;
 								}
 							}
@@ -174,6 +175,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 									std::sort(app->project.sounds.begin(),
 											  app->project.sounds.end(),
 											  libdragon_sound_comparison);
+									app->project.ReloadAssets();
 									--i;
 								}
 							}
@@ -250,6 +252,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 									std::sort(app->project.general_files.begin(),
 											  app->project.general_files.end(),
 											  libdragon_file_comparison);
+									app->project.ReloadAssets();
 
 									--i;
 								}
