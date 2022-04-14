@@ -292,7 +292,7 @@ void render_asset_folder(App &app, Asset *folder) {
 				if (display_sprites) {
 					std::string name = asset.GetName();
 					if (name.find(assets_name_filter) != name.npos) {
-						ImGui::TextColored(ImVec4(.4f, 1.f, .4f, 1.f), "%s",
+						ImGui::TextColored(ImVec4(.4f, .8f, .4f, 1.f), "%s",
 										   GetAssetTypeName(asset.GetType()).c_str());
 						ImGui::SameLine();
 
@@ -1047,7 +1047,7 @@ void AppGui::RenderSceneWindow(App &app) {
 							}
 							if (is_initial_scene) {
 								ImGui::SameLine(300 - 40);
-								ImGui::TextColored(ImVec4(.4f, 1.f, .4f, 1.f), "start");
+								ImGui::TextColored(ImVec4(.4f, .8f, .4f, 1.f), "start");
 							}
 							if (is_initial_scene && ImGui::IsItemHovered()) {
 								ImGui::SetTooltip("Initial Scene");
