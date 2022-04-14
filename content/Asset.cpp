@@ -10,7 +10,7 @@ Asset::Asset(AssetType type, std::string name, Asset *parent, AssetReferenceUnio
 	  name(name),
 	  asset_ref(asset_reference),
 	  parent(parent),
-	  path(parent ? parent->GetPath() / name : std::filesystem::path(name)) {
+	  path(parent ? (parent->GetPath() + "/" + name) : name) {
 }
 
 Asset *CreateAndReturnAssetFolder(Asset *root, const std::string &dfs_folder) {

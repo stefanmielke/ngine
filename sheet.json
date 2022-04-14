@@ -10,7 +10,7 @@
 },
 {
 	"filename": "Build_Run.png",
-	"frame": {"x":19,"y":0,"w":19,"h":20},
+	"frame": {"x":0,"y":20,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -18,6 +18,30 @@
 },
 {
 	"filename": "Clean_Build.png",
+	"frame": {"x":0,"y":40,"w":19,"h":20},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
+	"sourceSize": {"w":19,"h":20}
+},
+{
+	"filename": "Editor.png",
+	"frame": {"x":19,"y":0,"w":19,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
+	"sourceSize": {"w":19,"h":20}
+},
+{
+	"filename": "Error_Icon.png",
+	"frame": {"x":40,"y":40,"w":9,"h":9},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":9},
+	"sourceSize": {"w":9,"h":9}
+},
+{
+	"filename": "Run.png",
 	"frame": {"x":38,"y":0,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
@@ -25,36 +49,44 @@
 	"sourceSize": {"w":19,"h":20}
 },
 {
-	"filename": "Editor.png",
-	"frame": {"x":57,"y":0,"w":19,"h":20},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
-	"sourceSize": {"w":19,"h":20}
-},
-{
-	"filename": "Run.png",
-	"frame": {"x":76,"y":0,"w":19,"h":20},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
-	"sourceSize": {"w":19,"h":20}
-},
-{
 	"filename": "Save.png",
-	"frame": {"x":95,"y":0,"w":19,"h":20},
+	"frame": {"x":19,"y":20,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
 	"sourceSize": {"w":19,"h":20}
+},
+{
+	"filename": "View_Grid.png",
+	"frame": {"x":38,"y":20,"w":19,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
+	"sourceSize": {"w":19,"h":20}
+},
+{
+	"filename": "View_List.png",
+	"frame": {"x":20,"y":40,"w":19,"h":20},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
+	"sourceSize": {"w":19,"h":20}
+},
+{
+	"filename": "Warning_Icon.png",
+	"frame": {"x":40,"y":49,"w":9,"h":9},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":9},
+	"sourceSize": {"w":9,"h":9}
 }],
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "sheet.png",
 	"format": "RGBA8888",
-	"size": {"w":114,"h":20},
+	"size": {"w":57,"h":59},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:29aa6c36352c2d97f672c36ac9ced13e:b285e7fff8f7bee4de65bcefe8193bb8:9c44ecd7e9a522007eaff2949095bc1d$"
+	"smartupdate": "$TexturePacker:SmartUpdate:74c8a2f190085b0ad9f8bf4541f2e131:85e8191eabf28bdf98baae7c21ea95d9:9c44ecd7e9a522007eaff2949095bc1d$"
 }
 }

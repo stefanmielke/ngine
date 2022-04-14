@@ -7,7 +7,7 @@
 #include "../ConsoleApp.h"
 #include "../json.hpp"
 
-Project::Project(App *app) : project_settings(app) {
+Project::Project(App *app) : assets(nullptr), project_settings(app) {
 }
 
 void Project::SaveToDisk(const std::string &project_directory) {
@@ -191,8 +191,10 @@ void Project::ReloadGeneralFiles() {
 }
 
 void Project::ReloadAssets() {
-	if (assets)
+	if (assets) {
 		delete assets;
+		assets = nullptr;
+	}
 
 	assets = Asset::BuildAsset(project_settings.project_directory);
 }
@@ -203,7 +205,10 @@ void Project::Close(App *app) {
 	images.clear();
 	sounds.clear();
 
-	delete assets;
+	if (assets) {
+		delete assets;
+		assets = nullptr;
+	}
 
 	project_settings = ProjectSettings(app);
 }
@@ -214,5 +219,8 @@ Project::~Project() {
 	images.clear();
 	sounds.clear();
 
-	delete assets;
+	if (assets) {
+		delete assets;
+		assets = nullptr;
+	}
 }

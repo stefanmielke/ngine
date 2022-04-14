@@ -53,6 +53,11 @@ bool App::LoadAssets() {
 		float uvy1 = y1 / image_size.y;
 		float uvy2 = y2 / image_size.y;
 
+		if (uvx2 > 1)
+			uvx2 = 1.f;
+		if (uvy2 > 1)
+			uvy2 = 1.f;
+
 		image.position = ImVec4(uvx1, uvy1, uvx2, uvy2);
 		images.push_back(image);
 	}

@@ -17,6 +17,7 @@ class Asset {
 
 	Asset(AssetType type, std::string name, Asset *parent = nullptr,
 		  AssetReferenceUnion asset_reference = AssetReferenceUnion());
+	~Asset(){}
 
 	static Asset *BuildAsset(std::filesystem::path project_assets_folder);
 
@@ -36,12 +37,12 @@ class Asset {
 		return parent;
 	}
 
-	std::filesystem::path GetPath() const {
+	std::string GetPath() const {
 		return path;
 	}
 
-	std::filesystem::path GetFullPath(std::filesystem::path project_folder) const {
-		return project_folder / GetPath();
+	std::string GetFullPath(std::string project_folder) const {
+		return project_folder + "/" + GetPath();
 	}
 
    private:
@@ -51,5 +52,5 @@ class Asset {
 	AssetReferenceUnion asset_ref;
 
 	Asset *parent;
-	std::filesystem::path path;
+	std::string path;
 };

@@ -292,6 +292,36 @@ void render_asset_folder(App &app, Asset *folder) {
 				if (display_sprites) {
 					std::string name = asset.GetName();
 					if (name.find(assets_name_filter) != name.npos) {
+						if (!app.project.project_settings.modules.display) {
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Error_Icon.png", uv0, uv1);
+							ImGui::PushID(0);
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
+										 uv0, uv1)) {
+								app.project.project_settings.modules.display = true;
+							}
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip(
+									"Display module is disabled. Click here to enable it.");
+							}
+							ImGui::SameLine();
+						} else if (!app.project.project_settings.modules.rdp) {
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Warning_Icon.png", uv0, uv1);
+							ImGui::PushID(0);
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
+										 uv0, uv1)){
+								app.project.project_settings.modules.rdp = true;
+							}
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip(
+									"RDP module is disabled. Click here to enable it.");
+							}
+							ImGui::SameLine();
+						}
+
 						ImGui::TextColored(ImVec4(.4f, .8f, .4f, 1.f), "%s",
 										   GetAssetTypeName(asset.GetType()).c_str());
 						ImGui::SameLine();
@@ -341,6 +371,36 @@ void render_asset_folder(App &app, Asset *folder) {
 				if (display_sounds) {
 					std::string name = asset.GetName();
 					if (name.find(assets_name_filter) != name.npos) {
+						if (!app.project.project_settings.modules.audio) {
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Error_Icon.png", uv0, uv1);
+							ImGui::PushID(1);
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
+										 uv0, uv1)) {
+								app.project.project_settings.modules.audio = true;
+							}
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip(
+									"Audio module is disabled. Click here to enable it.");
+							}
+							ImGui::SameLine();
+						} else if (!app.project.project_settings.modules.audio_mixer) {
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Warning_Icon.png", uv0, uv1);
+							ImGui::PushID(1);
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
+										 uv0, uv1)) {
+								app.project.project_settings.modules.audio_mixer = true;
+							}
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip(
+									"Audio Mixer module is disabled. Click here to enable it.");
+							}
+							ImGui::SameLine();
+						}
+
 						ImGui::TextColored(ImVec4(.4f, .4f, 1.f, 1.f), "%s",
 										   GetAssetTypeName(asset.GetType()).c_str());
 
@@ -769,35 +829,6 @@ void AppGui::RenderContentBrowserNew(App &app) {
 	if (!app.project.project_settings.modules.dfs) {
 		ImGui::TextWrapped("DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
 		ImGui::Separator();
-	}
-	if (!app.project.images.empty()) {
-		if (!app.project.project_settings.modules.display) {
-			ImGui::TextWrapped(
-				"DISPLAY MODULE IS NOT LOADED. SPRITES WILL NOT BE USABLE IN THE "
-				"GAME.");
-			ImGui::Separator();
-		}
-		if (!app.project.project_settings.modules.rdp) {
-			ImGui::TextWrapped(
-				"RDP MODULE IS NOT LOADED. HARDWARE RENDERING (rdp_* functions) WILL "
-				"NOT BE USABLE IN THE GAME.");
-			ImGui::Separator();
-		}
-	}
-	if (!app.project.sounds.empty()) {
-		if (!app.project.project_settings.modules.audio) {
-			ImGui::TextWrapped(
-				"AUDIO MODULE IS NOT LOADED. AUDIO WILL NOT BE USABLE IN THE "
-				"GAME.");
-			ImGui::Separator();
-		}
-		if (!app.project.project_settings.modules.audio_mixer) {
-			ImGui::TextWrapped(
-				"AUDIO MIXER MODULE IS NOT LOADED. SOME AUDIO WILL NOT BE USABLE "
-				"IN "
-				"THE GAME.");
-			ImGui::Separator();
-		}
 	}
 
 	if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
