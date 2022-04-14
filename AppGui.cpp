@@ -27,6 +27,9 @@ const float details_window_size = 200;
 
 void open_url(const char *url);
 
+enum AssetsDisplayType { ADT_LIST, ADT_GRID };
+static AssetsDisplayType asset_display_type = ADT_LIST;
+
 void AppGui::Update(App &app) {
 	is_output_open = true;
 
@@ -277,14 +280,14 @@ void set_up_popup_windows(App &app) {
 	}
 }
 
-void render_asset_folder(App &app, Asset *folder) {
+void render_asset_folder_list(App &app, Asset *folder) {
 	set_up_popup_windows(app);
 
 	for (auto &asset : folder->children) {
 		switch (asset.GetType()) {
 			case FOLDER:
 				if (ImGui::TreeNodeEx(asset.GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-					render_asset_folder(app, &asset);
+					render_asset_folder_list(app, &asset);
 					ImGui::TreePop();
 				}
 				break;
@@ -296,8 +299,8 @@ void render_asset_folder(App &app, Asset *folder) {
 							ImVec2 uv0, uv1;
 							app.GetImagePosition("Error_Icon.png", uv0, uv1);
 							ImGui::PushID(0);
-							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
-										 uv0, uv1)) {
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+												   ImVec2(9, 9), uv0, uv1)) {
 								app.project.project_settings.modules.display = true;
 							}
 							ImGui::PopID();
@@ -310,8 +313,8 @@ void render_asset_folder(App &app, Asset *folder) {
 							ImVec2 uv0, uv1;
 							app.GetImagePosition("Warning_Icon.png", uv0, uv1);
 							ImGui::PushID(0);
-							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
-										 uv0, uv1)){
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+												   ImVec2(9, 9), uv0, uv1)) {
 								app.project.project_settings.modules.rdp = true;
 							}
 							ImGui::PopID();
@@ -375,8 +378,8 @@ void render_asset_folder(App &app, Asset *folder) {
 							ImVec2 uv0, uv1;
 							app.GetImagePosition("Error_Icon.png", uv0, uv1);
 							ImGui::PushID(1);
-							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
-										 uv0, uv1)) {
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+												   ImVec2(9, 9), uv0, uv1)) {
 								app.project.project_settings.modules.audio = true;
 							}
 							ImGui::PopID();
@@ -389,8 +392,8 @@ void render_asset_folder(App &app, Asset *folder) {
 							ImVec2 uv0, uv1;
 							app.GetImagePosition("Warning_Icon.png", uv0, uv1);
 							ImGui::PushID(1);
-							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(9, 9),
-										 uv0, uv1)) {
+							if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+												   ImVec2(9, 9), uv0, uv1)) {
 								app.project.project_settings.modules.audio_mixer = true;
 							}
 							ImGui::PopID();
@@ -831,9 +834,41 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		ImGui::Separator();
 	}
 
-	if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
-		render_asset_folder(app, app.project.assets);
-		ImGui::TreePop();
+	ImGui::TextUnformatted("Display As:");
+
+	ImGui::SameLine();
+	ImVec2 uv0, uv1;
+	app.GetImagePosition("View_List.png", uv0, uv1);
+	ImGui::PushID(0);
+	if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(19, 20), uv0, uv1)) {
+		asset_display_type = ADT_LIST;
+	}
+	ImGui::PopID();
+	if (ImGui::IsItemHovered()) {
+		ImGui::SetTooltip("View assets as a list");
+	}
+
+	ImGui::SameLine();
+	app.GetImagePosition("View_Grid.png", uv0, uv1);
+	ImGui::PushID(1);
+	if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(19, 20), uv0, uv1)) {
+		asset_display_type = ADT_GRID;
+	}
+	ImGui::PopID();
+	if (ImGui::IsItemHovered()) {
+		ImGui::SetTooltip("View assets as a grid");
+	}
+
+	const ImVec4 sep_color(.1f,.1f,.1f,1);
+	ImGui::PushStyleColor(ImGuiCol_Separator, sep_color);
+	ImGui::Separator();
+	ImGui::PopStyleColor();
+
+	if (asset_display_type == ADT_LIST) {
+		if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
+			render_asset_folder_list(app, app.project.assets);
+			ImGui::TreePop();
+		}
 	}
 
 	render_asset_details_window(app);
