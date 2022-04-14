@@ -190,6 +190,13 @@ void Project::ReloadGeneralFiles() {
 	std::sort(general_files.begin(), general_files.end(), libdragon_file_comparison);
 }
 
+void Project::ReloadAssets() {
+	if (assets)
+		delete assets;
+
+	assets = Asset::BuildAsset(project_settings.project_directory);
+}
+
 void Project::Close(App *app) {
 	scenes.clear();
 	script_files.clear();

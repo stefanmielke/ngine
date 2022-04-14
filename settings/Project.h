@@ -38,6 +38,8 @@ class Project {
 	void ReloadSounds();
 	void ReloadGeneralFiles();
 
+	void ReloadAssets();
+
 	explicit Project(App *app);
 	Project(Project const &) = delete;
 	Project &operator=(Project const &) = delete;

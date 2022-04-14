@@ -160,31 +160,34 @@ void AppGui::RenderOpenProjectWindow(App &app) {
 void set_up_popup_windows(App &app) {
 	if (ImGui::BeginPopup("PopupSpritesBrowserImage")) {
 		if (ImGui::Selectable("Edit Settings")) {
-			if (app.state.selected_image) {
-				app.state.image_editing = app.state.selected_image;
-				app.state.reload_image_edit = true;
+			if (app.state.asset_selected.Type() == IMAGE) {
+				app.state.asset_editing = app.state.asset_selected;
+				app.state.reload_asset_edit = true;
 			}
 		}
 		if (ImGui::Selectable("Copy DFS Path")) {
-			if (app.state.selected_image) {
-				std::string dfs_path((*app.state.selected_image)->dfs_folder +
-									 (*app.state.selected_image)->name + ".sprite");
+			if (app.state.asset_selected.Type() == IMAGE) {
+				std::string dfs_path((*app.state.asset_selected.Ref().image)->dfs_folder +
+									 (*app.state.asset_selected.Ref().image)->name + ".sprite");
 				ImGui::SetClipboardText(dfs_path.c_str());
 			}
 		}
 		if (ImGui::Selectable("Delete")) {
-			if (app.state.selected_image) {
-				(*app.state.selected_image)
+			if (app.state.asset_selected.Type() == IMAGE) {
+				(*app.state.asset_selected.Ref().image)
 					->DeleteFromDisk(app.project.project_settings.project_directory);
 
 				for (size_t i = 0; i < app.project.images.size(); ++i) {
 					if (app.project.images[i]->image_path ==
-						(*app.state.selected_image)->image_path) {
+						(*app.state.asset_selected.Ref().image)->image_path) {
 						app.project.images.erase(app.project.images.begin() + (int)i);
 						break;
 					}
 				}
-				app.state.selected_image = nullptr;
+
+				app.state.asset_selected.Reset();
+				app.state.asset_editing.Reset();
+				app.project.ReloadAssets();
 			}
 		}
 		ImGui::EndPopup();
@@ -192,38 +195,41 @@ void set_up_popup_windows(App &app) {
 
 	if (ImGui::BeginPopup("PopupSoundsBrowserSound")) {
 		if (ImGui::Selectable("Edit Settings")) {
-			if (app.state.selected_sound) {
-				app.state.sound_editing = app.state.selected_sound;
-				app.state.reload_sound_edit = true;
+			if (app.state.asset_selected.Type() == SOUND) {
+				app.state.asset_editing = app.state.asset_selected;
+				app.state.reload_asset_edit = true;
 			}
 		}
 		if (ImGui::Selectable("Copy DFS Path")) {
-			if (app.state.selected_sound) {
+			if (app.state.asset_selected.Type() == SOUND) {
 				std::string dfs_path;
-				if ((*app.state.selected_sound)->type == SOUND_XM ||
-					(*app.state.selected_sound)->type == SOUND_YM) {
+				if ((*app.state.asset_selected.Ref().sound)->type == SOUND_XM ||
+					(*app.state.asset_selected.Ref().sound)->type == SOUND_YM) {
 					dfs_path.append("rom:");
 				}
 
-				dfs_path.append((*app.state.selected_sound)->dfs_folder +
-								(*app.state.selected_sound)->name +
-								(*app.state.selected_sound)->GetLibdragonExtension());
+				dfs_path.append((*app.state.asset_selected.Ref().sound)->dfs_folder +
+								(*app.state.asset_selected.Ref().sound)->name +
+								(*app.state.asset_selected.Ref().sound)->GetLibdragonExtension());
 				ImGui::SetClipboardText(dfs_path.c_str());
 			}
 		}
 		if (ImGui::Selectable("Delete")) {
-			if (app.state.selected_sound) {
-				(*app.state.selected_sound)
+			if (app.state.asset_selected.Type() == SOUND) {
+				(*app.state.asset_selected.Ref().sound)
 					->DeleteFromDisk(app.project.project_settings.project_directory);
 
 				for (size_t i = 0; i < app.project.sounds.size(); ++i) {
 					if (app.project.sounds[i]->sound_path ==
-						(*app.state.selected_sound)->sound_path) {
+						(*app.state.asset_selected.Ref().sound)->sound_path) {
 						app.project.sounds.erase(app.project.sounds.begin() + (int)i);
 						break;
 					}
 				}
-				app.state.selected_sound = nullptr;
+
+				app.state.asset_selected.Reset();
+				app.state.asset_editing.Reset();
+				app.project.ReloadAssets();
 			}
 		}
 		ImGui::EndPopup();
@@ -231,34 +237,37 @@ void set_up_popup_windows(App &app) {
 
 	if (ImGui::BeginPopup("PopupContentsBrowserContent")) {
 		if (ImGui::Selectable("Edit Settings")) {
-			if (app.state.selected_general_file) {
-				app.state.general_file_editing = app.state.selected_general_file;
-				app.state.reload_general_file_edit = true;
+			if (app.state.asset_selected.Type() == GENERAL) {
+				app.state.asset_editing = app.state.asset_selected;
+				app.state.reload_asset_edit = true;
 			}
 		}
 		if (ImGui::Selectable("Copy DFS Path")) {
-			if (app.state.selected_general_file) {
+			if (app.state.asset_selected.Type() == GENERAL) {
 				std::string dfs_path;
-				dfs_path.append((*app.state.selected_general_file)->dfs_folder +
-								(*app.state.selected_general_file)->GetFilename());
+				dfs_path.append((*app.state.asset_selected.Ref().file)->dfs_folder +
+								(*app.state.asset_selected.Ref().file)->GetFilename());
 
 				ImGui::SetClipboardText(dfs_path.c_str());
 			}
 		}
 		if (ImGui::Selectable("Delete")) {
-			if (app.state.selected_general_file) {
-				(*app.state.selected_general_file)
+			if (app.state.asset_selected.Type() == GENERAL) {
+				(*app.state.asset_selected.Ref().file)
 					->DeleteFromDisk(app.project.project_settings.project_directory);
 
 				for (size_t i = 0; i < app.project.general_files.size(); ++i) {
 					if (app.project.general_files[i]->GetFilename() ==
-						(*app.state.selected_general_file)->GetFilename()) {
+						(*app.state.asset_selected.Ref().file)->GetFilename()) {
 						app.project.general_files.erase(app.project.general_files.begin() + (int)i);
 
 						break;
 					}
 				}
-				app.state.selected_general_file = nullptr;
+
+				app.state.asset_selected.Reset();
+				app.state.asset_editing.Reset();
+				app.project.ReloadAssets();
 			}
 		}
 		ImGui::EndPopup();
@@ -388,11 +397,7 @@ void render_asset_folder(App &app, Asset *folder) {
 	}
 }
 
-void AppGui::RenderContentBrowserNew(App &app) {
-	if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
-		render_asset_folder(app, app.project.assets);
-		ImGui::TreePop();
-	}
+void render_asset_details_window(App &app) {
 	ImVec2 position = ImGui::GetWindowPos();
 	ImVec2 size = ImGui::GetWindowSize();
 
@@ -472,6 +477,8 @@ void AppGui::RenderContentBrowserNew(App &app) {
 
 						std::sort(app.project.images.begin(), app.project.images.end(),
 								  libdragon_image_comparison);
+
+						app.project.ReloadAssets();
 					}
 				}
 
@@ -568,8 +575,10 @@ void AppGui::RenderContentBrowserNew(App &app) {
 							->SaveToDisk(app.project.project_settings.project_directory);
 
 						app.state.asset_editing.Reset();
+
 						std::sort(app.project.sounds.begin(), app.project.sounds.end(),
 								  libdragon_sound_comparison);
+						app.project.ReloadAssets();
 					}
 				}
 
@@ -649,68 +658,78 @@ void AppGui::RenderContentBrowserNew(App &app) {
 			}
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-					ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-					ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
-									 ImGuiInputTextFlags_CharsFilePath);
-					ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
+				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
+								 ImGuiInputTextFlags_CharsFilePath);
+				ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
 
-					ImGui::Separator();
-					ImGui::Spacing();
-					if (ImGui::Button("Save")) {
-						bool will_save = true;
-						if ((*app.state.asset_editing.Ref().file)->name != edit_name) {
-							std::string name_string(edit_name);
-							name_string.append((*app.state.asset_editing.Ref().file)->file_type);
+				ImGui::Separator();
+				ImGui::Spacing();
+				if (ImGui::Button("Save")) {
+					bool will_save = true;
+					if ((*app.state.asset_editing.Ref().file)->name != edit_name) {
+						std::string name_string(edit_name);
+						name_string.append((*app.state.asset_editing.Ref().file)->file_type);
 
-							auto find_by_name =
-								[&name_string](const std::unique_ptr<LibdragonFile> &i) {
-									return i->GetFilename() == name_string;
-								};
-							if (std::find_if(app.project.general_files.begin(),
-											 app.project.general_files.end(),
-											 find_by_name) != std::end(app.project.general_files)) {
-								console.AddLog(
-									"File with the name already exists. Please choose a "
-									"different name.");
-								will_save = false;
-							} else {
-								std::filesystem::copy_file(
-									app.project.project_settings.project_directory + "/" +
-										(*app.state.asset_editing.Ref().file)->file_path,
-									app.project.project_settings.project_directory +
-										"/assets/general/" + name_string);
-								(*app.state.asset_editing.Ref().file)
-									->DeleteFromDisk(
-										app.project.project_settings.project_directory);
-							}
-						}
-
-						if (will_save) {
-							(*app.state.asset_editing.Ref().file)->name = edit_name;
-							(*app.state.asset_editing.Ref().file)->dfs_folder = edit_dfs_folder;
+						auto find_by_name =
+							[&name_string](const std::unique_ptr<LibdragonFile> &i) {
+								return i->GetFilename() == name_string;
+							};
+						if (std::find_if(app.project.general_files.begin(),
+										 app.project.general_files.end(),
+										 find_by_name) != std::end(app.project.general_files)) {
+							console.AddLog(
+								"File with the name already exists. Please choose a "
+								"different name.");
+							will_save = false;
+						} else {
+							std::filesystem::copy_file(
+								app.project.project_settings.project_directory + "/" +
+									(*app.state.asset_editing.Ref().file)->file_path,
+								app.project.project_settings.project_directory +
+									"/assets/general/" + name_string);
 							(*app.state.asset_editing.Ref().file)
-								->copy_to_filesystem = edit_copy_to_filesystem;
-							(*app.state.asset_editing.Ref().file)
-								->file_path = "assets/general/" +
-											  (*app.state.asset_editing.Ref().file)->GetFilename();
-
-							(*app.state.asset_editing.Ref().file)
-								->SaveToDisk(app.project.project_settings.project_directory);
-
-							app.state.asset_editing.Reset();
-							std::sort(app.project.general_files.begin(),
-									  app.project.general_files.end(), libdragon_file_comparison);
+								->DeleteFromDisk(app.project.project_settings.project_directory);
 						}
 					}
 
-					ImGui::SameLine();
-					if (ImGui::Button("Cancel")) {
+					if (will_save) {
+						(*app.state.asset_editing.Ref().file)->name = edit_name;
+						(*app.state.asset_editing.Ref().file)->dfs_folder = edit_dfs_folder;
+						(*app.state.asset_editing.Ref().file)
+							->copy_to_filesystem = edit_copy_to_filesystem;
+						(*app.state.asset_editing.Ref().file)
+							->file_path = "assets/general/" +
+										  (*app.state.asset_editing.Ref().file)->GetFilename();
+
+						(*app.state.asset_editing.Ref().file)
+							->SaveToDisk(app.project.project_settings.project_directory);
+
 						app.state.asset_editing.Reset();
+
+						std::sort(app.project.general_files.begin(),
+								  app.project.general_files.end(), libdragon_file_comparison);
+						app.project.ReloadAssets();
 					}
 				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) {
+					app.state.asset_editing.Reset();
+				}
+			}
 			ImGui::End();
 		} break;
 	}
+}
+
+void AppGui::RenderContentBrowserNew(App &app) {
+	if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
+		render_asset_folder(app, app.project.assets);
+		ImGui::TreePop();
+	}
+
+	render_asset_details_window(app);
 }
 
 void AppGui::RenderContentBrowser(App &app) {
