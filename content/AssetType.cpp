@@ -13,4 +13,6 @@ std::string GetAssetTypeName(AssetType type) {
 		case GENERAL:
 			return "general";
 	}
+
+	return "";
 }

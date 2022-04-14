@@ -4,26 +4,19 @@
 #include <string>
 #include <vector>
 
+#include "AssetReference.h"
 #include "AssetType.h"
 
 class LibdragonImage;
 class LibdragonSound;
 class LibdragonFile;
 
-union AssetReference {
-	std::unique_ptr<LibdragonImage> *image;
-	std::unique_ptr<LibdragonSound> *sound;
-	std::unique_ptr<LibdragonFile> *file;
-
-	AssetReference() = default;
-};
-
 class Asset {
    public:
 	std::vector<Asset> children;
 
 	Asset(AssetType type, std::string name, Asset *parent = nullptr,
-		  AssetReference asset_reference = AssetReference());
+		  AssetReferenceUnion asset_reference = AssetReferenceUnion());
 
 	static Asset *BuildAsset(std::filesystem::path project_assets_folder);
 
@@ -35,7 +28,7 @@ class Asset {
 		return name;
 	}
 
-	AssetReference GetAssetReference() const {
+	AssetReferenceUnion GetAssetReference() const {
 		return asset_ref;
 	}
 
@@ -55,7 +48,7 @@ class Asset {
 	AssetType type;
 	std::string name;
 
-	AssetReference asset_ref;
+	AssetReferenceUnion asset_ref;
 
 	Asset *parent;
 	std::filesystem::path path;

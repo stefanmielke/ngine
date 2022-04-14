@@ -8,6 +8,7 @@
 #include "LibdragonFile.h"
 #include "LibdragonScript.h"
 #include "LibdragonSound.h"
+#include "content/AssetReference.h"
 #include "settings/EngineSettings.h"
 #include "settings/ProjectSettingsScreen.h"
 #include "settings/Scene.h"
@@ -25,6 +26,10 @@ class ProjectState {
 	std::unique_ptr<LibdragonFile> *selected_general_file;
 	std::unique_ptr<LibdragonFile> *general_file_editing;
 	bool reload_general_file_edit;
+
+	AssetReference asset_selected;
+	AssetReference asset_editing;
+	bool reload_asset_edit;
 
 	std::unique_ptr<LibdragonScript> *selected_script;
 	std::unique_ptr<LibdragonScript> *script_editing;

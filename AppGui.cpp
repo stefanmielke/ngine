@@ -20,6 +20,8 @@
 static int window_width, window_height;
 static bool is_output_open;
 
+const float details_window_size = 200;
+
 void open_url(const char *url);
 
 void AppGui::Update(App &app) {
@@ -281,19 +283,21 @@ void render_asset_folder(App &app, Asset *folder) {
 
 				std::string name = asset.GetName();
 
-				bool selected = app.state.selected_image &&
-								name == (*app.state.selected_image)->name;
+				bool selected = app.state.asset_selected.Ref().image &&
+								name == (*app.state.asset_selected.Ref().image)->name;
 				if (ImGui::Selectable(asset.GetName().c_str(), selected,
 									  ImGuiSelectableFlags_AllowDoubleClick)) {
-					app.state.selected_image = asset.GetAssetReference().image;
+					app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+					app.state.asset_editing = app.state.asset_selected;
+					app.state.reload_asset_edit = true;
 				}
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-					app.state.image_editing = app.state.selected_image;
-					app.state.reload_image_edit = true;
+					app.state.asset_editing = app.state.asset_selected;
+					app.state.reload_asset_edit = true;
 				}
 				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					app.state.selected_image = asset.GetAssetReference().image;
+					app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
 					ImGui::OpenPopup("PopupSpritesBrowserImage");
 				}
 				if (ImGui::IsItemHovered()) {
@@ -323,20 +327,22 @@ void render_asset_folder(App &app, Asset *folder) {
 
 				std::string name = asset.GetName();
 
-				bool selected = app.state.selected_sound &&
-								name == (*app.state.selected_sound)->name;
+				bool selected = app.state.asset_selected.Type() == SOUND &&
+								name == (*app.state.asset_selected.Ref().sound)->name;
 				if (ImGui::Selectable(asset.GetName().c_str(), selected,
 									  ImGuiSelectableFlags_AllowDoubleClick)) {
-					app.state.selected_sound = asset.GetAssetReference().sound;
+					app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+					app.state.asset_editing = app.state.asset_selected;
+					app.state.reload_asset_edit = true;
 				}
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-					app.state.sound_editing = app.state.selected_sound;
-					app.state.reload_sound_edit = true;
+					app.state.asset_editing = app.state.asset_selected;
+					app.state.reload_asset_edit = true;
 				}
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					app.state.selected_sound = asset.GetAssetReference().sound;
+					app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
 					ImGui::OpenPopup("PopupSoundsBrowserSound");
 				}
 
@@ -357,16 +363,18 @@ void render_asset_folder(App &app, Asset *folder) {
 								name == (*app.state.selected_general_file)->GetFilename();
 				if (ImGui::Selectable(name.c_str(), selected,
 									  ImGuiSelectableFlags_AllowDoubleClick)) {
-					app.state.selected_general_file = asset.GetAssetReference().file;
+					app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
+					app.state.asset_editing = app.state.asset_selected;
+					app.state.reload_asset_edit = true;
 				}
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-					app.state.general_file_editing = asset.GetAssetReference().file;
-					app.state.reload_general_file_edit = true;
+					app.state.asset_editing = app.state.asset_selected;
+					app.state.reload_asset_edit = true;
 				}
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					app.state.selected_general_file = asset.GetAssetReference().file;
+					app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
 					ImGui::OpenPopup("PopupContentsBrowserContent");
 				}
 
@@ -385,11 +393,333 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		render_asset_folder(app, app.project.assets);
 		ImGui::TreePop();
 	}
+	ImVec2 position = ImGui::GetWindowPos();
+	ImVec2 size = ImGui::GetWindowSize();
+
+	const float center_y_offset = is_output_open ? 200 : 19;
+	position.y = (float)window_height - details_window_size - center_y_offset;
+	size.y = details_window_size;
+
+	ImGui::SetNextWindowSize(size);
+	ImGui::SetNextWindowPos(position);
+	switch (app.state.asset_editing.Type()) {
+		case UNKNOWN:
+		case FOLDER:
+			break;
+		case IMAGE: {
+			static char image_edit_name[50];
+			static char image_edit_dfs_folder[100];
+			static int image_edit_h_slices = 0;
+			static int image_edit_v_slices = 0;
+			if (app.state.reload_asset_edit) {
+				app.state.reload_asset_edit = false;
+
+				strcpy(image_edit_name, (*app.state.asset_editing.Ref().image)->name.c_str());
+				strcpy(image_edit_dfs_folder,
+					   (*app.state.asset_editing.Ref().image)->dfs_folder.c_str());
+				image_edit_h_slices = (*app.state.asset_editing.Ref().image)->h_slices;
+				image_edit_v_slices = (*app.state.asset_editing.Ref().image)->v_slices;
+			}
+			if (ImGui::Begin("Details", nullptr,
+							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFilePath);
+				ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
+								 ImGuiInputTextFlags_CharsFilePath);
+				ImGui::InputInt("H Slices", &image_edit_h_slices);
+				ImGui::InputInt("V Slices", &image_edit_v_slices);
+
+				ImGui::Separator();
+				ImGui::Spacing();
+
+				if (ImGui::Button("Save")) {
+					bool will_save = true;
+					if ((*app.state.asset_editing.Ref().image)->name != image_edit_name) {
+						std::string name_string(image_edit_name);
+						auto find_by_name =
+							[&name_string](const std::unique_ptr<LibdragonImage> &i) {
+								return i->name == name_string;
+							};
+						if (std::find_if(app.project.images.begin(), app.project.images.end(),
+										 find_by_name) != std::end(app.project.images)) {
+							console.AddLog(
+								"Image with the name already exists. Please choose a "
+								"different name.");
+							will_save = false;
+						} else {
+							std::filesystem::copy_file(
+								app.project.project_settings.project_directory + "/" +
+									(*app.state.image_editing)->image_path,
+								app.project.project_settings.project_directory +
+									"/assets/sprites/" + image_edit_name + ".png");
+							(*app.state.image_editing)
+								->DeleteFromDisk(app.project.project_settings.project_directory);
+						}
+					}
+
+					if (will_save) {
+						(*app.state.asset_editing.Ref().image)->name = image_edit_name;
+						(*app.state.asset_editing.Ref().image)->dfs_folder = image_edit_dfs_folder;
+						(*app.state.asset_editing.Ref().image)->h_slices = image_edit_h_slices;
+						(*app.state.asset_editing.Ref().image)->v_slices = image_edit_v_slices;
+						(*app.state.asset_editing.Ref().image)
+							->image_path = "assets/sprites/" +
+										   (*app.state.asset_editing.Ref().image)->name + ".png";
+
+						(*app.state.asset_editing.Ref().image)
+							->SaveToDisk(app.project.project_settings.project_directory);
+
+						app.state.asset_editing.Reset();
+
+						std::sort(app.project.images.begin(), app.project.images.end(),
+								  libdragon_image_comparison);
+					}
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) {
+					app.state.asset_editing.Reset();
+				}
+			}
+			ImGui::End();
+		} break;
+		case SOUND: {
+			static char sound_edit_name[50];
+			static char sound_edit_dfs_folder[100];
+			if (app.state.reload_asset_edit) {
+				app.state.reload_asset_edit = false;
+
+				strcpy(sound_edit_name, (*app.state.asset_editing.Ref().sound)->name.c_str());
+				strcpy(sound_edit_dfs_folder,
+					   (*app.state.asset_editing.Ref().sound)->dfs_folder.c_str());
+
+				if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
+					std::string sound_path = app.project.project_settings.project_directory + "/" +
+											 (*app.state.asset_editing.Ref().sound)->sound_path;
+
+					if (app.audio_state == SS_PLAYING || app.audio_state == SS_PAUSED) {
+						Mix_HaltChannel(-1);
+						app.audio_state = SS_STOPPED;
+					}
+					if (app.audio_sample) {
+						Mix_FreeChunk(app.audio_sample);
+					}
+
+					app.audio_sample = Mix_LoadWAV(sound_path.c_str());
+					if (!app.audio_sample) {
+						console.AddLog("[error] Unable to load wave file: %s\n",
+									   sound_path.c_str());
+					}
+				}
+			}
+			if (ImGui::Begin("Details", nullptr,
+							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+				ImGui::InputText("Name", sound_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+				ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100,
+								 ImGuiInputTextFlags_CharsFilePath);
+
+				if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
+					ImGui::Checkbox("Loop", &(*app.state.asset_editing.Ref().sound)->wav_loop);
+					if ((*app.state.asset_editing.Ref().sound)->wav_loop) {
+						ImGui::InputInt("Loop Offset",
+										&(*app.state.asset_editing.Ref().sound)->wav_loop_offset);
+					}
+				} else if ((*app.state.asset_editing.Ref().sound)->type == SOUND_YM) {
+					ImGui::Checkbox("Compress",
+									&(*app.state.asset_editing.Ref().sound)->ym_compress);
+				}
+
+				ImGui::Separator();
+				ImGui::Spacing();
+				if (ImGui::Button("Save")) {
+					bool will_save = true;
+					if ((*app.state.asset_editing.Ref().sound)->name != sound_edit_name) {
+						std::string name_string(sound_edit_name);
+						auto find_by_name =
+							[&name_string](const std::unique_ptr<LibdragonSound> &i) {
+								return i->name == name_string;
+							};
+						if (std::find_if(app.project.sounds.begin(), app.project.sounds.end(),
+										 find_by_name) != std::end(app.project.sounds)) {
+							console.AddLog(
+								"Sound with the name already exists. Please choose a "
+								"different name.");
+							will_save = false;
+						} else {
+							std::filesystem::copy_file(
+								app.project.project_settings.project_directory + "/" +
+									(*app.state.asset_editing.Ref().sound)->sound_path,
+								app.project.project_settings.project_directory + "/assets/sounds/" +
+									sound_edit_name +
+									(*app.state.asset_editing.Ref().sound)->GetExtension());
+							(*app.state.asset_editing.Ref().sound)
+								->DeleteFromDisk(app.project.project_settings.project_directory);
+						}
+					}
+
+					if (will_save) {
+						(*app.state.asset_editing.Ref().sound)->name = sound_edit_name;
+						(*app.state.asset_editing.Ref().sound)->dfs_folder = sound_edit_dfs_folder;
+						(*app.state.asset_editing.Ref().sound)
+							->sound_path = "assets/sounds/" +
+										   (*app.state.asset_editing.Ref().sound)->name +
+										   (*app.state.asset_editing.Ref().sound)->GetExtension();
+
+						(*app.state.asset_editing.Ref().sound)
+							->SaveToDisk(app.project.project_settings.project_directory);
+
+						app.state.asset_editing.Reset();
+						std::sort(app.project.sounds.begin(), app.project.sounds.end(),
+								  libdragon_sound_comparison);
+					}
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) {
+					app.state.asset_editing.Reset();
+				}
+
+				// audio preview
+				if (app.state.asset_editing.Ref().sound) {
+					ImGui::Spacing();
+					ImGui::Separator();
+					ImGui::Spacing();
+
+					ImGui::TextUnformatted("Audio Preview");
+					ImGui::Spacing();
+
+					if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
+						if (ImGui::Button(app.audio_state == SS_STOPPED ? "Play" : "Restart")) {
+							switch (app.audio_state) {
+								case SS_STOPPED:
+									Mix_PlayChannel(0, app.audio_sample, 0);
+									break;
+								case SS_PAUSED:
+								case SS_PLAYING:
+									Mix_HaltChannel(0);
+									Mix_PlayChannel(0, app.audio_sample, 0);
+									break;
+							}
+							app.audio_state = SS_PLAYING;
+						}
+						ImGui::SameLine();
+						ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
+						if (ImGui::Button(app.audio_state == SS_PAUSED ? "Resume" : "Pause")) {
+							if (app.audio_state == SS_PAUSED) {
+								Mix_Resume(0);
+								app.audio_state = SS_PLAYING;
+							} else {
+								Mix_Pause(0);
+								app.audio_state = SS_PAUSED;
+							}
+						}
+						ImGui::EndDisabled();
+
+						ImGui::SameLine();
+						ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
+						if (ImGui::Button("Stop")) {
+							Mix_HaltChannel(0);
+							app.audio_state = SS_STOPPED;
+						}
+						ImGui::EndDisabled();
+
+						static int volume = MIX_MAX_VOLUME;
+						if (ImGui::SliderInt("Volume", &volume, 0, MIX_MAX_VOLUME)) {
+							Mix_Volume(0, volume);
+						}
+					} else {
+						ImGui::TextWrapped("Preview is not supported for this audio type.");
+					}
+				} else if (app.audio_state != SS_STOPPED) {
+					Mix_HaltChannel(0);
+				}
+			}
+			ImGui::End();
+		} break;
+		case GENERAL: {
+			static char edit_name[50];
+			static char edit_dfs_folder[100];
+			static bool edit_copy_to_filesystem;
+
+			if (app.state.reload_asset_edit) {
+				app.state.reload_asset_edit = false;
+
+				strcpy(edit_name, (*app.state.asset_editing.Ref().file)->name.c_str());
+				strcpy(edit_dfs_folder, (*app.state.asset_editing.Ref().file)->dfs_folder.c_str());
+				edit_copy_to_filesystem = (*app.state.asset_editing.Ref().file)->copy_to_filesystem;
+			}
+			if (ImGui::Begin("Details", nullptr,
+							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+					ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+					ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
+									 ImGuiInputTextFlags_CharsFilePath);
+					ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
+
+					ImGui::Separator();
+					ImGui::Spacing();
+					if (ImGui::Button("Save")) {
+						bool will_save = true;
+						if ((*app.state.asset_editing.Ref().file)->name != edit_name) {
+							std::string name_string(edit_name);
+							name_string.append((*app.state.asset_editing.Ref().file)->file_type);
+
+							auto find_by_name =
+								[&name_string](const std::unique_ptr<LibdragonFile> &i) {
+									return i->GetFilename() == name_string;
+								};
+							if (std::find_if(app.project.general_files.begin(),
+											 app.project.general_files.end(),
+											 find_by_name) != std::end(app.project.general_files)) {
+								console.AddLog(
+									"File with the name already exists. Please choose a "
+									"different name.");
+								will_save = false;
+							} else {
+								std::filesystem::copy_file(
+									app.project.project_settings.project_directory + "/" +
+										(*app.state.asset_editing.Ref().file)->file_path,
+									app.project.project_settings.project_directory +
+										"/assets/general/" + name_string);
+								(*app.state.asset_editing.Ref().file)
+									->DeleteFromDisk(
+										app.project.project_settings.project_directory);
+							}
+						}
+
+						if (will_save) {
+							(*app.state.asset_editing.Ref().file)->name = edit_name;
+							(*app.state.asset_editing.Ref().file)->dfs_folder = edit_dfs_folder;
+							(*app.state.asset_editing.Ref().file)
+								->copy_to_filesystem = edit_copy_to_filesystem;
+							(*app.state.asset_editing.Ref().file)
+								->file_path = "assets/general/" +
+											  (*app.state.asset_editing.Ref().file)->GetFilename();
+
+							(*app.state.asset_editing.Ref().file)
+								->SaveToDisk(app.project.project_settings.project_directory);
+
+							app.state.asset_editing.Reset();
+							std::sort(app.project.general_files.begin(),
+									  app.project.general_files.end(), libdragon_file_comparison);
+						}
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel")) {
+						app.state.asset_editing.Reset();
+					}
+				}
+			ImGui::End();
+		} break;
+	}
 }
 
 void AppGui::RenderContentBrowser(App &app) {
 	const float center_x_size = (float)window_width - 620;
-	const float center_y_offset = is_output_open ? 219 : 38;
+	float center_y_offset = is_output_open ? 219 : 38;
+
+	if (app.state.asset_editing.Type() > UNKNOWN) {
+		center_y_offset += details_window_size;
+	}
 	ImGui::SetNextWindowSize(ImVec2(center_x_size, (float)window_height - center_y_offset));
 	ImGui::SetNextWindowPos(ImVec2(300, 19));
 	if (ImGui::Begin("ContentBrowser", nullptr,

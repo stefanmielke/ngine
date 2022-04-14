@@ -4,9 +4,10 @@
 
 enum AssetType {
 	UNKNOWN,
-	FOLDER, IMAGE,
+	FOLDER,
+	IMAGE,
 	SOUND,
-	GENERAL
+	GENERAL,
 };
 
 std::string GetAssetTypeName(AssetType type);

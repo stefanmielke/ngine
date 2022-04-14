@@ -1,10 +1,11 @@
 #include "Asset.h"
 
 #include "../App.h"
+#include "AssetReference.h"
 
 extern App *g_app;
 
-Asset::Asset(AssetType type, std::string name, Asset *parent, AssetReference asset_reference)
+Asset::Asset(AssetType type, std::string name, Asset *parent, AssetReferenceUnion asset_reference)
 	: type(type),
 	  name(name),
 	  asset_ref(asset_reference),
@@ -49,7 +50,7 @@ Asset *Asset::BuildAsset(std::filesystem::path root_folder) {
 	for (auto &asset : g_app->project.images) {
 		Asset *cur_asset = CreateAndReturnAssetFolder(root_asset, asset->dfs_folder);
 
-		AssetReference ref;
+		AssetReferenceUnion ref;
 		ref.image = &asset;
 
 		cur_asset->children.emplace_back(IMAGE, asset->name, cur_asset, ref);
@@ -57,7 +58,7 @@ Asset *Asset::BuildAsset(std::filesystem::path root_folder) {
 	for (auto &asset : g_app->project.sounds) {
 		Asset *cur_asset = CreateAndReturnAssetFolder(root_asset, asset->dfs_folder);
 
-		AssetReference ref;
+		AssetReferenceUnion ref;
 		ref.sound = &asset;
 
 		cur_asset->children.emplace_back(SOUND, asset->name, cur_asset, ref);
@@ -65,7 +66,7 @@ Asset *Asset::BuildAsset(std::filesystem::path root_folder) {
 	for (auto &asset : g_app->project.general_files) {
 		Asset *cur_asset = CreateAndReturnAssetFolder(root_asset, asset->dfs_folder);
 
-		AssetReference ref;
+		AssetReferenceUnion ref;
 		ref.file = &asset;
 
 		cur_asset->children.emplace_back(GENERAL, asset->name, cur_asset, ref);
