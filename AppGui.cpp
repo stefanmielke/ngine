@@ -20,6 +20,9 @@
 static int window_width, window_height;
 static bool is_output_open;
 
+static bool display_sprites = true, display_sounds = true, display_files = true;
+static char assets_name_filter[100];
+
 const float details_window_size = 200;
 
 void open_url(const char *url);
@@ -286,37 +289,43 @@ void render_asset_folder(App &app, Asset *folder) {
 				}
 				break;
 			case IMAGE: {
-				ImGui::TextColored(ImVec4(.4f, 1.f, .4f, 1.f), "%s",
-								   GetAssetTypeName(asset.GetType()).c_str());
-				ImGui::SameLine();
+				if (display_sprites) {
+					std::string name = asset.GetName();
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TextColored(ImVec4(.4f, 1.f, .4f, 1.f), "%s",
+										   GetAssetTypeName(asset.GetType()).c_str());
+						ImGui::SameLine();
 
-				std::string name = asset.GetName();
+						bool selected = app.state.asset_selected.Ref().image &&
+										name == (*app.state.asset_selected.Ref().image)->name;
+						if (ImGui::Selectable(asset.GetName().c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
 
-				bool selected = app.state.asset_selected.Ref().image &&
-								name == (*app.state.asset_selected.Ref().image)->name;
-				if (ImGui::Selectable(asset.GetName().c_str(), selected,
-									  ImGuiSelectableFlags_AllowDoubleClick)) {
-					app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
-					app.state.asset_editing = app.state.asset_selected;
-					app.state.reload_asset_edit = true;
-				}
-
-				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-					app.state.asset_editing = app.state.asset_selected;
-					app.state.reload_asset_edit = true;
-				}
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
-					ImGui::OpenPopup("PopupSpritesBrowserImage");
-				}
-				if (ImGui::IsItemHovered()) {
-					ImGui::BeginTooltip();
-					ImGui::Text("%s", (*asset.GetAssetReference().image)->GetTooltip().c_str());
-					ImGui::Image(
-						(ImTextureID)(intptr_t)(*asset.GetAssetReference().image)->loaded_image,
-						ImVec2((float)(*asset.GetAssetReference().image)->width,
-							   (float)(*asset.GetAssetReference().image)->height));
-					ImGui::EndTooltip();
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupSpritesBrowserImage");
+						}
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s",
+										(*asset.GetAssetReference().image)->GetTooltip().c_str());
+							ImGui::Image((ImTextureID)(intptr_t)(*asset.GetAssetReference().image)
+											 ->loaded_image,
+										 ImVec2((float)(*asset.GetAssetReference().image)->width,
+												(float)(*asset.GetAssetReference().image)->height));
+							ImGui::EndTooltip();
+						}
+					}
 				}
 			} break;
 			case UNKNOWN: {
@@ -329,68 +338,81 @@ void render_asset_folder(App &app, Asset *folder) {
 				}
 			} break;
 			case SOUND: {
-				ImGui::TextColored(ImVec4(.4f, .4f, 1.f, 1.f), "%s",
-								   GetAssetTypeName(asset.GetType()).c_str());
+				if (display_sounds) {
+					std::string name = asset.GetName();
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TextColored(ImVec4(.4f, .4f, 1.f, 1.f), "%s",
+										   GetAssetTypeName(asset.GetType()).c_str());
 
-				ImGui::SameLine();
+						ImGui::SameLine();
 
-				std::string name = asset.GetName();
+						bool selected = app.state.asset_selected.Type() == SOUND &&
+										name == (*app.state.asset_selected.Ref().sound)->name;
+						if (ImGui::Selectable(asset.GetName().c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
 
-				bool selected = app.state.asset_selected.Type() == SOUND &&
-								name == (*app.state.asset_selected.Ref().sound)->name;
-				if (ImGui::Selectable(asset.GetName().c_str(), selected,
-									  ImGuiSelectableFlags_AllowDoubleClick)) {
-					app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
-					app.state.asset_editing = app.state.asset_selected;
-					app.state.reload_asset_edit = true;
-				}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
 
-				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-					app.state.asset_editing = app.state.asset_selected;
-					app.state.reload_asset_edit = true;
-				}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupSoundsBrowserSound");
+						}
 
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
-					ImGui::OpenPopup("PopupSoundsBrowserSound");
-				}
-
-				if (ImGui::IsItemHovered()) {
-					ImGui::BeginTooltip();
-					ImGui::Text("%s", (*asset.GetAssetReference().sound)->GetTooltip().c_str());
-					ImGui::EndTooltip();
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s",
+										(*asset.GetAssetReference().sound)->GetTooltip().c_str());
+							ImGui::EndTooltip();
+						}
+					}
 				}
 			} break;
 			case GENERAL: {
-				ImGui::TextColored(ImVec4(1.f, .4f, .4f, 1.f), "%s",
-								   GetAssetTypeName(asset.GetType()).c_str());
-				ImGui::SameLine();
+				if (display_files) {
+					std::string name = (*asset.GetAssetReference().file)->GetFilename();
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TextColored(ImVec4(1.f, .4f, .4f, 1.f), "%s",
+										   GetAssetTypeName(asset.GetType()).c_str());
+						ImGui::SameLine();
 
-				std::string name = (*asset.GetAssetReference().file)->GetFilename();
+						bool selected = app.state.asset_selected.Type() == GENERAL &&
+										name ==
+											(*app.state.asset_selected.Ref().file)->GetFilename();
+						if (ImGui::Selectable(name.c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
 
-				bool selected = app.state.selected_general_file &&
-								name == (*app.state.selected_general_file)->GetFilename();
-				if (ImGui::Selectable(name.c_str(), selected,
-									  ImGuiSelectableFlags_AllowDoubleClick)) {
-					app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
-					app.state.asset_editing = app.state.asset_selected;
-					app.state.reload_asset_edit = true;
-				}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
 
-				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-					app.state.asset_editing = app.state.asset_selected;
-					app.state.reload_asset_edit = true;
-				}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupContentsBrowserContent");
+						}
 
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-					app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
-					ImGui::OpenPopup("PopupContentsBrowserContent");
-				}
-
-				if (ImGui::IsItemHovered()) {
-					ImGui::BeginTooltip();
-					ImGui::Text("%s", (*asset.GetAssetReference().file)->GetTooltip().c_str());
-					ImGui::EndTooltip();
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s",
+										(*asset.GetAssetReference().file)->GetTooltip().c_str());
+							ImGui::EndTooltip();
+						}
+					}
 				}
 			} break;
 		}
@@ -733,6 +755,15 @@ void AppGui::RenderContentBrowserNew(App &app) {
 
 		app.project.ReloadAssets();
 	}
+	ImGui::Separator();
+
+	ImGui::TextUnformatted("Filters:");
+	ImGui::Checkbox("Sprites", &display_sprites);
+	ImGui::SameLine();
+	ImGui::Checkbox("Sounds", &display_sounds);
+	ImGui::SameLine();
+	ImGui::Checkbox("Files", &display_files);
+	ImGui::InputText("Name", assets_name_filter, 100);
 	ImGui::Separator();
 
 	if (!app.project.project_settings.modules.dfs) {

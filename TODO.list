@@ -38,10 +38,11 @@ To Do:
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
-[ ] Double click to open editor for asset
-    [ ] Add Sprite/Sound editors on Engine Settings
-[ ] File Picker for importing content
-    - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
+    [ ] "Full view" on content browser, with sprite preview
+    [ ] File Picker for importing content
+        - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
+    [ ] Double click to open editor for asset
+        [ ] Add Sprite/Sound editors on Engine Settings
 [ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)
@@ -96,6 +97,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Filter content based on type and name
 [x] Settings window inside the content window
     - sprites should not have preview
     - audio preview inside
