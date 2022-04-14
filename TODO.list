@@ -43,6 +43,8 @@ To Do:
         - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
     [ ] Double click to open editor for asset
         [ ] Add Sprite/Sound editors on Engine Settings
+    [ ] Smaller "modules missing" warnings
+        - put warning next to file type?
 [ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)

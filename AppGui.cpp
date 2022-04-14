@@ -475,10 +475,10 @@ void render_asset_details_window(App &app) {
 						} else {
 							std::filesystem::copy_file(
 								app.project.project_settings.project_directory + "/" +
-									(*app.state.image_editing)->image_path,
+									(*app.state.asset_editing.Ref().image)->image_path,
 								app.project.project_settings.project_directory +
 									"/assets/sprites/" + image_edit_name + ".png");
-							(*app.state.image_editing)
+							(*app.state.asset_editing.Ref().image)
 								->DeleteFromDisk(app.project.project_settings.project_directory);
 						}
 					}

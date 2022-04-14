@@ -15,18 +15,6 @@
 
 class ProjectState {
    public:
-	std::unique_ptr<LibdragonImage> *selected_image;
-	std::unique_ptr<LibdragonImage> *image_editing;
-	bool reload_image_edit;
-
-	std::unique_ptr<LibdragonSound> *selected_sound;
-	std::unique_ptr<LibdragonSound> *sound_editing;
-	bool reload_sound_edit;
-
-	std::unique_ptr<LibdragonFile> *selected_general_file;
-	std::unique_ptr<LibdragonFile> *general_file_editing;
-	bool reload_general_file_edit;
-
 	AssetReference asset_selected;
 	AssetReference asset_editing;
 	bool reload_asset_edit;
@@ -54,16 +42,7 @@ class ProjectState {
 	}
 
 	explicit ProjectState(const EngineSettings &engine_settings)
-		: selected_image(nullptr),
-		  image_editing(nullptr),
-		  reload_image_edit(false),
-		  selected_sound(nullptr),
-		  sound_editing(nullptr),
-		  reload_sound_edit(false),
-		  selected_general_file(nullptr),
-		  general_file_editing(nullptr),
-		  reload_general_file_edit(false),
-		  selected_script(nullptr),
+		: selected_script(nullptr),
 		  script_editing(nullptr),
 		  reload_script_edit(false),
 		  emulator_path(),
@@ -71,7 +50,7 @@ class ProjectState {
 		  libdragon_exe_path(),
 		  project_settings_screen(),
 		  current_scene(nullptr),
-		  scene_name(){
+		  scene_name() {
 		memset(scene_name, 0, 100);
 
 		LoadEngineSetings(engine_settings);
