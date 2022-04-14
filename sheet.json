@@ -19,7 +19,7 @@
 {
 	"filename": "Clean_Build.png",
 	"frame": {"x":0,"y":40,"w":19,"h":20},
-	"rotated": true,
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
 	"sourceSize": {"w":19,"h":20}
@@ -34,7 +34,7 @@
 },
 {
 	"filename": "Error_Icon.png",
-	"frame": {"x":40,"y":40,"w":9,"h":9},
+	"frame": {"x":38,"y":40,"w":9,"h":9},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":9},
@@ -58,7 +58,7 @@
 },
 {
 	"filename": "View_Grid.png",
-	"frame": {"x":38,"y":20,"w":19,"h":20},
+	"frame": {"x":19,"y":40,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -66,15 +66,15 @@
 },
 {
 	"filename": "View_List.png",
-	"frame": {"x":20,"y":40,"w":19,"h":20},
-	"rotated": true,
+	"frame": {"x":38,"y":20,"w":19,"h":20},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
 	"sourceSize": {"w":19,"h":20}
 },
 {
 	"filename": "Warning_Icon.png",
-	"frame": {"x":40,"y":49,"w":9,"h":9},
+	"frame": {"x":38,"y":49,"w":9,"h":9},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":9},
@@ -85,8 +85,8 @@
 	"version": "1.0",
 	"image": "sheet.png",
 	"format": "RGBA8888",
-	"size": {"w":57,"h":59},
+	"size": {"w":57,"h":60},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:74c8a2f190085b0ad9f8bf4541f2e131:85e8191eabf28bdf98baae7c21ea95d9:9c44ecd7e9a522007eaff2949095bc1d$"
+	"smartupdate": "$TexturePacker:SmartUpdate:5a606512a155aced58b9dec4522b3dde:85e8191eabf28bdf98baae7c21ea95d9:9c44ecd7e9a522007eaff2949095bc1d$"
 }
 }
