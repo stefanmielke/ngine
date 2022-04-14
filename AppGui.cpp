@@ -485,6 +485,8 @@ void render_asset_folder_list(App &app, Asset *folder) {
 void render_asset_folder_grid(App &app, Asset *folder) {
 	set_up_popup_windows(app);
 
+	const ImVec4 unselected_tint = ImVec4(.6f, .6f, .6f, 1);
+
 	ImGui::PushID(folder->GetName().c_str());
 	for (auto &asset : folder->children) {
 		switch (asset.GetType()) {
@@ -530,11 +532,15 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 
 						ImGui::TableNextColumn();
 
+						bool selected = app.state.asset_selected.Ref().image &&
+										name == (*app.state.asset_selected.Ref().image)->name;
+
 						ImGui::PushID(asset.GetName().c_str());
 						if (ImGui::ImageButton(
 								(ImTextureID)(intptr_t)((*asset.GetAssetReference().image)
 															->loaded_image),
-								ImVec2(80, 80))) {
+								ImVec2(80, 80), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0),
+								selected ? ImVec4(1, 1, 1, 1) : unselected_tint)) {
 							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
@@ -562,14 +568,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::EndTooltip();
 						}
 
-						bool selected = app.state.asset_selected.Ref().image &&
-										name == (*app.state.asset_selected.Ref().image)->name;
-						if (ImGui::Selectable(asset.GetName().c_str(), selected,
-											  ImGuiSelectableFlags_AllowDoubleClick)) {
-							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
-							app.state.asset_editing = app.state.asset_selected;
-							app.state.reload_asset_edit = true;
-						}
+						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
 			} break;
@@ -622,15 +621,19 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						//							ImGui::SameLine();
 						//						}
 
+						bool selected = app.state.asset_selected.Type() == SOUND &&
+										name == (*app.state.asset_selected.Ref().sound)->name;
+
 						ImVec2 uv0, uv1;
 						app.GetImagePosition("Song.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
-											   ImVec2(80, 80), uv0, uv1)) {
-							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
-							app.state.asset_editing = app.state.asset_selected;
-							app.state.reload_asset_edit = true;
-						}
+											   ImVec2(80, 80), uv0, uv1, -1, ImVec4(0, 0, 0, 0),
+											   selected ? ImVec4(1, 1, 1, 1) : unselected_tint)) {
+								app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+								app.state.asset_editing = app.state.asset_selected;
+								app.state.reload_asset_edit = true;
+							}
 						ImGui::PopID();
 
 						if (ImGui::IsItemHovered() &&
@@ -652,14 +655,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::EndTooltip();
 						}
 
-						bool selected = app.state.asset_selected.Type() == SOUND &&
-										name == (*app.state.asset_selected.Ref().sound)->name;
-						if (ImGui::Selectable(asset.GetName().c_str(), selected,
-											  ImGuiSelectableFlags_AllowDoubleClick)) {
-							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
-							app.state.asset_editing = app.state.asset_selected;
-							app.state.reload_asset_edit = true;
-						}
+						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
 			} break;
@@ -677,7 +673,8 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						app.GetImagePosition("File.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
-											   ImVec2(80, 80), uv0, uv1)) {
+											   ImVec2(80, 80), uv0, uv1, -1, ImVec4(0, 0, 0, 0),
+											   selected ? ImVec4(1, 1, 1, 1) : unselected_tint)) {
 							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
@@ -703,12 +700,19 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::EndTooltip();
 						}
 
-						if (ImGui::Selectable(name.c_str(), selected,
-											  ImGuiSelectableFlags_AllowDoubleClick)) {
-							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
-							app.state.asset_editing = app.state.asset_selected;
-							app.state.reload_asset_edit = true;
-						}
+						ImGui::SameLine(0);
+						ImGui::BeginDisabled();
+						ImGui::Checkbox("Text", &selected);
+						ImGui::EndDisabled();
+
+						ImGui::TextWrapped("%s", name.c_str());
+						//						if (ImGui::Selectable(name.c_str(), selected,
+						//											  ImGuiSelectableFlags_AllowDoubleClick))
+						//{ 							app.state.asset_selected.Ref(GENERAL,
+						// asset.GetAssetReference()); app.state.asset_editing
+						// =
+						// app.state.asset_selected; app.state.reload_asset_edit = true;
+						//						}
 					}
 				}
 			} break;
