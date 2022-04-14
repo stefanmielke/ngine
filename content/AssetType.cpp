@@ -11,7 +11,7 @@ std::string GetAssetTypeName(AssetType type) {
 		case SOUND:
 			return "sound";
 		case GENERAL:
-			return "general";
+			return "file";
 	}
 
 	return "";
