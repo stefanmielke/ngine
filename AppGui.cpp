@@ -155,25 +155,158 @@ void AppGui::RenderOpenProjectWindow(App &app) {
 	}
 }
 
-void render_asset_folder(Asset *folder) {
+void set_up_popup_windows(App &app) {
+	if (ImGui::BeginPopup("PopupSpritesBrowserImage")) {
+		if (ImGui::Selectable("Edit Settings")) {
+			if (app.state.selected_image) {
+				app.state.image_editing = app.state.selected_image;
+				app.state.reload_image_edit = true;
+			}
+		}
+		if (ImGui::Selectable("Copy DFS Path")) {
+			if (app.state.selected_image) {
+				std::string dfs_path((*app.state.selected_image)->dfs_folder +
+									 (*app.state.selected_image)->name + ".sprite");
+				ImGui::SetClipboardText(dfs_path.c_str());
+			}
+		}
+		if (ImGui::Selectable("Delete")) {
+			if (app.state.selected_image) {
+				(*app.state.selected_image)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.images.size(); ++i) {
+					if (app.project.images[i]->image_path ==
+						(*app.state.selected_image)->image_path) {
+						app.project.images.erase(app.project.images.begin() + (int)i);
+						break;
+					}
+				}
+				app.state.selected_image = nullptr;
+			}
+		}
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginPopup("PopupSoundsBrowserSound")) {
+		if (ImGui::Selectable("Edit Settings")) {
+			if (app.state.selected_sound) {
+				app.state.sound_editing = app.state.selected_sound;
+				app.state.reload_sound_edit = true;
+			}
+		}
+		if (ImGui::Selectable("Copy DFS Path")) {
+			if (app.state.selected_sound) {
+				std::string dfs_path;
+				if ((*app.state.selected_sound)->type == SOUND_XM ||
+					(*app.state.selected_sound)->type == SOUND_YM) {
+					dfs_path.append("rom:");
+				}
+
+				dfs_path.append((*app.state.selected_sound)->dfs_folder +
+								(*app.state.selected_sound)->name +
+								(*app.state.selected_sound)->GetLibdragonExtension());
+				ImGui::SetClipboardText(dfs_path.c_str());
+			}
+		}
+		if (ImGui::Selectable("Delete")) {
+			if (app.state.selected_sound) {
+				(*app.state.selected_sound)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.sounds.size(); ++i) {
+					if (app.project.sounds[i]->sound_path ==
+						(*app.state.selected_sound)->sound_path) {
+						app.project.sounds.erase(app.project.sounds.begin() + (int)i);
+						break;
+					}
+				}
+				app.state.selected_sound = nullptr;
+			}
+		}
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginPopup("PopupContentsBrowserContent")) {
+		if (ImGui::Selectable("Edit Settings")) {
+			if (app.state.selected_general_file) {
+				app.state.general_file_editing = app.state.selected_general_file;
+				app.state.reload_general_file_edit = true;
+			}
+		}
+		if (ImGui::Selectable("Copy DFS Path")) {
+			if (app.state.selected_general_file) {
+				std::string dfs_path;
+				dfs_path.append((*app.state.selected_general_file)->dfs_folder +
+								(*app.state.selected_general_file)->GetFilename());
+
+				ImGui::SetClipboardText(dfs_path.c_str());
+			}
+		}
+		if (ImGui::Selectable("Delete")) {
+			if (app.state.selected_general_file) {
+				(*app.state.selected_general_file)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.general_files.size(); ++i) {
+					if (app.project.general_files[i]->GetFilename() ==
+						(*app.state.selected_general_file)->GetFilename()) {
+						app.project.general_files.erase(app.project.general_files.begin() + (int)i);
+
+						break;
+					}
+				}
+				app.state.selected_general_file = nullptr;
+			}
+		}
+		ImGui::EndPopup();
+	}
+}
+
+void render_asset_folder(App &app, Asset *folder) {
+	set_up_popup_windows(app);
+
 	for (auto &asset : folder->children) {
 		switch (asset.GetType()) {
 			case FOLDER:
 				if (ImGui::TreeNodeEx(asset.GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-					render_asset_folder(&asset);
+					render_asset_folder(app, &asset);
 					ImGui::TreePop();
 				}
 				break;
-			case IMAGE:
+			case IMAGE: {
 				ImGui::TextColored(ImVec4(.4f, 1.f, .4f, 1.f), "%s",
 								   GetAssetTypeName(asset.GetType()).c_str());
-
 				ImGui::SameLine();
-				if (ImGui::Selectable(asset.GetName().c_str())) {
-					// do whatever
+
+				std::string name = asset.GetName();
+
+				bool selected = app.state.selected_image &&
+								name == (*app.state.selected_image)->name;
+				if (ImGui::Selectable(asset.GetName().c_str(), selected,
+									  ImGuiSelectableFlags_AllowDoubleClick)) {
+					app.state.selected_image = asset.GetAssetReference().image;
 				}
-				break;
-			case UNKNOWN:
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					app.state.image_editing = app.state.selected_image;
+					app.state.reload_image_edit = true;
+				}
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+					app.state.selected_image = asset.GetAssetReference().image;
+					ImGui::OpenPopup("PopupSpritesBrowserImage");
+				}
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					ImGui::Text("%s", (*asset.GetAssetReference().image)->GetTooltip().c_str());
+					ImGui::Image(
+						(ImTextureID)(intptr_t)(*asset.GetAssetReference().image)->loaded_image,
+						ImVec2((float)(*asset.GetAssetReference().image)->width,
+							   (float)(*asset.GetAssetReference().image)->height));
+					ImGui::EndTooltip();
+				}
+			} break;
+			case UNKNOWN: {
 				ImGui::TextColored(ImVec4(.4f, .4f, .4f, 1.f), "%s",
 								   GetAssetTypeName(asset.GetType()).c_str());
 
@@ -181,32 +314,75 @@ void render_asset_folder(Asset *folder) {
 				if (ImGui::Selectable(asset.GetName().c_str())) {
 					// do whatever
 				}
-				break;
-			case SOUND:
+			} break;
+			case SOUND: {
 				ImGui::TextColored(ImVec4(.4f, .4f, 1.f, 1.f), "%s",
 								   GetAssetTypeName(asset.GetType()).c_str());
 
 				ImGui::SameLine();
-				if (ImGui::Selectable(asset.GetName().c_str())) {
-					// do whatever
+
+				std::string name = asset.GetName();
+
+				bool selected = app.state.selected_sound &&
+								name == (*app.state.selected_sound)->name;
+				if (ImGui::Selectable(asset.GetName().c_str(), selected,
+									  ImGuiSelectableFlags_AllowDoubleClick)) {
+					app.state.selected_sound = asset.GetAssetReference().sound;
 				}
-				break;
-			case GENERAL:
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					app.state.sound_editing = app.state.selected_sound;
+					app.state.reload_sound_edit = true;
+				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+					app.state.selected_sound = asset.GetAssetReference().sound;
+					ImGui::OpenPopup("PopupSoundsBrowserSound");
+				}
+
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					ImGui::Text("%s", (*asset.GetAssetReference().sound)->GetTooltip().c_str());
+					ImGui::EndTooltip();
+				}
+			} break;
+			case GENERAL: {
 				ImGui::TextColored(ImVec4(1.f, .4f, .4f, 1.f), "%s",
 								   GetAssetTypeName(asset.GetType()).c_str());
-
 				ImGui::SameLine();
-				if (ImGui::Selectable(asset.GetName().c_str())) {
-					// do whatever
+
+				std::string name = (*asset.GetAssetReference().file)->GetFilename();
+
+				bool selected = app.state.selected_general_file &&
+								name == (*app.state.selected_general_file)->GetFilename();
+				if (ImGui::Selectable(name.c_str(), selected,
+									  ImGuiSelectableFlags_AllowDoubleClick)) {
+					app.state.selected_general_file = asset.GetAssetReference().file;
 				}
-				break;
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					app.state.general_file_editing = asset.GetAssetReference().file;
+					app.state.reload_general_file_edit = true;
+				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+					app.state.selected_general_file = asset.GetAssetReference().file;
+					ImGui::OpenPopup("PopupContentsBrowserContent");
+				}
+
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					ImGui::Text("%s", (*asset.GetAssetReference().file)->GetTooltip().c_str());
+					ImGui::EndTooltip();
+				}
+			} break;
 		}
 	}
 }
 
 void AppGui::RenderContentBrowserNew(App &app) {
 	if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
-		render_asset_folder(app.project.assets);
+		render_asset_folder(app, app.project.assets);
 		ImGui::TreePop();
 	}
 }

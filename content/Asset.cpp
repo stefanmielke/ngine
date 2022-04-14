@@ -4,9 +4,10 @@
 
 extern App *g_app;
 
-Asset::Asset(AssetType type, std::string name, Asset *parent)
+Asset::Asset(AssetType type, std::string name, Asset *parent, AssetReference asset_reference)
 	: type(type),
 	  name(name),
+	  asset_ref(asset_reference),
 	  parent(parent),
 	  path(parent ? parent->GetPath() / name : std::filesystem::path(name)) {
 }
@@ -48,17 +49,26 @@ Asset *Asset::BuildAsset(std::filesystem::path root_folder) {
 	for (auto &asset : g_app->project.images) {
 		Asset *cur_asset = CreateAndReturnAssetFolder(root_asset, asset->dfs_folder);
 
-		cur_asset->children.emplace_back(IMAGE, asset->name, cur_asset);
+		AssetReference ref;
+		ref.image = &asset;
+
+		cur_asset->children.emplace_back(IMAGE, asset->name, cur_asset, ref);
 	}
 	for (auto &asset : g_app->project.sounds) {
 		Asset *cur_asset = CreateAndReturnAssetFolder(root_asset, asset->dfs_folder);
 
-		cur_asset->children.emplace_back(SOUND, asset->name, cur_asset);
+		AssetReference ref;
+		ref.sound = &asset;
+
+		cur_asset->children.emplace_back(SOUND, asset->name, cur_asset, ref);
 	}
 	for (auto &asset : g_app->project.general_files) {
 		Asset *cur_asset = CreateAndReturnAssetFolder(root_asset, asset->dfs_folder);
 
-		cur_asset->children.emplace_back(GENERAL, asset->name, cur_asset);
+		AssetReference ref;
+		ref.file = &asset;
+
+		cur_asset->children.emplace_back(GENERAL, asset->name, cur_asset, ref);
 	}
 
 	return root_asset;
