@@ -38,9 +38,13 @@ To Do:
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
+[ ] Double click to open editor for asset
+    [ ] Add Sprite/Sound editors on Engine Settings
 [ ] Settings window inside the content window
     - sprites should not have preview
     - audio preview inside
+[ ] File Picker for importing content
+    - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
 [ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)
@@ -53,10 +57,10 @@ To Do:
     - Create tilesheet based on the images
     - Preview gif file (animation?)
 [ ] Add image slices preview on import/edit
-[ ] File Picker for importing content
-    - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
 [ ] Resize output window
 [ ] Remove opening cmd window for every command on Windows
+[ ] Check if editors are found on Engine Settings
+[ ] Only allow '/' on dfs_folder
 [ ] Update README
 [ ] Update Wiki
 

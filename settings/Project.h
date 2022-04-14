@@ -10,6 +10,7 @@
 #include "../LibdragonFile.h"
 #include "../LibdragonScript.h"
 #include "../LibdragonSound.h"
+#include "../content/Asset.h"
 
 class App;
 
@@ -21,6 +22,8 @@ class Project {
 	std::vector<std::unique_ptr<LibdragonSound>> sounds;
 	std::vector<std::unique_ptr<LibdragonImage>> images;
 	std::vector<std::unique_ptr<LibdragonFile>> general_files;
+
+	Asset *assets;
 
 	ProjectSettings project_settings;
 

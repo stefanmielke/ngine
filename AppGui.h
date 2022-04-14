@@ -18,4 +18,5 @@ class AppGui {
 	static void RenderSceneWindow(App &app);
 	static void RenderSettingsWindow(App &app);
 
+	static void RenderContentBrowserNew(App &app);
 };

@@ -155,6 +155,62 @@ void AppGui::RenderOpenProjectWindow(App &app) {
 	}
 }
 
+void render_asset_folder(Asset *folder) {
+	for (auto &asset : folder->children) {
+		switch (asset.GetType()) {
+			case FOLDER:
+				if (ImGui::TreeNodeEx(asset.GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+					render_asset_folder(&asset);
+					ImGui::TreePop();
+				}
+				break;
+			case IMAGE:
+				ImGui::TextColored(ImVec4(.4f, 1.f, .4f, 1.f), "%s",
+								   GetAssetTypeName(asset.GetType()).c_str());
+
+				ImGui::SameLine();
+				if (ImGui::Selectable(asset.GetName().c_str())) {
+					// do whatever
+				}
+				break;
+			case UNKNOWN:
+				ImGui::TextColored(ImVec4(.4f, .4f, .4f, 1.f), "%s",
+								   GetAssetTypeName(asset.GetType()).c_str());
+
+				ImGui::SameLine();
+				if (ImGui::Selectable(asset.GetName().c_str())) {
+					// do whatever
+				}
+				break;
+			case SOUND:
+				ImGui::TextColored(ImVec4(.4f, .4f, 1.f, 1.f), "%s",
+								   GetAssetTypeName(asset.GetType()).c_str());
+
+				ImGui::SameLine();
+				if (ImGui::Selectable(asset.GetName().c_str())) {
+					// do whatever
+				}
+				break;
+			case GENERAL:
+				ImGui::TextColored(ImVec4(1.f, .4f, .4f, 1.f), "%s",
+								   GetAssetTypeName(asset.GetType()).c_str());
+
+				ImGui::SameLine();
+				if (ImGui::Selectable(asset.GetName().c_str())) {
+					// do whatever
+				}
+				break;
+		}
+	}
+}
+
+void AppGui::RenderContentBrowserNew(App &app) {
+	if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
+		render_asset_folder(app.project.assets);
+		ImGui::TreePop();
+	}
+}
+
 void AppGui::RenderContentBrowser(App &app) {
 	const float center_x_size = (float)window_width - 620;
 	const float center_y_offset = is_output_open ? 219 : 38;
@@ -165,6 +221,10 @@ void AppGui::RenderContentBrowser(App &app) {
 		if (app.project.project_settings.IsOpen()) {
 			if (ImGui::BeginTabBar("CenterContentTabs",
 								   ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
+				if (ImGui::BeginTabItem("Content Browser")) {
+					RenderContentBrowserNew(app);
+					ImGui::EndTabItem();
+				}
 				if (ImGui::BeginTabItem("Sprites")) {
 					const int item_size = 100;
 					int items_per_line = std::floor(ImGui::GetWindowWidth() / (float)item_size);

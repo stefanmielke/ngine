@@ -86,6 +86,8 @@ bool Project::Open(const char *path, App *app) {
 	ReloadSounds();
 	ReloadGeneralFiles();
 
+	assets = Asset::BuildAsset(project_settings.project_directory);
+
 	SaveToDisk(project_settings.project_directory);
 	project_settings.SaveToDisk();
 
@@ -194,6 +196,8 @@ void Project::Close(App *app) {
 	images.clear();
 	sounds.clear();
 
+	delete assets;
+
 	project_settings = ProjectSettings(app);
 }
 
@@ -202,4 +206,6 @@ Project::~Project() {
 	script_files.clear();
 	images.clear();
 	sounds.clear();
+
+	delete assets;
 }
