@@ -38,11 +38,11 @@ To Do:
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
-    [ ] "Full view" on content browser, with sprite preview
     [ ] File Picker for importing content
         - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
     [ ] Double click to open editor for asset
         [ ] Add Sprite/Sound editors on Engine Settings
+    [ ] Order assets by name then is_folder
 [ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)
@@ -97,6 +97,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] "Full view" on content browser, with sprite preview
 [x] Smaller "modules missing" warnings
 [x] Filter content based on type and name
 [x] Settings window inside the content window

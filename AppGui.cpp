@@ -482,6 +482,241 @@ void render_asset_folder_list(App &app, Asset *folder) {
 	}
 }
 
+void render_asset_folder_grid(App &app, Asset *folder) {
+	set_up_popup_windows(app);
+
+	ImGui::PushID(folder->GetName().c_str());
+	for (auto &asset : folder->children) {
+		switch (asset.GetType()) {
+			case FOLDER:
+				render_asset_folder_grid(app, &asset);
+				break;
+			case IMAGE: {
+				if (display_sprites) {
+					std::string name = asset.GetName();
+					if (name.find(assets_name_filter) != name.npos) {
+						//						if (!app.project.project_settings.modules.display) {
+						//							ImVec2 uv0, uv1;
+						//							app.GetImagePosition("Error_Icon.png", uv0,
+						// uv1); 							ImGui::PushID(0); if
+						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+						// ImVec2(9, 9), uv0, uv1)) {
+						// app.project.project_settings.modules.display = true;
+						//							}
+						//							ImGui::PopID();
+						//							if (ImGui::IsItemHovered()) {
+						//								ImGui::SetTooltip(
+						//									"Display module is disabled. Click here
+						// to enable it.");
+						//							}
+						//							ImGui::SameLine();
+						//						} else if
+						//(!app.project.project_settings.modules.rdp)
+						//{ 							ImVec2 uv0, uv1;
+						// app.GetImagePosition("Warning_Icon.png", uv0, uv1);
+						// ImGui::PushID(0); 							if
+						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+						// ImVec2(9, 9), uv0, uv1)) {
+						// app.project.project_settings.modules.rdp = true;
+						//							}
+						//							ImGui::PopID();
+						//							if (ImGui::IsItemHovered()) {
+						//								ImGui::SetTooltip(
+						//									"RDP module is disabled. Click here to
+						// enable it.");
+						//							}
+						//							ImGui::SameLine();
+						//						}
+
+						ImGui::TableNextColumn();
+
+						ImGui::PushID(asset.GetName().c_str());
+						if (ImGui::ImageButton(
+								(ImTextureID)(intptr_t)((*asset.GetAssetReference().image)
+															->loaded_image),
+								ImVec2(80, 80))) {
+							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						ImGui::PopID();
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupSpritesBrowserImage");
+						}
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s",
+										(*asset.GetAssetReference().image)->GetTooltip().c_str());
+							ImGui::Image((ImTextureID)(intptr_t)(*asset.GetAssetReference().image)
+											 ->loaded_image,
+										 ImVec2((float)(*asset.GetAssetReference().image)->width,
+												(float)(*asset.GetAssetReference().image)->height));
+							ImGui::EndTooltip();
+						}
+
+						bool selected = app.state.asset_selected.Ref().image &&
+										name == (*app.state.asset_selected.Ref().image)->name;
+						if (ImGui::Selectable(asset.GetName().c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+					}
+				}
+			} break;
+			case UNKNOWN: {
+				ImGui::TableNextColumn();
+				ImGui::TextColored(ImVec4(.4f, .4f, .4f, 1.f), "%s",
+								   GetAssetTypeName(asset.GetType()).c_str());
+
+				ImGui::SameLine();
+				if (ImGui::Selectable(asset.GetName().c_str())) {
+					// do whatever
+				}
+			} break;
+			case SOUND: {
+				if (display_sounds) {
+					std::string name = asset.GetName();
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TableNextColumn();
+
+						//						if (!app.project.project_settings.modules.audio) {
+						//							ImVec2 uv0, uv1;
+						//							app.GetImagePosition("Error_Icon.png", uv0,
+						// uv1); 							ImGui::PushID(1); if
+						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+						// ImVec2(9, 9), uv0, uv1)) {
+						// app.project.project_settings.modules.audio = true;
+						//							}
+						//							ImGui::PopID();
+						//							if (ImGui::IsItemHovered()) {
+						//								ImGui::SetTooltip(
+						//									"Audio module is disabled. Click here to
+						// enable it.");
+						//							}
+						//							ImGui::SameLine();
+						//						} else if
+						//(!app.project.project_settings.modules.audio_mixer)
+						//{ 							ImVec2 uv0, uv1;
+						// app.GetImagePosition("Warning_Icon.png", uv0, uv1);
+						// ImGui::PushID(1); 							if
+						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+						// ImVec2(9, 9), uv0, uv1)) {
+						// app.project.project_settings.modules.audio_mixer = true;
+						//							}
+						//							ImGui::PopID();
+						//							if (ImGui::IsItemHovered()) {
+						//								ImGui::SetTooltip(
+						//									"Audio Mixer module is disabled. Click
+						// here to enable it.");
+						//							}
+						//							ImGui::SameLine();
+						//						}
+
+						ImVec2 uv0, uv1;
+						app.GetImagePosition("Song.png", uv0, uv1);
+						ImGui::PushID(asset.GetName().c_str());
+						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
+											   ImVec2(80, 80), uv0, uv1)) {
+							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						ImGui::PopID();
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupSoundsBrowserSound");
+						}
+
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s",
+										(*asset.GetAssetReference().sound)->GetTooltip().c_str());
+							ImGui::EndTooltip();
+						}
+
+						bool selected = app.state.asset_selected.Type() == SOUND &&
+										name == (*app.state.asset_selected.Ref().sound)->name;
+						if (ImGui::Selectable(asset.GetName().c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+					}
+				}
+			} break;
+			case GENERAL: {
+				if (display_files) {
+					std::string name = (*asset.GetAssetReference().file)->GetFilename();
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TableNextColumn();
+
+						bool selected = app.state.asset_selected.Type() == GENERAL &&
+										name ==
+											(*app.state.asset_selected.Ref().file)->GetFilename();
+
+						ImVec2 uv0, uv1;
+						app.GetImagePosition("File.png", uv0, uv1);
+						ImGui::PushID(asset.GetName().c_str());
+						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
+											   ImVec2(80, 80), uv0, uv1)) {
+							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						ImGui::PopID();
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupContentsBrowserContent");
+						}
+
+						if (ImGui::IsItemHovered()) {
+							ImGui::BeginTooltip();
+							ImGui::Text("%s",
+										(*asset.GetAssetReference().file)->GetTooltip().c_str());
+							ImGui::EndTooltip();
+						}
+
+						if (ImGui::Selectable(name.c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+					}
+				}
+			} break;
+		}
+	}
+	ImGui::PopID();
+}
+
 void render_asset_details_window(App &app) {
 	ImVec2 position = ImGui::GetWindowPos();
 	ImVec2 size = ImGui::GetWindowSize();
@@ -859,7 +1094,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		ImGui::SetTooltip("View assets as a grid");
 	}
 
-	const ImVec4 sep_color(.1f,.1f,.1f,1);
+	const ImVec4 sep_color(.1f, .1f, .1f, 1);
 	ImGui::PushStyleColor(ImGuiCol_Separator, sep_color);
 	ImGui::Separator();
 	ImGui::PopStyleColor();
@@ -868,6 +1103,17 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
 			render_asset_folder_list(app, app.project.assets);
 			ImGui::TreePop();
+		}
+	} else if (asset_display_type == ADT_GRID) {
+		const int item_size = 100;
+		int items_per_line = std::floor(ImGui::GetWindowWidth() / (float)item_size);
+		if (items_per_line < 1)
+			items_per_line = 1;
+
+		if (ImGui::BeginTable("Assets", items_per_line)) {
+			ImGui::TableNextRow();
+			render_asset_folder_grid(app, app.project.assets);
+			ImGui::EndTable();
 		}
 	}
 
