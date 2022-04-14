@@ -724,6 +724,51 @@ void render_asset_details_window(App &app) {
 }
 
 void AppGui::RenderContentBrowserNew(App &app) {
+	ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+	ImGui::SameLine();
+	if (ImGui::Button("Refresh Assets")) {
+		app.project.ReloadImages(app.renderer);
+		app.project.ReloadSounds();
+		app.project.ReloadGeneralFiles();
+
+		app.project.ReloadAssets();
+	}
+	ImGui::Separator();
+
+	if (!app.project.project_settings.modules.dfs) {
+		ImGui::TextWrapped("DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
+		ImGui::Separator();
+	}
+	if (!app.project.images.empty()) {
+		if (!app.project.project_settings.modules.display) {
+			ImGui::TextWrapped(
+				"DISPLAY MODULE IS NOT LOADED. SPRITES WILL NOT BE USABLE IN THE "
+				"GAME.");
+			ImGui::Separator();
+		}
+		if (!app.project.project_settings.modules.rdp) {
+			ImGui::TextWrapped(
+				"RDP MODULE IS NOT LOADED. HARDWARE RENDERING (rdp_* functions) WILL "
+				"NOT BE USABLE IN THE GAME.");
+			ImGui::Separator();
+		}
+	}
+	if (!app.project.sounds.empty()) {
+		if (!app.project.project_settings.modules.audio) {
+			ImGui::TextWrapped(
+				"AUDIO MODULE IS NOT LOADED. AUDIO WILL NOT BE USABLE IN THE "
+				"GAME.");
+			ImGui::Separator();
+		}
+		if (!app.project.project_settings.modules.audio_mixer) {
+			ImGui::TextWrapped(
+				"AUDIO MIXER MODULE IS NOT LOADED. SOME AUDIO WILL NOT BE USABLE "
+				"IN "
+				"THE GAME.");
+			ImGui::Separator();
+		}
+	}
+
 	if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
 		render_asset_folder(app, app.project.assets);
 		ImGui::TreePop();

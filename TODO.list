@@ -40,9 +40,6 @@ To Do:
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
 [ ] Double click to open editor for asset
     [ ] Add Sprite/Sound editors on Engine Settings
-[ ] Settings window inside the content window
-    - sprites should not have preview
-    - audio preview inside
 [ ] File Picker for importing content
     - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
 [ ] Scene nodes
@@ -99,6 +96,9 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Settings window inside the content window
+    - sprites should not have preview
+    - audio preview inside
 [x] Keyboard shortcuts
     * F5 -> Build/Run
     * Shift+F5 -> Run
