@@ -41,8 +41,7 @@ To Do:
     [ ] File Picker for importing content
         - https://github.com/aiekick/ImGuiFileDialog/tree/Lib_Only
     [ ] Double click to open editor for asset
-        [ ] Add Sprite/Sound editors on Engine Settings
-    [ ] Order assets by name then is_folder
+        [ ] Add Sprite/Sound editors on Engine Settingsthen is_folder
 [ ] Scene nodes
 [ ] Import sprite fonts
     - Import ttf, setting size and characters (with default being the whole range)
@@ -97,6 +96,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Order assets by name
 [x] "Full view" on content browser, with sprite preview
 [x] Smaller "modules missing" warnings
 [x] Filter content based on type and name
