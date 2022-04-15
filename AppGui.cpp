@@ -497,39 +497,6 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 				if (display_sprites) {
 					std::string name = asset.GetName();
 					if (name.find(assets_name_filter) != name.npos) {
-						//						if (!app.project.project_settings.modules.display) {
-						//							ImVec2 uv0, uv1;
-						//							app.GetImagePosition("Error_Icon.png", uv0,
-						// uv1); 							ImGui::PushID(0); if
-						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
-						// ImVec2(9, 9), uv0, uv1)) {
-						// app.project.project_settings.modules.display = true;
-						//							}
-						//							ImGui::PopID();
-						//							if (ImGui::IsItemHovered()) {
-						//								ImGui::SetTooltip(
-						//									"Display module is disabled. Click here
-						// to enable it.");
-						//							}
-						//							ImGui::SameLine();
-						//						} else if
-						//(!app.project.project_settings.modules.rdp)
-						//{ 							ImVec2 uv0, uv1;
-						// app.GetImagePosition("Warning_Icon.png", uv0, uv1);
-						// ImGui::PushID(0); 							if
-						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
-						// ImVec2(9, 9), uv0, uv1)) {
-						// app.project.project_settings.modules.rdp = true;
-						//							}
-						//							ImGui::PopID();
-						//							if (ImGui::IsItemHovered()) {
-						//								ImGui::SetTooltip(
-						//									"RDP module is disabled. Click here to
-						// enable it.");
-						//							}
-						//							ImGui::SameLine();
-						//						}
-
 						ImGui::TableNextColumn();
 
 						bool selected = app.state.asset_selected.Ref().image &&
@@ -539,8 +506,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						if (ImGui::ImageButton(
 								(ImTextureID)(intptr_t)((*asset.GetAssetReference().image)
 															->loaded_image),
-								ImVec2(80, 80), ImVec2(0, 0), ImVec2(1, 1), -1, ImVec4(0, 0, 0, 0),
-								selected ? ImVec4(1, 1, 1, 1) : unselected_tint)) {
+								ImVec2(80, 80))) {
 							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
@@ -568,6 +534,35 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::EndTooltip();
 						}
 
+						if (selected) {
+							ImGui::SameLine(8);
+							ImGui::Checkbox("##", &selected);
+						}
+
+						if (!app.project.project_settings.modules.display) {
+							ImGui::SameLine(73);
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Error_Icon.png", uv0, uv1);
+							ImGui::PushID(0);
+							ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+											   ImVec2(15, 15), uv0, uv1);
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip("Display module is disabled.");
+							}
+						} else if (!app.project.project_settings.modules.rdp) {
+							ImGui::SameLine(73);
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Warning_Icon.png", uv0, uv1);
+							ImGui::PushID(0);
+							ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+											   ImVec2(15, 15), uv0, uv1);
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip("RDP module is disabled.");
+							}
+						}
+
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
@@ -588,39 +583,6 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 					if (name.find(assets_name_filter) != name.npos) {
 						ImGui::TableNextColumn();
 
-						//						if (!app.project.project_settings.modules.audio) {
-						//							ImVec2 uv0, uv1;
-						//							app.GetImagePosition("Error_Icon.png", uv0,
-						// uv1); 							ImGui::PushID(1); if
-						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
-						// ImVec2(9, 9), uv0, uv1)) {
-						// app.project.project_settings.modules.audio = true;
-						//							}
-						//							ImGui::PopID();
-						//							if (ImGui::IsItemHovered()) {
-						//								ImGui::SetTooltip(
-						//									"Audio module is disabled. Click here to
-						// enable it.");
-						//							}
-						//							ImGui::SameLine();
-						//						} else if
-						//(!app.project.project_settings.modules.audio_mixer)
-						//{ 							ImVec2 uv0, uv1;
-						// app.GetImagePosition("Warning_Icon.png", uv0, uv1);
-						// ImGui::PushID(1); 							if
-						//(ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
-						// ImVec2(9, 9), uv0, uv1)) {
-						// app.project.project_settings.modules.audio_mixer = true;
-						//							}
-						//							ImGui::PopID();
-						//							if (ImGui::IsItemHovered()) {
-						//								ImGui::SetTooltip(
-						//									"Audio Mixer module is disabled. Click
-						// here to enable it.");
-						//							}
-						//							ImGui::SameLine();
-						//						}
-
 						bool selected = app.state.asset_selected.Type() == SOUND &&
 										name == (*app.state.asset_selected.Ref().sound)->name;
 
@@ -628,12 +590,11 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						app.GetImagePosition("Song.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
-											   ImVec2(80, 80), uv0, uv1, -1, ImVec4(0, 0, 0, 0),
-											   selected ? ImVec4(1, 1, 1, 1) : unselected_tint)) {
-								app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
-								app.state.asset_editing = app.state.asset_selected;
-								app.state.reload_asset_edit = true;
-							}
+											   ImVec2(80, 80), uv0, uv1)) {
+							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
 						ImGui::PopID();
 
 						if (ImGui::IsItemHovered() &&
@@ -655,6 +616,35 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::EndTooltip();
 						}
 
+						if (selected) {
+							ImGui::SameLine(8);
+							ImGui::Checkbox("##", &selected);
+						}
+
+						if (!app.project.project_settings.modules.audio) {
+							ImGui::SameLine(73);
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Error_Icon.png", uv0, uv1);
+							ImGui::PushID(0);
+							ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+											   ImVec2(15, 15), uv0, uv1);
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip("Audio module is disabled.");
+							}
+						} else if (!app.project.project_settings.modules.audio_mixer) {
+							ImGui::SameLine(73);
+							ImVec2 uv0, uv1;
+							app.GetImagePosition("Warning_Icon.png", uv0, uv1);
+							ImGui::PushID(0);
+							ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
+											   ImVec2(15, 15), uv0, uv1);
+							ImGui::PopID();
+							if (ImGui::IsItemHovered()) {
+								ImGui::SetTooltip("Audio Mixer module is disabled.");
+							}
+						}
+
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
@@ -673,8 +663,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						app.GetImagePosition("File.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
-											   ImVec2(80, 80), uv0, uv1, -1, ImVec4(0, 0, 0, 0),
-											   selected ? ImVec4(1, 1, 1, 1) : unselected_tint)) {
+											   ImVec2(80, 80), uv0, uv1)) {
 							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
@@ -700,10 +689,10 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::EndTooltip();
 						}
 
-						ImGui::SameLine(0);
-						ImGui::BeginDisabled();
-						ImGui::Checkbox("Text", &selected);
-						ImGui::EndDisabled();
+						if (selected) {
+							ImGui::SameLine(8);
+							ImGui::Checkbox("##", &selected);
+						}
 
 						ImGui::TextWrapped("%s", name.c_str());
 						//						if (ImGui::Selectable(name.c_str(), selected,
@@ -1059,27 +1048,23 @@ void AppGui::RenderContentBrowserNew(App &app) {
 	}
 	ImGui::Separator();
 
-	ImGui::TextUnformatted("Filters:");
-	ImGui::Checkbox("Sprites", &display_sprites);
+	ImGui::InputTextWithHint("##Name", "Filter Assets", assets_name_filter, 100);
 	ImGui::SameLine();
-	ImGui::Checkbox("Sounds", &display_sounds);
-	ImGui::SameLine();
-	ImGui::Checkbox("Files", &display_files);
-	ImGui::InputText("Name", assets_name_filter, 100);
-	ImGui::Separator();
-
-	if (!app.project.project_settings.modules.dfs) {
-		ImGui::TextWrapped("DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
-		ImGui::Separator();
+	ImGui::SetNextItemWidth(50);
+	if (ImGui::BeginCombo("##", "Filters", ImGuiComboFlags_NoArrowButton)) {
+		ImGui::Checkbox("Sprites", &display_sprites);
+		ImGui::Checkbox("Sounds", &display_sounds);
+		ImGui::Checkbox("Files", &display_files);
+		ImGui::EndCombo();
 	}
-
-	ImGui::TextUnformatted("Display As:");
-
 	ImGui::SameLine();
+	ImGui::TextUnformatted("|");
+	ImGui::SameLine();
+
 	ImVec2 uv0, uv1;
 	app.GetImagePosition("View_List.png", uv0, uv1);
 	ImGui::PushID(0);
-	if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(19, 20), uv0, uv1)) {
+	if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(15, 15), uv0, uv1)) {
 		asset_display_type = ADT_LIST;
 	}
 	ImGui::PopID();
@@ -1090,12 +1075,16 @@ void AppGui::RenderContentBrowserNew(App &app) {
 	ImGui::SameLine();
 	app.GetImagePosition("View_Grid.png", uv0, uv1);
 	ImGui::PushID(1);
-	if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(19, 20), uv0, uv1)) {
+	if (ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture), ImVec2(15, 15), uv0, uv1)) {
 		asset_display_type = ADT_GRID;
 	}
 	ImGui::PopID();
 	if (ImGui::IsItemHovered()) {
 		ImGui::SetTooltip("View assets as a grid");
+	}
+
+	if (!app.project.project_settings.modules.dfs) {
+		ImGui::TextWrapped("DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
 	}
 
 	const ImVec4 sep_color(.1f, .1f, .1f, 1);
