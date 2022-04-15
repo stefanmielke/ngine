@@ -485,8 +485,6 @@ void render_asset_folder_list(App &app, Asset *folder) {
 void render_asset_folder_grid(App &app, Asset *folder) {
 	set_up_popup_windows(app);
 
-	const ImVec4 unselected_tint = ImVec4(.6f, .6f, .6f, 1);
-
 	ImGui::PushID(folder->GetName().c_str());
 	for (auto &asset : folder->children) {
 		switch (asset.GetType()) {
