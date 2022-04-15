@@ -23,7 +23,7 @@ static bool is_output_open;
 static bool display_sprites = true, display_sounds = true, display_files = true;
 static char assets_name_filter[100];
 
-const float details_window_size = 170;
+const float details_window_size = 172;
 
 void open_url(const char *url);
 
