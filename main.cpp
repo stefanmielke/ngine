@@ -56,73 +56,7 @@ int main(int argv, char **args) {
 					console.AddLog("Dropped file: %s", event.drop.file);
 
 					if (app.project.project_settings.IsOpen()) {
-						std::string file(event.drop.file);
-						if (file.ends_with(".png")) {
-							DroppedImage dropped_image(event.drop.file);
-
-							std::filesystem::path filepath(event.drop.file);
-							std::string filename = filepath.filename().replace_extension().string();
-							std::replace(filename.begin(), filename.end(), ' ', '_');
-
-							strcpy(dropped_image.name, filename.c_str());
-
-							dropped_image.image_data = IMG_LoadTexture(app.renderer,
-																	   event.drop.file);
-
-							int w, h;
-							SDL_QueryTexture(dropped_image.image_data, nullptr, nullptr, &w, &h);
-
-							const float max_size = 300.f;
-							if (w > h) {
-								dropped_image.height_mult = (float)h / (float)w;
-								h = (int)(dropped_image.height_mult * max_size);
-								w = (int)max_size;
-							} else {
-								dropped_image.width_mult = (float)w / (float)h;
-								w = (int)(dropped_image.width_mult * max_size);
-								h = (int)max_size;
-							}
-
-							dropped_image.w = w;
-							dropped_image.h = h;
-
-							app.state.dropped_image_files.push_back(dropped_image);
-
-							ImGui::SetWindowFocus("Import Assets");
-						} else if (file.ends_with(".wav") || file.ends_with(".xm") ||
-								   file.ends_with(".ym")) {
-							LibdragonSoundType type;
-							if (file.ends_with(".wav"))
-								type = SOUND_WAV;
-							else if (file.ends_with(".xm"))
-								type = SOUND_XM;
-							else
-								type = SOUND_YM;
-
-							DroppedSound dropped_sound(event.drop.file, type);
-							std::filesystem::path filepath(event.drop.file);
-							std::string filename = filepath.filename().replace_extension().string();
-							std::replace(filename.begin(), filename.end(), ' ', '_');
-
-							strcpy(dropped_sound.name, filename.c_str());
-
-							app.state.dropped_sound_files.push_back(dropped_sound);
-
-							ImGui::SetWindowFocus("Import Assets");
-						} else {
-							DroppedGeneralFile dropped_file(event.drop.file);
-
-							std::filesystem::path filepath(event.drop.file);
-							std::string filename = filepath.filename().replace_extension().string();
-							std::replace(filename.begin(), filename.end(), ' ', '_');
-
-							strcpy(dropped_file.name, filename.c_str());
-							strcpy(dropped_file.extension, filepath.extension().string().c_str());
-
-							app.state.dropped_general_files.push_back(dropped_file);
-
-							ImGui::SetWindowFocus("Import Assets");
-						}
+						AppGui::ProcessImportFile(app, event.drop.file);
 					} else {
 						std::filesystem::path dropped_path(event.drop.file);
 						if (std::filesystem::is_directory(dropped_path)) {

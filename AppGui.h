@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "settings/EngineSettings.h"
 
 class App;
@@ -9,6 +11,8 @@ class AppGui {
 	static void Update(App &app);
 
 	static void ChangeTheme(App &app, Theme theme);
+
+	static void ProcessImportFile(App &app, std::string file_path);
 
    private:
 	static void RenderMenuBar(App &app);

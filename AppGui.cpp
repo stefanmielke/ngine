@@ -51,6 +51,74 @@ void AppGui::Update(App &app) {
 	RenderSettingsWindow(app);
 }
 
+void AppGui::ProcessImportFile(App &app, std::string file_path) {
+	if (file_path.ends_with(".png")) {
+		DroppedImage dropped_image(file_path.c_str());
+
+		std::filesystem::path filepath(file_path);
+		std::string filename = filepath.filename().replace_extension().string();
+		std::replace(filename.begin(), filename.end(), ' ', '_');
+
+		strcpy(dropped_image.name, filename.c_str());
+
+		dropped_image.image_data = IMG_LoadTexture(app.renderer, file_path.c_str());
+
+		int w, h;
+		SDL_QueryTexture(dropped_image.image_data, nullptr, nullptr, &w, &h);
+
+		const float max_size = 300.f;
+		if (w > h) {
+			dropped_image.height_mult = (float)h / (float)w;
+			h = (int)(dropped_image.height_mult * max_size);
+			w = (int)max_size;
+		} else {
+			dropped_image.width_mult = (float)w / (float)h;
+			w = (int)(dropped_image.width_mult * max_size);
+			h = (int)max_size;
+		}
+
+		dropped_image.w = w;
+		dropped_image.h = h;
+
+		app.state.dropped_image_files.push_back(dropped_image);
+
+		ImGui::SetWindowFocus("Import Assets");
+	} else if (file_path.ends_with(".wav") || file_path.ends_with(".xm") ||
+			   file_path.ends_with(".ym")) {
+		LibdragonSoundType type;
+		if (file_path.ends_with(".wav"))
+			type = SOUND_WAV;
+		else if (file_path.ends_with(".xm"))
+			type = SOUND_XM;
+		else
+			type = SOUND_YM;
+
+		DroppedSound dropped_sound(file_path.c_str(), type);
+		std::filesystem::path filepath(file_path);
+		std::string filename = filepath.filename().replace_extension().string();
+		std::replace(filename.begin(), filename.end(), ' ', '_');
+
+		strcpy(dropped_sound.name, filename.c_str());
+
+		app.state.dropped_sound_files.push_back(dropped_sound);
+
+		ImGui::SetWindowFocus("Import Assets");
+	} else {
+		DroppedGeneralFile dropped_file(file_path.c_str());
+
+		std::filesystem::path filepath(file_path);
+		std::string filename = filepath.filename().replace_extension().string();
+		std::replace(filename.begin(), filename.end(), ' ', '_');
+
+		strcpy(dropped_file.name, filename.c_str());
+		strcpy(dropped_file.extension, filepath.extension().string().c_str());
+
+		app.state.dropped_general_files.push_back(dropped_file);
+
+		ImGui::SetWindowFocus("Import Assets");
+	}
+}
+
 void AppGui::RenderMenuBar(App &app) {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
@@ -1031,8 +1099,29 @@ void render_asset_details_window(App &app) {
 	}
 }
 
+void render_asset_import_window(App &app) {
+	ImGui::SetNextWindowSize(ImVec2(680, 330), ImGuiCond_Once);
+	if (ImGuiFileDialog::Instance()->Display("ImportAssetsDlgKey")) {
+		if (ImGuiFileDialog::Instance()->IsOk()) {
+			auto selections = ImGuiFileDialog::Instance()->GetSelection();
+			for (auto &selection : selections) {
+				AppGui::ProcessImportFile(app, selection.second.c_str());
+			}
+		}
+
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
 void AppGui::RenderContentBrowserNew(App &app) {
-	ImGui::TextWrapped("Drag & Drop files anywhere to import.");
+	render_asset_import_window(app);
+
+	if (ImGui::Button("Import Assets")) {
+		ImGuiFileDialog::Instance()->OpenDialog("ImportAssetsDlgKey", "Choose Files", ".*", ".", 0);
+	}
+	if (ImGui::IsItemHovered()) {
+		ImGui::SetTooltip("You can also Drag & Drop files anywhere to import.");
+	}
 	ImGui::SameLine();
 	if (ImGui::Button("Refresh Assets")) {
 		app.project.ReloadImages(app.renderer);
