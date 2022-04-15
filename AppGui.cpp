@@ -569,6 +569,14 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 										name == (*app.state.asset_selected.Ref().image)->name;
 
 						ImGui::PushID(asset.GetName().c_str());
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, .1f));
+						} else {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, .1f));
+						}
 						if (ImGui::ImageButton(
 								(ImTextureID)(intptr_t)((*asset.GetAssetReference().image)
 															->loaded_image),
@@ -577,6 +585,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
 						}
+						ImGui::PopStyleColor(3);
 						ImGui::PopID();
 
 						if (ImGui::IsItemHovered() &&
@@ -655,12 +664,21 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						ImVec2 uv0, uv1;
 						app.GetImagePosition("Song.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, .1f));
+						} else {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, .1f));
+						}
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
 											   ImVec2(50, 50), uv0, uv1, 18)) {
 							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
 						}
+						ImGui::PopStyleColor(3);
 						ImGui::PopID();
 
 						if (ImGui::IsItemHovered() &&
@@ -728,12 +746,21 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						ImVec2 uv0, uv1;
 						app.GetImagePosition("File.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, .1f));
+						} else {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, .1f));
+						}
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
 											   ImVec2(50, 50), uv0, uv1, 18)) {
 							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
 						}
+						ImGui::PopStyleColor(3);
 						ImGui::PopID();
 
 						if (ImGui::IsItemHovered() &&
