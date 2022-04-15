@@ -986,7 +986,9 @@ void render_asset_details_window(App &app) {
 				if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
 					ImGui::Checkbox("Loop", &(*app.state.asset_editing.Ref().sound)->wav_loop);
 					if ((*app.state.asset_editing.Ref().sound)->wav_loop) {
-						ImGui::InputInt("Loop Offset",
+						ImGui::SameLine();
+						ImGui::SetNextItemWidth(100);
+						ImGui::InputInt("Offset",
 										&(*app.state.asset_editing.Ref().sound)->wav_loop_offset);
 					}
 				} else if ((*app.state.asset_editing.Ref().sound)->type == SOUND_YM) {
