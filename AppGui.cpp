@@ -1216,8 +1216,8 @@ void AppGui::RenderContentBrowser(App &app) {
 				}
 				if (ImGui::BeginTabItem("Scripts")) {
 					static char script_name_input[100] = {};
-					bool create_script;
-					create_script = ImGui::InputTextWithHint(
+					ImGui::SetNextItemWidth(300);
+					bool create_script = ImGui::InputTextWithHint(
 						"##ScriptName", "script_name", script_name_input, 100,
 						ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsFileName |
 							ImGuiInputTextFlags_AutoSelectAll);
@@ -1237,6 +1237,7 @@ void AppGui::RenderContentBrowser(App &app) {
 							}
 						}
 					}
+					ImGui::SameLine();
 					if (ImGui::Button("Reload Scripts")) {
 						app.project.ReloadScripts(&app);
 					}
