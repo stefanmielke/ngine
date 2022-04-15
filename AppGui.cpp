@@ -23,7 +23,7 @@ static bool is_output_open;
 static bool display_sprites = true, display_sounds = true, display_files = true;
 static char assets_name_filter[100];
 
-const float details_window_size = 200;
+const float details_window_size = 170;
 
 void open_url(const char *url);
 
@@ -898,6 +898,60 @@ void render_asset_details_window(App &app) {
 			}
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+				// audio preview
+				if (app.state.asset_editing.Ref().sound) {
+					if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
+						if (ImGui::Button(app.audio_state == SS_STOPPED ? "Play" : "Restart")) {
+							switch (app.audio_state) {
+								case SS_STOPPED:
+									Mix_PlayChannel(0, app.audio_sample, 0);
+									break;
+								case SS_PAUSED:
+								case SS_PLAYING:
+									Mix_HaltChannel(0);
+									Mix_PlayChannel(0, app.audio_sample, 0);
+									break;
+							}
+							app.audio_state = SS_PLAYING;
+						}
+						ImGui::SameLine();
+						ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
+						if (ImGui::Button(app.audio_state == SS_PAUSED ? "Resume" : "Pause")) {
+							if (app.audio_state == SS_PAUSED) {
+								Mix_Resume(0);
+								app.audio_state = SS_PLAYING;
+							} else {
+								Mix_Pause(0);
+								app.audio_state = SS_PAUSED;
+							}
+						}
+						ImGui::EndDisabled();
+
+						ImGui::SameLine();
+						ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
+						if (ImGui::Button("Stop")) {
+							Mix_HaltChannel(0);
+							app.audio_state = SS_STOPPED;
+						}
+						ImGui::EndDisabled();
+
+						ImGui::SameLine();
+						static int volume = MIX_MAX_VOLUME;
+						ImGui::SetNextItemWidth(100);
+						if (ImGui::SliderInt("Volume", &volume, 0, MIX_MAX_VOLUME)) {
+							Mix_Volume(0, volume);
+						}
+					} else {
+						ImGui::TextWrapped("Preview is not supported for this audio type.");
+					}
+
+					ImGui::Spacing();
+					ImGui::Separator();
+					ImGui::Spacing();
+				} else if (app.audio_state != SS_STOPPED) {
+					Mix_HaltChannel(0);
+				}
+
 				ImGui::InputText("Name", sound_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
 				ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100,
 								 ImGuiInputTextFlags_CharsFilePath);
@@ -962,61 +1016,6 @@ void render_asset_details_window(App &app) {
 				if (ImGui::Button("Cancel")) {
 					app.state.asset_editing.Reset();
 					app.state.asset_selected.Reset();
-				}
-
-				// audio preview
-				if (app.state.asset_editing.Ref().sound) {
-					ImGui::Spacing();
-					ImGui::Separator();
-					ImGui::Spacing();
-
-					ImGui::TextUnformatted("Audio Preview");
-					ImGui::Spacing();
-
-					if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
-						if (ImGui::Button(app.audio_state == SS_STOPPED ? "Play" : "Restart")) {
-							switch (app.audio_state) {
-								case SS_STOPPED:
-									Mix_PlayChannel(0, app.audio_sample, 0);
-									break;
-								case SS_PAUSED:
-								case SS_PLAYING:
-									Mix_HaltChannel(0);
-									Mix_PlayChannel(0, app.audio_sample, 0);
-									break;
-							}
-							app.audio_state = SS_PLAYING;
-						}
-						ImGui::SameLine();
-						ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
-						if (ImGui::Button(app.audio_state == SS_PAUSED ? "Resume" : "Pause")) {
-							if (app.audio_state == SS_PAUSED) {
-								Mix_Resume(0);
-								app.audio_state = SS_PLAYING;
-							} else {
-								Mix_Pause(0);
-								app.audio_state = SS_PAUSED;
-							}
-						}
-						ImGui::EndDisabled();
-
-						ImGui::SameLine();
-						ImGui::BeginDisabled(app.audio_state == SS_STOPPED);
-						if (ImGui::Button("Stop")) {
-							Mix_HaltChannel(0);
-							app.audio_state = SS_STOPPED;
-						}
-						ImGui::EndDisabled();
-
-						static int volume = MIX_MAX_VOLUME;
-						if (ImGui::SliderInt("Volume", &volume, 0, MIX_MAX_VOLUME)) {
-							Mix_Volume(0, volume);
-						}
-					} else {
-						ImGui::TextWrapped("Preview is not supported for this audio type.");
-					}
-				} else if (app.audio_state != SS_STOPPED) {
-					Mix_HaltChannel(0);
 				}
 			}
 			ImGui::End();
