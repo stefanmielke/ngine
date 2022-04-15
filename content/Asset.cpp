@@ -44,6 +44,20 @@ Asset *CreateAndReturnAssetFolder(Asset *root, const std::string &dfs_folder) {
 	return cur_asset;
 }
 
+void sort_asset_children(std::vector<Asset> &children) {
+	if (children.empty())
+		return;
+
+	std::sort(children.begin(), children.end(), libdragon_asset_comparison);
+	for (auto &child : children) {
+		sort_asset_children(child.children);
+	}
+}
+
+void sort_asset(Asset *asset) {
+	sort_asset_children(asset->children);
+}
+
 Asset *Asset::BuildAsset(std::filesystem::path root_folder) {
 	Asset *root_asset = new Asset(FOLDER, "Assets");
 
@@ -72,5 +86,16 @@ Asset *Asset::BuildAsset(std::filesystem::path root_folder) {
 		cur_asset->children.emplace_back(GENERAL, asset->name, cur_asset, ref);
 	}
 
+	sort_asset(root_asset);
+
 	return root_asset;
+}
+
+bool libdragon_asset_comparison(const Asset &s1, const Asset &s2) {
+	if (s1.GetType() == FOLDER && s2.GetType() != FOLDER)
+		return false;
+	else if (s1.GetType() != FOLDER && s2.GetType() == FOLDER)
+		return true;
+
+	return s1 < s2;
 }

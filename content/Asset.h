@@ -17,7 +17,8 @@ class Asset {
 
 	Asset(AssetType type, std::string name, Asset *parent = nullptr,
 		  AssetReferenceUnion asset_reference = AssetReferenceUnion());
-	~Asset(){}
+	~Asset() {
+	}
 
 	static Asset *BuildAsset(std::filesystem::path project_assets_folder);
 
@@ -45,6 +46,10 @@ class Asset {
 		return project_folder + "/" + GetPath();
 	}
 
+	bool operator<(const Asset &other) const {
+		return (name < other.name);
+	}
+
    private:
 	AssetType type;
 	std::string name;
@@ -54,3 +59,5 @@ class Asset {
 	Asset *parent;
 	std::string path;
 };
+
+bool libdragon_asset_comparison(const Asset &s1, const Asset &s2);
