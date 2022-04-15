@@ -656,7 +656,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						app.GetImagePosition("Song.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
-											   ImVec2(80, 80), uv0, uv1)) {
+											   ImVec2(50, 50), uv0, uv1, 18)) {
 							app.state.asset_selected.Ref(SOUND, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
@@ -729,7 +729,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						app.GetImagePosition("File.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
-											   ImVec2(80, 80), uv0, uv1)) {
+											   ImVec2(50, 50), uv0, uv1, 18)) {
 							app.state.asset_selected.Ref(GENERAL, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
