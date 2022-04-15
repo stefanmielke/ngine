@@ -86,6 +86,10 @@ void EngineSettings::LoadFromDisk(const std::string &path) {
 
 	filestream.close();
 
+	if (last_opened_project.empty()) {
+		last_opened_project = ".";
+	}
+
 	if (!libdragon_exe_location.empty()) {
 		libdragon_version = Libdragon::GetVersion(libdragon_exe_location);
 	}

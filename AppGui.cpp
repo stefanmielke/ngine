@@ -124,7 +124,7 @@ void AppGui::RenderMenuBar(App &app) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("New Project")) {
 				ImGuiFileDialog::Instance()->OpenDialog("NewProjectDlgKey", "Choose Folder",
-														nullptr, ".");
+														nullptr, app.engine_settings.GetLastOpenedProject());
 			}
 			if (ImGui::MenuItem("Open Project")) {
 				ImGuiFileDialog::Instance()->OpenDialog("OpenProjectDlgKey", "Choose Folder",
