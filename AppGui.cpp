@@ -1445,7 +1445,7 @@ void AppGui::RenderSceneWindow(App &app) {
 							}
 							if (is_initial_scene) {
 								ImGui::SameLine(300 - 40);
-								ImGui::TextColored(ImVec4(.4f, .8f, .4f, 1.f), "start");
+								render_badge("start", ImVec4(.4f, .8f, .4f, 1.f));
 							}
 							if (is_initial_scene && ImGui::IsItemHovered()) {
 								ImGui::SetTooltip("Initial Scene");
