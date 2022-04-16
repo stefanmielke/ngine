@@ -4,6 +4,15 @@
 #include <string>
 #include <SDL2/SDL_image.h>
 
+enum LibdragonImageType {
+	IMAGE_UNKNOWN,
+	IMAGE_PNG,
+	IMAGE_BMP,
+};
+
+std::string get_libdragon_image_type_name(LibdragonImageType type);
+std::string get_libdragon_image_type_extension(LibdragonImageType type);
+
 class LibdragonImage {
    public:
 	std::string name;
@@ -16,6 +25,8 @@ class LibdragonImage {
 	int height;
 	int display_width;
 	int display_height;
+
+	LibdragonImageType type;
 
 	SDL_Texture *loaded_image;
 

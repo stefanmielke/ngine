@@ -3,8 +3,11 @@
 #include <filesystem>
 #include <sstream>
 
+#include "App.h"
 #include "ConsoleApp.h"
 #include "ThreadCommand.h"
+
+extern App *g_app;
 
 void Content::CreateSprites(const EngineSettings &engine_settings,
 							const ProjectSettings &project_settings,
@@ -20,9 +23,20 @@ void Content::CreateSprites(const EngineSettings &engine_settings,
 		std::filesystem::create_directories(project_settings.project_directory + "/" +
 											dfs_output_path);
 
+		// copy to temp folder (build/temp/sprites) as png
+		std::string temp_directory = project_settings.project_directory + "/build/temp/sprites/";
+		std::string temp_filepath = temp_directory + image->name + ".png";
+		std::filesystem::create_directories(temp_directory);
+
+		std::string image_full_path = project_settings.project_directory + "/" + image->image_path;
+		SDL_Surface *image_surface = IMG_Load(image_full_path.c_str());
+		IMG_SavePNG(image_surface, temp_filepath.c_str());
+		SDL_FreeSurface(image_surface);
+
+		std::string build_temp_image_path = "build/temp/sprites/" + image->name + ".png";
 		command << engine_settings.GetLibdragonExeLocation() << " exec /n64_toolchain/bin/mksprite "
 				<< (project_settings.display.bit_depth == DEPTH_16_BPP ? 16 : 32) << " "
-				<< image->h_slices << " " << image->v_slices << " " << image->image_path << " "
+				<< image->h_slices << " " << image->v_slices << " " << build_temp_image_path << " "
 				<< dfs_output_path + image->name + ".sprite";
 
 		console.AddLog("%s", command.str().c_str());

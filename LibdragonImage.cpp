@@ -6,6 +6,32 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_custom.h"
 
+std::string get_libdragon_image_type_name(LibdragonImageType type) {
+	switch (type) {
+		case IMAGE_UNKNOWN:
+			return "unknown";
+		case IMAGE_PNG:
+			return "png";
+		case IMAGE_BMP:
+			return "bmp";
+	}
+
+	return "none";
+}
+
+std::string get_libdragon_image_type_extension(LibdragonImageType type) {
+	switch (type) {
+		case IMAGE_UNKNOWN:
+			return ".unknown";
+		case IMAGE_PNG:
+			return ".png";
+		case IMAGE_BMP:
+			return ".bmp";
+	}
+
+	return ".none";
+}
+
 LibdragonImage::LibdragonImage()
 	: dfs_folder("/"),
 	  h_slices(1),
@@ -14,6 +40,7 @@ LibdragonImage::LibdragonImage()
 	  height(0),
 	  display_width(0),
 	  display_height(0),
+	  type(IMAGE_PNG),
 	  loaded_image(nullptr) {
 }
 
@@ -27,7 +54,7 @@ LibdragonImage::~LibdragonImage() {
 void LibdragonImage::SaveToDisk(const std::string &project_directory) {
 	nlohmann::json json = {
 		{"name", name},			{"image_path", image_path}, {"dfs_folder", dfs_folder},
-		{"h_slices", h_slices}, {"v_slices", v_slices},
+		{"h_slices", h_slices}, {"v_slices", v_slices},		{"type", type},
 	};
 
 	std::string directory = project_directory + "/.ngine/sprites/";
@@ -53,6 +80,8 @@ void LibdragonImage::LoadFromDisk(const std::string &filepath) {
 	dfs_folder = json["dfs_folder"];
 	h_slices = json["h_slices"];
 	v_slices = json["v_slices"];
+	if (!json["type"].is_null())
+		type = json["type"];
 }
 
 void LibdragonImage::DeleteFromDisk(const std::string &project_directory) const {
@@ -95,6 +124,8 @@ void LibdragonImage::DrawTooltip() const {
 
 	ImGui::BeginTooltip();
 	render_badge("sprite", ImVec4(.4f, .8f, .4f, 0.7f));
+	ImGui::SameLine();
+	render_badge(get_libdragon_image_type_name(type).c_str(), ImVec4(.4f, .8f, .4f, 0.7f));
 	ImGui::SameLine();
 	ImGui::Text("%s", name.c_str());
 	ImGui::Separator();

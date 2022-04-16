@@ -4,7 +4,8 @@
 
 #include "App.h"
 #include "ConsoleApp.h"
-#include "imgui.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_custom.h"
 
 void ImportAssets::RenderImportScreen(App *app) {
 	if (!app->state.dropped_image_files.empty() || !app->state.dropped_sound_files.empty() ||
@@ -31,6 +32,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						render_badge(get_libdragon_image_type_name(image_file->type).c_str(),
+									 ImVec4(.4f, .8f, .4f, 0.7f));
 						ImGui::InputText("Name", image_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", image_file->dfs_folder, 100,
@@ -49,6 +52,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 								console.AddLog(
 									"[error] Please fill both 'name' and 'dfs folder' fields");
 							} else {
+								std::string extension = get_libdragon_image_type_extension(image_file->type);
+
 								std::string name_string(name);
 								auto find_by_name =
 									[&name_string](const std::unique_ptr<LibdragonImage> &i) {
@@ -63,10 +68,11 @@ void ImportAssets::RenderImportScreen(App *app) {
 								} else {
 									auto image = std::make_unique<LibdragonImage>();
 									image->name = name;
+									image->type = image_file->type;
 									image->dfs_folder = dfs_folder;
 									image->h_slices = image_file->h_slices;
 									image->v_slices = image_file->v_slices;
-									image->image_path = "assets/sprites/" + name + ".png";
+									image->image_path = "assets/sprites/" + name + extension;
 
 									std::filesystem::create_directories(
 										app->project.project_settings.project_directory +
@@ -74,7 +80,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 									std::filesystem::copy_file(
 										image_file->image_path,
 										app->project.project_settings.project_directory +
-											"/assets/sprites/" + name + ".png");
+											"/assets/sprites/" + name + extension);
 
 									image->SaveToDisk(
 										app->project.project_settings.project_directory);

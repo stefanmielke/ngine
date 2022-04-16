@@ -53,8 +53,14 @@ void AppGui::Update(App &app) {
 }
 
 void AppGui::ProcessImportFile(App &app, std::string file_path) {
-	if (file_path.ends_with(".png")) {
-		DroppedImage dropped_image(file_path.c_str());
+	if (file_path.ends_with(".png") || file_path.ends_with(".bmp")) {
+		LibdragonImageType type;
+		if (file_path.ends_with(".png"))
+			type = IMAGE_PNG;
+		else if (file_path.ends_with(".bmp"))
+			type = IMAGE_BMP;
+
+		DroppedImage dropped_image(file_path.c_str(), type);
 
 		std::filesystem::path filepath(file_path);
 		std::string filename = filepath.filename().replace_extension().string();
@@ -825,24 +831,30 @@ void render_asset_details_window(App &app) {
 								"different name.");
 							will_save = false;
 						} else {
+							std::string extension = get_libdragon_image_type_extension(
+								(*app.state.asset_editing.Ref().image)->type);
+
 							std::filesystem::copy_file(
 								app.project.project_settings.project_directory + "/" +
 									(*app.state.asset_editing.Ref().image)->image_path,
 								app.project.project_settings.project_directory +
-									"/assets/sprites/" + image_edit_name + ".png");
+									"/assets/sprites/" + image_edit_name + extension);
 							(*app.state.asset_editing.Ref().image)
 								->DeleteFromDisk(app.project.project_settings.project_directory);
 						}
 					}
 
 					if (will_save) {
+						std::string extension = get_libdragon_image_type_extension(
+							(*app.state.asset_editing.Ref().image)->type);
+
 						(*app.state.asset_editing.Ref().image)->name = image_edit_name;
 						(*app.state.asset_editing.Ref().image)->dfs_folder = image_edit_dfs_folder;
 						(*app.state.asset_editing.Ref().image)->h_slices = image_edit_h_slices;
 						(*app.state.asset_editing.Ref().image)->v_slices = image_edit_v_slices;
 						(*app.state.asset_editing.Ref().image)
 							->image_path = "assets/sprites/" +
-										   (*app.state.asset_editing.Ref().image)->name + ".png";
+										   (*app.state.asset_editing.Ref().image)->name + extension;
 
 						(*app.state.asset_editing.Ref().image)
 							->SaveToDisk(app.project.project_settings.project_directory);

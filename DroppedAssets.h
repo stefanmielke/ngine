@@ -3,10 +3,13 @@
 #include <string>
 #include <SDL2/SDL.h>
 
+#include "LibdragonImage.h"
 #include "LibdragonSound.h"
 
 struct DroppedImage {
 	std::string image_path;
+	LibdragonImageType type;
+
 	SDL_Texture *image_data;
 	int w, h;
 	float width_mult, height_mult;
@@ -15,8 +18,9 @@ struct DroppedImage {
 	char dfs_folder[100] = "/\0";
 	int h_slices, v_slices;
 
-	explicit DroppedImage(const char *image_path)
+	DroppedImage(const char *image_path, LibdragonImageType type)
 		: image_path(image_path),
+		  type(type),
 		  image_data(nullptr),
 		  w(0),
 		  h(0),
