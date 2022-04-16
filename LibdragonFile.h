@@ -19,11 +19,4 @@ class LibdragonFile {
 
 	[[nodiscard]] std::string GetFilename() const;
 	void DrawTooltip() const;
-
-	bool operator<(const LibdragonFile &other) const {
-		return (name < other.name);
-	}
 };
-
-bool libdragon_file_comparison(const std::unique_ptr<LibdragonFile> &f1,
-							   const std::unique_ptr<LibdragonFile> &f2);

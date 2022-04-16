@@ -70,8 +70,3 @@ void LibdragonFile::DrawTooltip() const {
 	ImGui::Text("%s", tooltip.str().c_str());
 	ImGui::EndTooltip();
 }
-
-bool libdragon_file_comparison(const std::unique_ptr<LibdragonFile> &f1,
-							   const std::unique_ptr<LibdragonFile> &f2) {
-	return (*f1) < (*f2);
-}
