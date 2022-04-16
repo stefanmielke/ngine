@@ -4,6 +4,8 @@
 #include <sstream>
 
 #include "json.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_custom.h"
 
 LibdragonSound::LibdragonSound(LibdragonSoundType type)
 	: type(type), wav_loop(false), wav_loop_offset(0), ym_compress(false) {
@@ -56,14 +58,14 @@ void LibdragonSound::DeleteFromDisk(const std::string &project_directory) const 
 	std::filesystem::remove(sound_filepath);
 }
 
-std::string LibdragonSound::GetTooltip() const {
+void LibdragonSound::DrawTooltip() const {
 	std::string dfs_prefix;
 	if (type == SOUND_XM || type == SOUND_YM) {
 		dfs_prefix = "rom:";
 	}
 
 	std::stringstream tooltip;
-	tooltip << name << "\nPath: " << sound_path << "\nDFS_Path: " << dfs_prefix << dfs_folder
+	tooltip << "Path: " << sound_path << "\nDFS Path: " << dfs_prefix << dfs_folder
 			<< name << GetLibdragonExtension() << "\n";
 
 	switch (type) {
@@ -85,7 +87,17 @@ std::string LibdragonSound::GetTooltip() const {
 			tooltip << "\nType: NOT MAPPED";
 		} break;
 	}
-	return tooltip.str();
+
+	ImGui::BeginTooltip();
+	render_badge("sound", ImVec4(.4f, .4f, 1.f, 0.7f));
+	ImGui::SameLine();
+	render_badge(GetExtensionName().c_str(), ImVec4(.4f, .4f, 1.f, 0.7f));
+	ImGui::SameLine();
+	ImGui::Text("%s", name.c_str());
+	ImGui::Separator();
+
+	ImGui::Text("%s", tooltip.str().c_str());
+	ImGui::EndTooltip();
 }
 std::string LibdragonSound::GetLibdragonExtension() const {
 	switch (type) {
@@ -130,6 +142,21 @@ std::string LibdragonSound::GetExtension() const {
 			return ".ym";
 		default:
 			return ".not_mapped";
+	}
+}
+
+std::string LibdragonSound::GetExtensionName() const {
+	switch (type) {
+		case SOUND_UNKNOWN:
+			return "no_ext";
+		case SOUND_WAV:
+			return "wav";
+		case SOUND_XM:
+			return "xm";
+		case SOUND_YM:
+			return "ym";
+		default:
+			return "not_mapped";
 	}
 }
 

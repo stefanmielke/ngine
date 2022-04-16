@@ -3,6 +3,8 @@
 #include <fstream>
 
 #include "json.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_custom.h"
 
 LibdragonFile::LibdragonFile() : dfs_folder("/"), copy_to_filesystem(true) {
 }
@@ -54,13 +56,19 @@ std::string LibdragonFile::GetFilename() const {
 	return name + file_type;
 }
 
-std::string LibdragonFile::GetTooltip() const {
+void LibdragonFile::DrawTooltip() const {
 	std::stringstream tooltip;
-	tooltip << GetFilename() << "\nPath: " << file_path << "\nDFS_Path: " << dfs_folder
-			<< GetFilename() << "\nCopy to Filesystem: " << (copy_to_filesystem ? "yes" : "no")
-			<< "\n";
+	tooltip << "Path: " << file_path << "\nDFS_Path: " << dfs_folder << GetFilename()
+			<< "\nCopy to Filesystem: " << (copy_to_filesystem ? "yes" : "no") << "\n";
 
-	return tooltip.str();
+	ImGui::BeginTooltip();
+	render_badge("file", ImVec4(1.f, .4f, .4f, 0.7f));
+	ImGui::SameLine();
+	ImGui::Text("%s", GetFilename().c_str());
+	ImGui::Separator();
+
+	ImGui::Text("%s", tooltip.str().c_str());
+	ImGui::EndTooltip();
 }
 
 bool libdragon_file_comparison(const std::unique_ptr<LibdragonFile> &f1,

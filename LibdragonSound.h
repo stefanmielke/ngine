@@ -29,10 +29,11 @@ class LibdragonSound {
 	void LoadFromDisk(const std::string &filepath);
 	void DeleteFromDisk(const std::string &project_directory) const;
 
-	[[nodiscard]] std::string GetTooltip() const;
+	void DrawTooltip() const;
 	[[nodiscard]] std::string GetLibdragonGenFlags() const;
 	[[nodiscard]] std::string GetLibdragonExtension() const;
 	[[nodiscard]] std::string GetExtension() const;
+	[[nodiscard]] std::string GetExtensionName() const;
 
 	bool operator<(const LibdragonSound &other) const {
 		return (name < other.name);

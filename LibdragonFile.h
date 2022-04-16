@@ -18,7 +18,7 @@ class LibdragonFile {
 	void DeleteFromDisk(const std::string &project_directory) const;
 
 	[[nodiscard]] std::string GetFilename() const;
-	[[nodiscard]] std::string GetTooltip() const;
+	void DrawTooltip() const;
 
 	bool operator<(const LibdragonFile &other) const {
 		return (name < other.name);

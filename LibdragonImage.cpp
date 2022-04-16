@@ -3,6 +3,8 @@
 #include <fstream>
 
 #include "json.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_custom.h"
 
 LibdragonImage::LibdragonImage()
 	: dfs_folder("/"),
@@ -85,13 +87,23 @@ void LibdragonImage::LoadImage(const std::string &project_directory, SDL_Rendere
 	display_height = h;
 }
 
-std::string LibdragonImage::GetTooltip() const {
+void LibdragonImage::DrawTooltip() const {
 	std::stringstream tooltip;
-	tooltip << name << "\nPath: " << image_path << "\nDFS_Path: " << dfs_folder << name
+	tooltip << "Path: " << image_path << "\nDFS_Path: " << dfs_folder << name
 			<< ".sprite\nSize: " << width << "x" << height << "\nSlices: " << h_slices << "x"
 			<< v_slices << "\n";
 
-	return tooltip.str();
+	ImGui::BeginTooltip();
+	render_badge("sprite", ImVec4(.4f, .8f, .4f, 0.7f));
+	ImGui::SameLine();
+	ImGui::Text("%s", name.c_str());
+	ImGui::Separator();
+
+	ImGui::Text("%s", tooltip.str().c_str());
+	ImGui::Separator();
+
+	ImGui::Image((ImTextureID)(intptr_t)loaded_image, ImVec2((float)width, (float)height));
+	ImGui::EndTooltip();
 }
 
 bool libdragon_image_comparison(const std::unique_ptr<LibdragonImage> &i1,

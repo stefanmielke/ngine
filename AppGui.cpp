@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 
 #include "imgui.h"
+#include "imgui_custom.h"
 #include "imgui/ImGuiFileDialog/ImGuiFileDialog.h"
 
 #include "App.h"
@@ -124,7 +125,8 @@ void AppGui::RenderMenuBar(App &app) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("New Project")) {
 				ImGuiFileDialog::Instance()->OpenDialog("NewProjectDlgKey", "Choose Folder",
-														nullptr, app.engine_settings.GetLastOpenedProject());
+														nullptr,
+														app.engine_settings.GetLastOpenedProject());
 			}
 			if (ImGui::MenuItem("Open Project")) {
 				ImGuiFileDialog::Instance()->OpenDialog("OpenProjectDlgKey", "Choose Folder",
@@ -393,8 +395,8 @@ void render_asset_folder_list(App &app, Asset *folder) {
 							ImGui::SameLine();
 						}
 
-						ImGui::TextColored(ImVec4(.4f, .8f, .4f, 1.f), "%s",
-										   GetAssetTypeName(asset.GetType()).c_str());
+						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
+									 ImVec4(.4f, .8f, .4f, 0.7f));
 						ImGui::SameLine();
 
 						bool selected = app.state.asset_selected.Ref().image &&
@@ -417,14 +419,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 							ImGui::OpenPopup("PopupSpritesBrowserImage");
 						}
 						if (ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							ImGui::Text("%s",
-										(*asset.GetAssetReference().image)->GetTooltip().c_str());
-							ImGui::Image((ImTextureID)(intptr_t)(*asset.GetAssetReference().image)
-											 ->loaded_image,
-										 ImVec2((float)(*asset.GetAssetReference().image)->width,
-												(float)(*asset.GetAssetReference().image)->height));
-							ImGui::EndTooltip();
+							(*asset.GetAssetReference().image)->DrawTooltip();
 						}
 					}
 				}
@@ -472,9 +467,8 @@ void render_asset_folder_list(App &app, Asset *folder) {
 							ImGui::SameLine();
 						}
 
-						ImGui::TextColored(ImVec4(.4f, .4f, 1.f, 1.f), "%s",
-										   GetAssetTypeName(asset.GetType()).c_str());
-
+						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
+									 ImVec4(.4f, .4f, 1.f, 0.7f));
 						ImGui::SameLine();
 
 						bool selected = app.state.asset_selected.Type() == SOUND &&
@@ -499,10 +493,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 						}
 
 						if (ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							ImGui::Text("%s",
-										(*asset.GetAssetReference().sound)->GetTooltip().c_str());
-							ImGui::EndTooltip();
+							(*asset.GetAssetReference().sound)->DrawTooltip();
 						}
 					}
 				}
@@ -511,8 +502,8 @@ void render_asset_folder_list(App &app, Asset *folder) {
 				if (display_files) {
 					std::string name = (*asset.GetAssetReference().file)->GetFilename();
 					if (name.find(assets_name_filter) != name.npos) {
-						ImGui::TextColored(ImVec4(1.f, .4f, .4f, 1.f), "%s",
-										   GetAssetTypeName(asset.GetType()).c_str());
+						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
+									 ImVec4(1.f, .4f, .4f, 0.7f));
 						ImGui::SameLine();
 
 						bool selected = app.state.asset_selected.Type() == GENERAL &&
@@ -538,10 +529,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 						}
 
 						if (ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							ImGui::Text("%s",
-										(*asset.GetAssetReference().file)->GetTooltip().c_str());
-							ImGui::EndTooltip();
+							(*asset.GetAssetReference().file)->DrawTooltip();
 						}
 					}
 				}
@@ -599,14 +587,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::OpenPopup("PopupSpritesBrowserImage");
 						}
 						if (ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							ImGui::Text("%s",
-										(*asset.GetAssetReference().image)->GetTooltip().c_str());
-							ImGui::Image((ImTextureID)(intptr_t)(*asset.GetAssetReference().image)
-											 ->loaded_image,
-										 ImVec2((float)(*asset.GetAssetReference().image)->width,
-												(float)(*asset.GetAssetReference().image)->height));
-							ImGui::EndTooltip();
+							(*asset.GetAssetReference().image)->DrawTooltip();
 						}
 
 						if (selected) {
@@ -694,10 +675,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						}
 
 						if (ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							ImGui::Text("%s",
-										(*asset.GetAssetReference().sound)->GetTooltip().c_str());
-							ImGui::EndTooltip();
+							(*asset.GetAssetReference().sound)->DrawTooltip();
 						}
 
 						if (selected) {
@@ -776,10 +754,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						}
 
 						if (ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							ImGui::Text("%s",
-										(*asset.GetAssetReference().file)->GetTooltip().c_str());
-							ImGui::EndTooltip();
+							(*asset.GetAssetReference().file)->DrawTooltip();
 						}
 
 						if (selected) {
@@ -788,13 +763,6 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						}
 
 						ImGui::TextWrapped("%s", name.c_str());
-						//						if (ImGui::Selectable(name.c_str(), selected,
-						//											  ImGuiSelectableFlags_AllowDoubleClick))
-						//{ 							app.state.asset_selected.Ref(GENERAL,
-						// asset.GetAssetReference()); app.state.asset_editing
-						// =
-						// app.state.asset_selected; app.state.reload_asset_edit = true;
-						//						}
 					}
 				}
 			} break;
