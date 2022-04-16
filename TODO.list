@@ -56,6 +56,7 @@ To Do:
 [ ] Remove opening cmd window for every command on Windows
 [ ] Check if editors are found on Engine Settings
 [ ] Only allow '/' on dfs_folder
+[ ] Button to run on real hardware
 [ ] Update README
 [ ] Update Wiki
 
