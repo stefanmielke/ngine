@@ -34,8 +34,4 @@ class LibdragonSound {
 	[[nodiscard]] std::string GetLibdragonExtension() const;
 	[[nodiscard]] std::string GetExtension() const;
 	[[nodiscard]] std::string GetExtensionName() const;
-
-	bool operator<(const LibdragonSound &other) const {
-		return (name < other.name);
-	}
 };

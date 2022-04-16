@@ -44,8 +44,4 @@ class LibdragonImage {
 	void DeleteFromDisk(const std::string &project_directory) const;
 
 	void DrawTooltip() const;
-
-	bool operator<(const LibdragonImage &other) const {
-		return (name < other.name);
-	}
 };
