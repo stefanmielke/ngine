@@ -869,9 +869,6 @@ void render_asset_details_window(App &app) {
 						(*app.state.asset_editing.Ref().image)
 							->SaveToDisk(app.project.project_settings.project_directory);
 
-						std::sort(app.project.images.begin(), app.project.images.end(),
-								  libdragon_image_comparison);
-
 						app.project.ReloadAssets();
 					}
 				}
@@ -1025,8 +1022,6 @@ void render_asset_details_window(App &app) {
 						(*app.state.asset_editing.Ref().sound)
 							->SaveToDisk(app.project.project_settings.project_directory);
 
-						std::sort(app.project.sounds.begin(), app.project.sounds.end(),
-								  libdragon_sound_comparison);
 						app.project.ReloadAssets();
 					}
 				}
@@ -1100,8 +1095,6 @@ void render_asset_details_window(App &app) {
 						(*app.state.asset_editing.Ref().file)
 							->SaveToDisk(app.project.project_settings.project_directory);
 
-						std::sort(app.project.general_files.begin(),
-								  app.project.general_files.end(), libdragon_file_comparison);
 						app.project.ReloadAssets();
 					}
 				}

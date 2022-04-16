@@ -117,7 +117,6 @@ void Project::ReloadImages(SDL_Renderer *renderer) {
 			}
 		}
 	}
-	std::sort(images.begin(), images.end(), libdragon_image_comparison);
 }
 
 void Project::ReloadScripts(App *app) {
@@ -164,7 +163,6 @@ void Project::ReloadSounds() {
 			}
 		}
 	}
-	std::sort(sounds.begin(), sounds.end(), libdragon_sound_comparison);
 }
 
 void Project::ReloadGeneralFiles() {
@@ -187,7 +185,6 @@ void Project::ReloadGeneralFiles() {
 			}
 		}
 	}
-	std::sort(general_files.begin(), general_files.end(), libdragon_file_comparison);
 }
 
 void Project::ReloadAssets() {
