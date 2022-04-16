@@ -98,6 +98,7 @@ void create_build_files(App *app) {
 	Content::CreateSounds(app->engine_settings, app->project.project_settings, app->project.sounds);
 	Content::CreateGeneralFiles(app->engine_settings, app->project.project_settings,
 								app->project.general_files);
+	Content::CreateFonts(app->engine_settings, app->project.project_settings, app->project.fonts);
 
 	std::string path_to_content_script(app->project.project_settings.project_directory +
 									   "/.ngine/pipeline/content_pipeline_end.term");

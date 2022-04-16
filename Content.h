@@ -3,8 +3,9 @@
 #include <memory>
 #include <vector>
 
-#include "LibdragonImage.h"
 #include "LibdragonFile.h"
+#include "LibdragonFont.h"
+#include "LibdragonImage.h"
 #include "LibdragonSound.h"
 #include "settings/EngineSettings.h"
 #include "settings/ProjectSettings.h"
@@ -20,4 +21,7 @@ class Content {
 	static void CreateGeneralFiles(const EngineSettings &engine_settings,
 								   const ProjectSettings &project_settings,
 								   const std::vector<std::unique_ptr<LibdragonFile>> &files);
+	static void CreateFonts(const EngineSettings &engine_settings,
+							  const ProjectSettings &project_settings,
+							  const std::vector<std::unique_ptr<LibdragonFont>> &fonts);
 };

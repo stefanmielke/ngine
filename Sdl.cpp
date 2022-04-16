@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <string>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -21,7 +22,8 @@ void Sdl::Init(App *app) {
 		exit(1);
 	}
 
-	IMG_Init(IMG_INIT_PNG);
+	IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG | IMG_INIT_TIF);
+	TTF_Init();
 
 	app->window = SDL_CreateWindow(app->default_title, SDL_WINDOWPOS_CENTERED,
 								   SDL_WINDOWPOS_CENTERED, 1200, 768, windowFlags);
@@ -74,6 +76,7 @@ void Sdl::Quit(App *app, SDL_Window *window, SDL_Renderer *renderer) {
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }

@@ -91,3 +91,38 @@ void Content::CreateGeneralFiles(const EngineSettings &engine_settings,
 		}
 	}
 }
+
+void Content::CreateFonts(const EngineSettings &engine_settings,
+						  const ProjectSettings &project_settings,
+						  const std::vector<std::unique_ptr<LibdragonFont>> &fonts) {
+	if (fonts.empty())
+		return;
+
+	console.AddLog("Building font assets...");
+
+	for (auto &font : fonts) {
+		std::stringstream command;
+		std::string dfs_output_path = "build/filesystem" + font->dfs_folder;
+		std::filesystem::create_directories(project_settings.project_directory + "/" +
+											dfs_output_path);
+
+		// copy to temp folder (build/temp/sprites) as png
+		std::string temp_directory = project_settings.project_directory + "/build/temp/fonts/";
+		std::string temp_filepath = temp_directory + font->name + ".png";
+		std::filesystem::create_directories(temp_directory);
+
+		std::string image_full_path = project_settings.project_directory + "/" + font->font_path;
+		SDL_Surface *image_surface = LibdragonFont::LoadSurfaceFromFont(
+			image_full_path.c_str(), font->font_size, g_app->renderer);
+		IMG_SavePNG(image_surface, temp_filepath.c_str());
+		SDL_FreeSurface(image_surface);
+
+		std::string build_temp_image_path = "build/temp/fonts/" + font->name + ".png";
+		command << engine_settings.GetLibdragonExeLocation() << " exec /n64_toolchain/bin/mksprite "
+				<< (project_settings.display.bit_depth == DEPTH_16_BPP ? 16 : 32) << " 16 8 "
+				<< build_temp_image_path << " " << dfs_output_path + font->name + ".font";
+
+		console.AddLog("%s", command.str().c_str());
+		ThreadCommand::QueueCommand(command.str());
+	}
+}

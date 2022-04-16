@@ -21,7 +21,8 @@
 static int window_width, window_height;
 static bool is_output_open;
 
-static bool display_sprites = true, display_sounds = true, display_files = true;
+static bool display_sprites = true, display_sounds = true, display_files = true,
+			display_fonts = true;
 static char assets_name_filter[100];
 
 const float details_window_size = 172;
@@ -118,6 +119,38 @@ void AppGui::ProcessImportFile(App &app, std::string file_path) {
 		strcpy(dropped_sound.name, filename.c_str());
 
 		app.state.dropped_sound_files.push_back(dropped_sound);
+
+		ImGui::SetWindowFocus("Import Assets");
+	} else if (file_path.ends_with(".ttf")) {
+		DroppedFont dropped_font(file_path.c_str());
+
+		std::filesystem::path filepath(file_path);
+		std::string filename = filepath.filename().replace_extension().string();
+		std::replace(filename.begin(), filename.end(), ' ', '_');
+
+		strcpy(dropped_font.name, filename.c_str());
+
+		dropped_font.font_data = LibdragonFont::LoadTextureFromFont(file_path.c_str(), 16,
+																	app.renderer);
+
+		int w, h;
+		SDL_QueryTexture(dropped_font.font_data, nullptr, nullptr, &w, &h);
+
+		const float max_size = 300.f;
+		if (w > h) {
+			dropped_font.height_mult = (float)h / (float)w;
+			h = (int)(dropped_font.height_mult * max_size);
+			w = (int)max_size;
+		} else {
+			dropped_font.width_mult = (float)w / (float)h;
+			w = (int)(dropped_font.width_mult * max_size);
+			h = (int)max_size;
+		}
+
+		dropped_font.w = w;
+		dropped_font.h = h;
+
+		app.state.dropped_font_files.push_back(dropped_font);
 
 		ImGui::SetWindowFocus("Import Assets");
 	} else {
@@ -272,6 +305,11 @@ void set_up_popup_windows(App &app) {
 				for (size_t i = 0; i < app.project.images.size(); ++i) {
 					if (app.project.images[i]->image_path ==
 						(*app.state.asset_selected.Ref().image)->image_path) {
+						if ((*app.state.asset_selected.Ref().image)->loaded_image) {
+							SDL_DestroyTexture(
+								(*app.state.asset_selected.Ref().image)->loaded_image);
+						}
+
 						app.project.images.erase(app.project.images.begin() + (int)i);
 						break;
 					}
@@ -353,6 +391,45 @@ void set_up_popup_windows(App &app) {
 						(*app.state.asset_selected.Ref().file)->GetFilename()) {
 						app.project.general_files.erase(app.project.general_files.begin() + (int)i);
 
+						break;
+					}
+				}
+
+				app.state.asset_selected.Reset();
+				app.state.asset_editing.Reset();
+				app.project.ReloadAssets();
+			}
+		}
+		ImGui::EndPopup();
+	}
+	if (ImGui::BeginPopup("PopupFontsBrowserFont")) {
+		if (ImGui::Selectable("Edit Settings")) {
+			if (app.state.asset_selected.Type() == FONT) {
+				app.state.asset_editing = app.state.asset_selected;
+				app.state.reload_asset_edit = true;
+			}
+		}
+		if (ImGui::Selectable("Copy DFS Path")) {
+			if (app.state.asset_selected.Type() == FONT) {
+				std::string dfs_path((*app.state.asset_selected.Ref().font)->dfs_folder +
+									 (*app.state.asset_selected.Ref().font)->name + ".font");
+				ImGui::SetClipboardText(dfs_path.c_str());
+			}
+		}
+		if (ImGui::Selectable("Delete")) {
+			if (app.state.asset_selected.Type() == FONT) {
+				(*app.state.asset_selected.Ref().font)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.fonts.size(); ++i) {
+					if (app.project.fonts[i]->font_path ==
+						(*app.state.asset_selected.Ref().font)->font_path) {
+						if ((*app.state.asset_selected.Ref().font)->loaded_image) {
+							SDL_DestroyTexture(
+								(*app.state.asset_selected.Ref().font)->loaded_image);
+						}
+
+						app.project.fonts.erase(app.project.fonts.begin() + (int)i);
 						break;
 					}
 				}
@@ -546,6 +623,39 @@ void render_asset_folder_list(App &app, Asset *folder) {
 
 						if (ImGui::IsItemHovered()) {
 							(*asset.GetAssetReference().file)->DrawTooltip();
+						}
+					}
+				}
+			} break;
+			case FONT: {
+				if (display_fonts) {
+					std::string name = asset.GetName();
+					if (name.find(assets_name_filter) != name.npos) {
+						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
+									 ImVec4(.8f, .8f, .4f, 0.7f));
+						ImGui::SameLine();
+
+						bool selected = app.state.asset_selected.Ref().font &&
+										name == (*app.state.asset_selected.Ref().font)->name;
+						if (ImGui::Selectable(asset.GetName().c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(FONT, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(FONT, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupFontsBrowserFont");
+						}
+						if (ImGui::IsItemHovered()) {
+							(*asset.GetAssetReference().font)->DrawTooltip();
 						}
 					}
 				}
@@ -782,6 +892,58 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 					}
 				}
 			} break;
+			case FONT: {
+				if (display_fonts) {
+					std::string name = asset.GetName();
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TableNextColumn();
+
+						bool selected = app.state.asset_selected.Ref().font &&
+										name == (*app.state.asset_selected.Ref().font)->name;
+
+						ImGui::PushID(asset.GetName().c_str());
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, .1f));
+						} else {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, .1f));
+						}
+						if (ImGui::ImageButton(
+								(ImTextureID)(intptr_t)((*asset.GetAssetReference().font)
+															->loaded_image),
+								ImVec2(80, 80))) {
+							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						ImGui::PopStyleColor(3);
+						ImGui::PopID();
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupSpritesBrowserImage");
+						}
+						if (ImGui::IsItemHovered()) {
+							(*asset.GetAssetReference().font)->DrawTooltip();
+						}
+
+						if (selected) {
+							ImGui::SameLine(8);
+							ImGui::Checkbox("##", &selected);
+						}
+
+						ImGui::TextWrapped("%s", name.c_str());
+					}
+				}
+			} break;
 		}
 	}
 	ImGui::PopID();
@@ -801,6 +963,80 @@ void render_asset_details_window(App &app) {
 		case UNKNOWN:
 		case FOLDER:
 			break;
+		case FONT: {
+			static char image_edit_name[50];
+			static char image_edit_dfs_folder[100];
+			static int image_edit_font_size = 0;
+			if (app.state.reload_asset_edit) {
+				app.state.reload_asset_edit = false;
+
+				strcpy(image_edit_name, (*app.state.asset_editing.Ref().font)->name.c_str());
+				strcpy(image_edit_dfs_folder,
+					   (*app.state.asset_editing.Ref().font)->dfs_folder.c_str());
+				image_edit_font_size = (*app.state.asset_editing.Ref().font)->font_size;
+			}
+			if (ImGui::Begin("Details", nullptr,
+							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFilePath);
+				ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
+								 ImGuiInputTextFlags_CharsFilePath);
+				ImGui::InputInt("Font Size", &image_edit_font_size);
+
+				ImGui::Separator();
+				ImGui::Spacing();
+
+				if (ImGui::Button("Save")) {
+					bool will_save = true;
+					if ((*app.state.asset_editing.Ref().font)->name != image_edit_name) {
+						std::string name_string(image_edit_name);
+						auto find_by_name =
+							[&name_string](const std::unique_ptr<LibdragonFont> &i) {
+								return i->name == name_string;
+							};
+						if (std::find_if(app.project.fonts.begin(), app.project.fonts.end(),
+										 find_by_name) != std::end(app.project.fonts)) {
+							console.AddLog(
+								"Font with the name already exists. Please choose a "
+								"different name.");
+							will_save = false;
+						} else {
+							std::filesystem::copy_file(
+								app.project.project_settings.project_directory + "/" +
+									(*app.state.asset_editing.Ref().font)->font_path,
+								app.project.project_settings.project_directory + "/assets/fonts/" +
+									image_edit_name + ".ttf");
+							(*app.state.asset_editing.Ref().font)
+								->DeleteFromDisk(app.project.project_settings.project_directory);
+						}
+					}
+
+					if (will_save) {
+						(*app.state.asset_editing.Ref().font)->name = image_edit_name;
+						(*app.state.asset_editing.Ref().font)->dfs_folder = image_edit_dfs_folder;
+						(*app.state.asset_editing.Ref().font)->font_size = image_edit_font_size;
+						(*app.state.asset_editing.Ref().font)
+							->font_path = "assets/fonts/" +
+										  (*app.state.asset_editing.Ref().font)->name + ".ttf";
+
+						(*app.state.asset_editing.Ref().font)
+							->SaveToDisk(app.project.project_settings.project_directory);
+
+						(*app.state.asset_editing.Ref().font)
+							->LoadImage(app.project.project_settings.project_directory,
+										app.renderer);
+
+						app.project.ReloadAssets();
+					}
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) {
+					app.state.asset_editing.Reset();
+					app.state.asset_selected.Reset();
+				}
+			}
+			ImGui::End();
+		} break;
 		case IMAGE: {
 			static char image_edit_name[50];
 			static char image_edit_dfs_folder[100];
@@ -1138,6 +1374,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		app.project.ReloadImages(app.renderer);
 		app.project.ReloadSounds();
 		app.project.ReloadGeneralFiles();
+		app.project.ReloadFonts(&app);
 
 		app.project.ReloadAssets();
 	}
@@ -1150,6 +1387,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		ImGui::Checkbox("Sprites", &display_sprites);
 		ImGui::Checkbox("Sounds", &display_sounds);
 		ImGui::Checkbox("Files", &display_files);
+		ImGui::Checkbox("Fonts", &display_fonts);
 		ImGui::EndCombo();
 	}
 	ImGui::SameLine();

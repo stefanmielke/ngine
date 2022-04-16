@@ -49,10 +49,12 @@ jobs:
           curl -s https://www.libsdl.org/release/SDL2-devel-2.0.20-mingw.tar.gz -O SDL2-devel-2.0.20-mingw.tar.gz
           curl -s https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz -O SDL2_image-devel-2.0.5-mingw.tar.gz
           curl -s https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.0.4-mingw.tar.gz -O SDL2_mixer-devel-2.0.4-mingw.tar.gz
+          curl -s https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.0.18/SDL2_ttf-devel-2.0.18-mingw.tar.gz -O SDL2_ttf-devel-2.0.18-mingw.tar.gz
           
           tar -xzf SDL2-devel-2.0.20-mingw.tar.gz
           tar -xzf SDL2_image-devel-2.0.5-mingw.tar.gz
           tar -xzf SDL2_mixer-devel-2.0.4-mingw.tar.gz
+          tar -xzf SDL2_ttf-devel-2.0.18-mingw.tar.gz
           
           cd SDL2-2.0.20
           make native
@@ -66,6 +68,10 @@ jobs:
           make native
           cd ..
           
+          cd SDL2_ttf-2.0.18
+          make native
+          cd ..
+          
           cd ..
 
       - name: Install SDL2, SDL2_image and SDL2_mixer on Linux
@@ -73,11 +79,20 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libsdl2-image-dev libsdl2-mixer-dev
+          
           mkdir SDL2
           cd SDL2
           wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz
           tar -xzf SDL2-2.0.20.tar.gz
           cd SDL2-2.0.20
+          ./configure
+          make all -j
+          sudo make install
+          cd ..
+          
+          wget https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.0.18/SDL2_ttf-2.0.18.tar.gz
+          tar -xzf SDL2_ttf-2.0.18.tar.gz
+          cd SDL2_ttf-2.0.18
           ./configure
           make all -j
           sudo make install

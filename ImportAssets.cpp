@@ -9,7 +9,7 @@
 
 void ImportAssets::RenderImportScreen(App *app) {
 	if (!app->state.dropped_image_files.empty() || !app->state.dropped_sound_files.empty() ||
-		!app->state.dropped_general_files.empty()) {
+		!app->state.dropped_general_files.empty() || !app->state.dropped_font_files.empty()) {
 		if (ImGui::Begin("Import Assets")) {
 			float window_width = ImGui::GetWindowWidth();
 			float window_height = ImGui::GetWindowHeight() - 200;
@@ -52,7 +52,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 								console.AddLog(
 									"[error] Please fill both 'name' and 'dfs folder' fields");
 							} else {
-								std::string extension = get_libdragon_image_type_extension(image_file->type);
+								std::string extension = get_libdragon_image_type_extension(
+									image_file->type);
 
 								std::string name_string(name);
 								auto find_by_name =
@@ -88,6 +89,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 										app->project.project_settings.project_directory,
 										app->renderer);
 
+									SDL_DestroyTexture(image_file->image_data);
+
 									app->state.dropped_image_files.erase(
 										app->state.dropped_image_files.begin() + (int)i);
 
@@ -100,6 +103,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
+							SDL_DestroyTexture(image_file->image_data);
+
 							app->state.dropped_image_files.erase(
 								app->state.dropped_image_files.begin() + (int)i);
 							--i;
@@ -260,6 +265,97 @@ void ImportAssets::RenderImportScreen(App *app) {
 						if (ImGui::Button("Cancel")) {
 							app->state.dropped_general_files.erase(
 								app->state.dropped_general_files.begin() + (int)i);
+							--i;
+						}
+
+						ImGui::EndTabItem();
+					}
+					ImGui::PopID();
+					++id;
+				}
+				for (size_t i = 0; i < app->state.dropped_font_files.size(); ++i) {
+					DroppedFont *font_file = &app->state.dropped_font_files[i];
+
+					ImGui::PushID(id);
+					if (ImGui::BeginTabItem("Font")) {
+						if (font_file->width_mult > font_file->height_mult) {
+							ImGui::Image((ImTextureID)(intptr_t)font_file->font_data,
+										 ImVec2((float)window_width,
+												(float)font_file->height_mult * window_width));
+						} else {
+							ImGui::Image((ImTextureID)(intptr_t)font_file->font_data,
+										 ImVec2((float)font_file->width_mult * window_height,
+												(float)window_height));
+						}
+						ImGui::Separator();
+						ImGui::Spacing();
+
+						ImGui::InputText("Name", font_file->name, 50,
+										 ImGuiInputTextFlags_CharsFileName);
+						ImGui::InputText("DFS Folder", font_file->dfs_folder, 100,
+										 ImGuiInputTextFlags_CharsFilePath);
+						ImGui::InputInt("Font Size", &font_file->font_size);
+
+						ImGui::Separator();
+						ImGui::Spacing();
+
+						if (ImGui::Button("Import")) {
+							std::string name(font_file->name);
+							std::string dfs_folder(font_file->dfs_folder);
+
+							if (name.empty() || dfs_folder.empty()) {
+								console.AddLog(
+									"[error] Please fill both 'name' and 'dfs folder' fields");
+							} else {
+								std::string name_string(name);
+								auto find_by_name =
+									[&name_string](const std::unique_ptr<LibdragonFont> &i) {
+										return i->name == name_string;
+									};
+								if (std::find_if(app->project.fonts.begin(),
+												 app->project.fonts.end(),
+												 find_by_name) != std::end(app->project.fonts)) {
+									console.AddLog(
+										"Font with the name already exists. Please choose a "
+										"different name.");
+								} else {
+									auto font = std::make_unique<LibdragonFont>();
+									font->name = name;
+									font->dfs_folder = dfs_folder;
+									font->font_size = font_file->font_size;
+									font->font_path = "assets/fonts/" + name + ".ttf";
+
+									std::filesystem::create_directories(
+										app->project.project_settings.project_directory +
+										"/assets/fonts");
+									std::filesystem::copy_file(
+										font_file->font_path,
+										app->project.project_settings.project_directory +
+											"/assets/fonts/" + name + ".ttf");
+
+									font->SaveToDisk(
+										app->project.project_settings.project_directory);
+									font->LoadImage(app->project.project_settings.project_directory,
+													app->renderer);
+
+									SDL_DestroyTexture(font_file->font_data);
+
+									app->state.dropped_font_files.erase(
+										app->state.dropped_font_files.begin() + (int)i);
+
+									app->project.fonts.push_back(move(font));
+									app->project.ReloadAssets();
+									--i;
+								}
+							}
+						}
+
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel")) {
+							SDL_DestroyTexture(font_file->font_data);
+
+							app->state.dropped_font_files.erase(
+								app->state.dropped_font_files.begin() + (int)i);
 							--i;
 						}
 

@@ -55,6 +55,29 @@ struct DroppedGeneralFile {
 	char dfs_folder[100] = "/\0";
 	bool copy_to_filesystem;
 
-	explicit DroppedGeneralFile(const char *file_path) : file_path(file_path), copy_to_filesystem(true) {
+	explicit DroppedGeneralFile(const char *file_path)
+		: file_path(file_path), copy_to_filesystem(true) {
+	}
+};
+
+struct DroppedFont {
+	std::string font_path;
+
+	SDL_Texture *font_data;
+	int w, h;
+	float width_mult, height_mult;
+
+	char name[50] = "\0";
+	char dfs_folder[100] = "/\0";
+	int font_size;
+
+	explicit DroppedFont(const char *font_path)
+		: font_path(font_path),
+		  font_data(nullptr),
+		  w(0),
+		  h(0),
+		  width_mult(1),
+		  height_mult(1),
+		  font_size(16) {
 	}
 };

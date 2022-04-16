@@ -85,6 +85,14 @@ Asset *Asset::BuildAsset(std::filesystem::path root_folder) {
 
 		cur_asset->children.emplace_back(GENERAL, asset->name, cur_asset, ref);
 	}
+	for (auto &asset : g_app->project.fonts) {
+		Asset *cur_asset = CreateAndReturnAssetFolder(root_asset, asset->dfs_folder);
+
+		AssetReferenceUnion ref;
+		ref.font = &asset;
+
+		cur_asset->children.emplace_back(FONT, asset->name, cur_asset, ref);
+	}
 
 	sort_asset(root_asset);
 

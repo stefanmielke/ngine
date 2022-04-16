@@ -8,6 +8,7 @@ enum AssetType {
 	IMAGE,
 	SOUND,
 	GENERAL,
+	FONT,
 };
 
 std::string GetAssetTypeName(AssetType type);

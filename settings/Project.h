@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "../LibdragonImage.h"
 #include "../LibdragonFile.h"
+#include "../LibdragonFont.h"
 #include "../LibdragonScript.h"
 #include "../LibdragonSound.h"
 #include "../content/Asset.h"
@@ -22,6 +23,7 @@ class Project {
 	std::vector<std::unique_ptr<LibdragonSound>> sounds;
 	std::vector<std::unique_ptr<LibdragonImage>> images;
 	std::vector<std::unique_ptr<LibdragonFile>> general_files;
+	std::vector<std::unique_ptr<LibdragonFont>> fonts;
 
 	Asset *assets;
 
@@ -36,6 +38,7 @@ class Project {
 	void ReloadImages(SDL_Renderer *renderer);
 	void ReloadScripts(App *app);
 	void ReloadSounds();
+	void ReloadFonts(App *app);
 	void ReloadGeneralFiles();
 
 	void ReloadAssets();

@@ -85,6 +85,7 @@ bool Project::Open(const char *path, App *app) {
 	ReloadImages(app->renderer);
 	ReloadSounds();
 	ReloadGeneralFiles();
+	ReloadFonts(app);
 
 	assets = Asset::BuildAsset(project_settings.project_directory);
 
@@ -194,6 +195,29 @@ void Project::ReloadAssets() {
 	}
 
 	assets = Asset::BuildAsset(project_settings.project_directory);
+}
+
+void Project::ReloadFonts(App *app) {
+	fonts.clear();
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/fonts";
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path().string());
+			if (filepath.ends_with(".font.json")) {
+				auto font = std::make_unique<LibdragonFont>();
+				font->LoadFromDisk(filepath);
+				font->LoadImage(project_settings.project_directory, app->renderer);
+
+				fonts.push_back(move(font));
+			}
+		}
+	}
 }
 
 void Project::Close(App *app) {

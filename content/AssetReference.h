@@ -4,14 +4,16 @@
 
 #include "AssetType.h"
 
+class LibdragonFile;
+class LibdragonFont;
 class LibdragonImage;
 class LibdragonSound;
-class LibdragonFile;
 
 union AssetReferenceUnion {
 	std::unique_ptr<LibdragonImage> *image;
 	std::unique_ptr<LibdragonSound> *sound;
 	std::unique_ptr<LibdragonFile> *file;
+	std::unique_ptr<LibdragonFont> *font;
 };
 
 struct AssetReference {

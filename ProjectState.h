@@ -26,6 +26,7 @@ class ProjectState {
 	std::vector<DroppedImage> dropped_image_files;
 	std::vector<DroppedSound> dropped_sound_files;
 	std::vector<DroppedGeneralFile> dropped_general_files;
+	std::vector<DroppedFont> dropped_font_files;
 
 	char emulator_path[255];
 	char editor_path[255];
@@ -61,9 +62,14 @@ class ProjectState {
 			if (image.image_data)
 				SDL_DestroyTexture(image.image_data);
 		}
+		for (auto &image : dropped_font_files) {
+			if (image.font_data)
+				SDL_DestroyTexture(image.font_data);
+		}
 
 		dropped_general_files.clear();
 		dropped_sound_files.clear();
 		dropped_image_files.clear();
+		dropped_font_files.clear();
 	}
 };
