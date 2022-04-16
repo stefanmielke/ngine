@@ -152,8 +152,3 @@ void LibdragonImage::DrawTooltip() const {
 	ImGui::Image((ImTextureID)(intptr_t)loaded_image, ImVec2((float)width, (float)height));
 	ImGui::EndTooltip();
 }
-
-bool libdragon_image_comparison(const std::unique_ptr<LibdragonImage> &i1,
-								const std::unique_ptr<LibdragonImage> &i2) {
-	return (*i1) < (*i2);
-}

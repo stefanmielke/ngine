@@ -159,8 +159,3 @@ std::string LibdragonSound::GetExtensionName() const {
 			return "not_mapped";
 	}
 }
-
-bool libdragon_sound_comparison(const std::unique_ptr<LibdragonSound> &s1,
-								const std::unique_ptr<LibdragonSound> &s2) {
-	return (*s1) < (*s2);
-}

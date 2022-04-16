@@ -39,6 +39,3 @@ class LibdragonSound {
 		return (name < other.name);
 	}
 };
-
-bool libdragon_sound_comparison(const std::unique_ptr<LibdragonSound> &s1,
-								const std::unique_ptr<LibdragonSound> &s2);

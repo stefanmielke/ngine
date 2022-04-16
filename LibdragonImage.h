@@ -49,6 +49,3 @@ class LibdragonImage {
 		return (name < other.name);
 	}
 };
-
-bool libdragon_image_comparison(const std::unique_ptr<LibdragonImage> &i1,
-								const std::unique_ptr<LibdragonImage> &i2);
