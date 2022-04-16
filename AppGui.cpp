@@ -53,12 +53,22 @@ void AppGui::Update(App &app) {
 }
 
 void AppGui::ProcessImportFile(App &app, std::string file_path) {
-	if (file_path.ends_with(".png") || file_path.ends_with(".bmp")) {
+	if (file_path.ends_with(".png") || file_path.ends_with(".bmp") || file_path.ends_with(".jpg") ||
+		file_path.ends_with(".pcx") || file_path.ends_with(".tga") ||
+		file_path.ends_with(".jpeg")) {
 		LibdragonImageType type;
 		if (file_path.ends_with(".png"))
 			type = IMAGE_PNG;
 		else if (file_path.ends_with(".bmp"))
 			type = IMAGE_BMP;
+		else if (file_path.ends_with(".jpg"))
+			type = IMAGE_JPG;
+		else if (file_path.ends_with(".jpeg"))
+			type = IMAGE_JPEG;
+		else if (file_path.ends_with(".pcx"))
+			type = IMAGE_PCX;
+		else if (file_path.ends_with(".tga"))
+			type = IMAGE_TGA;
 
 		DroppedImage dropped_image(file_path.c_str(), type);
 

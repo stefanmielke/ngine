@@ -95,6 +95,13 @@ Future:
 
 Done:
 - 2.0.0:
+[x] More image formats support
+    - BMP
+    - PCX
+    - JPEG
+    - JPG
+    - PNG
+    - TGA
 [x] File Picker for importing content
 [x] Order assets by name
 [x] "Full view" on content browser, with sprite preview

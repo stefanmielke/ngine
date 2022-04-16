@@ -8,6 +8,10 @@ enum LibdragonImageType {
 	IMAGE_UNKNOWN,
 	IMAGE_PNG,
 	IMAGE_BMP,
+	IMAGE_JPG,
+	IMAGE_JPEG,
+	IMAGE_PCX,
+	IMAGE_TGA,
 };
 
 std::string get_libdragon_image_type_name(LibdragonImageType type);

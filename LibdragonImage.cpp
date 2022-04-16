@@ -14,6 +14,14 @@ std::string get_libdragon_image_type_name(LibdragonImageType type) {
 			return "png";
 		case IMAGE_BMP:
 			return "bmp";
+		case IMAGE_JPG:
+			return "jpg";
+		case IMAGE_JPEG:
+			return "jpeg";
+		case IMAGE_PCX:
+			return "pcx";
+		case IMAGE_TGA:
+			return "tga";
 	}
 
 	return "none";
@@ -27,6 +35,14 @@ std::string get_libdragon_image_type_extension(LibdragonImageType type) {
 			return ".png";
 		case IMAGE_BMP:
 			return ".bmp";
+		case IMAGE_JPG:
+			return ".jpg";
+		case IMAGE_JPEG:
+			return ".jpeg";
+		case IMAGE_PCX:
+			return ".pcx";
+		case IMAGE_TGA:
+			return ".tga";
 	}
 
 	return ".none";
