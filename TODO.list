@@ -41,8 +41,6 @@ To Do:
     [ ] Double click to open editor for asset
         [ ] Add Sprite/Sound editors on Engine Settings
 [ ] Scene nodes
-[ ] Import Tiled maps
-    - Custom export to use with libdragon-extensions
 [ ] Import LDtk maps
     - Custom export to use with libdragon-extensions
 [ ] Add image slices preview on import/edit
@@ -53,6 +51,7 @@ To Do:
 [ ] Button to run on real hardware
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script
+[ ] Fix crash when deleting first element of the content browser
 [ ] Update README
 [ ] Update Wiki
 
@@ -91,6 +90,8 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Import Tiled maps
+    - Custom export to use with libdragon-extensions
 [x] Using libdragon-cli for git commands
 [x] Import sprite fonts
 [x] More image formats support
