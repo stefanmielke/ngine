@@ -14,6 +14,8 @@ std::string GetAssetTypeName(AssetType type) {
 			return "file";
 		case FONT:
 			return "font";
+		case TILED_MAP:
+			return "map";
 	}
 
 	return "";

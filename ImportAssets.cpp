@@ -9,7 +9,8 @@
 
 void ImportAssets::RenderImportScreen(App *app) {
 	if (!app->state.dropped_image_files.empty() || !app->state.dropped_sound_files.empty() ||
-		!app->state.dropped_general_files.empty() || !app->state.dropped_font_files.empty()) {
+		!app->state.dropped_general_files.empty() || !app->state.dropped_font_files.empty() ||
+		!app->state.dropped_tiled_files.empty()) {
 		if (ImGui::Begin("Import Assets")) {
 			float window_width = ImGui::GetWindowWidth();
 			float window_height = ImGui::GetWindowHeight() - 200;
@@ -356,6 +357,78 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 							app->state.dropped_font_files.erase(
 								app->state.dropped_font_files.begin() + (int)i);
+							--i;
+						}
+
+						ImGui::EndTabItem();
+					}
+					ImGui::PopID();
+					++id;
+				}
+				for (size_t i = 0; i < app->state.dropped_tiled_files.size(); ++i) {
+					DroppedTiledMap *map_file = &app->state.dropped_tiled_files[i];
+					ImGui::PushID(id);
+					if (ImGui::BeginTabItem("General")) {
+						ImGui::BeginDisabled();
+						render_badge("tiled", ImVec4(.4f, .1f, .1f, 1.f));
+						ImGui::EndDisabled();
+
+						ImGui::InputText("Name", map_file->name, 50,
+										 ImGuiInputTextFlags_CharsFileName);
+						ImGui::InputText("DFS Folder", map_file->dfs_folder, 100,
+										 ImGuiInputTextFlags_CharsFilePath);
+
+						ImGui::Separator();
+						ImGui::Spacing();
+
+						if (ImGui::Button("Import")) {
+							std::string name(map_file->name);
+							std::string dfs_folder(map_file->dfs_folder);
+
+							if (name.empty() || dfs_folder.empty()) {
+								console.AddLog(
+									"[error] Please fill both 'name' and 'dfs folder' fields");
+							} else {
+								if (std::filesystem::exists(
+										app->project.project_settings.project_directory +
+										"/assets/tiled_maps/" + name + + ".tmx")) {
+									console.AddLog(
+										"File with the name already exists. Please choose a "
+										"different name.");
+								} else {
+									auto file = std::make_unique<LibdragonTiledMap>();
+									file->name = name;
+									file->dfs_folder = dfs_folder;
+									file->dfs_folder = dfs_folder;
+									file->file_path = "assets/tiled_maps/" + name +
+													  + ".tmx";
+
+									std::filesystem::create_directories(
+										app->project.project_settings.project_directory +
+										"/assets/tiled_maps");
+									std::filesystem::copy_file(
+										map_file->file_path,
+										app->project.project_settings.project_directory +
+											"/assets/tiled_maps/" + name + ".tmx");
+
+									file->SaveToDisk(
+										app->project.project_settings.project_directory);
+
+									app->state.dropped_tiled_files.erase(
+										app->state.dropped_tiled_files.begin() + (int)i);
+
+									app->project.tiled_maps.push_back(move(file));
+									app->project.ReloadAssets();
+
+									--i;
+								}
+							}
+						}
+
+						ImGui::SameLine();
+						if (ImGui::Button("Cancel")) {
+							app->state.dropped_tiled_files.erase(
+								app->state.dropped_tiled_files.begin() + (int)i);
 							--i;
 						}
 

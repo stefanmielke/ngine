@@ -45,15 +45,14 @@ To Do:
     - Custom export to use with libdragon-extensions
 [ ] Import LDtk maps
     - Custom export to use with libdragon-extensions
-[ ] GIF import
-    - Create tilesheet based on the images
-    - Preview gif file (animation?)
 [ ] Add image slices preview on import/edit
 [ ] Resize output window
 [ ] Remove opening cmd window for every command on Windows
 [ ] Check if editors are found on Engine Settings
 [ ] Only allow '/' on dfs_folder
 [ ] Button to run on real hardware
+[ ] Button to add libdragon-extensions submodule if it doesn't exists
+[ ] Add "menu" module to not having to init menu on a global script
 [ ] Update README
 [ ] Update Wiki
 

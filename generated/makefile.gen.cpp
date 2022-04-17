@@ -109,7 +109,8 @@ void generate_makefile_gen(const Project &project) {
 	const char *rom_title = project.project_settings.project_name.c_str();
 	const char *rom_filename = project.project_settings.rom_name.c_str();
 	bool has_content = !project.images.empty() || !project.sounds.empty() ||
-					   !project.general_files.empty();
+					   !project.general_files.empty() || !project.fonts.empty() ||
+					   !project.tiled_maps.empty();
 
 	FILE *filestream = fopen(makefile_path.c_str(), "w");
 

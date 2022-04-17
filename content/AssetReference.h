@@ -8,12 +8,14 @@ class LibdragonFile;
 class LibdragonFont;
 class LibdragonImage;
 class LibdragonSound;
+class LibdragonTiledMap;
 
 union AssetReferenceUnion {
 	std::unique_ptr<LibdragonImage> *image;
 	std::unique_ptr<LibdragonSound> *sound;
 	std::unique_ptr<LibdragonFile> *file;
 	std::unique_ptr<LibdragonFont> *font;
+	std::unique_ptr<LibdragonTiledMap> *tiled;
 };
 
 struct AssetReference {

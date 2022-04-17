@@ -86,6 +86,7 @@ bool Project::Open(const char *path, App *app) {
 	ReloadSounds();
 	ReloadGeneralFiles();
 	ReloadFonts(app);
+	ReloadTiledMaps();
 
 	assets = Asset::BuildAsset(project_settings.project_directory);
 
@@ -183,6 +184,28 @@ void Project::ReloadGeneralFiles() {
 				file->LoadFromDisk(filepath);
 
 				general_files.push_back(move(file));
+			}
+		}
+	}
+}
+
+void Project::ReloadTiledMaps() {
+	tiled_maps.clear();
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/tiled_maps";
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path().string());
+			if (filepath.ends_with(".tiled_maps.json")) {
+				auto file = std::make_unique<LibdragonTiledMap>();
+				file->LoadFromDisk(filepath);
+
+				tiled_maps.push_back(move(file));
 			}
 		}
 	}

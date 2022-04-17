@@ -8,6 +8,7 @@
 #include "LibdragonFile.h"
 #include "LibdragonScript.h"
 #include "LibdragonSound.h"
+#include "LibdragonTiledMap.h"
 #include "content/AssetReference.h"
 #include "settings/EngineSettings.h"
 #include "settings/ProjectSettingsScreen.h"
@@ -27,6 +28,7 @@ class ProjectState {
 	std::vector<DroppedSound> dropped_sound_files;
 	std::vector<DroppedGeneralFile> dropped_general_files;
 	std::vector<DroppedFont> dropped_font_files;
+	std::vector<DroppedTiledMap> dropped_tiled_files;
 
 	char emulator_path[255];
 	char editor_path[255];
@@ -71,5 +73,6 @@ class ProjectState {
 		dropped_sound_files.clear();
 		dropped_image_files.clear();
 		dropped_font_files.clear();
+		dropped_tiled_files.clear();
 	}
 };

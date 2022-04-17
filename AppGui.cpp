@@ -22,7 +22,7 @@ static int window_width, window_height;
 static bool is_output_open;
 
 static bool display_sprites = true, display_sounds = true, display_files = true,
-			display_fonts = true;
+			display_fonts = true, display_maps = true;
 static char assets_name_filter[100];
 
 const float details_window_size = 172;
@@ -151,6 +151,18 @@ void AppGui::ProcessImportFile(App &app, std::string file_path) {
 		dropped_font.h = h;
 
 		app.state.dropped_font_files.push_back(dropped_font);
+
+		ImGui::SetWindowFocus("Import Assets");
+	} else if (file_path.ends_with(".tmx")) {
+		DroppedTiledMap dropped_map(file_path.c_str());
+
+		std::filesystem::path filepath(file_path);
+		std::string filename = filepath.filename().replace_extension().string();
+		std::replace(filename.begin(), filename.end(), ' ', '_');
+
+		strcpy(dropped_map.name, filename.c_str());
+
+		app.state.dropped_tiled_files.push_back(dropped_map);
 
 		ImGui::SetWindowFocus("Import Assets");
 	} else {
@@ -441,6 +453,43 @@ void set_up_popup_windows(App &app) {
 		}
 		ImGui::EndPopup();
 	}
+	if (ImGui::BeginPopup("PopupMapsBrowserTiled")) {
+		if (ImGui::Selectable("Edit Settings")) {
+			if (app.state.asset_selected.Type() == TILED_MAP) {
+				app.state.asset_editing = app.state.asset_selected;
+				app.state.reload_asset_edit = true;
+			}
+		}
+		if (ImGui::Selectable("Copy DFS Path")) {
+			if (app.state.asset_selected.Type() == TILED_MAP) {
+				std::string dfs_path;
+				dfs_path.append((*app.state.asset_selected.Ref().tiled)->dfs_folder +
+								(*app.state.asset_selected.Ref().tiled)->name + ".map");
+
+				ImGui::SetClipboardText(dfs_path.c_str());
+			}
+		}
+		if (ImGui::Selectable("Delete")) {
+			if (app.state.asset_selected.Type() == TILED_MAP) {
+				(*app.state.asset_selected.Ref().tiled)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.tiled_maps.size(); ++i) {
+					if (app.project.tiled_maps[i]->name ==
+						(*app.state.asset_selected.Ref().tiled)->name) {
+						app.project.tiled_maps.erase(app.project.tiled_maps.begin() + (int)i);
+
+						break;
+					}
+				}
+
+				app.state.asset_selected.Reset();
+				app.state.asset_editing.Reset();
+				app.project.ReloadAssets();
+			}
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void render_asset_folder_list(App &app, Asset *folder) {
@@ -660,6 +709,41 @@ void render_asset_folder_list(App &app, Asset *folder) {
 					}
 				}
 			} break;
+			case TILED_MAP: {
+				if (display_maps) {
+					std::string name = (*asset.GetAssetReference().tiled)->name;
+					if (name.find(assets_name_filter) != name.npos) {
+						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
+									 ImVec4(.4f, .1f, .1f, 0.7f));
+						ImGui::SameLine();
+
+						bool selected = app.state.asset_selected.Type() == TILED_MAP &&
+										name == (*app.state.asset_selected.Ref().tiled)->name;
+						if (ImGui::Selectable(name.c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(TILED_MAP, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(TILED_MAP, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupMapsBrowserTiled");
+						}
+
+						if (ImGui::IsItemHovered()) {
+							(*asset.GetAssetReference().tiled)->DrawTooltip();
+						}
+					}
+				}
+			} break;
 		}
 	}
 }
@@ -811,7 +895,6 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 
 						if (!app.project.project_settings.modules.audio) {
 							ImGui::SameLine(73);
-							ImVec2 uv0, uv1;
 							app.GetImagePosition("Error_Icon.png", uv0, uv1);
 							ImGui::PushID(0);
 							ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
@@ -822,7 +905,6 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							}
 						} else if (!app.project.project_settings.modules.audio_mixer) {
 							ImGui::SameLine(73);
-							ImVec2 uv0, uv1;
 							app.GetImagePosition("Warning_Icon.png", uv0, uv1);
 							ImGui::PushID(0);
 							ImGui::ImageButton((ImTextureID)(intptr_t)(app.app_texture),
@@ -933,6 +1015,60 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						}
 						if (ImGui::IsItemHovered()) {
 							(*asset.GetAssetReference().font)->DrawTooltip();
+						}
+
+						if (selected) {
+							ImGui::SameLine(8);
+							ImGui::Checkbox("##", &selected);
+						}
+
+						ImGui::TextWrapped("%s", name.c_str());
+					}
+				}
+			} break;
+			case TILED_MAP: {
+				if (display_files) {
+					std::string name = (*asset.GetAssetReference().tiled)->name;
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TableNextColumn();
+
+						bool selected = app.state.asset_selected.Type() == TILED_MAP &&
+										name == (*app.state.asset_selected.Ref().tiled)->name;
+
+						ImVec2 uv0, uv1;
+						app.GetImagePosition("File.png", uv0, uv1);
+						ImGui::PushID(asset.GetName().c_str());
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, .1f));
+						} else {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, .1f));
+						}
+						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
+											   ImVec2(50, 50), uv0, uv1, 18)) {
+							app.state.asset_selected.Ref(TILED_MAP, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						ImGui::PopStyleColor(3);
+						ImGui::PopID();
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(TILED_MAP, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupContentsBrowserContent");
+						}
+
+						if (ImGui::IsItemHovered()) {
+							(*asset.GetAssetReference().tiled)->DrawTooltip();
 						}
 
 						if (selected) {
@@ -1343,6 +1479,73 @@ void render_asset_details_window(App &app) {
 			}
 			ImGui::End();
 		} break;
+		case TILED_MAP: {
+			static char edit_name[50];
+			static char edit_dfs_folder[100];
+
+			if (app.state.reload_asset_edit) {
+				app.state.reload_asset_edit = false;
+
+				strcpy(edit_name, (*app.state.asset_editing.Ref().tiled)->name.c_str());
+				strcpy(edit_dfs_folder, (*app.state.asset_editing.Ref().tiled)->dfs_folder.c_str());
+			}
+			if (ImGui::Begin("Details", nullptr,
+							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
+								 ImGuiInputTextFlags_CharsFilePath);
+
+				ImGui::Separator();
+				ImGui::Spacing();
+				if (ImGui::Button("Save")) {
+					bool will_save = true;
+					if ((*app.state.asset_editing.Ref().tiled)->name != edit_name) {
+						std::string name_string(edit_name);
+
+						auto find_by_name =
+							[&name_string](const std::unique_ptr<LibdragonTiledMap> &i) {
+								return i->name == name_string;
+							};
+						if (std::find_if(app.project.tiled_maps.begin(),
+										 app.project.tiled_maps.end(),
+										 find_by_name) != std::end(app.project.tiled_maps)) {
+							console.AddLog(
+								"Tiled Map with the name already exists. Please choose a "
+								"different name.");
+							will_save = false;
+						} else {
+							std::filesystem::copy_file(
+								app.project.project_settings.project_directory + "/" +
+									(*app.state.asset_editing.Ref().tiled)->file_path,
+								app.project.project_settings.project_directory +
+									"/assets/tiled_maps/" + name_string + ".tmx");
+							(*app.state.asset_editing.Ref().tiled)
+								->DeleteFromDisk(app.project.project_settings.project_directory);
+						}
+					}
+
+					if (will_save) {
+						(*app.state.asset_editing.Ref().tiled)->name = edit_name;
+						(*app.state.asset_editing.Ref().tiled)->dfs_folder = edit_dfs_folder;
+						(*app.state.asset_editing.Ref().tiled)
+							->file_path = "assets/tiled_maps/" +
+										  (*app.state.asset_editing.Ref().tiled)->name + ".tmx";
+
+						(*app.state.asset_editing.Ref().tiled)
+							->SaveToDisk(app.project.project_settings.project_directory);
+
+						app.project.ReloadAssets();
+					}
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) {
+					app.state.asset_editing.Reset();
+					app.state.asset_selected.Reset();
+				}
+			}
+			ImGui::End();
+		} break;
 	}
 }
 
@@ -1375,6 +1578,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		app.project.ReloadSounds();
 		app.project.ReloadGeneralFiles();
 		app.project.ReloadFonts(&app);
+		app.project.ReloadTiledMaps();
 
 		app.project.ReloadAssets();
 	}
@@ -1388,6 +1592,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		ImGui::Checkbox("Sounds", &display_sounds);
 		ImGui::Checkbox("Files", &display_files);
 		ImGui::Checkbox("Fonts", &display_fonts);
+		ImGui::Checkbox("Maps", &display_maps);
 		ImGui::EndCombo();
 	}
 	ImGui::SameLine();

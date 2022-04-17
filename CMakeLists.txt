@@ -6,7 +6,8 @@ add_compile_options(-Wall)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set(SOURCES main.cpp ProjectBuilder.cpp Libdragon.cpp CodeEditor.cpp ConsoleApp.cpp ScriptBuilder.cpp ThreadCommand.cpp Emulator.cpp LibdragonImage.cpp Content.cpp LibdragonSound.cpp App.cpp ImportAssets.cpp Sdl.cpp AppGui.cpp LibdragonFile.cpp LibdragonScript.cpp LibdragonFont.cpp)
+set(SOURCES main.cpp ProjectBuilder.cpp CodeEditor.cpp ConsoleApp.cpp ScriptBuilder.cpp ThreadCommand.cpp Emulator.cpp Content.cpp App.cpp ImportAssets.cpp Sdl.cpp AppGui.cpp)
+set(SOURCES ${SOURCES} Libdragon.cpp LibdragonImage.cpp LibdragonSound.cpp LibdragonFile.cpp LibdragonScript.cpp LibdragonFont.cpp LibdragonTiledMap.cpp)
 set(SOURCES ${SOURCES} content/Asset.cpp content/AssetType.cpp)
 set(SOURCES ${SOURCES} generated/makefile.gen.cpp generated/setup.gen.cpp generated/change_scene.gen.cpp generated/scene_gen.cpp generated/script_blank.gen.cpp)
 set(SOURCES ${SOURCES} settings/DisplaySettings.cpp settings/ProjectSettings.cpp settings/ModulesSettings.cpp settings/EngineSettings.cpp settings/Scene.cpp settings/Project.cpp settings/AudioSettings.cpp settings/AudioMixerSettings.cpp)
@@ -14,6 +15,8 @@ set(SOURCES ${SOURCES} static/main.s.cpp static/vscode_c_cpp_properties.cpp stat
 
 set(SOURCES ${SOURCES} imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/imgui_impl_sdl.cpp imgui/imgui_impl_sdlrenderer.cpp)
 set(SOURCES ${SOURCES} imgui/ImGuiFileDialog/ImGuiFileDialog.cpp imgui/imgui_custom.cpp)
+
+set(SOURCES ${SOURCES} pugixml/pugixml.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ngine.rc)
 

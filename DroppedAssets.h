@@ -60,6 +60,16 @@ struct DroppedGeneralFile {
 	}
 };
 
+struct DroppedTiledMap {
+	std::string file_path;
+
+	char name[50] = "\0";
+	char dfs_folder[100] = "/\0";
+
+	explicit DroppedTiledMap(const char *file_path) : file_path(file_path) {
+	}
+};
+
 struct DroppedFont {
 	std::string font_path;
 

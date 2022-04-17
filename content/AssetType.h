@@ -9,6 +9,7 @@ enum AssetType {
 	SOUND,
 	GENERAL,
 	FONT,
+	TILED_MAP,
 };
 
 std::string GetAssetTypeName(AssetType type);
