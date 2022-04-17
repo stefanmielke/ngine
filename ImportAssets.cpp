@@ -377,6 +377,13 @@ void ImportAssets::RenderImportScreen(App *app) {
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", map_file->dfs_folder, 100,
 										 ImGuiInputTextFlags_CharsFilePath);
+						ImGui::Separator();
+						ImGui::Spacing();
+
+						ImGui::TextWrapped("Layers:");
+						for (size_t layer_i = 0; layer_i < map_file->layers.size(); ++layer_i) {
+							ImGui::TextWrapped("%s", map_file->layers[layer_i].name.c_str());
+						}
 
 						ImGui::Separator();
 						ImGui::Spacing();
@@ -391,7 +398,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 							} else {
 								if (std::filesystem::exists(
 										app->project.project_settings.project_directory +
-										"/assets/tiled_maps/" + name + + ".tmx")) {
+										"/assets/tiled_maps/" + name + +".tmx")) {
 									console.AddLog(
 										"File with the name already exists. Please choose a "
 										"different name.");
@@ -400,8 +407,8 @@ void ImportAssets::RenderImportScreen(App *app) {
 									file->name = name;
 									file->dfs_folder = dfs_folder;
 									file->dfs_folder = dfs_folder;
-									file->file_path = "assets/tiled_maps/" + name +
-													  + ".tmx";
+									file->file_path = "assets/tiled_maps/" + name + +".tmx";
+									file->layers = map_file->layers;
 
 									std::filesystem::create_directories(
 										app->project.project_settings.project_directory +

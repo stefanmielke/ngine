@@ -162,6 +162,8 @@ void AppGui::ProcessImportFile(App &app, std::string file_path) {
 
 		strcpy(dropped_map.name, filename.c_str());
 
+		dropped_map.layers = LibdragonTiledMap::LoadLayers(filepath);
+
 		app.state.dropped_tiled_files.push_back(dropped_map);
 
 		ImGui::SetWindowFocus("Import Assets");
@@ -414,6 +416,7 @@ void set_up_popup_windows(App &app) {
 		}
 		ImGui::EndPopup();
 	}
+
 	if (ImGui::BeginPopup("PopupFontsBrowserFont")) {
 		if (ImGui::Selectable("Edit Settings")) {
 			if (app.state.asset_selected.Type() == FONT) {
@@ -453,6 +456,7 @@ void set_up_popup_windows(App &app) {
 		}
 		ImGui::EndPopup();
 	}
+
 	if (ImGui::BeginPopup("PopupMapsBrowserTiled")) {
 		if (ImGui::Selectable("Edit Settings")) {
 			if (app.state.asset_selected.Type() == TILED_MAP) {
@@ -460,13 +464,21 @@ void set_up_popup_windows(App &app) {
 				app.state.reload_asset_edit = true;
 			}
 		}
-		if (ImGui::Selectable("Copy DFS Path")) {
-			if (app.state.asset_selected.Type() == TILED_MAP) {
-				std::string dfs_path;
-				dfs_path.append((*app.state.asset_selected.Ref().tiled)->dfs_folder +
-								(*app.state.asset_selected.Ref().tiled)->name + ".map");
+		if (app.state.asset_selected.Type() == TILED_MAP) {
+			for (auto &layer : (*app.state.asset_selected.Ref().tiled)->layers) {
+				ImGui::PushID(layer.name.c_str());
+				std::string dfs_label = "Copy '" + layer.name + "' DFS Path";
+				if (ImGui::Selectable(dfs_label.c_str())) {
+					if (app.state.asset_selected.Type() == TILED_MAP) {
+						std::string dfs_path;
+						dfs_path.append((*app.state.asset_selected.Ref().tiled)->dfs_folder +
+										(*app.state.asset_selected.Ref().tiled)->name + "_" +
+										layer.name + ".map");
 
-				ImGui::SetClipboardText(dfs_path.c_str());
+						ImGui::SetClipboardText(dfs_path.c_str());
+					}
+				}
+				ImGui::PopID();
 			}
 		}
 		if (ImGui::Selectable("Delete")) {

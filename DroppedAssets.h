@@ -5,6 +5,7 @@
 
 #include "LibdragonImage.h"
 #include "LibdragonSound.h"
+#include "LibdragonTiledMap.h"
 
 struct DroppedImage {
 	std::string image_path;
@@ -65,6 +66,8 @@ struct DroppedTiledMap {
 
 	char name[50] = "\0";
 	char dfs_folder[100] = "/\0";
+
+	std::vector<LibdragonMapLayer> layers;
 
 	explicit DroppedTiledMap(const char *file_path) : file_path(file_path) {
 	}
