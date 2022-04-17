@@ -7,6 +7,7 @@
 #include "LibdragonFont.h"
 #include "LibdragonImage.h"
 #include "LibdragonSound.h"
+#include "LibdragonTiledMap.h"
 #include "settings/EngineSettings.h"
 #include "settings/ProjectSettings.h"
 
@@ -22,6 +23,9 @@ class Content {
 								   const ProjectSettings &project_settings,
 								   const std::vector<std::unique_ptr<LibdragonFile>> &files);
 	static void CreateFonts(const EngineSettings &engine_settings,
-							  const ProjectSettings &project_settings,
-							  const std::vector<std::unique_ptr<LibdragonFont>> &fonts);
+							const ProjectSettings &project_settings,
+							const std::vector<std::unique_ptr<LibdragonFont>> &fonts);
+	static void CreateTiledMaps(const EngineSettings &engine_settings,
+								const ProjectSettings &project_settings,
+								const std::vector<std::unique_ptr<LibdragonTiledMap>> &maps);
 };
