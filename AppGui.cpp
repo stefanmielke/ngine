@@ -162,7 +162,7 @@ void AppGui::ProcessImportFile(App &app, std::string file_path) {
 
 		strcpy(dropped_map.name, filename.c_str());
 
-		dropped_map.layers = LibdragonTiledMap::LoadLayers(filepath);
+		dropped_map.layers = LibdragonTiledMap::LoadLayers(filepath.string());
 
 		app.state.dropped_tiled_files.push_back(dropped_map);
 

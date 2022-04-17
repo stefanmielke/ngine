@@ -45,7 +45,8 @@ class ProjectState {
 	}
 
 	explicit ProjectState(const EngineSettings &engine_settings)
-		: selected_script(nullptr),
+		: reload_asset_edit(false),
+		  selected_script(nullptr),
 		  script_editing(nullptr),
 		  reload_script_edit(false),
 		  emulator_path(),
