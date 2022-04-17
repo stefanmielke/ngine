@@ -104,7 +104,15 @@ clean:
 
 .PHONY: all clean)";
 
+#include <filesystem>
+#include "../static/static.h"
+
 void generate_makefile_gen(const Project &project) {
+	std::string makefile_custom_path(project.project_settings.project_directory + "/Makefile_custom.mk");
+	if (!std::filesystem::exists(makefile_custom_path)) {
+		create_static_file(project.project_settings.project_directory + "/Makefile_custom.mk", makefile_custom_mk);
+	}
+
 	std::string makefile_path(project.project_settings.project_directory + "/Makefile");
 	const char *rom_title = project.project_settings.project_name.c_str();
 	const char *rom_filename = project.project_settings.rom_name.c_str();
