@@ -56,8 +56,7 @@ void LibdragonFont::LoadImage(const std::string &project_directory, SDL_Renderer
 
 SDL_Surface *LibdragonFont::LoadSurfaceFromFont(const char *font_path, int font_size,
 												SDL_Renderer *renderer) {
-	SDL_Color fg = {255, 255, 255, 255};
-	SDL_Color bg = {0, 0, 0, 0};
+	const SDL_Color fg = {255, 255, 255, 255};
 
 	auto *font = TTF_OpenFont(font_path, font_size);
 	std::string font_text;
