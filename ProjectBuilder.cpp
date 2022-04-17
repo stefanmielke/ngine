@@ -50,14 +50,10 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Adding libdragon-extensions...");
 
-	const char *lib_ext_submodule_cmd =
-		"git submodule add https://github.com/stefanmielke/libdragon-extensions.git "
-		"libs/libdragon-extensions";
-	if (ThreadCommand::RunCommand(lib_ext_submodule_cmd) != EXIT_SUCCESS) {
-		console.AddLog(
-			"[error] Error adding libdragon-extensions. Please use the command below to add it "
-			"manually.\n%s",
-			lib_ext_submodule_cmd);
+	if (!Libdragon::GitSubmoduleAddSync(app->engine_settings.GetLibdragonExeLocation(),
+										"https://github.com/stefanmielke/libdragon-extensions.git",
+										"libs/libdragon-extensions")) {
+		console.AddLog("[error] Error adding libdragon-extensions. Please add it manually later.");
 	}
 
 	console.AddLog("Creating project settings file...");

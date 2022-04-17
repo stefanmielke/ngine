@@ -49,7 +49,7 @@ void Libdragon::Disasm(const std::string &folder, const std::string &libdragon_e
 	ThreadCommand::QueueCommand(command);
 }
 
-std::string Libdragon::GetVersion(const std::string& libdragon_exe_folder) {
+std::string Libdragon::GetVersion(const std::string &libdragon_exe_folder) {
 	char command[500];
 	snprintf(command, 500, "%s version", libdragon_exe_folder.c_str());
 
@@ -59,4 +59,23 @@ std::string Libdragon::GetVersion(const std::string& libdragon_exe_folder) {
 	} else {
 		return result;
 	}
+}
+
+void Libdragon::GitCheckout(const std::string &libdragon_exe_folder,
+							const std::string &checkout_folder_relative,
+							const std::string &branch) {
+	char cmd[255];
+	snprintf(cmd, 255, "%s exec bash -c 'cd %s; git checkout %s'", libdragon_exe_folder.c_str(),
+			 checkout_folder_relative.c_str(), branch.c_str());
+	ThreadCommand::QueueCommand(cmd);
+}
+
+bool Libdragon::GitSubmoduleAddSync(const std::string &libdragon_exe_folder,
+									const std::string &submodule_uri,
+									const std::string &submodule_folder) {
+	char cmd[500];
+	snprintf(cmd, 500, "%s exec git submodule add %s %s", libdragon_exe_folder.c_str(),
+			 submodule_uri.c_str(), submodule_folder.c_str());
+
+	return ThreadCommand::RunCommand(cmd) == EXIT_SUCCESS;
 }

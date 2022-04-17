@@ -2049,13 +2049,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 												 50);
 								ImGui::SameLine();
 								if (ImGui::Button("Update")) {
-									std::string dir(app.project.project_settings.project_directory);
-									dir.append("/libdragon");
-
-									char cmd[255];
-									snprintf(cmd, 255, "git checkout %s",
-											 app.state.project_settings_screen.libdragon_branch);
-									ThreadCommand::QueueCommand(cmd);
+									Libdragon::GitCheckout(
+										app.engine_settings.GetLibdragonExeLocation(), "libdragon",
+										app.state.project_settings_screen.libdragon_branch);
 								}
 							}
 							{

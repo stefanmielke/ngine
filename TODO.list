@@ -41,9 +41,6 @@ To Do:
     [ ] Double click to open editor for asset
         [ ] Add Sprite/Sound editors on Engine Settings
 [ ] Scene nodes
-[ ] Import sprite fonts
-    - Import ttf, setting size and characters (with default being the whole range)
-    - During build, create texture with the characters and import as sprite
 [ ] Import Tiled maps
     - Custom export to use with libdragon-extensions
 [ ] Import LDtk maps
@@ -95,6 +92,8 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Using libdragon-cli for git commands
+[x] Import sprite fonts
 [x] More image formats support
     - BMP
     - PCX
