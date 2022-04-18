@@ -84,8 +84,6 @@ static void command_thread(const char *command) {
 	bool success = result == EXIT_SUCCESS;
 
 	if (success) {
-		console.AddLog("Finished successfully.");
-
 		if (command_queue.empty()) {
 			is_running_command = false;
 		} else {
@@ -94,8 +92,6 @@ static void command_thread(const char *command) {
 	} else {
 		console.AddLog("[error] Process returned %d.", result);
 		if (!command_queue.empty()) {
-			console.AddLog("# Command failed. Stopping further commands.");
-
 			// on failure stop all other queued commands
 			while (!command_queue.empty()) {
 				command_queue.pop();

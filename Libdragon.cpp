@@ -17,6 +17,8 @@ void Libdragon::Build(const std::string &folder, const std::string &libdragon_ex
 	char command[500];
 	snprintf(command, 500, "%s make -j", libdragon_exe_folder.c_str());
 	ThreadCommand::QueueCommand(command);
+
+	ThreadCommand::QueueCommand("echo Build Completed.");
 }
 
 void Libdragon::Clean(const std::string &folder, const std::string &libdragon_exe_folder) {

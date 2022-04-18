@@ -55,6 +55,11 @@ void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
 	}
 	title_text.append("###CONSOLE_OUTPUT");
 
+	bool is_title_error = title_text.starts_with("[error]");
+	if (is_title_error) {
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.4f, 0.4f, 1.0f));
+	}
+
 	is_open = true;
 	if (!ImGui::Begin(title_text.c_str(), nullptr,
 					  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
@@ -62,8 +67,14 @@ void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
 			is_open = false;
 			ImGui::SetWindowPos(ImVec2(0, (float)window_height - 19.f));
 		}
+		if (is_title_error) {
+			ImGui::PopStyleColor();
+		}
 		ImGui::End();
 		return;
+	}
+	if (is_title_error) {
+		ImGui::PopStyleColor();
 	}
 	ImGui::SetWindowPos(ImVec2(0, (float)window_height - 200.f));
 
