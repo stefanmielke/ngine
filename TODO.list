@@ -41,8 +41,6 @@ To Do:
     [ ] Double click to open editor for asset
         [ ] Add Sprite/Sound editors on Engine Settings
 [ ] Scene nodes
-[ ] Import LDtk maps
-    - Custom export to use with libdragon-extensions
 [ ] Add image slices preview on import/edit
 [ ] Resize output window
 [ ] Remove opening cmd window for every command on Windows
@@ -90,6 +88,9 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Show last console line when console is minimized
+[x] Import LDtk maps
+    - Custom export to use with libdragon-extensions
 [x] Import Tiled maps
     - Custom export to use with libdragon-extensions
 [x] Using libdragon-cli for git commands

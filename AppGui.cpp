@@ -20,7 +20,7 @@
 #include "ThreadCommand.h"
 
 static int window_width, window_height;
-static bool is_output_open;
+static bool is_output_open = true;
 
 static bool display_sprites = true, display_sounds = true, display_files = true,
 			display_fonts = true, display_maps = true;
@@ -34,8 +34,6 @@ enum AssetsDisplayType { ADT_LIST, ADT_GRID };
 static AssetsDisplayType asset_display_type = ADT_LIST;
 
 void AppGui::Update(App &app) {
-	is_output_open = true;
-
 	SDL_GetWindowSize(app.window, &window_width, &window_height);
 
 	RenderMenuBar(app);
@@ -1734,8 +1732,7 @@ void render_asset_details_window(App &app) {
 							[&name_string](const std::unique_ptr<LibdragonLDtkMap> &i) {
 								return i->name == name_string;
 							};
-						if (std::find_if(app.project.ldtk_maps.begin(),
-										 app.project.ldtk_maps.end(),
+						if (std::find_if(app.project.ldtk_maps.begin(), app.project.ldtk_maps.end(),
 										 find_by_name) != std::end(app.project.ldtk_maps)) {
 							console.AddLog(
 								"LDtk Map with the name already exists. Please choose a "

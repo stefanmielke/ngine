@@ -44,13 +44,20 @@ void ConsoleApp::AddLog(const char *fmt, ...) {
 }
 
 void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
-	is_open = true;
-
 	int window_width, window_height;
 	SDL_GetWindowSize(window, &window_width, &window_height);
 
 	ImGui::SetNextWindowSize(ImVec2((float)window_width, 200.f));
-	if (!ImGui::Begin(title, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
+
+	std::string title_text(title);
+	if (!is_open && Items.Size > 0) {
+		title_text = Items[Items.Size - 1];
+	}
+	title_text.append("###CONSOLE_OUTPUT");
+
+	is_open = true;
+	if (!ImGui::Begin(title_text.c_str(), nullptr,
+					  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) {
 		if (ImGui::IsWindowCollapsed()) {
 			is_open = false;
 			ImGui::SetWindowPos(ImVec2(0, (float)window_height - 19.f));
@@ -69,8 +76,7 @@ void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
 	}
 	ImGui::Separator();
 
-	ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false,
-					  ImGuiWindowFlags_HorizontalScrollbar);
+	ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 	if (ImGui::BeginPopupContextWindow()) {
 		if (ImGui::Selectable("Clear"))
 			ClearLog();
