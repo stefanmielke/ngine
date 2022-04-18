@@ -9,6 +9,7 @@ class LibdragonFont;
 class LibdragonImage;
 class LibdragonSound;
 class LibdragonTiledMap;
+class LibdragonLDtkMap;
 
 union AssetReferenceUnion {
 	std::unique_ptr<LibdragonImage> *image;
@@ -16,6 +17,7 @@ union AssetReferenceUnion {
 	std::unique_ptr<LibdragonFile> *file;
 	std::unique_ptr<LibdragonFont> *font;
 	std::unique_ptr<LibdragonTiledMap> *tiled;
+	std::unique_ptr<LibdragonLDtkMap> *ldtk;
 };
 
 struct AssetReference {

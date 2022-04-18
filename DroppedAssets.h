@@ -73,6 +73,18 @@ struct DroppedTiledMap {
 	}
 };
 
+struct DroppedLDtkMap {
+	std::string file_path;
+
+	char name[50] = "\0";
+	char dfs_folder[100] = "/\0";
+
+	std::vector<LibdragonMapLayer> layers;
+
+	explicit DroppedLDtkMap(const char *file_path) : file_path(file_path) {
+	}
+};
+
 struct DroppedFont {
 	std::string font_path;
 

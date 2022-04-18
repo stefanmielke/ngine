@@ -6,6 +6,7 @@
 #include "LibdragonFile.h"
 #include "LibdragonFont.h"
 #include "LibdragonImage.h"
+#include "LibdragonLDtkMap.h"
 #include "LibdragonSound.h"
 #include "LibdragonTiledMap.h"
 #include "settings/EngineSettings.h"
@@ -28,4 +29,7 @@ class Content {
 	static void CreateTiledMaps(const EngineSettings &engine_settings,
 								const ProjectSettings &project_settings,
 								const std::vector<std::unique_ptr<LibdragonTiledMap>> &maps);
+	static void CreateLDtkMaps(const EngineSettings &engine_settings,
+								const ProjectSettings &project_settings,
+								const std::vector<std::unique_ptr<LibdragonLDtkMap>> &maps);
 };

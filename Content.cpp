@@ -4,6 +4,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <LDtkLoader/Project.hpp>
+
 #include "App.h"
 #include "ConsoleApp.h"
 #include "ThreadCommand.h"
@@ -135,7 +137,7 @@ void Content::CreateTiledMaps(const EngineSettings &engine_settings,
 	if (maps.empty())
 		return;
 
-	console.AddLog("Building general assets...");
+	console.AddLog("Building tile maps assets...");
 
 	for (auto &map : maps) {
 		std::string dfs_output_path = "build/filesystem" + map->dfs_folder;
@@ -185,6 +187,87 @@ void Content::CreateTiledMaps(const EngineSettings &engine_settings,
 			layer_file.close();
 
 			console.AddLog("Created map file at %s", output_file_path.c_str());
+		}
+	}
+}
+
+void Content::CreateLDtkMaps(const EngineSettings &engine_settings,
+							 const ProjectSettings &project_settings,
+							 const std::vector<std::unique_ptr<LibdragonLDtkMap>> &maps) {
+	if (maps.empty())
+		return;
+
+	console.AddLog("Building ldtk maps assets...");
+
+	for (auto &map : maps) {
+		std::string dfs_output_path = "build/filesystem" + map->dfs_folder;
+		std::filesystem::create_directories(project_settings.project_directory + "/" +
+											dfs_output_path);
+
+		std::string file_path = project_settings.project_directory + "/" + map->file_path;
+
+		ldtk::Project project;
+
+		try {
+			project.loadFromFile(file_path);
+		} catch (std::exception &ex) {
+			console.AddLog("Error loading ldtk map: %s", ex.what());
+			continue;
+		}
+
+		std::vector<LibdragonMapLayer> layers;
+
+		for (auto &world : project.allWorlds()) {
+			for (const auto &level : world.allLevels()) {
+				std::string level_name(level.name);
+
+				std::string level_output_dir = project_settings.project_directory + "/" +
+											   dfs_output_path + level_name;
+				std::filesystem::create_directories(level_output_dir);
+
+				for (const auto &layer : level.allLayers()) {
+					if (layer.allTiles().empty())
+						continue;
+
+					std::string layer_output_dir = level_output_dir + "/" + layer.getName() +
+												   ".map";
+
+					{
+						const size_t map_size = layer.getGridSize().x * layer.getGridSize().y;
+						std::vector<int> map_output;
+						map_output.reserve(map_size);
+						for (size_t i = 0; i < map_size; ++i) {
+							map_output.push_back(-1);
+						}
+
+						for (const auto &tile : layer.allTiles()) {
+							map_output[tile.coordId] = tile.tileId;
+						}
+
+						std::ofstream file(layer_output_dir);
+
+						int coord_id = 0;
+						for (auto &tile : map_output) {
+							file << tile;
+
+							if (coord_id % layer.getGridSize().x == layer.getGridSize().x - 1)
+								file << "\n";
+							else
+								file << ",";
+
+							++coord_id;
+						}
+
+						// replace last ',' to a new line
+						file.seekp(file.tellp() - std::streampos(1));
+						file << "\n";
+
+						file.close();
+
+						console.AddLog("Created map file at %s", layer_output_dir.c_str());
+					}
+				}
+			}
 		}
 	}
 }

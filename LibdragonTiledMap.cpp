@@ -1,4 +1,4 @@
-#include "LibdragonTiledMap.h"
+#include "LibdragonLDtkMap.h"
 
 #include <fstream>
 
@@ -20,12 +20,6 @@ void LibdragonTiledMap::SaveToDisk(const std::string &project_directory) {
 		{"file_path", file_path},
 		{"dfs_folder", dfs_folder},
 	};
-
-	for (auto &layer : layers) {
-		nlohmann::json json_layer = {{"name", layer.name}};
-
-		json["layers"].push_back(json_layer);
-	}
 
 	std::string directory = project_directory + "/.ngine/tiled_maps/";
 	if (!std::filesystem::exists(directory))
@@ -73,6 +67,7 @@ std::vector<LibdragonMapLayer> LibdragonTiledMap::LoadLayers(const std::string &
 	auto result = tmx_file.load_file(file_path.c_str());
 	if (result.status != pugi::status_ok) {
 		console.AddLog("Error loading tiled map: %s", result.description());
+		return std::vector<LibdragonMapLayer>(0);
 	}
 
 	std::vector<LibdragonMapLayer> layers;

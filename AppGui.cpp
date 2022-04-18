@@ -14,6 +14,7 @@
 #include "Emulator.h"
 #include "ImportAssets.h"
 #include "Libdragon.h"
+#include "LibdragonLDtkMap.h"
 #include "ProjectBuilder.h"
 #include "ScriptBuilder.h"
 #include "ThreadCommand.h"
@@ -165,6 +166,20 @@ void AppGui::ProcessImportFile(App &app, std::string file_path) {
 		dropped_map.layers = LibdragonTiledMap::LoadLayers(filepath.string());
 
 		app.state.dropped_tiled_files.push_back(dropped_map);
+
+		ImGui::SetWindowFocus("Import Assets");
+	} else if (file_path.ends_with(".ldtk")) {
+		DroppedLDtkMap dropped_map(file_path.c_str());
+
+		std::filesystem::path filepath(file_path);
+		std::string filename = filepath.filename().replace_extension().string();
+		std::replace(filename.begin(), filename.end(), ' ', '_');
+
+		strcpy(dropped_map.name, filename.c_str());
+
+		dropped_map.layers = LibdragonLDtkMap::LoadLayers(filepath.string());
+
+		app.state.dropped_ldtk_files.push_back(dropped_map);
 
 		ImGui::SetWindowFocus("Import Assets");
 	} else {
@@ -502,6 +517,51 @@ void set_up_popup_windows(App &app) {
 		}
 		ImGui::EndPopup();
 	}
+	if (ImGui::BeginPopup("PopupMapsBrowserLDtk")) {
+		if (ImGui::Selectable("Edit Settings")) {
+			if (app.state.asset_selected.Type() == LDTK_MAP) {
+				app.state.asset_editing = app.state.asset_selected;
+				app.state.reload_asset_edit = true;
+			}
+		}
+		if (app.state.asset_selected.Type() == LDTK_MAP) {
+			for (auto &layer : (*app.state.asset_selected.Ref().ldtk)->layers) {
+				ImGui::PushID(layer.name.c_str());
+				std::string dfs_label = "Copy '" + layer.name + "' DFS Path";
+				if (ImGui::Selectable(dfs_label.c_str())) {
+					if (app.state.asset_selected.Type() == LDTK_MAP) {
+						std::string dfs_path;
+						dfs_path.append((*app.state.asset_selected.Ref().ldtk)->dfs_folder +
+										(*app.state.asset_selected.Ref().ldtk)->name + "/" +
+										layer.name + ".map");
+
+						ImGui::SetClipboardText(dfs_path.c_str());
+					}
+				}
+				ImGui::PopID();
+			}
+		}
+		if (ImGui::Selectable("Delete")) {
+			if (app.state.asset_selected.Type() == LDTK_MAP) {
+				(*app.state.asset_selected.Ref().ldtk)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.tiled_maps.size(); ++i) {
+					if (app.project.tiled_maps[i]->name ==
+						(*app.state.asset_selected.Ref().ldtk)->name) {
+						app.project.tiled_maps.erase(app.project.tiled_maps.begin() + (int)i);
+
+						break;
+					}
+				}
+
+				app.state.asset_selected.Reset();
+				app.state.asset_editing.Reset();
+				app.project.ReloadAssets();
+			}
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void render_asset_folder_list(App &app, Asset *folder) {
@@ -752,6 +812,41 @@ void render_asset_folder_list(App &app, Asset *folder) {
 
 						if (ImGui::IsItemHovered()) {
 							(*asset.GetAssetReference().tiled)->DrawTooltip();
+						}
+					}
+				}
+			} break;
+			case LDTK_MAP: {
+				if (display_maps) {
+					std::string name = (*asset.GetAssetReference().ldtk)->name;
+					if (name.find(assets_name_filter) != name.npos) {
+						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
+									 ImVec4(.4f, .1f, .1f, 0.7f));
+						ImGui::SameLine();
+
+						bool selected = app.state.asset_selected.Type() == LDTK_MAP &&
+										name == (*app.state.asset_selected.Ref().ldtk)->name;
+						if (ImGui::Selectable(name.c_str(), selected,
+											  ImGuiSelectableFlags_AllowDoubleClick)) {
+							app.state.asset_selected.Ref(LDTK_MAP, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(LDTK_MAP, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupMapsBrowserLDtk");
+						}
+
+						if (ImGui::IsItemHovered()) {
+							(*asset.GetAssetReference().ldtk)->DrawTooltip();
 						}
 					}
 				}
@@ -1039,7 +1134,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 				}
 			} break;
 			case TILED_MAP: {
-				if (display_files) {
+				if (display_maps) {
 					std::string name = (*asset.GetAssetReference().tiled)->name;
 					if (name.find(assets_name_filter) != name.npos) {
 						ImGui::TableNextColumn();
@@ -1076,11 +1171,65 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						if (ImGui::IsItemHovered() &&
 							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 							app.state.asset_selected.Ref(TILED_MAP, asset.GetAssetReference());
-							ImGui::OpenPopup("PopupContentsBrowserContent");
+							ImGui::OpenPopup("PopupMapsBrowserTiled");
 						}
 
 						if (ImGui::IsItemHovered()) {
 							(*asset.GetAssetReference().tiled)->DrawTooltip();
+						}
+
+						if (selected) {
+							ImGui::SameLine(8);
+							ImGui::Checkbox("##", &selected);
+						}
+
+						ImGui::TextWrapped("%s", name.c_str());
+					}
+				}
+			} break;
+			case LDTK_MAP: {
+				if (display_maps) {
+					std::string name = (*asset.GetAssetReference().ldtk)->name;
+					if (name.find(assets_name_filter) != name.npos) {
+						ImGui::TableNextColumn();
+
+						bool selected = app.state.asset_selected.Type() == LDTK_MAP &&
+										name == (*app.state.asset_selected.Ref().ldtk)->name;
+
+						ImVec2 uv0, uv1;
+						app.GetImagePosition("File.png", uv0, uv1);
+						ImGui::PushID(asset.GetName().c_str());
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, .1f));
+						} else {
+							ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, .1f));
+							ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, .1f));
+						}
+						if (ImGui::ImageButton((ImTextureID)(intptr_t)((app.app_texture)),
+											   ImVec2(50, 50), uv0, uv1, 18)) {
+							app.state.asset_selected.Ref(LDTK_MAP, asset.GetAssetReference());
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+						ImGui::PopStyleColor(3);
+						ImGui::PopID();
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							app.state.asset_editing = app.state.asset_selected;
+							app.state.reload_asset_edit = true;
+						}
+
+						if (ImGui::IsItemHovered() &&
+							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+							app.state.asset_selected.Ref(LDTK_MAP, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupMapsBrowserLDtk");
+						}
+
+						if (ImGui::IsItemHovered()) {
+							(*asset.GetAssetReference().ldtk)->DrawTooltip();
 						}
 
 						if (selected) {
@@ -1558,6 +1707,73 @@ void render_asset_details_window(App &app) {
 			}
 			ImGui::End();
 		} break;
+		case LDTK_MAP: {
+			static char edit_name[50];
+			static char edit_dfs_folder[100];
+
+			if (app.state.reload_asset_edit) {
+				app.state.reload_asset_edit = false;
+
+				strcpy(edit_name, (*app.state.asset_editing.Ref().ldtk)->name.c_str());
+				strcpy(edit_dfs_folder, (*app.state.asset_editing.Ref().ldtk)->dfs_folder.c_str());
+			}
+			if (ImGui::Begin("Details", nullptr,
+							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
+				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
+								 ImGuiInputTextFlags_CharsFilePath);
+
+				ImGui::Separator();
+				ImGui::Spacing();
+				if (ImGui::Button("Save")) {
+					bool will_save = true;
+					if ((*app.state.asset_editing.Ref().ldtk)->name != edit_name) {
+						std::string name_string(edit_name);
+
+						auto find_by_name =
+							[&name_string](const std::unique_ptr<LibdragonLDtkMap> &i) {
+								return i->name == name_string;
+							};
+						if (std::find_if(app.project.ldtk_maps.begin(),
+										 app.project.ldtk_maps.end(),
+										 find_by_name) != std::end(app.project.ldtk_maps)) {
+							console.AddLog(
+								"LDtk Map with the name already exists. Please choose a "
+								"different name.");
+							will_save = false;
+						} else {
+							std::filesystem::copy_file(
+								app.project.project_settings.project_directory + "/" +
+									(*app.state.asset_editing.Ref().ldtk)->file_path,
+								app.project.project_settings.project_directory +
+									"/assets/ldtk_maps/" + name_string + ".ldtk");
+							(*app.state.asset_editing.Ref().ldtk)
+								->DeleteFromDisk(app.project.project_settings.project_directory);
+						}
+					}
+
+					if (will_save) {
+						(*app.state.asset_editing.Ref().ldtk)->name = edit_name;
+						(*app.state.asset_editing.Ref().ldtk)->dfs_folder = edit_dfs_folder;
+						(*app.state.asset_editing.Ref().ldtk)
+							->file_path = "assets/ldtk_maps/" +
+										  (*app.state.asset_editing.Ref().ldtk)->name + ".ldtk";
+
+						(*app.state.asset_editing.Ref().ldtk)
+							->SaveToDisk(app.project.project_settings.project_directory);
+
+						app.project.ReloadAssets();
+					}
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) {
+					app.state.asset_editing.Reset();
+					app.state.asset_selected.Reset();
+				}
+			}
+			ImGui::End();
+		} break;
 	}
 }
 
@@ -1591,6 +1807,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		app.project.ReloadGeneralFiles();
 		app.project.ReloadFonts(&app);
 		app.project.ReloadTiledMaps();
+		app.project.ReloadLDtkMaps();
 
 		app.project.ReloadAssets();
 	}

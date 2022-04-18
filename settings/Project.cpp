@@ -87,6 +87,7 @@ bool Project::Open(const char *path, App *app) {
 	ReloadGeneralFiles();
 	ReloadFonts(app);
 	ReloadTiledMaps();
+	ReloadLDtkMaps();
 
 	assets = Asset::BuildAsset(project_settings.project_directory);
 
@@ -206,6 +207,28 @@ void Project::ReloadTiledMaps() {
 				file->LoadFromDisk(filepath);
 
 				tiled_maps.push_back(move(file));
+			}
+		}
+	}
+}
+
+void Project::ReloadLDtkMaps() {
+	ldtk_maps.clear();
+
+	std::filesystem::path folder = project_settings.project_directory + "/.ngine/ldtk_maps";
+	if (!std::filesystem::exists(folder)) {
+		return;
+	}
+
+	std::filesystem::recursive_directory_iterator dir_iter(folder);
+	for (auto &file_entry : dir_iter) {
+		if (file_entry.is_regular_file()) {
+			std::string filepath(file_entry.path().string());
+			if (filepath.ends_with(".ldtk_maps.json")) {
+				auto file = std::make_unique<LibdragonLDtkMap>();
+				file->LoadFromDisk(filepath);
+
+				ldtk_maps.push_back(move(file));
 			}
 		}
 	}

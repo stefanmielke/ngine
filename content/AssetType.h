@@ -10,6 +10,7 @@ enum AssetType {
 	GENERAL,
 	FONT,
 	TILED_MAP,
+	LDTK_MAP,
 };
 
 std::string GetAssetTypeName(AssetType type);

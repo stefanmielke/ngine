@@ -15,6 +15,7 @@ std::string GetAssetTypeName(AssetType type) {
 		case FONT:
 			return "font";
 		case TILED_MAP:
+		case LDTK_MAP:
 			return "map";
 	}
 

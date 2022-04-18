@@ -9,6 +9,7 @@
 #include "../LibdragonImage.h"
 #include "../LibdragonFile.h"
 #include "../LibdragonFont.h"
+#include "../LibdragonLDtkMap.h"
 #include "../LibdragonScript.h"
 #include "../LibdragonSound.h"
 #include "../LibdragonTiledMap.h"
@@ -26,6 +27,7 @@ class Project {
 	std::vector<std::unique_ptr<LibdragonFile>> general_files;
 	std::vector<std::unique_ptr<LibdragonFont>> fonts;
 	std::vector<std::unique_ptr<LibdragonTiledMap>> tiled_maps;
+	std::vector<std::unique_ptr<LibdragonLDtkMap>> ldtk_maps;
 
 	Asset *assets;
 
@@ -43,6 +45,7 @@ class Project {
 	void ReloadFonts(App *app);
 	void ReloadGeneralFiles();
 	void ReloadTiledMaps();
+	void ReloadLDtkMaps();
 
 	void ReloadAssets();
 

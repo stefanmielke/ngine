@@ -29,6 +29,7 @@ class ProjectState {
 	std::vector<DroppedGeneralFile> dropped_general_files;
 	std::vector<DroppedFont> dropped_font_files;
 	std::vector<DroppedTiledMap> dropped_tiled_files;
+	std::vector<DroppedLDtkMap> dropped_ldtk_files;
 
 	char emulator_path[255];
 	char editor_path[255];
@@ -75,5 +76,6 @@ class ProjectState {
 		dropped_image_files.clear();
 		dropped_font_files.clear();
 		dropped_tiled_files.clear();
+		dropped_ldtk_files.clear();
 	}
 };
