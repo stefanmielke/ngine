@@ -50,11 +50,7 @@ To Do:
 [ ] Add "menu" module to not having to init menu on a global script
 [ ] Fix crash when deleting first element of the content browser
     - mark Asset as "deleted", then, at the end of the frame, remove all marked
-[ ] Check if docker is installed
-    - Link to download if not: https://www.docker.com/products/docker-desktop/
-[ ] Check if docker is running
-    - Button to start it if not (Windows only): "%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"
-    - Version if it is: docker version --format 'docker {{.Server.Version}}'
+[ ] Warning if libdragon-cli or docker are not working as intended
 [ ] Update README
 [ ] Update Wiki
 
@@ -95,6 +91,11 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Check if docker is installed
+    - Link to download if not: https://www.docker.com/products/docker-desktop/
+[x] Check if docker is running
+    - Button to start it if not (Windows only): "%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"
+    - Version if it is: docker version --format 'docker {{.Server.Version}}'
 [x] Bundle libdragon-cli
     - use it as default (checkbox "use bundled")
 [x] Show last console line when console is minimized
