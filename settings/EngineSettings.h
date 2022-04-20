@@ -38,7 +38,7 @@ class EngineSettings {
 		return theme;
 	};
 
-	void SetLibdragonExeLocation(const App *app, std::string path);
+	void SetLibdragonExeLocation(const App *app, bool use_bundled, std::string path);
 	[[nodiscard]] std::string GetLibdragonExeLocation() const {
 		return libdragon_exe_location;
 	};
@@ -51,10 +51,15 @@ class EngineSettings {
 		return libdragon_version;
 	};
 
-	void SetLibdragonUseBundled(const App *app, bool use_bundled);
+	[[nodiscard]] std::string GetDockerVersion() const {
+		return docker_version;
+	};
+
 	[[nodiscard]] bool GetLibdragonUseBundled() const {
 		return libdragon_use_bundled;
 	};
+
+	void ReloadDockerVersion();
 
    private:
 	std::string last_opened_project;
@@ -68,6 +73,7 @@ class EngineSettings {
 	std::string engine_settings_filepath;
 
 	std::string libdragon_version;
+	std::string docker_version;
 
 	void LoadFromDisk(const App *app, const std::string& path);
 };

@@ -241,6 +241,10 @@ void AppGui::RenderMenuBar(App &app) {
 								app.engine_settings.GetLibdragonVersion().starts_with("Update"))) {
 				open_url("https://github.com/anacierdem/libdragon-docker/releases/latest");
 			}
+			if (ImGui::MenuItem(app.engine_settings.GetDockerVersion().c_str(), nullptr, false,
+								!app.engine_settings.GetDockerVersion().starts_with("docker"))) {
+				open_url("https://www.docker.com/get-started");
+			}
 			ImGui::Separator();
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
 			ImGui::Separator();
@@ -2692,8 +2696,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 				if (ImGui::Button("Save")) {
 					app.engine_settings.SetEmulatorPath(app.state.emulator_path);
 					app.engine_settings.SetEditorLocation(app.state.editor_path);
-					app.engine_settings.SetLibdragonExeLocation(&app, app.state.libdragon_exe_path);
-					app.engine_settings.SetLibdragonUseBundled(&app, app.state.libdragon_use_bundled);
+					app.engine_settings.SetLibdragonExeLocation(
+						&app, app.state.libdragon_use_bundled, app.state.libdragon_exe_path);
 				}
 
 				ImGui::Separator();

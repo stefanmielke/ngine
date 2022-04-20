@@ -44,6 +44,7 @@ To Do:
 [ ] Add image slices preview on import/edit
 [ ] Check if editors are found on Engine Settings
 [ ] Only allow '/' on dfs_folder
+    - Also check if it finishes with '/'.
 [ ] Button to run on real hardware
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script

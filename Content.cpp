@@ -88,7 +88,6 @@ void Content::CreateGeneralFiles(const EngineSettings &engine_settings,
 			command << "cp \"" << file->file_path << "\" \""
 					<< dfs_output_path + file->GetFilename() << "\"";
 
-			console.AddLog("%s", command.str().c_str());
 			ThreadCommand::QueueCommand(command.str());
 		}
 	}

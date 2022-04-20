@@ -11,6 +11,8 @@
 #include <unistd.h>
 #endif
 
+#include "../ThreadCommand.h"
+
 EngineSettings::EngineSettings()
 	: editor_location("code"),
 	  libdragon_exe_location(),
@@ -97,6 +99,8 @@ void EngineSettings::LoadFromDisk(const App *app, const std::string &path) {
 	if (libdragon_use_bundled || !libdragon_exe_location.empty()) {
 		libdragon_version = Libdragon::GetVersion(app);
 	}
+
+	ReloadDockerVersion();
 }
 
 void EngineSettings::SetLastOpenedProject(std::string path) {
@@ -123,8 +127,9 @@ void EngineSettings::SetTheme(Theme theme_id) {
 	SaveToDisk();
 }
 
-void EngineSettings::SetLibdragonExeLocation(const App *app, std::string path) {
+void EngineSettings::SetLibdragonExeLocation(const App *app, bool use_bundled, std::string path) {
 	libdragon_exe_location = std::move(path);
+	libdragon_use_bundled = use_bundled;
 
 	SaveToDisk();
 
@@ -133,12 +138,13 @@ void EngineSettings::SetLibdragonExeLocation(const App *app, std::string path) {
 	}
 }
 
-void EngineSettings::SetLibdragonUseBundled(const App *app, bool use_bundled) {
-	libdragon_use_bundled = use_bundled;
+void EngineSettings::ReloadDockerVersion() {
+	std::string command("docker version --format 'docker {{.Server.Version}}'");
 
-	SaveToDisk();
-
-	if (libdragon_use_bundled || !libdragon_exe_location.empty()) {
-		libdragon_version = Libdragon::GetVersion(app);
+	std::string result;
+	if (ThreadCommand::RunCommand(command, result) != EXIT_SUCCESS) {
+		docker_version = "Docker is not installed.";
+	} else {
+		docker_version = result;
 	}
 }
