@@ -118,8 +118,8 @@ jobs:
           cd build
           mkdir bundles
           cd bundles
-          wget https://github.com/anacierdem/libdragon-docker/releases/download/v10.7.0/libdragon-linux-x86_64.tar.gz
-          Expand-Archive -Path 'libdragon-win-x86_64.zip' -DestinationPath .
+          curl -L -s https://github.com/anacierdem/libdragon-docker/releases/download/v10.7.0/libdragon-win-x86_64.zip -O libdragon-win-x86_64.zip
+          tar -xzf libdragon-win-x86_64.zip
 
       - name: Download bundles on Linux
         if: ${{ runner.os == 'Linux'}}
