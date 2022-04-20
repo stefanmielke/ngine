@@ -143,7 +143,13 @@ void EngineSettings::ReloadDockerVersion() {
 
 	std::string result;
 	if (ThreadCommand::RunCommand(command, result) != EXIT_SUCCESS) {
-		docker_version = "Docker is not installed.";
+		if (result.find("is not recognized") != std::string::npos) {
+			docker_version = "Docker is not installed.";
+		} else if (result.starts_with("error during connect") || result.find("accepts at most 0") != std::string::npos) {
+			docker_version = "Docker is not started. Click to start.";
+		} else {
+			docker_version = "Error getting docker version";
+		}
 	} else {
 		docker_version = result;
 	}

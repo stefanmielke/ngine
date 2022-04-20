@@ -24,7 +24,8 @@ int exec(std::string cmd) {
 
 	cmd.append(" 2>&1");
 
-	chdir(g_app->project.project_settings.project_directory.c_str());
+	if (g_app && g_app->project.project_settings.IsOpen())
+		chdir(g_app->project.project_settings.project_directory.c_str());
 
 	auto pipe = popen(cmd.c_str(), "r");
 	if (!pipe)
@@ -41,7 +42,9 @@ int exec(std::string cmd) {
 	}
 
 	int result = pclose(pipe);
-	chdir(g_app->GetEngineDirectory().c_str());
+
+	if (g_app && g_app->project.project_settings.IsOpen())
+		chdir(g_app->GetEngineDirectory().c_str());
 
 	return result;
 }

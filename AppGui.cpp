@@ -243,7 +243,14 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			if (ImGui::MenuItem(app.engine_settings.GetDockerVersion().c_str(), nullptr, false,
 								!app.engine_settings.GetDockerVersion().starts_with("docker"))) {
-				open_url("https://www.docker.com/get-started");
+				if (app.engine_settings.GetDockerVersion().starts_with("Docker is not started")) {
+#ifdef WIN64
+					ThreadCommand::RunCommandDetached(
+						R"(""%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"")");
+#endif
+				} else {
+					open_url("https://www.docker.com/get-started");
+				}
 			}
 			ImGui::Separator();
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
