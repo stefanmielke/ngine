@@ -233,8 +233,23 @@ void AppGui::RenderMenuBar(App &app) {
 
 				console.AddLog("Assembly output to 'rom.asm' file.");
 			}
+#ifndef WIN64
+			if (ImGui::MenuItem("Run on Console")) {
+				std::string rom_path(app.project.project_settings.project_directory + "/" +
+									 app.project.project_settings.rom_name + ".z64");
+				std::string unfloader_path(app.GetEngineDirectory() + "/bundle/UNFLoader");
+
+				char cmd[500];
+				snprintf(cmd, 500,
+						 "gnome-terminal -- bash -c \"sudo rmmod usbserial\nsudo rmmod "
+						 "ftdi_sio\nsudo %s -d -r %s\"",
+						 unfloader_path.c_str(), rom_path.c_str());
+
+				ThreadCommand::RunCommandDetached(cmd);
+			}
 			ImGui::EndMenu();
 		}
+#endif
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
 			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false,
@@ -2755,7 +2770,7 @@ void open_url(const char *url) {
 #ifdef __LINUX__
 	std::string command("xdg-open ");
 #else
-	std::string command("start ");
+		std::string command("start ");
 #endif
 	command.append(url);
 

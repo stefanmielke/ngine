@@ -143,3 +143,5 @@ jobs:
             ${{github.workspace}}/build/*.dll
             ${{github.workspace}}/build/bundles/libdragon.exe
             ${{github.workspace}}/build/bundles/libdragon
+            ${{github.workspace}}/build/bundles/UNFLoader.exe
+            ${{github.workspace}}/build/bundles/UNFLoader

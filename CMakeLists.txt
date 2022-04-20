@@ -26,7 +26,7 @@ add_executable(${PROJECT_NAME} ${SOURCES} ngine.rc)
 target_include_directories(${PROJECT_NAME} PRIVATE imgui)
 target_include_directories(${PROJECT_NAME} PUBLIC ldtkloader/include)
 
-if(UNIX)
+if (UNIX)
     target_link_libraries(${PROJECT_NAME} GL dl)
     set(CMAKE_THREAD_LIBS_INIT "-lpthread")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
@@ -37,7 +37,7 @@ if(UNIX)
 
     find_package(SDL2 REQUIRED)
     target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2 SDL2_image SDL2_mixer SDL2_ttf)
-elseif(WIN32)
+elseif (WIN32)
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
     find_package(SDL2_mixer REQUIRED)
@@ -45,7 +45,7 @@ elseif(WIN32)
     target_include_directories(${PROJECT_NAME} PRIVATE D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/include/ D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/include/SDL2/ D:/a/ngine/ngine/SDL2/SDL2_image-2.0.5/x86_64-w64-mingw32/include/ D:/a/ngine/ngine/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/ D:/a/ngine/ngine/SDL2/SDL2_ttf-2.0.18/x86_64-w64-mingw32/include/)
     target_link_directories(${PROJECT_NAME} PRIVATE D:/a/ngine/ngine/SDL2/SDL2-2.0.20/x86_64-w64-mingw32/lib/ D:/a/ngine/ngine/SDL2/SDL2_image-2.0.5/x86_64-w64-mingw32/lib/ D:/a/ngine/ngine/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/ D:/a/ngine/ngine/SDL2/SDL2_ttf-2.0.18/x86_64-w64-mingw32/lib/)
     target_link_libraries(${PROJECT_NAME} mingw32 SDL2main SDL2 -mwindows SDL2_image SDL2_mixer SDL2_ttf)
-endif()
+endif ()
 
 add_custom_command(
         TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
@@ -66,11 +66,24 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}/sheet.json
 )
 
-if(WIN32)
+if (WIN32)
     add_custom_command(
             TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/deps/windows_dll
             ${CMAKE_CURRENT_BINARY_DIR}/
     )
-endif()
+    add_custom_command(
+            TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/deps/unfloader/UNFLoader.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/UNFLoader.exe
+    )
+else ()
+    add_custom_command(
+            TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/deps/unfloader/UNFLoader
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/UNFLoader
+    )
+endif ()
