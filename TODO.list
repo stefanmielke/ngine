@@ -46,6 +46,8 @@ To Do:
 [ ] Only allow '/' on dfs_folder
     - Also check if it finishes with '/'.
 [/] Button to run on real hardware
+    - Check dependencies
+    - Add links to D2XX drivers -> https://ftdichip.com/drivers/d2xx-drivers/
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script
 [ ] Fix crash when deleting first element of the content browser

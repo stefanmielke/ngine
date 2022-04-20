@@ -247,9 +247,9 @@ void AppGui::RenderMenuBar(App &app) {
 
 				ThreadCommand::RunCommandDetached(cmd);
 			}
+#endif
 			ImGui::EndMenu();
 		}
-#endif
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
 			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false,
