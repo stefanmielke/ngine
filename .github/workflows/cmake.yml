@@ -112,6 +112,24 @@ jobs:
           set SDL2DIR="${{github.workspace}}\SDL2"
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+      - name: Download bundles on Windows
+        if: ${{ runner.os == 'Windows'}}
+        run: |
+          cd build
+          mkdir bundles
+          cd bundles
+          curl -s https://github.com/anacierdem/libdragon-docker/releases/download/v10.7.0/libdragon-win-x86_64.zip -O libdragon-win-x86_64.zip
+          Expand-Archive -Path 'libdragon-win-x86_64.zip' -DestinationPath '${{github.workspace}}/build/bundles/'
+
+      - name: Download bundles on Linux
+        if: ${{ runner.os == 'Linux'}}
+        run: |
+          cd build
+          mkdir bundles
+          cd bundles
+          wget https://github.com/anacierdem/libdragon-docker/releases/download/v10.7.0/libdragon-linux-x86_64.tar.gz
+          tar -xzf libdragon-linux-x86_64.tar.gz
+
       - name: Archive
         uses: actions/upload-artifact@v3
         with:
@@ -123,3 +141,5 @@ jobs:
             ${{github.workspace}}/build/sheet.png
             ${{github.workspace}}/build/sheet.json
             ${{github.workspace}}/build/*.dll
+            ${{github.workspace}}/build/bundles/libdragon.exe
+            ${{github.workspace}}/build/bundles/libdragon

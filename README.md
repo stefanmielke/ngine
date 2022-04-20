@@ -12,9 +12,9 @@
 - [SDL2](https://www.libsdl.org/index.php) (bundled on Windows)
 - [SDL2_Image](https://www.libsdl.org/projects/SDL_image/) (bundled on Windows)
 - [SDL2_Mixer](https://www.libsdl.org/projects/SDL_mixer/) (bundled on Windows)
+- [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf) (bundled on Windows)
+- [Libdragon CLI](https://github.com/anacierdem/libdragon-docker) (bundled)
 - [Docker](https://www.docker.com/get-started)
-- [Libdragon CLI](https://github.com/anacierdem/libdragon-docker)
-- [GIT](https://git-scm.com/downloads)
 
 ### What it is
 
@@ -28,7 +28,7 @@ Unity or UE4, where you can create the game using another language. It also (for
 nodes nor supports [ECS](https://en.wikipedia.org/wiki/Entity_component_system) directly (but you can add those yourself
 if you want).
 
-Also Libdragon still has no support for 3D (but should have soon), so that is also not provided.
+Also Libdragon still has no support for 3D (but should have soon), so that is also not provided natively (but you can import 3D assets).
 
 ### How to use it
 
@@ -36,20 +36,32 @@ Refer to this project's [wiki](https://github.com/stefanmielke/ngine/wiki) for m
 
 ### Functionalities Supported
 
-- Input
-- Audio / Mixer
-- Display / RDP
-- Console
-- Libdragon's Debug Modules
-- Real-Time Clock
-- Scene Manager (from [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
-- Memory Pool (from [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
-- Imports
-    - Sprites
-    - Sounds
-    - Custom Content (can copy the content or use a custom build pipeline)
-- Scenes
-- Scripts (can attach to scenes or globally)
+- Modules:
+  - Input
+  - Audio / Mixer
+  - Display / RDP
+  - Console
+  - Libdragon's Debug Modules
+  - Real-Time Clock
+  - Scene Manager (from [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
+  - Memory Pool (from [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
+  - Scenes (from [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
+- Asset Importing:
+  - Sprites/Textures
+    - BMP
+    - PCX
+    - PNG
+    - JPG
+    - TGA
+  - Sounds
+    - WAV
+    - YM
+    - XM
+  - Maps (using [Libdragon-Extensions](https://github.com/stefanmielke/libdragon-extensions))
+    - [Tiled](https://www.mapeditor.org/)
+    - [LDtk](https://ldtk.io/)
+  - Custom Content (can copy the content or use a custom build pipeline)
+- Scripting for code (can attach to scenes or globally)
 
 ### Overview Video
 
@@ -59,7 +71,7 @@ Refer to this project's [wiki](https://github.com/stefanmielke/ngine/wiki) for m
 
 ### Building
 
-- Install SDL2, SDL2_image, SDL2_mixer
+- Install SDL2, SDL2_image, SDL2_mixer, SDL2_ttf
     - Windows: has to be discoverable by CMake
     - Linux: download/install latest from source
 - Run `cmake` and `make` on the project folder.
