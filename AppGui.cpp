@@ -229,8 +229,7 @@ void AppGui::RenderMenuBar(App &app) {
 			if (ImGui::MenuItem("Disassembly ROM")) {
 				console.AddLog("Building Project...");
 				ProjectBuilder::Build(&app);
-				Libdragon::Disasm(app.project.project_settings.project_directory,
-								  app.engine_settings.GetLibdragonExeLocation());
+				Libdragon::Disasm(&app);
 
 				console.AddLog("Assembly output to 'rom.asm' file.");
 			}
@@ -2442,9 +2441,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 								if (ImGui::Button("Update Libdragon")) {
 									console.AddLog("Running 'libdragon update'...");
-									Libdragon::Update(
-										app.project.project_settings.project_directory,
-										app.engine_settings.GetLibdragonExeLocation());
+									Libdragon::Update(&app);
 								}
 								ImGui::SameLine();
 								ImGui::BeginDisabled();
@@ -2453,9 +2450,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 								if (ImGui::Button("Re-Build Libdragon")) {
 									console.AddLog("Running 'libdragon install'...");
-									Libdragon::Install(
-										app.project.project_settings.project_directory,
-										app.engine_settings.GetLibdragonExeLocation());
+									Libdragon::Install(&app);
 								}
 								ImGui::SameLine();
 								ImGui::BeginDisabled();
@@ -2481,7 +2476,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 								ImGui::SameLine();
 								if (ImGui::Button("Update")) {
 									Libdragon::GitCheckout(
-										app.engine_settings.GetLibdragonExeLocation(), "libdragon",
+										&app, "libdragon",
 										app.state.project_settings_screen.libdragon_branch);
 								}
 							}
@@ -2677,9 +2672,12 @@ void AppGui::RenderSettingsWindow(App &app) {
 						"We will run the libdragon-docker exe from this path.\n\nYou can use PATH "
 						"vars by leaving only the exe name.");
 				}
+				ImGui::Checkbox("Use bundled", &app.state.libdragon_use_bundled);
+				ImGui::BeginDisabled(app.state.libdragon_use_bundled);
 				ImGui::InputTextWithHint("##LibdragonExePath",
 										 "/path/to/libdragon/folder/libdragon",
 										 app.state.libdragon_exe_path, 255);
+				ImGui::EndDisabled();
 
 				{
 					ImGui::TextUnformatted("Theme");
@@ -2694,7 +2692,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 				if (ImGui::Button("Save")) {
 					app.engine_settings.SetEmulatorPath(app.state.emulator_path);
 					app.engine_settings.SetEditorLocation(app.state.editor_path);
-					app.engine_settings.SetLibdragonExeLocation(app.state.libdragon_exe_path);
+					app.engine_settings.SetLibdragonExeLocation(&app, app.state.libdragon_exe_path);
+					app.engine_settings.SetLibdragonUseBundled(&app, app.state.libdragon_use_bundled);
 				}
 
 				ImGui::Separator();
@@ -2706,7 +2705,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Reload File")) {
-					app.engine_settings.LoadFromDisk();
+					app.engine_settings.LoadFromDisk(&app);
 					app.state.LoadEngineSetings(app.engine_settings);
 				}
 

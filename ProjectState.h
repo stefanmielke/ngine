@@ -34,6 +34,7 @@ class ProjectState {
 	char emulator_path[255];
 	char editor_path[255];
 	char libdragon_exe_path[255];
+	bool libdragon_use_bundled;
 	ProjectSettingsScreen project_settings_screen;
 
 	Scene *current_scene;
@@ -43,6 +44,8 @@ class ProjectState {
 		strcpy(emulator_path, engine_settings.GetEmulatorPath().c_str());
 		strcpy(editor_path, engine_settings.GetEditorLocation().c_str());
 		strcpy(libdragon_exe_path, engine_settings.GetLibdragonExeLocation().c_str());
+
+		libdragon_use_bundled = engine_settings.GetLibdragonUseBundled();
 	}
 
 	explicit ProjectState(const EngineSettings &engine_settings)
@@ -53,6 +56,7 @@ class ProjectState {
 		  emulator_path(),
 		  editor_path(),
 		  libdragon_exe_path(),
+		  libdragon_use_bundled(true),
 		  project_settings_screen(),
 		  current_scene(nullptr),
 		  scene_name() {

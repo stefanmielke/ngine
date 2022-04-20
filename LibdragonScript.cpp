@@ -169,8 +169,7 @@ void LibdragonScript::RenameAs(App *app, const std::string &new_name) {
 	SaveToDisk(app);
 
 	if (updated_scene || updated_global) {
-		Libdragon::Clean(app->project.project_settings.project_directory,
-						 app->engine_settings.GetLibdragonExeLocation());
+		Libdragon::Clean(app);
 	}
 }
 

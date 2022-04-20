@@ -8,6 +8,7 @@
 
 #include "App.h"
 #include "ConsoleApp.h"
+#include "Libdragon.h"
 #include "ThreadCommand.h"
 #include "pugixml/pugixml.hpp"
 
@@ -38,13 +39,12 @@ void Content::CreateSprites(const EngineSettings &engine_settings,
 		SDL_FreeSurface(image_surface);
 
 		std::string build_temp_image_path = "build/temp/sprites/" + image->name + ".png";
-		command << engine_settings.GetLibdragonExeLocation() << " exec /n64_toolchain/bin/mksprite "
+		command << "/n64_toolchain/bin/mksprite "
 				<< (project_settings.display.bit_depth == DEPTH_16_BPP ? 16 : 32) << " "
 				<< image->h_slices << " " << image->v_slices << " " << build_temp_image_path << " "
 				<< dfs_output_path + image->name + ".sprite";
 
-		console.AddLog("%s", command.str().c_str());
-		ThreadCommand::QueueCommand(command.str());
+		Libdragon::Exec(g_app, command.str());
 	}
 }
 
@@ -62,13 +62,11 @@ void Content::CreateSounds(const EngineSettings &engine_settings,
 		std::filesystem::create_directories(project_settings.project_directory + "/" +
 											dfs_output_path);
 
-		command << engine_settings.GetLibdragonExeLocation()
-				<< " exec /n64_toolchain/bin/audioconv64 " << sound->GetLibdragonGenFlags()
-				<< " -o " << dfs_output_path + sound->name + sound->GetLibdragonExtension() << " "
+		command << "/n64_toolchain/bin/audioconv64 " << sound->GetLibdragonGenFlags() << " -o "
+				<< dfs_output_path + sound->name + sound->GetLibdragonExtension() << " "
 				<< sound->sound_path;
 
-		console.AddLog("%s", command.str().c_str());
-		ThreadCommand::QueueCommand(command.str());
+		Libdragon::Exec(g_app, command.str());
 	}
 }
 
@@ -122,12 +120,11 @@ void Content::CreateFonts(const EngineSettings &engine_settings,
 		SDL_FreeSurface(image_surface);
 
 		std::string build_temp_image_path = "build/temp/fonts/" + font->name + ".png";
-		command << engine_settings.GetLibdragonExeLocation() << " exec /n64_toolchain/bin/mksprite "
+		command << "/n64_toolchain/bin/mksprite "
 				<< (project_settings.display.bit_depth == DEPTH_16_BPP ? 16 : 32) << " 16 8 "
 				<< build_temp_image_path << " " << dfs_output_path + font->name + ".font";
 
-		console.AddLog("%s", command.str().c_str());
-		ThreadCommand::QueueCommand(command.str());
+		Libdragon::Exec(g_app, command.str());
 	}
 }
 

@@ -32,7 +32,7 @@ std::string GetExeDirectory() {
 
 int main(int argv, char **args) {
 	App app(GetExeDirectory());
-	app.engine_settings.LoadFromDisk();
+	app.engine_settings.LoadFromDisk(&app);
 	app.state = ProjectState(app.engine_settings);
 
 	g_app = &app;

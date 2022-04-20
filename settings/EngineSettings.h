@@ -9,12 +9,14 @@ enum Theme {
 	THEME_DARKGRAY,
 };
 
+class App;
+
 class EngineSettings {
    public:
 	EngineSettings();
 
 	void SaveToDisk();
-	void LoadFromDisk();
+	void LoadFromDisk(const App *app);
 
 	void SetEmulatorPath(std::string path);
 	[[nodiscard]] std::string GetEmulatorPath() const {
@@ -36,7 +38,7 @@ class EngineSettings {
 		return theme;
 	};
 
-	void SetLibdragonExeLocation(std::string path);
+	void SetLibdragonExeLocation(const App *app, std::string path);
 	[[nodiscard]] std::string GetLibdragonExeLocation() const {
 		return libdragon_exe_location;
 	};
@@ -49,11 +51,17 @@ class EngineSettings {
 		return libdragon_version;
 	};
 
+	void SetLibdragonUseBundled(const App *app, bool use_bundled);
+	[[nodiscard]] bool GetLibdragonUseBundled() const {
+		return libdragon_use_bundled;
+	};
+
    private:
 	std::string last_opened_project;
 	std::string emulator_location;
 	std::string editor_location;
 	std::string libdragon_exe_location;
+	bool libdragon_use_bundled;
 	Theme theme;
 
 	std::string engine_settings_folder;
@@ -61,5 +69,5 @@ class EngineSettings {
 
 	std::string libdragon_version;
 
-	void LoadFromDisk(const std::string& path);
+	void LoadFromDisk(const App *app, const std::string& path);
 };

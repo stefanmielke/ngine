@@ -24,7 +24,7 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Running 'libdragon init' at '%s'...", project_folder.c_str());
 
-	if (!Libdragon::InitSync(project_folder, app->engine_settings.GetLibdragonExeLocation())) {
+	if (!Libdragon::InitSync(app)) {
 		console.AddLog("[error] Failed to initialize libdragon.");
 		return;
 	}
@@ -50,7 +50,7 @@ void create_project_thread(App *app, std::string project_folder) {
 
 	console.AddLog("Adding libdragon-extensions...");
 
-	if (!Libdragon::GitSubmoduleAddSync(app->engine_settings.GetLibdragonExeLocation(),
+	if (!Libdragon::GitSubmoduleAddSync(app,
 										"https://github.com/stefanmielke/libdragon-extensions.git",
 										"libs/libdragon-extensions")) {
 		console.AddLog("[error] Error adding libdragon-extensions. Please add it manually later.");
@@ -125,18 +125,15 @@ void create_build_files(App *app) {
 void ProjectBuilder::Build(App *app) {
 	create_build_files(app);
 
-	Libdragon::Build(app->project.project_settings.project_directory,
-					 app->engine_settings.GetLibdragonExeLocation());
+	Libdragon::Build(app);
 }
 
 void ProjectBuilder::Rebuild(App *app) {
-	Libdragon::CleanSync(app->project.project_settings.project_directory,
-						 app->engine_settings.GetLibdragonExeLocation());
+	Libdragon::CleanSync(app);
 
 	create_build_files(app);
 
-	Libdragon::Build(app->project.project_settings.project_directory,
-					 app->engine_settings.GetLibdragonExeLocation());
+	Libdragon::Build(app);
 }
 
 void ProjectBuilder::GenerateStaticFiles(const std::string &project_folder) {

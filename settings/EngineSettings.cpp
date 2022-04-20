@@ -13,7 +13,8 @@
 
 EngineSettings::EngineSettings()
 	: editor_location("code"),
-	  libdragon_exe_location("libdragon"),
+	  libdragon_exe_location(),
+	  libdragon_use_bundled(true),
 	  theme(THEME_DARK),
 	  engine_settings_folder(),
 	  engine_settings_filepath() {
@@ -40,6 +41,7 @@ void EngineSettings::SaveToDisk() {
 				{"emulator_location", emulator_location},
 				{"last_opened_project", last_opened_project},
 				{"libdragon_exe_location", libdragon_exe_location},
+				{"libdragon_use_bundled", libdragon_use_bundled},
 				{"theme", theme},
 			},
 		},
@@ -55,10 +57,10 @@ void EngineSettings::SaveToDisk() {
 	filestream.close();
 }
 
-void EngineSettings::LoadFromDisk() {
+void EngineSettings::LoadFromDisk(const App *app) {
 	// TODO: old location, remove on 2.0.0
 	if (std::filesystem::exists("ngine.engine.json")) {
-		LoadFromDisk("ngine.engine.json");
+		LoadFromDisk(app, "ngine.engine.json");
 		SaveToDisk();  // save on new location
 
 		std::filesystem::remove("ngine.engine.json");
@@ -69,14 +71,15 @@ void EngineSettings::LoadFromDisk() {
 		return;
 	}
 
-	LoadFromDisk(engine_settings_filepath);
+	LoadFromDisk(app, engine_settings_filepath);
 }
 
-void EngineSettings::LoadFromDisk(const std::string &path) {
+void EngineSettings::LoadFromDisk(const App *app, const std::string &path) {
 	std::ifstream filestream(path);
 
 	nlohmann::json json;
 	filestream >> json;
+	filestream.close();
 
 	last_opened_project = json["engine"]["last_opened_project"];
 	emulator_location = json["engine"]["emulator_location"];
@@ -84,14 +87,15 @@ void EngineSettings::LoadFromDisk(const std::string &path) {
 	libdragon_exe_location = json["engine"]["libdragon_exe_location"];
 	theme = json["engine"]["theme"];
 
-	filestream.close();
+	if (!json["engine"]["libdragon_use_bundled"].is_null())
+		libdragon_use_bundled = json["engine"]["libdragon_use_bundled"];
 
 	if (last_opened_project.empty()) {
 		last_opened_project = ".";
 	}
 
-	if (!libdragon_exe_location.empty()) {
-		libdragon_version = Libdragon::GetVersion(libdragon_exe_location);
+	if (libdragon_use_bundled || !libdragon_exe_location.empty()) {
+		libdragon_version = Libdragon::GetVersion(app);
 	}
 }
 
@@ -119,12 +123,22 @@ void EngineSettings::SetTheme(Theme theme_id) {
 	SaveToDisk();
 }
 
-void EngineSettings::SetLibdragonExeLocation(std::string path) {
+void EngineSettings::SetLibdragonExeLocation(const App *app, std::string path) {
 	libdragon_exe_location = std::move(path);
 
 	SaveToDisk();
 
-	if (!libdragon_exe_location.empty()) {
-		libdragon_version = Libdragon::GetVersion(libdragon_exe_location);
+	if (libdragon_use_bundled || !libdragon_exe_location.empty()) {
+		libdragon_version = Libdragon::GetVersion(app);
+	}
+}
+
+void EngineSettings::SetLibdragonUseBundled(const App *app, bool use_bundled) {
+	libdragon_use_bundled = use_bundled;
+
+	SaveToDisk();
+
+	if (libdragon_use_bundled || !libdragon_exe_location.empty()) {
+		libdragon_version = Libdragon::GetVersion(app);
 	}
 }

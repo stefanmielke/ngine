@@ -17,6 +17,8 @@ char separator[] = "\n\0";
 #endif
 
 int exec(std::string cmd) {
+	console.AddLog("%s", cmd.c_str());
+
 	char buffer[128];
 	std::string output;
 
@@ -44,6 +46,8 @@ int exec(std::string cmd) {
 	return result;
 }
 int exec_result(std::string cmd, std::string &result) {
+	console.AddLog("%s", cmd.c_str());
+
 	result.clear();
 
 	char buffer[128];
@@ -119,13 +123,9 @@ void ThreadCommand::QueueCommand(std::string command) {
 }
 
 static int run_command(std::string command) {
-	console.AddLog("Running %s", command.c_str());
-
 	return exec(command);
 }
 static int run_command_result(std::string command, std::string &result) {
-	console.AddLog("Running %s", command.c_str());
-
 	return exec_result(command, result);
 }
 

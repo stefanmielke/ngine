@@ -42,14 +42,18 @@ To Do:
         [ ] Add Sprite/Sound editors on Engine Settings
 [ ] Scene nodes
 [ ] Add image slices preview on import/edit
-[ ] Resize output window
-[ ] Remove opening cmd window for every command on Windows
 [ ] Check if editors are found on Engine Settings
 [ ] Only allow '/' on dfs_folder
 [ ] Button to run on real hardware
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script
 [ ] Fix crash when deleting first element of the content browser
+    - mark Asset as "deleted", then, at the end of the frame, remove all marked
+[ ] Check if docker is installed
+    - Link to download if not: https://www.docker.com/products/docker-desktop/
+[ ] Check if docker is running
+    - Button to start it if not (Windows only): "%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"
+    - Version if it is: docker version --format 'docker {{.Server.Version}}'
 [ ] Update README
 [ ] Update Wiki
 
@@ -63,6 +67,10 @@ To Do:
 [ ] Update Wiki
 
 3.0.0:
+[ ] Remove opening cmd window for every command on Windows
+[ ] Generate PC port
+    - Possibility to run/debug locally
+[ ] Resize output window
 [ ] Localization files
     - en-us
     - pt-br
@@ -76,8 +84,6 @@ Future:
     - Wait for better support for this on libdragon?
 [ ] Syntax highlight on script previews
 [ ] Import/View 3d models
-[ ] Generate PC port?
-    - Possibility to run/debug locally
 [ ] MacOS port?
     - Need someone with a Mac
 [ ] Custom engine extensions
@@ -88,6 +94,8 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Bundle libdragon-cli
+    - use it as default (checkbox "use bundled")
 [x] Show last console line when console is minimized
 [x] Import LDtk maps
     - Custom export to use with libdragon-extensions

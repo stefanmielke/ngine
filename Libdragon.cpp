@@ -1,59 +1,68 @@
 #include "Libdragon.h"
 
+#include "App.h"
 #include "ThreadCommand.h"
 
-void Libdragon::Init(const std::string &folder, const std::string &libdragon_exe_folder) {
-	char command[500];
-	snprintf(command, 500, "%s init", libdragon_exe_folder.c_str());
-	ThreadCommand::QueueCommand(command);
+std::string get_libdragon_exe_location(const App *app) {
+	if (app->engine_settings.GetLibdragonUseBundled())
+		return "\"" + app->GetEngineDirectory() + "/bundle/libdragon\"";
+
+	return "\"" + app->engine_settings.GetLibdragonExeLocation() + "\"";
 }
-bool Libdragon::InitSync(const std::string &folder, const std::string &libdragon_exe_folder) {
+
+bool Libdragon::InitSync(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s init", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s init", get_libdragon_exe_location(app).c_str());
 	return ThreadCommand::RunCommand(command) == EXIT_SUCCESS;
 }
 
-void Libdragon::Build(const std::string &folder, const std::string &libdragon_exe_folder) {
+void Libdragon::Build(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s make -j", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s make -j", get_libdragon_exe_location(app).c_str());
 	ThreadCommand::QueueCommand(command);
 
 	ThreadCommand::QueueCommand("echo Build Completed.");
 }
 
-void Libdragon::Clean(const std::string &folder, const std::string &libdragon_exe_folder) {
+void Libdragon::Clean(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s exec make clean", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s exec make clean", get_libdragon_exe_location(app).c_str());
 	ThreadCommand::QueueCommand(command);
 }
 
-void Libdragon::CleanSync(const std::string &folder, const std::string &libdragon_exe_folder) {
+void Libdragon::CleanSync(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s exec make clean", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s exec make clean", get_libdragon_exe_location(app).c_str());
 	ThreadCommand::RunCommand(command);
 }
 
-void Libdragon::Update(const std::string &folder, const std::string &libdragon_exe_folder) {
+void Libdragon::Update(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s update", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s update", get_libdragon_exe_location(app).c_str());
 	ThreadCommand::QueueCommand(command);
 }
 
-void Libdragon::Install(const std::string &folder, const std::string &libdragon_exe_folder) {
+void Libdragon::Install(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s install", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s install", get_libdragon_exe_location(app).c_str());
 	ThreadCommand::QueueCommand(command);
 }
 
-void Libdragon::Disasm(const std::string &folder, const std::string &libdragon_exe_folder) {
+void Libdragon::Disasm(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s disasm > rom.asm", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s disasm > rom.asm", get_libdragon_exe_location(app).c_str());
 	ThreadCommand::QueueCommand(command);
 }
 
-std::string Libdragon::GetVersion(const std::string &libdragon_exe_folder) {
+void Libdragon::Exec(const App *app, const std::string &command) {
+	char cmd[500];
+	snprintf(cmd, 500, "%s exec %s", get_libdragon_exe_location(app).c_str(), command.c_str());
+	ThreadCommand::QueueCommand(cmd);
+}
+
+std::string Libdragon::GetVersion(const App *app) {
 	char command[500];
-	snprintf(command, 500, "%s version", libdragon_exe_folder.c_str());
+	snprintf(command, 500, "%s version", get_libdragon_exe_location(app).c_str());
 
 	std::string result;
 	if (ThreadCommand::RunCommand(command, result) != EXIT_SUCCESS) {
@@ -63,20 +72,19 @@ std::string Libdragon::GetVersion(const std::string &libdragon_exe_folder) {
 	}
 }
 
-void Libdragon::GitCheckout(const std::string &libdragon_exe_folder,
-							const std::string &checkout_folder_relative,
+void Libdragon::GitCheckout(const App *app, const std::string &checkout_folder_relative,
 							const std::string &branch) {
 	char cmd[255];
-	snprintf(cmd, 255, "%s exec bash -c 'cd %s; git checkout %s'", libdragon_exe_folder.c_str(),
-			 checkout_folder_relative.c_str(), branch.c_str());
+	snprintf(cmd, 255, "%s exec bash -c 'cd %s; git checkout %s'",
+			 get_libdragon_exe_location(app).c_str(), checkout_folder_relative.c_str(),
+			 branch.c_str());
 	ThreadCommand::QueueCommand(cmd);
 }
 
-bool Libdragon::GitSubmoduleAddSync(const std::string &libdragon_exe_folder,
-									const std::string &submodule_uri,
+bool Libdragon::GitSubmoduleAddSync(const App *app, const std::string &submodule_uri,
 									const std::string &submodule_folder) {
 	char cmd[500];
-	snprintf(cmd, 500, "%s exec git submodule add %s %s", libdragon_exe_folder.c_str(),
+	snprintf(cmd, 500, "%s exec git submodule add %s %s", get_libdragon_exe_location(app).c_str(),
 			 submodule_uri.c_str(), submodule_folder.c_str());
 
 	return ThreadCommand::RunCommand(cmd) == EXIT_SUCCESS;
