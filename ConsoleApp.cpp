@@ -49,16 +49,27 @@ void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
 
 	ImGui::SetNextWindowSize(ImVec2((float)window_width, 200.f));
 
+	bool title_has_color = false;
 	std::string title_text(title);
 	if (!is_open && Items.Size > 0) {
 		title_text = Items[Items.Size - 1];
+
+		if (title_text.starts_with("[error]")) {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.4f, 0.4f, 1.0f));
+			title_has_color = true;
+		} else if (title_text.starts_with("! ")) {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 1.0f, 0.6f, 1.0f));
+			title_has_color = true;
+		} else if (title_text.starts_with("# ")) {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.6f, 1.0f));
+			title_has_color = true;
+		}
+
+		if (title_text.starts_with("! ") || title_text.starts_with("# ")) {
+			title_text = title_text.substr(2, title_text.length() - 2);
+		}
 	}
 	title_text.append("###CONSOLE_OUTPUT");
-
-	bool is_title_error = title_text.starts_with("[error]");
-	if (is_title_error) {
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.4f, 0.4f, 1.0f));
-	}
 
 	is_open = true;
 	if (!ImGui::Begin(title_text.c_str(), nullptr,
@@ -67,13 +78,13 @@ void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
 			is_open = false;
 			ImGui::SetWindowPos(ImVec2(0, (float)window_height - 19.f));
 		}
-		if (is_title_error) {
+		if (title_has_color) {
 			ImGui::PopStyleColor();
 		}
 		ImGui::End();
 		return;
 	}
-	if (is_title_error) {
+	if (title_has_color) {
 		ImGui::PopStyleColor();
 	}
 	ImGui::SetWindowPos(ImVec2(0, (float)window_height - 200.f));
@@ -108,6 +119,9 @@ void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
 			has_color = true;
 		} else if (strncmp(item, "# ", 2) == 0) {
 			color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f);
+			has_color = true;
+		} else if (strncmp(item, "! ", 2) == 0) {
+			color = ImVec4(0.6f, 1.0f, 0.6f, 1.0f);
 			has_color = true;
 		}
 		if (has_color)

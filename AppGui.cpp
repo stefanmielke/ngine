@@ -230,8 +230,7 @@ void AppGui::RenderMenuBar(App &app) {
 				console.AddLog("Building Project...");
 				ProjectBuilder::Build(&app);
 				Libdragon::Disasm(&app);
-
-				console.AddLog("Assembly output to 'rom.asm' file.");
+				ThreadCommand::QueueCommand("echo ! Assembly output to 'rom.asm' file.");
 			}
 #ifndef WIN64
 			if (ImGui::MenuItem("Run on Console")) {

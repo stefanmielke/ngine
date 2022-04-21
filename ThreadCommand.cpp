@@ -17,7 +17,8 @@ char separator[] = "\n\0";
 #endif
 
 int exec(std::string cmd) {
-	console.AddLog("%s", cmd.c_str());
+	if (!cmd.starts_with("echo"))
+		console.AddLog("%s", cmd.c_str());
 
 	char buffer[128];
 	std::string output;
@@ -49,7 +50,8 @@ int exec(std::string cmd) {
 	return result;
 }
 int exec_result(std::string cmd, std::string &result) {
-	console.AddLog("%s", cmd.c_str());
+	if (!cmd.starts_with("echo"))
+		console.AddLog("%s", cmd.c_str());
 
 	result.clear();
 

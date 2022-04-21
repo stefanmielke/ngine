@@ -21,7 +21,7 @@ void Libdragon::Build(const App *app) {
 	snprintf(command, 500, "%s make -j", get_libdragon_exe_location(app).c_str());
 	ThreadCommand::QueueCommand(command);
 
-	ThreadCommand::QueueCommand("echo Build Completed.");
+	ThreadCommand::QueueCommand("echo ! Build Completed.");
 }
 
 void Libdragon::Clean(const App *app) {
