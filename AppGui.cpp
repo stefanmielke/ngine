@@ -1277,7 +1277,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 										name == (*app.state.asset_selected.Ref().tiled)->name;
 
 						ImVec2 uv0, uv1;
-						app.GetImagePosition("File.png", uv0, uv1);
+						app.GetImagePosition("Map.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
@@ -1331,7 +1331,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 										name == (*app.state.asset_selected.Ref().ldtk)->name;
 
 						ImVec2 uv0, uv1;
-						app.GetImagePosition("File.png", uv0, uv1);
+						app.GetImagePosition("Map.png", uv0, uv1);
 						ImGui::PushID(asset.GetName().c_str());
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 						if (app.engine_settings.GetTheme() == THEME_LIGHT) {
