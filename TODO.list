@@ -50,9 +50,6 @@ To Do:
     - Add links to D2XX drivers -> https://ftdichip.com/drivers/d2xx-drivers/
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script
-[ ] Fix crash when deleting first element of the content browser
-    - mark Asset as "deleted", then, at the end of the frame, remove all marked
-[ ] Warning if libdragon-cli or docker are not working as intended
 [ ] Update README
 [ ] Update Wiki
 
@@ -93,6 +90,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Warning on start page if libdragon-cli or docker are not working as intended
 [x] Add start page
 [x] Check if docker is installed
     - Link to download if not: https://www.docker.com/products/docker-desktop/

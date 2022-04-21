@@ -42,7 +42,7 @@ bool link_button(const char *label, const char *url) {
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 1, 1));
 
 	bool result = ImGui::Button(label);
-	if (result) {
+	if (result && url) {
 		open_url(url);
 	}
 

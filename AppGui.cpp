@@ -69,6 +69,14 @@ void AppGui::RenderStarterWindow(App &app) {
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.0f, .8f, .0f, 1.f));
 		ImGui::TextWrapped("Welcome to NGine");
 		ImGui::PopStyleColor();
+		if (app.engine_version.is_pre_release) {
+			ImGui::Spacing();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, .0f, .0f, 1.f));
+			ImGui::TextWrapped("This is a pre-release version. There might be bugs, and if you find any, don't hesitate to open a bug on GitHub (and don't forget to add the version number).");
+			ImGui::PopStyleColor();
+			ImGui::Spacing();
+			ImGui::Spacing();
+		}
 
 		ImGui::Separator();
 		ImGui::Spacing();
@@ -92,19 +100,53 @@ void AppGui::RenderStarterWindow(App &app) {
 		ImGui::Separator();
 		ImGui::Spacing();
 
-		ImGui::TextWrapped("Also understand that a working Docker environment is required.");
-		link_button("Click here to download Docker for your platform",
-					"https://www.docker.com/get-started");
-
-		ImGui::Spacing();
-		ImGui::Separator();
-		ImGui::Spacing();
-
 		ImGui::TextWrapped(
 			"If you want to run on console, check out the UNFLoader guide on the 'Help' menu to "
 			"learn how to install the required drivers.");
 		link_button("You can also click here to download the drivers",
 					"https://ftdichip.com/drivers/d2xx-drivers/");
+
+		bool has_warnings = !app.engine_settings.GetDockerVersion().starts_with("docker") ||
+							!app.engine_settings.GetLibdragonVersion().starts_with("libdragon");
+		if (has_warnings) {
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
+			ImGui::TextWrapped("Warnings:");
+			ImGui::PopStyleColor();
+		}
+
+		if (!app.engine_settings.GetDockerVersion().starts_with("docker")) {
+			ImGui::Spacing();
+
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
+			if (app.engine_settings.GetDockerVersion().starts_with("Docker is not started")) {
+#ifndef WIN64
+				if (link_button("Docker service is stopped. Please start Docker for Windows manually or click here.")) {
+					ThreadCommand::RunCommandDetached(
+						R"(""%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"")");
+				}
+#else
+				ImGui::TextWrapped("Docker service is stopped. Please start the Docker service.");
+#endif
+			} else {
+				link_button(
+					"Docker was not found on your system. Click here to download Docker for your "
+					"platform",
+					"https://www.docker.com/get-started");
+			}
+			ImGui::PopStyleColor();
+		}
+		if (!app.engine_settings.GetLibdragonVersion().starts_with("libdragon")) {
+			ImGui::Spacing();
+
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 1, 1));
+			ImGui::TextWrapped(
+				" Libdragon-cli seems to be configured incorrectly. Set the correct path on the "
+				"engine settings on the right panel.");
+			ImGui::PopStyleColor();
+		}
 	}
 	ImGui::End();
 }
