@@ -87,7 +87,7 @@ void LibdragonTiledMap::DrawTooltip() const {
 	std::stringstream tooltip;
 	tooltip << "Path: " << file_path << "\n\nLayers:";
 	for (auto &layer : layers) {
-		tooltip << "\n- " << layer.name << " (DFS Path: " << dfs_folder << name << "_" << layer.name
+		tooltip << "\n- " << layer.name << " (DFS Path: " << dfs_folder << name << "/" << layer.name
 				<< ".map)";
 	}
 

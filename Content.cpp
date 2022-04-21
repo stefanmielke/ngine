@@ -136,7 +136,7 @@ void Content::CreateTiledMaps(const EngineSettings &engine_settings,
 	console.AddLog("Building tile maps assets...");
 
 	for (auto &map : maps) {
-		std::string dfs_output_path = "build/filesystem" + map->dfs_folder;
+		std::string dfs_output_path = "build/filesystem" + map->dfs_folder + map->name + "/";
 		std::filesystem::create_directories(project_settings.project_directory + "/" +
 											dfs_output_path);
 
@@ -152,8 +152,8 @@ void Content::CreateTiledMaps(const EngineSettings &engine_settings,
 
 		auto xml_layers = tmx_file.child("map").children("layer");
 		for (auto &xml_layer : xml_layers) {
-			std::string output_file_path = dfs_output_path + map->name + "_" +
-										   xml_layer.attribute("name").value() + ".map";
+			std::string output_file_path = dfs_output_path + xml_layer.attribute("name").value() +
+										   ".map";
 
 			int width = xml_layer.attribute("width").as_int();
 
@@ -196,7 +196,7 @@ void Content::CreateLDtkMaps(const EngineSettings &engine_settings,
 	console.AddLog("Building ldtk maps assets...");
 
 	for (auto &map : maps) {
-		std::string dfs_output_path = "build/filesystem" + map->dfs_folder;
+		std::string dfs_output_path = "build/filesystem" + map->dfs_folder + map->name + "/";
 		std::filesystem::create_directories(project_settings.project_directory + "/" +
 											dfs_output_path);
 

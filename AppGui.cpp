@@ -599,7 +599,7 @@ void set_up_popup_windows(App &app) {
 					if (app.state.asset_selected.Type() == TILED_MAP) {
 						std::string dfs_path;
 						dfs_path.append((*app.state.asset_selected.Ref().tiled)->dfs_folder +
-										(*app.state.asset_selected.Ref().tiled)->name + "_" +
+										(*app.state.asset_selected.Ref().tiled)->name + "/" +
 										layer.name + ".map");
 
 						ImGui::SetClipboardText(dfs_path.c_str());
