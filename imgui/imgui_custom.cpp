@@ -1,5 +1,9 @@
 #include "imgui_custom.h"
 
+#include "../App.h"
+
+extern App *g_app;
+
 void render_badge(const char *label, ImVec4 color) {
 	ImGui::BeginDisabled();
 	ImGui::PushStyleColor(ImGuiCol_Button, color);
@@ -10,4 +14,24 @@ void render_badge(const char *label, ImVec4 color) {
 	style.Alpha = prev_alpha;
 	ImGui::PopStyleColor();
 	ImGui::EndDisabled();
+}
+
+bool link_button(const char *label) {
+	if (g_app->engine_settings.GetTheme() == THEME_LIGHT) {
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, .1f));
+	} else {
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, .1f));
+	}
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_BorderShadow, ImVec4(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 1, 1));
+
+	bool result = ImGui::Button(label);
+
+	ImGui::PopStyleColor(6);
+
+	return result;
 }

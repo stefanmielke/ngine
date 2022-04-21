@@ -33,6 +33,8 @@ void open_url(const char *url);
 enum AssetsDisplayType { ADT_LIST, ADT_GRID };
 static AssetsDisplayType asset_display_type = ADT_LIST;
 
+static bool help_window_unfloader_active = false;
+
 void AppGui::Update(App &app) {
 	SDL_GetWindowSize(app.window, &window_width, &window_height);
 
@@ -196,7 +198,45 @@ void AppGui::ProcessImportFile(App &app, std::string file_path) {
 	}
 }
 
+void render_help_window_unfloader() {
+	if (!help_window_unfloader_active)
+		return;
+
+	ImGui::SetNextWindowSize(ImVec2(400, 190));
+	if (ImGui::Begin("Help - UNFLoader", &help_window_unfloader_active,
+					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+		ImGui::TextWrapped("Help for UNFLoader.");
+		ImGui::Separator();
+
+		if (link_button("More information here")) {
+			open_url("https://github.com/buu342/N64-UNFLoader/tree/master/UNFLoader");
+		}
+		ImGui::Separator();
+
+		ImGui::TextWrapped("Requirements:");
+		ImGui::Spacing();
+#ifdef WIN64
+		ImGui::TextWrapped(
+			"- Windows XP or higher.\n- The Windows version of the FDTI driver. If you are on "
+			"Windows XP, be sure you download the XP driver and not the first one.");
+		if (link_button("Download driver here.")) {
+			open_url("https://www.ftdichip.com/Drivers/D2XX.htm");
+		}
+#else
+		ImGui::TextWrapped(
+			"- Ubuntu (Haven't tested with others).\n- The relevant FTDI driver for your processor "
+			"architecture (Check the README inside the downloaded tar for install instructions).");
+		if (link_button("Download driver here.")) {
+			open_url("https://www.ftdichip.com/Drivers/D2XX.htm");
+		}
+#endif
+	}
+	ImGui::End();
+}
+
 void AppGui::RenderMenuBar(App &app) {
+	render_help_window_unfloader();
+
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("New Project")) {
@@ -250,23 +290,13 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help")) {
-			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
-			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false,
-								app.engine_settings.GetLibdragonVersion().starts_with("Update"))) {
-				open_url("https://github.com/anacierdem/libdragon-docker/releases/latest");
-			}
-			if (ImGui::MenuItem(app.engine_settings.GetDockerVersion().c_str(), nullptr, false,
-								!app.engine_settings.GetDockerVersion().starts_with("docker"))) {
-				if (app.engine_settings.GetDockerVersion().starts_with("Docker is not started")) {
-#ifdef WIN64
-					ThreadCommand::RunCommandDetached(
-						R"(""%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"")");
-#endif
-				} else {
-					open_url("https://www.docker.com/get-started");
-				}
+			ImGui::MenuItem("Guides", nullptr, false, false);
+			ImGui::Separator();
+			if (ImGui::MenuItem("UNFLoader Help")) {
+				help_window_unfloader_active = true;
 			}
 			ImGui::Separator();
+
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
 			ImGui::Separator();
 			if (ImGui::MenuItem("N64Brew Wiki")) {
@@ -278,10 +308,14 @@ void AppGui::RenderMenuBar(App &app) {
 			if (ImGui::MenuItem("Awesome N64 Development List")) {
 				open_url("https://n64.dev/");
 			}
+			if (ImGui::MenuItem("Libdragon Modules Reference")) {
+				open_url("https://libdragon.dev/ref/modules.html");
+			}
 			if (ImGui::MenuItem("N64 Dev Manual - Libultra")) {
 				open_url("https://ultra64.ca/resources/documentation/");
 			}
 			ImGui::Separator();
+
 			ImGui::MenuItem("Engine Resources", nullptr, false, false);
 			ImGui::Separator();
 			if (ImGui::MenuItem("Ngine Wiki")) {
@@ -302,8 +336,34 @@ void AppGui::RenderMenuBar(App &app) {
 			if (ImGui::MenuItem("SDL2 Image")) {
 				open_url("https://www.libsdl.org/projects/SDL_image/");
 			}
+			if (ImGui::MenuItem("SDL2 Mixer")) {
+				open_url("https://www.libsdl.org/projects/SDL_mixer/");
+			}
+			if (ImGui::MenuItem("SDL2 TTF")) {
+				open_url("https://github.com/libsdl-org/SDL_ttf");
+			}
 			if (ImGui::MenuItem("Docker Install")) {
 				open_url("https://www.docker.com/get-started");
+			}
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("About")) {
+			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
+			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false,
+								app.engine_settings.GetLibdragonVersion().starts_with("Update"))) {
+				open_url("https://github.com/anacierdem/libdragon-docker/releases/latest");
+			}
+			if (ImGui::MenuItem(app.engine_settings.GetDockerVersion().c_str(), nullptr, false,
+								!app.engine_settings.GetDockerVersion().starts_with("docker"))) {
+				if (app.engine_settings.GetDockerVersion().starts_with("Docker is not started")) {
+#ifdef WIN64
+					ThreadCommand::RunCommandDetached(
+						R"(""%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"")");
+#endif
+				} else {
+					open_url("https://www.docker.com/get-started");
+				}
 			}
 			ImGui::EndMenu();
 		}
@@ -2769,7 +2829,7 @@ void open_url(const char *url) {
 #ifdef __LINUX__
 	std::string command("xdg-open ");
 #else
-		std::string command("start ");
+	std::string command("start ");
 #endif
 	command.append(url);
 
