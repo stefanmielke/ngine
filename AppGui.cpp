@@ -2892,6 +2892,9 @@ void AppGui::RenderSettingsWindow(App &app) {
 					app.engine_settings.LoadFromDisk(&app);
 					app.state.LoadEngineSetings(app.engine_settings);
 				}
+				if (ImGui::Button("Open Engine Folder")) {
+					open_url(app.GetEngineDirectory().c_str());
+				}
 
 				ImGui::EndTabItem();
 			}
