@@ -22,7 +22,10 @@ union AssetReferenceUnion {
 
 struct AssetReference {
    public:
-	AssetReference() : asset_type(UNKNOWN), asset_ref(AssetReferenceUnion()) {
+	bool marked_to_delete;
+
+	AssetReference()
+		: marked_to_delete(false), asset_type(UNKNOWN), asset_ref(AssetReferenceUnion()) {
 	}
 
 	void Ref(AssetType type, AssetReferenceUnion ref) {
@@ -39,6 +42,7 @@ struct AssetReference {
 	}
 
 	void Reset() {
+		marked_to_delete = false;
 		asset_type = UNKNOWN;
 		asset_ref = AssetReferenceUnion();
 	}

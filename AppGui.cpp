@@ -460,25 +460,7 @@ void set_up_popup_windows(App &app) {
 		}
 		if (ImGui::Selectable("Delete")) {
 			if (app.state.asset_selected.Type() == IMAGE) {
-				(*app.state.asset_selected.Ref().image)
-					->DeleteFromDisk(app.project.project_settings.project_directory);
-
-				for (size_t i = 0; i < app.project.images.size(); ++i) {
-					if (app.project.images[i]->image_path ==
-						(*app.state.asset_selected.Ref().image)->image_path) {
-						if ((*app.state.asset_selected.Ref().image)->loaded_image) {
-							SDL_DestroyTexture(
-								(*app.state.asset_selected.Ref().image)->loaded_image);
-						}
-
-						app.project.images.erase(app.project.images.begin() + (int)i);
-						break;
-					}
-				}
-
-				app.state.asset_selected.Reset();
-				app.state.asset_editing.Reset();
-				app.project.ReloadAssets();
+				app.state.asset_selected.marked_to_delete = true;
 			}
 		}
 		ImGui::EndPopup();
@@ -507,20 +489,7 @@ void set_up_popup_windows(App &app) {
 		}
 		if (ImGui::Selectable("Delete")) {
 			if (app.state.asset_selected.Type() == SOUND) {
-				(*app.state.asset_selected.Ref().sound)
-					->DeleteFromDisk(app.project.project_settings.project_directory);
-
-				for (size_t i = 0; i < app.project.sounds.size(); ++i) {
-					if (app.project.sounds[i]->sound_path ==
-						(*app.state.asset_selected.Ref().sound)->sound_path) {
-						app.project.sounds.erase(app.project.sounds.begin() + (int)i);
-						break;
-					}
-				}
-
-				app.state.asset_selected.Reset();
-				app.state.asset_editing.Reset();
-				app.project.ReloadAssets();
+				app.state.asset_selected.marked_to_delete = true;
 			}
 		}
 		ImGui::EndPopup();
@@ -544,21 +513,7 @@ void set_up_popup_windows(App &app) {
 		}
 		if (ImGui::Selectable("Delete")) {
 			if (app.state.asset_selected.Type() == GENERAL) {
-				(*app.state.asset_selected.Ref().file)
-					->DeleteFromDisk(app.project.project_settings.project_directory);
-
-				for (size_t i = 0; i < app.project.general_files.size(); ++i) {
-					if (app.project.general_files[i]->GetFilename() ==
-						(*app.state.asset_selected.Ref().file)->GetFilename()) {
-						app.project.general_files.erase(app.project.general_files.begin() + (int)i);
-
-						break;
-					}
-				}
-
-				app.state.asset_selected.Reset();
-				app.state.asset_editing.Reset();
-				app.project.ReloadAssets();
+				app.state.asset_selected.marked_to_delete = true;
 			}
 		}
 		ImGui::EndPopup();
@@ -580,25 +535,7 @@ void set_up_popup_windows(App &app) {
 		}
 		if (ImGui::Selectable("Delete")) {
 			if (app.state.asset_selected.Type() == FONT) {
-				(*app.state.asset_selected.Ref().font)
-					->DeleteFromDisk(app.project.project_settings.project_directory);
-
-				for (size_t i = 0; i < app.project.fonts.size(); ++i) {
-					if (app.project.fonts[i]->font_path ==
-						(*app.state.asset_selected.Ref().font)->font_path) {
-						if ((*app.state.asset_selected.Ref().font)->loaded_image) {
-							SDL_DestroyTexture(
-								(*app.state.asset_selected.Ref().font)->loaded_image);
-						}
-
-						app.project.fonts.erase(app.project.fonts.begin() + (int)i);
-						break;
-					}
-				}
-
-				app.state.asset_selected.Reset();
-				app.state.asset_editing.Reset();
-				app.project.ReloadAssets();
+				app.state.asset_selected.marked_to_delete = true;
 			}
 		}
 		ImGui::EndPopup();
@@ -630,21 +567,7 @@ void set_up_popup_windows(App &app) {
 		}
 		if (ImGui::Selectable("Delete")) {
 			if (app.state.asset_selected.Type() == TILED_MAP) {
-				(*app.state.asset_selected.Ref().tiled)
-					->DeleteFromDisk(app.project.project_settings.project_directory);
-
-				for (size_t i = 0; i < app.project.tiled_maps.size(); ++i) {
-					if (app.project.tiled_maps[i]->name ==
-						(*app.state.asset_selected.Ref().tiled)->name) {
-						app.project.tiled_maps.erase(app.project.tiled_maps.begin() + (int)i);
-
-						break;
-					}
-				}
-
-				app.state.asset_selected.Reset();
-				app.state.asset_editing.Reset();
-				app.project.ReloadAssets();
+				app.state.asset_selected.marked_to_delete = true;
 			}
 		}
 		ImGui::EndPopup();
@@ -676,21 +599,7 @@ void set_up_popup_windows(App &app) {
 		}
 		if (ImGui::Selectable("Delete")) {
 			if (app.state.asset_selected.Type() == LDTK_MAP) {
-				(*app.state.asset_selected.Ref().ldtk)
-					->DeleteFromDisk(app.project.project_settings.project_directory);
-
-				for (size_t i = 0; i < app.project.tiled_maps.size(); ++i) {
-					if (app.project.tiled_maps[i]->name ==
-						(*app.state.asset_selected.Ref().ldtk)->name) {
-						app.project.tiled_maps.erase(app.project.tiled_maps.begin() + (int)i);
-
-						break;
-					}
-				}
-
-				app.state.asset_selected.Reset();
-				app.state.asset_editing.Reset();
-				app.project.ReloadAssets();
+				app.state.asset_selected.marked_to_delete = true;
 			}
 		}
 		ImGui::EndPopup();
@@ -699,7 +608,6 @@ void set_up_popup_windows(App &app) {
 
 void render_asset_folder_list(App &app, Asset *folder) {
 	set_up_popup_windows(app);
-
 	for (auto &asset : folder->children) {
 		switch (asset.GetType()) {
 			case FOLDER:
@@ -709,7 +617,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 				}
 				break;
 			case IMAGE: {
-				if (display_sprites) {
+				if (display_sprites && asset.GetAssetReference().image) {
 					std::string name = asset.GetName();
 					if (name.find(assets_name_filter) != name.npos) {
 						if (!app.project.project_settings.modules.display) {
@@ -781,7 +689,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 				}
 			} break;
 			case SOUND: {
-				if (display_sounds) {
+				if (display_sounds && asset.GetAssetReference().sound) {
 					std::string name = asset.GetName();
 					if (name.find(assets_name_filter) != name.npos) {
 						if (!app.project.project_settings.modules.audio) {
@@ -846,7 +754,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 				}
 			} break;
 			case GENERAL: {
-				if (display_files) {
+				if (display_files && asset.GetAssetReference().file) {
 					std::string name = (*asset.GetAssetReference().file)->GetFilename();
 					if (name.find(assets_name_filter) != name.npos) {
 						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
@@ -882,7 +790,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 				}
 			} break;
 			case FONT: {
-				if (display_fonts) {
+				if (display_fonts && asset.GetAssetReference().font) {
 					std::string name = asset.GetName();
 					if (name.find(assets_name_filter) != name.npos) {
 						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
@@ -915,7 +823,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 				}
 			} break;
 			case TILED_MAP: {
-				if (display_maps) {
+				if (display_maps && asset.GetAssetReference().tiled) {
 					std::string name = (*asset.GetAssetReference().tiled)->name;
 					if (name.find(assets_name_filter) != name.npos) {
 						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
@@ -950,7 +858,7 @@ void render_asset_folder_list(App &app, Asset *folder) {
 				}
 			} break;
 			case LDTK_MAP: {
-				if (display_maps) {
+				if (display_maps && asset.GetAssetReference().ldtk) {
 					std::string name = (*asset.GetAssetReference().ldtk)->name;
 					if (name.find(assets_name_filter) != name.npos) {
 						render_badge(GetAssetTypeName(asset.GetType()).c_str(),
@@ -989,10 +897,6 @@ void render_asset_folder_list(App &app, Asset *folder) {
 }
 
 void render_asset_folder_grid(App &app, Asset *folder) {
-	ImGui::PushID(folder->GetName().c_str());
-
-	set_up_popup_windows(app);
-
 	for (auto &asset : folder->children) {
 		switch (asset.GetType()) {
 			case FOLDER:
@@ -1377,7 +1281,6 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 			} break;
 		}
 	}
-	ImGui::PopID();
 }
 
 void render_asset_details_window(App &app) {
@@ -2005,6 +1908,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 
 		if (ImGui::BeginTable("Assets", items_per_line)) {
 			ImGui::TableNextRow();
+			set_up_popup_windows(app);
 			render_asset_folder_grid(app, app.project.assets);
 			ImGui::EndTable();
 		}
@@ -2123,6 +2027,103 @@ void AppGui::RenderContentBrowser(App &app) {
 			}
 		}
 		ImGui::End();
+	}
+
+	if (app.state.asset_selected.marked_to_delete) {
+		switch (app.state.asset_selected.Type()) {
+			case UNKNOWN:
+			case FOLDER:
+				break;
+			case IMAGE: {
+				(*app.state.asset_selected.Ref().image)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.images.size(); ++i) {
+					if (app.project.images[i]->image_path ==
+						(*app.state.asset_selected.Ref().image)->image_path) {
+						if ((*app.state.asset_selected.Ref().image)->loaded_image) {
+							SDL_DestroyTexture(
+								(*app.state.asset_selected.Ref().image)->loaded_image);
+						}
+
+						app.project.images.erase(app.project.images.begin() + (int)i);
+						break;
+					}
+				}
+			} break;
+			case SOUND: {
+				(*app.state.asset_selected.Ref().sound)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.sounds.size(); ++i) {
+					if (app.project.sounds[i]->sound_path ==
+						(*app.state.asset_selected.Ref().sound)->sound_path) {
+						app.project.sounds.erase(app.project.sounds.begin() + (int)i);
+						break;
+					}
+				}
+			} break;
+			case GENERAL: {
+				(*app.state.asset_selected.Ref().file)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.general_files.size(); ++i) {
+					if (app.project.general_files[i]->GetFilename() ==
+						(*app.state.asset_selected.Ref().file)->GetFilename()) {
+						app.project.general_files.erase(app.project.general_files.begin() + (int)i);
+
+						break;
+					}
+				}
+			} break;
+			case FONT: {
+				(*app.state.asset_selected.Ref().font)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.fonts.size(); ++i) {
+					if (app.project.fonts[i]->font_path ==
+						(*app.state.asset_selected.Ref().font)->font_path) {
+						if ((*app.state.asset_selected.Ref().font)->loaded_image) {
+							SDL_DestroyTexture(
+								(*app.state.asset_selected.Ref().font)->loaded_image);
+						}
+
+						app.project.fonts.erase(app.project.fonts.begin() + (int)i);
+						break;
+					}
+				}
+			} break;
+			case TILED_MAP: {
+				(*app.state.asset_selected.Ref().tiled)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.tiled_maps.size(); ++i) {
+					if (app.project.tiled_maps[i]->name ==
+						(*app.state.asset_selected.Ref().tiled)->name) {
+						app.project.tiled_maps.erase(app.project.tiled_maps.begin() + (int)i);
+
+						break;
+					}
+				}
+			} break;
+			case LDTK_MAP: {
+				(*app.state.asset_selected.Ref().ldtk)
+					->DeleteFromDisk(app.project.project_settings.project_directory);
+
+				for (size_t i = 0; i < app.project.ldtk_maps.size(); ++i) {
+					if (app.project.ldtk_maps[i]->name ==
+						(*app.state.asset_selected.Ref().ldtk)->name) {
+						app.project.ldtk_maps.erase(app.project.ldtk_maps.begin() + (int)i);
+
+						break;
+					}
+				}
+			} break;
+		}
+
+		app.state.asset_selected.Reset();
+		app.state.asset_editing.Reset();
+		app.project.ReloadAssets();
 	}
 }
 
