@@ -649,6 +649,7 @@ void set_up_popup_windows(App &app) {
 		}
 		ImGui::EndPopup();
 	}
+
 	if (ImGui::BeginPopup("PopupMapsBrowserLDtk")) {
 		if (ImGui::Selectable("Edit Settings")) {
 			if (app.state.asset_selected.Type() == LDTK_MAP) {
@@ -988,9 +989,10 @@ void render_asset_folder_list(App &app, Asset *folder) {
 }
 
 void render_asset_folder_grid(App &app, Asset *folder) {
+	ImGui::PushID(folder->GetName().c_str());
+
 	set_up_popup_windows(app);
 
-	ImGui::PushID(folder->GetName().c_str());
 	for (auto &asset : folder->children) {
 		switch (asset.GetType()) {
 			case FOLDER:
