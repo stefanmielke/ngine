@@ -5,6 +5,7 @@
 
 #include "ConsoleApp.h"
 #include "json.hpp"
+#include "ThreadCommand.h"
 
 App::App(std::string engine_directory)
 	: renderer(nullptr),
@@ -95,4 +96,15 @@ void App::CloseProject() {
 	SDL_SetWindowTitle(window, default_title);
 
 	console.AddLog("Project closed.");
+}
+
+void App::OpenUrl(const char *url) {
+#ifdef __LINUX__
+	std::string command("xdg-open ");
+#else
+	std::string command("start ");
+#endif
+	command.append(url);
+
+	ThreadCommand::RunCommandDetached(command);
 }

@@ -54,6 +54,8 @@ class App {
 		return engine_directory;
 	}
 
+	static void OpenUrl(const char *url);
+
    private:
 	std::string engine_directory;
 	std::vector<GUIImage> images;

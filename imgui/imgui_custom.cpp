@@ -5,17 +5,6 @@
 
 extern App *g_app;
 
-static void open_url(const char *url) {
-#ifdef __LINUX__
-	std::string command("xdg-open ");
-#else
-	std::string command("start ");
-#endif
-	command.append(url);
-
-	ThreadCommand::RunCommandDetached(command);
-}
-
 void render_badge(const char *label, ImVec4 color) {
 	ImGui::BeginDisabled();
 	ImGui::PushStyleColor(ImGuiCol_Button, color);
@@ -43,7 +32,7 @@ bool link_button(const char *label, const char *url) {
 
 	bool result = ImGui::Button(label);
 	if (result && url) {
-		open_url(url);
+		App::OpenUrl(url);
 	}
 
 	ImGui::PopStyleColor(6);

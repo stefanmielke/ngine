@@ -28,8 +28,6 @@ static char assets_name_filter[100];
 
 const float details_window_size = 172;
 
-static void open_url(const char *url);
-
 enum AssetsDisplayType { ADT_LIST, ADT_GRID };
 static AssetsDisplayType asset_display_type = ADT_LIST;
 
@@ -395,50 +393,50 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::MenuItem("Development Resources", nullptr, false, false);
 			ImGui::Separator();
 			if (ImGui::MenuItem("N64Brew Wiki")) {
-				open_url("https://n64brew.dev/wiki/Main_Page");
+				App::OpenUrl("https://n64brew.dev/wiki/Main_Page");
 			}
 			if (ImGui::MenuItem("N64Brew Discord")) {
-				open_url("https://discord.gg/WqFgNWf");
+				App::OpenUrl("https://discord.gg/WqFgNWf");
 			}
 			if (ImGui::MenuItem("Awesome N64 Development List")) {
-				open_url("https://n64.dev/");
+				App::OpenUrl("https://n64.dev/");
 			}
 			if (ImGui::MenuItem("Libdragon Modules Reference")) {
-				open_url("https://libdragon.dev/ref/modules.html");
+				App::OpenUrl("https://libdragon.dev/ref/modules.html");
 			}
 			if (ImGui::MenuItem("N64 Dev Manual - Libultra")) {
-				open_url("https://ultra64.ca/resources/documentation/");
+				App::OpenUrl("https://ultra64.ca/resources/documentation/");
 			}
 			ImGui::Separator();
 
 			ImGui::MenuItem("Engine Resources", nullptr, false, false);
 			ImGui::Separator();
 			if (ImGui::MenuItem("Ngine Wiki")) {
-				open_url("https://github.com/stefanmielke/ngine/wiki");
+				App::OpenUrl("https://github.com/stefanmielke/ngine/wiki");
 			}
 			if (ImGui::MenuItem("Libdragon")) {
-				open_url("https://github.com/DragonMinded/libdragon");
+				App::OpenUrl("https://github.com/DragonMinded/libdragon");
 			}
 			if (ImGui::MenuItem("Libdragon CLI")) {
-				open_url("https://github.com/anacierdem/libdragon-docker");
+				App::OpenUrl("https://github.com/anacierdem/libdragon-docker");
 			}
 			if (ImGui::MenuItem("Libdragon Extensions")) {
-				open_url("https://github.com/stefanmielke/libdragon-extensions");
+				App::OpenUrl("https://github.com/stefanmielke/libdragon-extensions");
 			}
 			if (ImGui::MenuItem("SDL2")) {
-				open_url("https://www.libsdl.org/index.php");
+				App::OpenUrl("https://www.libsdl.org/index.php");
 			}
 			if (ImGui::MenuItem("SDL2 Image")) {
-				open_url("https://www.libsdl.org/projects/SDL_image/");
+				App::OpenUrl("https://www.libsdl.org/projects/SDL_image/");
 			}
 			if (ImGui::MenuItem("SDL2 Mixer")) {
-				open_url("https://www.libsdl.org/projects/SDL_mixer/");
+				App::OpenUrl("https://www.libsdl.org/projects/SDL_mixer/");
 			}
 			if (ImGui::MenuItem("SDL2 TTF")) {
-				open_url("https://github.com/libsdl-org/SDL_ttf");
+				App::OpenUrl("https://github.com/libsdl-org/SDL_ttf");
 			}
 			if (ImGui::MenuItem("Docker Install")) {
-				open_url("https://www.docker.com/get-started");
+				App::OpenUrl("https://www.docker.com/get-started");
 			}
 
 			ImGui::EndMenu();
@@ -447,7 +445,7 @@ void AppGui::RenderMenuBar(App &app) {
 			ImGui::MenuItem(app.engine_version.version_string.c_str(), nullptr, false, false);
 			if (ImGui::MenuItem(app.engine_settings.GetLibdragonVersion().c_str(), nullptr, false,
 								app.engine_settings.GetLibdragonVersion().starts_with("Update"))) {
-				open_url("https://github.com/anacierdem/libdragon-docker/releases/latest");
+				App::OpenUrl("https://github.com/anacierdem/libdragon-docker/releases/latest");
 			}
 			if (ImGui::MenuItem(app.engine_settings.GetDockerVersion().c_str(), nullptr, false,
 								!app.engine_settings.GetDockerVersion().starts_with("docker"))) {
@@ -457,7 +455,7 @@ void AppGui::RenderMenuBar(App &app) {
 						R"(""%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"")");
 #endif
 				} else {
-					open_url("https://www.docker.com/get-started");
+					App::OpenUrl("https://www.docker.com/get-started");
 				}
 			}
 			ImGui::EndMenu();
@@ -2893,7 +2891,7 @@ void AppGui::RenderSettingsWindow(App &app) {
 					app.state.LoadEngineSetings(app.engine_settings);
 				}
 				if (ImGui::Button("Open Engine Folder")) {
-					open_url(app.GetEngineDirectory().c_str());
+					App::OpenUrl(app.GetEngineDirectory().c_str());
 				}
 
 				ImGui::EndTabItem();
@@ -2925,15 +2923,4 @@ void AppGui::ChangeTheme(App &app, Theme theme) {
 	ImGuiStyle *style = &ImGui::GetStyle();
 	style->FrameRounding = 3.f;
 	style->FrameBorderSize = 1.f;
-}
-
-void open_url(const char *url) {
-#ifdef __LINUX__
-	std::string command("xdg-open ");
-#else
-	std::string command("start ");
-#endif
-	command.append(url);
-
-	ThreadCommand::RunCommandDetached(command);
 }
