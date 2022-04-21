@@ -273,9 +273,7 @@ void render_help_window_unfloader() {
 		ImGui::TextWrapped(
 			"- Windows XP or higher.\n- The Windows version of the FDTI driver. If you are on "
 			"Windows XP, be sure you download the XP driver and not the first one.");
-		if (link_button("Download driver here.")) {
-			open_url("https://ftdichip.com/drivers/d2xx-drivers/");
-		}
+		link_button("Download driver here.", "https://ftdichip.com/drivers/d2xx-drivers/");
 #else
 		ImGui::TextWrapped(
 			"- Ubuntu (Haven't tested with others).\n- The relevant FTDI driver for your processor "
