@@ -28,7 +28,7 @@ static char assets_name_filter[100];
 
 const float details_window_size = 172;
 
-void open_url(const char *url);
+static void open_url(const char *url);
 
 enum AssetsDisplayType { ADT_LIST, ADT_GRID };
 static AssetsDisplayType asset_display_type = ADT_LIST;
@@ -47,11 +47,66 @@ void AppGui::Update(App &app) {
 
 	console.Draw("Output", app.window, is_output_open);
 
-	RenderContentBrowser(app);
-
-	RenderSceneWindow(app);
+	if (app.project.project_settings.IsOpen()) {
+		RenderContentBrowser(app);
+		RenderSceneWindow(app);
+	} else {
+		RenderStarterWindow(app);
+	}
 
 	RenderSettingsWindow(app);
+}
+
+void AppGui::RenderStarterWindow(App &app) {
+	const float center_x_size = (float)window_width - 320;
+	float center_y_offset = is_output_open ? 219 : 38;
+
+	ImGui::SetNextWindowSize(ImVec2(center_x_size, (float)window_height - center_y_offset));
+	ImGui::SetNextWindowPos(ImVec2(0, 19));
+
+	if (ImGui::Begin("Start Page", nullptr,
+					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar)) {
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.0f, .8f, .0f, 1.f));
+		ImGui::TextWrapped("Welcome to NGine");
+		ImGui::PopStyleColor();
+
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::TextWrapped("Click on 'File' to create or to open a project.");
+		ImGui::Spacing();
+		ImGui::TextWrapped("Click on 'Help' to learn more about the engine or its libraries.");
+		ImGui::Spacing();
+		ImGui::TextWrapped("Click on 'About' to check the version of the tools it uses.");
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::TextWrapped(
+			"If this is your first time here, take a look on the right sidebar and take your "
+			"time configuring the emulator and editor you want to use. You can also change the "
+			"theme if you prefer a light one.");
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::TextWrapped("Also understand that a working Docker environment is required.");
+		link_button("Click here to download Docker for your platform",
+					"https://www.docker.com/get-started");
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::TextWrapped(
+			"If you want to run on console, check out the UNFLoader guide on the 'Help' menu to "
+			"learn how to install the required drivers.");
+		link_button("You can also click here to download the drivers",
+					"https://ftdichip.com/drivers/d2xx-drivers/");
+	}
+	ImGui::End();
 }
 
 void AppGui::ProcessImportFile(App &app, std::string file_path) {
@@ -208,9 +263,8 @@ void render_help_window_unfloader() {
 		ImGui::TextWrapped("Help for UNFLoader.");
 		ImGui::Separator();
 
-		if (link_button("More information here")) {
-			open_url("https://github.com/buu342/N64-UNFLoader/tree/master/UNFLoader");
-		}
+		link_button("More information here",
+					"https://github.com/buu342/N64-UNFLoader/tree/master/UNFLoader");
 		ImGui::Separator();
 
 		ImGui::TextWrapped("Requirements:");
@@ -220,15 +274,13 @@ void render_help_window_unfloader() {
 			"- Windows XP or higher.\n- The Windows version of the FDTI driver. If you are on "
 			"Windows XP, be sure you download the XP driver and not the first one.");
 		if (link_button("Download driver here.")) {
-			open_url("https://www.ftdichip.com/Drivers/D2XX.htm");
+			open_url("https://ftdichip.com/drivers/d2xx-drivers/");
 		}
 #else
 		ImGui::TextWrapped(
 			"- Ubuntu (Haven't tested with others).\n- The relevant FTDI driver for your processor "
 			"architecture (Check the README inside the downloaded tar for install instructions).");
-		if (link_button("Download driver here.")) {
-			open_url("https://www.ftdichip.com/Drivers/D2XX.htm");
-		}
+		link_button("Download driver here.", "https://ftdichip.com/drivers/d2xx-drivers/");
 #endif
 	}
 	ImGui::End();

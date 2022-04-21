@@ -93,6 +93,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Add start page
 [x] Check if docker is installed
     - Link to download if not: https://www.docker.com/products/docker-desktop/
 [x] Check if docker is running
