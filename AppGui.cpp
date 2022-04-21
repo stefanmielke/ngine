@@ -122,7 +122,7 @@ void AppGui::RenderStarterWindow(App &app) {
 
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
 			if (app.engine_settings.GetDockerVersion().starts_with("Docker is not started")) {
-#ifndef WIN64
+#ifdef WIN64
 				if (link_button("Docker service is stopped. Please start Docker for Windows manually or click here.")) {
 					ThreadCommand::RunCommandDetached(
 						R"(""%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"")");
