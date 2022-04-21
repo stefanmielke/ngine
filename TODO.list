@@ -48,6 +48,7 @@ To Do:
 [/] Button to run on real hardware
     - Check dependencies
     - Add links to D2XX drivers -> https://ftdichip.com/drivers/d2xx-drivers/
+    - Add it next to "run" commands
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script
 [ ] Update README

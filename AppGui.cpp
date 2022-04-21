@@ -96,18 +96,14 @@ void AppGui::RenderStarterWindow(App &app) {
 			"time configuring the emulator and editor you want to use. You can also change the "
 			"theme if you prefer a light one.");
 
-		ImGui::Spacing();
-		ImGui::Separator();
-		ImGui::Spacing();
-
-		ImGui::TextWrapped(
-			"If you want to run on console, check out the UNFLoader guide on the 'Help' menu to "
-			"learn how to install the required drivers.");
-		link_button("You can also click here to download the drivers",
-					"https://ftdichip.com/drivers/d2xx-drivers/");
+		bool has_libftd_installed = false;
+#ifdef __LINUX__
+		has_libftd_installed = !std::filesystem::exists("/usr/local/lib/libftd2xx.so");
+#endif
 
 		bool has_warnings = !app.engine_settings.GetDockerVersion().starts_with("docker") ||
-							!app.engine_settings.GetLibdragonVersion().starts_with("libdragon");
+							!app.engine_settings.GetLibdragonVersion().starts_with("libdragon") ||
+							!has_libftd_installed;
 		if (has_warnings) {
 			ImGui::Spacing();
 			ImGui::Separator();
@@ -147,6 +143,13 @@ void AppGui::RenderStarterWindow(App &app) {
 				" Libdragon-cli seems to be configured incorrectly. Set the correct path on the "
 				"engine settings on the right panel.");
 			ImGui::PopStyleColor();
+		}
+		if (!has_libftd_installed) {
+			ImGui::Spacing();
+
+			if (link_button("To run on console, check out the UNFLoader guide clicking here.")) {
+				help_window_unfloader_active = true;
+			}
 		}
 	}
 	ImGui::End();
@@ -300,6 +303,7 @@ void render_help_window_unfloader() {
 	if (!help_window_unfloader_active)
 		return;
 
+	ImGui::SetNextWindowFocus();
 	ImGui::SetNextWindowSize(ImVec2(400, 190));
 	if (ImGui::Begin("Help - UNFLoader", &help_window_unfloader_active,
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
@@ -1874,8 +1878,9 @@ void AppGui::RenderContentBrowserNew(App &app) {
 	render_asset_import_window(app);
 
 	if (ImGui::Button("Import Assets")) {
-		ImGuiFileDialog::Instance()->OpenDialog("ImportAssetsDlgKey", "Choose Files", ".*",
-												app.project.project_settings.project_directory + "/", 0);
+		ImGuiFileDialog::Instance()->OpenDialog(
+			"ImportAssetsDlgKey", "Choose Files", ".*",
+			app.project.project_settings.project_directory + "/", 0);
 	}
 	if (ImGui::IsItemHovered()) {
 		ImGui::SetTooltip("You can also Drag & Drop files anywhere to import.");
