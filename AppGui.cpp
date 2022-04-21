@@ -72,7 +72,9 @@ void AppGui::RenderStarterWindow(App &app) {
 		if (app.engine_version.is_pre_release) {
 			ImGui::Spacing();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, .0f, .0f, 1.f));
-			ImGui::TextWrapped("This is a pre-release version. There might be bugs, and if you find any, don't hesitate to open a bug on GitHub (and don't forget to add the version number).");
+			ImGui::TextWrapped(
+				"This is a pre-release version. There might be bugs, and if you find any, don't "
+				"hesitate to open a bug on GitHub (and don't forget to add the version number).");
 			ImGui::PopStyleColor();
 			ImGui::Spacing();
 			ImGui::Spacing();
@@ -123,7 +125,8 @@ void AppGui::RenderStarterWindow(App &app) {
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
 			if (app.engine_settings.GetDockerVersion().starts_with("Docker is not started")) {
 #ifdef WIN64
-				if (link_button("Docker service is stopped. Please start Docker for Windows manually or click here.")) {
+				if (link_button("Docker service is stopped. Please start Docker for Windows "
+								"manually or click here.")) {
 					ThreadCommand::RunCommandDetached(
 						R"(""%PROGRAMFILES%\Docker\Docker\Docker Desktop.exe"")");
 				}
@@ -1873,7 +1876,8 @@ void AppGui::RenderContentBrowserNew(App &app) {
 	render_asset_import_window(app);
 
 	if (ImGui::Button("Import Assets")) {
-		ImGuiFileDialog::Instance()->OpenDialog("ImportAssetsDlgKey", "Choose Files", ".*", ".", 0);
+		ImGuiFileDialog::Instance()->OpenDialog("ImportAssetsDlgKey", "Choose Files", ".*",
+												app.project.project_settings.project_directory + "/", 0);
 	}
 	if (ImGui::IsItemHovered()) {
 		ImGui::SetTooltip("You can also Drag & Drop files anywhere to import.");
