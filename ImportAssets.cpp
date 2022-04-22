@@ -37,14 +37,14 @@ void ImportAssets::RenderImportScreen(App *app) {
 									 ImVec4(.4f, .8f, .4f, 0.7f));
 						ImGui::InputText("Name", image_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", image_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePathDFS);
+						bool dfs_valid = input_text_dfs_folder(image_file->dfs_folder, 100);
 						ImGui::InputInt("H Slices", &image_file->h_slices);
 						ImGui::InputInt("V Slices", &image_file->v_slices);
 
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						ImGui::BeginDisabled(!dfs_valid);
 						if (ImGui::Button("Import")) {
 							std::string name(image_file->name);
 							std::string dfs_folder(image_file->dfs_folder);
@@ -101,6 +101,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
 
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
@@ -122,8 +123,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 					if (ImGui::BeginTabItem("Sound")) {
 						ImGui::InputText("Name", sound_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", sound_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePathDFS);
+						bool dfs_valid = input_text_dfs_folder(sound_file->dfs_folder, 100);
 
 						if (sound_file->type == SOUND_WAV) {
 							ImGui::Checkbox("Loop", &sound_file->loop);
@@ -137,6 +137,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						ImGui::BeginDisabled(!dfs_valid);
 						if (ImGui::Button("Import")) {
 							std::string name(sound_file->name);
 							std::string dfs_folder(sound_file->dfs_folder);
@@ -186,6 +187,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
 
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
@@ -209,13 +211,13 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 						ImGui::InputText("Name", general_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", general_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePathDFS);
+						bool dfs_valid = input_text_dfs_folder(general_file->dfs_folder, 100);
 						ImGui::Checkbox("Copy to Filesystem", &general_file->copy_to_filesystem);
 
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						ImGui::BeginDisabled(!dfs_valid);
 						if (ImGui::Button("Import")) {
 							std::string name(general_file->name);
 							std::string dfs_folder(general_file->dfs_folder);
@@ -261,6 +263,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
 
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
@@ -293,13 +296,13 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 						ImGui::InputText("Name", font_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", font_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePathDFS);
+						bool dfs_valid = input_text_dfs_folder(font_file->dfs_folder, 100);
 						ImGui::InputInt("Font Size", &font_file->font_size);
 
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						ImGui::BeginDisabled(!dfs_valid);
 						if (ImGui::Button("Import")) {
 							std::string name(font_file->name);
 							std::string dfs_folder(font_file->dfs_folder);
@@ -350,6 +353,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
 
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
@@ -373,8 +377,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 						ImGui::InputText("Name", map_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", map_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePathDFS);
+						bool dfs_valid = input_text_dfs_folder(map_file->dfs_folder, 100);
 						ImGui::Separator();
 						ImGui::Spacing();
 
@@ -386,6 +389,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						ImGui::BeginDisabled(!dfs_valid);
 						if (ImGui::Button("Import")) {
 							std::string name(map_file->name);
 							std::string dfs_folder(map_file->dfs_folder);
@@ -428,6 +432,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
 
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
@@ -449,8 +454,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 
 						ImGui::InputText("Name", map_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
-						ImGui::InputText("DFS Folder", map_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePathDFS);
+						bool dfs_valid = input_text_dfs_folder(map_file->dfs_folder, 100);
 						ImGui::Separator();
 						ImGui::Spacing();
 
@@ -462,6 +466,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::Separator();
 						ImGui::Spacing();
 
+						ImGui::BeginDisabled(!dfs_valid);
 						if (ImGui::Button("Import")) {
 							std::string name(map_file->name);
 							std::string dfs_folder(map_file->dfs_folder);
@@ -504,6 +509,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 								}
 							}
 						}
+						ImGui::EndDisabled();
 
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {

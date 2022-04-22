@@ -51,6 +51,7 @@ To Do:
     - Add it next to "run" commands
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script
+[ ] Engine stats on menu (debug builds only)
 [ ] Update README
 [ ] Update Wiki
 

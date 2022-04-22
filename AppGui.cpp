@@ -476,6 +476,14 @@ void AppGui::RenderMenuBar(App &app) {
 			}
 			ImGui::EndMenu();
 		}
+#ifdef DEBUG
+		ImGui::MenuItem("Stats:", nullptr, false, false);
+
+		ImGuiIO *io = &ImGui::GetIO();
+		char fps[50];
+		snprintf(fps, 50, "%.3f (%.1f FPS)", 1000.0f / io->Framerate, io->Framerate);
+		ImGui::MenuItem(fps, nullptr, false, false);
+#endif
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -1371,13 +1379,13 @@ void render_asset_details_window(App &app) {
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-				ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePathDFS);
+				bool dfs_valid = input_text_dfs_folder(image_edit_dfs_folder, 100);
 				ImGui::InputInt("Font Size", &image_edit_font_size);
 
 				ImGui::Separator();
 				ImGui::Spacing();
 
+				ImGui::BeginDisabled(!dfs_valid);
 				if (ImGui::Button("Save")) {
 					bool will_save = true;
 					if ((*app.state.asset_editing.Ref().font)->name != image_edit_name) {
@@ -1421,6 +1429,7 @@ void render_asset_details_window(App &app) {
 						app.project.ReloadAssets();
 					}
 				}
+				ImGui::EndDisabled();
 
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) {
@@ -1447,14 +1456,14 @@ void render_asset_details_window(App &app) {
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-				ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePathDFS);
+				bool dfs_valid = input_text_dfs_folder(image_edit_dfs_folder, 100);
 				ImGui::InputInt("H Slices", &image_edit_h_slices);
 				ImGui::InputInt("V Slices", &image_edit_v_slices);
 
 				ImGui::Separator();
 				ImGui::Spacing();
 
+				ImGui::BeginDisabled(!dfs_valid);
 				if (ImGui::Button("Save")) {
 					bool will_save = true;
 					if ((*app.state.asset_editing.Ref().image)->name != image_edit_name) {
@@ -1501,6 +1510,7 @@ void render_asset_details_window(App &app) {
 						app.project.ReloadAssets();
 					}
 				}
+				ImGui::EndDisabled();
 
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) {
@@ -1596,8 +1606,7 @@ void render_asset_details_window(App &app) {
 				}
 
 				ImGui::InputText("Name", sound_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-				ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePathDFS);
+				bool dfs_valid = input_text_dfs_folder(sound_edit_dfs_folder, 100);
 
 				if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
 					ImGui::Checkbox("Loop", &(*app.state.asset_editing.Ref().sound)->wav_loop);
@@ -1614,6 +1623,8 @@ void render_asset_details_window(App &app) {
 
 				ImGui::Separator();
 				ImGui::Spacing();
+
+				ImGui::BeginDisabled(!dfs_valid);
 				if (ImGui::Button("Save")) {
 					bool will_save = true;
 					if ((*app.state.asset_editing.Ref().sound)->name != sound_edit_name) {
@@ -1654,6 +1665,7 @@ void render_asset_details_window(App &app) {
 						app.project.ReloadAssets();
 					}
 				}
+				ImGui::EndDisabled();
 
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) {
@@ -1678,12 +1690,14 @@ void render_asset_details_window(App &app) {
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePathDFS);
+				bool dfs_valid = input_text_dfs_folder(edit_dfs_folder, 100);
+
 				ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
 
 				ImGui::Separator();
 				ImGui::Spacing();
+
+				ImGui::BeginDisabled(!dfs_valid);
 				if (ImGui::Button("Save")) {
 					bool will_save = true;
 					if ((*app.state.asset_editing.Ref().file)->name != edit_name) {
@@ -1727,6 +1741,7 @@ void render_asset_details_window(App &app) {
 						app.project.ReloadAssets();
 					}
 				}
+				ImGui::EndDisabled();
 
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) {
@@ -1749,11 +1764,12 @@ void render_asset_details_window(App &app) {
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePathDFS);
+				bool dfs_valid = input_text_dfs_folder(edit_dfs_folder, 100);
 
 				ImGui::Separator();
 				ImGui::Spacing();
+
+				ImGui::BeginDisabled(!dfs_valid);
 				if (ImGui::Button("Save")) {
 					bool will_save = true;
 					if ((*app.state.asset_editing.Ref().tiled)->name != edit_name) {
@@ -1794,6 +1810,7 @@ void render_asset_details_window(App &app) {
 						app.project.ReloadAssets();
 					}
 				}
+				ImGui::EndDisabled();
 
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) {
@@ -1816,11 +1833,12 @@ void render_asset_details_window(App &app) {
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePathDFS);
+				bool dfs_valid = input_text_dfs_folder(edit_dfs_folder, 100);
 
 				ImGui::Separator();
 				ImGui::Spacing();
+
+				ImGui::BeginDisabled(!dfs_valid);
 				if (ImGui::Button("Save")) {
 					bool will_save = true;
 					if ((*app.state.asset_editing.Ref().ldtk)->name != edit_name) {
@@ -1860,6 +1878,7 @@ void render_asset_details_window(App &app) {
 						app.project.ReloadAssets();
 					}
 				}
+				ImGui::EndDisabled();
 
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) {

@@ -26,6 +26,10 @@ add_executable(${PROJECT_NAME} ${SOURCES} ngine.rc)
 target_include_directories(${PROJECT_NAME} PRIVATE imgui)
 target_include_directories(${PROJECT_NAME} PUBLIC ldtkloader/include)
 
+if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_compile_definitions(DEBUG)
+endif ()
+
 if (UNIX)
     target_link_libraries(${PROJECT_NAME} GL dl)
     set(CMAKE_THREAD_LIBS_INIT "-lpthread")

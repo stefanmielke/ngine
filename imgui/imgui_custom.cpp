@@ -1,9 +1,13 @@
 #include "imgui_custom.h"
 
+#include <string>
+
 #include "../App.h"
 #include "../ThreadCommand.h"
 
 extern App *g_app;
+
+ImVec4 color_invalid_input = ImVec4(1, .3f, .3f, 1);
 
 void render_badge(const char *label, ImVec4 color) {
 	ImGui::BeginDisabled();
@@ -38,4 +42,17 @@ bool link_button(const char *label, const char *url) {
 	ImGui::PopStyleColor(6);
 
 	return result;
+}
+
+bool input_text_dfs_folder(char *buf, int buf_size) {
+	std::string dfs_folder_string(buf);
+	bool dfs_invalid = !dfs_folder_string.ends_with("/");
+
+	if (dfs_invalid)
+		ImGui::PushStyleColor(ImGuiCol_Text, color_invalid_input);
+	ImGui::InputText("DFS Folder", buf, buf_size, ImGuiInputTextFlags_CharsFilePathDFS);
+	if (dfs_invalid)
+		ImGui::PopStyleColor();
+
+	return !dfs_invalid;
 }

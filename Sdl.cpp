@@ -14,7 +14,10 @@
 void Sdl::Init(App *app) {
 	int rendererFlags, windowFlags;
 
-	rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+	rendererFlags = SDL_RENDERER_ACCELERATED;
+#ifndef DEBUG
+	rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
+#endif
 	windowFlags = SDL_WINDOW_RESIZABLE;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
