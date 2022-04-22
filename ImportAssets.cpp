@@ -63,26 +63,28 @@ void ImportAssets::RenderImportScreen(App *app) {
 							SDL_SetRenderDrawColor(app->renderer, 0, 0, 0, 0);
 							SDL_RenderClear(app->renderer);
 
-							SDL_SetRenderDrawColor(app->renderer, 255, 0, 0, 150);
+							SDL_SetRenderDrawColor(app->renderer, 0, 255, 0, 255);
 
 							int h_slices = image_file->h_slices - 1;
 							if (h_slices > 0) {
-								float steps = (float)image_file->w / (float)image_file->h_slices;
+								float steps = ((float)image_file->w * 2) /
+											  (float)image_file->h_slices;
 								for (int h = 1; h <= h_slices; ++h) {
 									SDL_RenderDrawLine(app->renderer, steps * h, 0, steps * h,
-													   image_file->h);
+													   (image_file->h * 2));
 								}
 							}
 							int v_slices = image_file->v_slices - 1;
 							if (v_slices > 0) {
-								float steps = (float)image_file->h / (float)image_file->v_slices;
+								float steps = ((float)image_file->h * 2) /
+											  (float)image_file->v_slices;
 								for (int v = 1; v <= v_slices; ++v) {
-									SDL_RenderDrawLine(app->renderer, 0, steps * v, image_file->w,
-													   steps * v);
+									SDL_RenderDrawLine(app->renderer, 0, steps * v,
+													   (image_file->w * 2), steps * v);
 								}
 							}
 
-							SDL_Rect rect = {0, 0, image_file->w, image_file->h};
+							SDL_Rect rect = {0, 0, image_file->w * 2, image_file->h * 2};
 							SDL_RenderDrawRect(app->renderer, &rect);
 
 							SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
