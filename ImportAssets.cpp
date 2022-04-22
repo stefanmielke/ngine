@@ -38,7 +38,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Name", image_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", image_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePath);
+										 ImGuiInputTextFlags_CharsFilePathDFS);
 						ImGui::InputInt("H Slices", &image_file->h_slices);
 						ImGui::InputInt("V Slices", &image_file->v_slices);
 
@@ -123,7 +123,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Name", sound_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", sound_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePath);
+										 ImGuiInputTextFlags_CharsFilePathDFS);
 
 						if (sound_file->type == SOUND_WAV) {
 							ImGui::Checkbox("Loop", &sound_file->loop);
@@ -210,7 +210,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Name", general_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", general_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePath);
+										 ImGuiInputTextFlags_CharsFilePathDFS);
 						ImGui::Checkbox("Copy to Filesystem", &general_file->copy_to_filesystem);
 
 						ImGui::Separator();
@@ -294,7 +294,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Name", font_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", font_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePath);
+										 ImGuiInputTextFlags_CharsFilePathDFS);
 						ImGui::InputInt("Font Size", &font_file->font_size);
 
 						ImGui::Separator();
@@ -374,7 +374,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Name", map_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", map_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePath);
+										 ImGuiInputTextFlags_CharsFilePathDFS);
 						ImGui::Separator();
 						ImGui::Spacing();
 
@@ -450,7 +450,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Name", map_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						ImGui::InputText("DFS Folder", map_file->dfs_folder, 100,
-										 ImGuiInputTextFlags_CharsFilePath);
+										 ImGuiInputTextFlags_CharsFilePathDFS);
 						ImGui::Separator();
 						ImGui::Spacing();
 

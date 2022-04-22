@@ -1370,9 +1370,9 @@ void render_asset_details_window(App &app) {
 			}
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFilePath);
+				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
 				ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePath);
+								 ImGuiInputTextFlags_CharsFilePathDFS);
 				ImGui::InputInt("Font Size", &image_edit_font_size);
 
 				ImGui::Separator();
@@ -1446,9 +1446,9 @@ void render_asset_details_window(App &app) {
 			}
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFilePath);
+				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
 				ImGui::InputText("DFS Folder", image_edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePath);
+								 ImGuiInputTextFlags_CharsFilePathDFS);
 				ImGui::InputInt("H Slices", &image_edit_h_slices);
 				ImGui::InputInt("V Slices", &image_edit_v_slices);
 
@@ -1597,7 +1597,7 @@ void render_asset_details_window(App &app) {
 
 				ImGui::InputText("Name", sound_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
 				ImGui::InputText("DFS Folder", sound_edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePath);
+								 ImGuiInputTextFlags_CharsFilePathDFS);
 
 				if ((*app.state.asset_editing.Ref().sound)->type == SOUND_WAV) {
 					ImGui::Checkbox("Loop", &(*app.state.asset_editing.Ref().sound)->wav_loop);
@@ -1679,7 +1679,7 @@ void render_asset_details_window(App &app) {
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
 				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePath);
+								 ImGuiInputTextFlags_CharsFilePathDFS);
 				ImGui::Checkbox("Copy to Filesystem", &edit_copy_to_filesystem);
 
 				ImGui::Separator();
@@ -1750,7 +1750,7 @@ void render_asset_details_window(App &app) {
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
 				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePath);
+								 ImGuiInputTextFlags_CharsFilePathDFS);
 
 				ImGui::Separator();
 				ImGui::Spacing();
@@ -1817,7 +1817,7 @@ void render_asset_details_window(App &app) {
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 				ImGui::InputText("Name", edit_name, 50, ImGuiInputTextFlags_CharsFileName);
 				ImGui::InputText("DFS Folder", edit_dfs_folder, 100,
-								 ImGuiInputTextFlags_CharsFilePath);
+								 ImGuiInputTextFlags_CharsFilePathDFS);
 
 				ImGui::Separator();
 				ImGui::Spacing();

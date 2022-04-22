@@ -3835,7 +3835,7 @@ static bool InputTextFilterCharacter(unsigned int* p_char, ImGuiInputTextFlags f
         return false;
 
     // Generic named filters
-    if (apply_named_filters && (flags & (ImGuiInputTextFlags_CharsFileName | ImGuiInputTextFlags_CharsFilePath | ImGuiInputTextFlags_CharsDecimal | ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_CharsScientific)))
+    if (apply_named_filters && (flags & (ImGuiInputTextFlags_CharsFileName | ImGuiInputTextFlags_CharsFilePath | ImGuiInputTextFlags_CharsFilePathDFS | ImGuiInputTextFlags_CharsDecimal | ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_CharsScientific)))
     {
         // The libc allows overriding locale, with e.g. 'setlocale(LC_NUMERIC, "de_DE.UTF-8");' which affect the output/input of printf/scanf to use e.g. ',' instead of '.'.
         // The standard mandate that programs starts in the "C" locale where the decimal point is '.'.
@@ -3854,6 +3854,11 @@ static bool InputTextFilterCharacter(unsigned int* p_char, ImGuiInputTextFlags f
 		// Allow 0..9 a..z A..z / \ _ - .
 		if (flags & ImGuiInputTextFlags_CharsFilePath)
 			if (!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z') && (c != '.') && (c != '-') && (c != '/') && (c != '\\') && (c != '_'))
+				return false;
+
+		// Allow 0..9 a..z A..z / _ - .
+		if (flags & ImGuiInputTextFlags_CharsFilePathDFS)
+			if (!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z') && (c != '.') && (c != '-') && (c != '/') && (c != '_'))
 				return false;
 
         // Allow 0-9 . - + * /
