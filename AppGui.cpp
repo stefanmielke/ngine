@@ -108,9 +108,7 @@ void AppGui::RenderStarterWindow(App &app) {
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
 		ImGui::TextWrapped("Checks:");
-		ImGui::PopStyleColor();
 
 		if (is_libdragon_ok) {
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.0f, .8f, .0f, 1.f));
