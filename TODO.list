@@ -46,8 +46,9 @@ To Do:
     - Add slices preview on editing
 [/] Button to run on real hardware
     - Check dependencies on Windows
-[ ] Button to add libdragon-extensions submodule if it doesn't exists
-[ ] Add "menu" module to not having to init menu on a global script
+[ ] Button to add libdragon-extensions submodule if it doesn't exist
+[ ] Add "menu" module to not have to init menu on a global script
+    - Add default colors to choose
 [ ] Update README
 [ ] Update Wiki
 

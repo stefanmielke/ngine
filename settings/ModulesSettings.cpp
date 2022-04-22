@@ -12,6 +12,7 @@ ModulesSettings::ModulesSettings()
 	  rtc(false),
 	  scene_manager(true),
 	  memory_pool(true),
+	  menu(false),
 	  debug_is_viewer(true),
 	  debug_usb(false) {
 }

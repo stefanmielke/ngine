@@ -14,6 +14,7 @@ class ModulesSettings {
 
 	bool scene_manager;
 	bool memory_pool;
+	bool menu;
 
 	bool debug_is_viewer;
 	bool debug_usb;

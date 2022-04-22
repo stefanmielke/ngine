@@ -70,6 +70,8 @@ bool ProjectSettings::LoadFromFile(App *app, const std::string &folder) {
 	modules.rdp = json["modules"]["rdp"];
 	modules.scene_manager = json["modules"]["scene_manager"];
 	modules.timer = json["modules"]["timer"];
+	if (!json["modules"]["menu"].is_null())
+		modules.menu = json["modules"]["menu"];
 
 	if (!json["libdragon"]["branch"].is_null())
 		libdragon_branch = json["libdragon"]["branch"];
@@ -136,6 +138,7 @@ void ProjectSettings::SaveToDisk() {
 	json["modules"]["dfs"] = modules.dfs;
 	json["modules"]["display"] = modules.display;
 	json["modules"]["memory_pool"] = modules.memory_pool;
+	json["modules"]["menu"] = modules.menu;
 	json["modules"]["rdp"] = modules.rdp;
 	json["modules"]["rtc"] = modules.rtc;
 	json["modules"]["scene_manager"] = modules.scene_manager;

@@ -2805,6 +2805,8 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 							ImGui::Checkbox("Memory Pool",
 											&app.project.project_settings.modules.memory_pool);
+							ImGui::Checkbox("Menu",
+											&app.project.project_settings.modules.menu);
 							ImGui::Checkbox("Scene Manager",
 											&app.project.project_settings.modules.scene_manager);
 
