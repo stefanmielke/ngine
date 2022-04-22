@@ -87,6 +87,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] All module options on single tab
 [x] Added "menu" module and default color options
 [x] Image slices preview when importing
 [x] Start with console collapsed

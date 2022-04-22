@@ -2656,49 +2656,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 							}
 						}
 
-						ImGui::Separator();
-						ImGui::Spacing();
-						ImGui::TextUnformatted("Memory Pool Module");
-						separator_light();
-
-						ImGui::BeginDisabled(!app.project.project_settings.modules.memory_pool);
-						ImGui::TextUnformatted("Global Memory Reserve (KB)");
-						ImGui::InputInt("##GlobalMem",
-										&app.project.project_settings.global_mem_alloc_size, 1,
-										1024);
-						ImGui::TextUnformatted("Scene Memory Reserve (KB)");
-						ImGui::InputInt("##LocalMem",
-										&app.project.project_settings.scene_mem_alloc_size, 1,
-										1024);
-						ImGui::EndDisabled();
-
-						ImGui::Separator();
-						ImGui::Spacing();
-						ImGui::TextUnformatted("Menu Module");
-						separator_light();
-
-						ImGui::BeginDisabled(!app.project.project_settings.modules.menu);
-						ImGui::ColorEdit4("Selected Color",
-										  app.project.project_settings.menu.text_selected_color,
-										  ImGuiColorEditFlags_NoInputs);
-						ImGui::ColorEdit4("Enabled Color",
-										  app.project.project_settings.menu.text_enabled_color,
-										  ImGuiColorEditFlags_NoInputs);
-						ImGui::ColorEdit4("Disabled Color",
-										  app.project.project_settings.menu.text_disabled_color,
-										  ImGuiColorEditFlags_NoInputs);
-						ImGui::ColorEdit4("Text Background Color",
-										  app.project.project_settings.menu.text_background_color,
-										  ImGuiColorEditFlags_NoInputs);
-						ImGui::ColorEdit4(
-							"Out of Bounds Color",
-							app.project.project_settings.menu.text_out_of_bounds_color,
-							ImGuiColorEditFlags_NoInputs);
-						ImGui::ColorEdit4("Menu Background Color",
-										  app.project.project_settings.menu.menu_background_color,
-										  ImGuiColorEditFlags_NoInputs);
-						ImGui::EndDisabled();
-
 						ImGui::EndTabItem();
 					}
 
@@ -2834,25 +2791,6 @@ void AppGui::RenderSettingsWindow(App &app) {
 						ImGui::EndTabItem();
 					}
 
-					if (app.project.project_settings.modules.audio) {
-						if (ImGui::BeginTabItem("Audio")) {
-							ImGui::InputInt("Frequency",
-											&app.project.project_settings.audio.frequency);
-							ImGui::InputInt("Buffers", &app.project.project_settings.audio.buffers);
-
-							ImGui::BeginDisabled(!app.project.project_settings.modules.audio_mixer);
-							ImGui::Separator();
-							ImGui::Spacing();
-							ImGui::TextUnformatted("Mixer Settings:");
-							ImGui::Spacing();
-							ImGui::InputInt("Channels",
-											&app.project.project_settings.audio_mixer.channels);
-							ImGui::EndDisabled();
-
-							ImGui::EndTabItem();
-						}
-					}
-
 					static int antialias_current = app.project.project_settings.display.antialias;
 					static int bit_depth_current = app.project.project_settings.display.bit_depth;
 					static int gamma_current = app.project.project_settings.display.gamma;
@@ -2868,8 +2806,14 @@ void AppGui::RenderSettingsWindow(App &app) {
 													  "RESOLUTION_256x240", "RESOLUTION_512x480",
 													  "RESOLUTION_512x240", "RESOLUTION_640x240"};
 
-					if (app.project.project_settings.modules.display) {
-						if (ImGui::BeginTabItem("Display")) {
+					if (ImGui::BeginTabItem("Module Settings")) {
+						{
+							ImGui::BeginDisabled(!app.project.project_settings.modules.display);
+							ImGui::Separator();
+							ImGui::Spacing();
+							ImGui::TextUnformatted("Display");
+							separator_light();
+
 							ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
 							ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
 							ImGui::SliderInt("Buffers",
@@ -2877,9 +2821,81 @@ void AppGui::RenderSettingsWindow(App &app) {
 											 3);
 							ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
 							ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
-
-							ImGui::EndTabItem();
+							ImGui::EndDisabled();
 						}
+						{
+							ImGui::BeginDisabled(!app.project.project_settings.modules.audio);
+							ImGui::Separator();
+							ImGui::Spacing();
+							ImGui::TextUnformatted("Audio");
+							separator_light();
+
+							ImGui::InputInt("Frequency",
+											&app.project.project_settings.audio.frequency);
+							ImGui::InputInt("Buffers", &app.project.project_settings.audio.buffers);
+							ImGui::EndDisabled();
+						}
+						{
+							ImGui::BeginDisabled(!app.project.project_settings.modules.audio_mixer);
+							ImGui::Separator();
+							ImGui::Spacing();
+							ImGui::TextUnformatted("Audio Mixer");
+							separator_light();
+
+							ImGui::InputInt("Channels",
+											&app.project.project_settings.audio_mixer.channels);
+							ImGui::EndDisabled();
+						}
+
+						{
+							ImGui::BeginDisabled(!app.project.project_settings.modules.memory_pool);
+							ImGui::Separator();
+							ImGui::Spacing();
+							ImGui::TextUnformatted("Memory Pool");
+							separator_light();
+
+							ImGui::TextUnformatted("Global Memory Reserve (KB)");
+							ImGui::InputInt("##GlobalMem",
+											&app.project.project_settings.global_mem_alloc_size, 1,
+											1024);
+							ImGui::TextUnformatted("Scene Memory Reserve (KB)");
+							ImGui::InputInt("##LocalMem",
+											&app.project.project_settings.scene_mem_alloc_size, 1,
+											1024);
+							ImGui::EndDisabled();
+						}
+						{
+							ImGui::BeginDisabled(!app.project.project_settings.modules.menu);
+							ImGui::Separator();
+							ImGui::Spacing();
+							ImGui::TextUnformatted("Menu");
+							separator_light();
+
+							ImGui::ColorEdit4("Selected Color",
+											  app.project.project_settings.menu.text_selected_color,
+											  ImGuiColorEditFlags_NoInputs);
+							ImGui::ColorEdit4("Enabled Color",
+											  app.project.project_settings.menu.text_enabled_color,
+											  ImGuiColorEditFlags_NoInputs);
+							ImGui::ColorEdit4("Disabled Color",
+											  app.project.project_settings.menu.text_disabled_color,
+											  ImGuiColorEditFlags_NoInputs);
+							ImGui::ColorEdit4(
+								"Text Background Color",
+								app.project.project_settings.menu.text_background_color,
+								ImGuiColorEditFlags_NoInputs);
+							ImGui::ColorEdit4(
+								"Out of Bounds Color",
+								app.project.project_settings.menu.text_out_of_bounds_color,
+								ImGuiColorEditFlags_NoInputs);
+							ImGui::ColorEdit4(
+								"Menu Background Color",
+								app.project.project_settings.menu.menu_background_color,
+								ImGuiColorEditFlags_NoInputs);
+							ImGui::EndDisabled();
+						}
+
+						ImGui::EndTabItem();
 					}
 
 					ImGui::Separator();
@@ -2899,10 +2915,11 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 						app.project.project_settings.SaveToDisk();
 
-						SDL_SetWindowTitle(app.window,
-										   ("NGine - " + app.project.project_settings.project_name +
-											" - " + app.project.project_settings.project_directory)
-											   .c_str());
+						SDL_SetWindowTitle(
+							app.window,
+							("NGine - " + app.project.project_settings.project_name + " - " +
+							 app.project.project_settings.project_directory)
+								.c_str());
 
 						console.AddLog("Saved Project Settings.");
 					}
