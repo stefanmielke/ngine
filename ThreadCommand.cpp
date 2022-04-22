@@ -25,8 +25,16 @@ int exec(std::string cmd) {
 
 	cmd.append(" 2>&1");
 
-	if (g_app && g_app->project.project_settings.IsOpen())
+	if (g_app && !g_app->project.project_settings.project_directory.empty())
 		chdir(g_app->project.project_settings.project_directory.c_str());
+
+#ifdef DEBUG
+	{
+		char buff[FILENAME_MAX];
+		getcwd(buff, FILENAME_MAX);
+		console.AddLog("# WKDIR: %s", buff);
+	}
+#endif
 
 	auto pipe = popen(cmd.c_str(), "r");
 	if (!pipe)
@@ -44,7 +52,7 @@ int exec(std::string cmd) {
 
 	int result = pclose(pipe);
 
-	if (g_app && g_app->project.project_settings.IsOpen())
+	if (g_app && !g_app->project.project_settings.project_directory.empty())
 		chdir(g_app->GetEngineDirectory().c_str());
 
 	return result;
@@ -60,8 +68,16 @@ int exec_result(std::string cmd, std::string &result) {
 
 	cmd.append(" 2>&1");
 
-	if (g_app && g_app->project.project_settings.IsOpen())
+	if (g_app && !g_app->project.project_settings.project_directory.empty())
 		chdir(g_app->project.project_settings.project_directory.c_str());
+
+#ifdef DEBUG
+	{
+		char buff[FILENAME_MAX];
+		getcwd(buff, FILENAME_MAX);
+		console.AddLog("# WKDIR: %s", buff);
+	}
+#endif
 
 	auto pipe = popen(cmd.c_str(), "r");
 	if (!pipe)
@@ -75,7 +91,7 @@ int exec_result(std::string cmd, std::string &result) {
 
 	int result_code = pclose(pipe);
 
-	if (g_app && g_app->project.project_settings.IsOpen())
+	if (g_app && !g_app->project.project_settings.project_directory.empty())
 		chdir(g_app->GetEngineDirectory().c_str());
 
 	return result_code;

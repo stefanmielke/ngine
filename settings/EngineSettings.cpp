@@ -11,6 +11,7 @@
 #include <unistd.h>
 #endif
 
+#include "../ConsoleApp.h"
 #include "../ThreadCommand.h"
 
 EngineSettings::EngineSettings()
@@ -80,7 +81,14 @@ void EngineSettings::LoadFromDisk(const App *app, const std::string &path) {
 	std::ifstream filestream(path);
 
 	nlohmann::json json;
-	filestream >> json;
+	try {
+		filestream >> json;
+	} catch (std::exception &ex) {
+		console.AddLog("Error loading engine configs. Error: %s", ex.what());
+		filestream.close();
+		return;
+	}
+
 	filestream.close();
 
 	last_opened_project = json["engine"]["last_opened_project"];
@@ -143,9 +151,11 @@ void EngineSettings::ReloadDockerVersion() {
 
 	std::string result;
 	if (ThreadCommand::RunCommand(command, result) != EXIT_SUCCESS) {
-		if (result.find("is not recognized") != std::string::npos || result.find("not found") != std::string::npos) {
+		if (result.find("is not recognized") != std::string::npos ||
+			result.find("not found") != std::string::npos) {
 			docker_version = "Docker is not installed. Click to install.";
-		} else if (result.starts_with("error during connect") || result.find("accepts at most 0") != std::string::npos) {
+		} else if (result.starts_with("error during connect") ||
+				   result.find("accepts at most 0") != std::string::npos) {
 			docker_version = "Docker is not started. Click to start.";
 		} else {
 			docker_version = "Error getting docker version";

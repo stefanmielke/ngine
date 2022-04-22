@@ -475,10 +475,13 @@ void AppGui::RenderMenuBar(App &app) {
 
 void AppGui::RenderNewProjectWindow(App &app) {
 	ImGui::SetNextWindowSize(ImVec2(680, 330), ImGuiCond_Once);
-	if (ImGuiFileDialog::Instance()->IsOpened("NewProjectDlgKey"))
+	if (ImGuiFileDialog::Instance()->IsOpened("NewProjectDlgKey")) {
 		ImGui::SetNextWindowFocus();
+	}
+
 	if (ImGuiFileDialog::Instance()->Display("NewProjectDlgKey")) {
 		if (ImGuiFileDialog::Instance()->IsOk()) {
+			app.project.Close(&app);
 			ProjectBuilder::Create(&app, ImGuiFileDialog::Instance()->GetCurrentPath());
 		}
 
@@ -488,8 +491,14 @@ void AppGui::RenderNewProjectWindow(App &app) {
 
 void AppGui::RenderOpenProjectWindow(App &app) {
 	ImGui::SetNextWindowSize(ImVec2(680, 330), ImGuiCond_Once);
-	if (ImGuiFileDialog::Instance()->IsOpened("OpenProjectDlgKey"))
+	if (ImGuiFileDialog::Instance()->IsOpened("OpenProjectDlgKey")) {
 		ImGui::SetNextWindowFocus();
+		if (ImGui::IsKeyPressed(ImGuiKey_Enter, false) ||
+			ImGui::IsKeyPressed(ImGuiKey_KeypadEnter, false)) {
+			app.OpenProject(ImGuiFileDialog::Instance()->GetCurrentPath());
+			ImGuiFileDialog::Instance()->Close();
+		}
+	}
 	if (ImGuiFileDialog::Instance()->Display("OpenProjectDlgKey")) {
 		if (ImGuiFileDialog::Instance()->IsOk()) {
 			app.OpenProject(ImGuiFileDialog::Instance()->GetCurrentPath());
@@ -1964,26 +1973,28 @@ void AppGui::RenderContentBrowserNew(App &app) {
 	ImGui::Separator();
 	ImGui::PopStyleColor();
 
-	if (asset_display_type == ADT_LIST) {
-		if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
-			render_asset_folder_list(app, app.project.assets);
-			ImGui::TreePop();
-		}
-	} else if (asset_display_type == ADT_GRID) {
-		const int item_size = 100;
-		int items_per_line = std::floor(ImGui::GetWindowWidth() / (float)item_size);
-		if (items_per_line < 1)
-			items_per_line = 1;
+	if (app.project.assets) {
+		if (asset_display_type == ADT_LIST) {
+			if (ImGui::TreeNodeEx("Assets", ImGuiTreeNodeFlags_DefaultOpen)) {
+				render_asset_folder_list(app, app.project.assets);
+				ImGui::TreePop();
+			}
+		} else if (asset_display_type == ADT_GRID) {
+			const int item_size = 100;
+			int items_per_line = std::floor(ImGui::GetWindowWidth() / (float)item_size);
+			if (items_per_line < 1)
+				items_per_line = 1;
 
-		if (ImGui::BeginTable("Assets", items_per_line)) {
-			ImGui::TableNextRow();
-			set_up_popup_windows(app);
-			render_asset_folder_grid(app, app.project.assets);
-			ImGui::EndTable();
+			if (ImGui::BeginTable("Assets", items_per_line)) {
+				ImGui::TableNextRow();
+				set_up_popup_windows(app);
+				render_asset_folder_grid(app, app.project.assets);
+				ImGui::EndTable();
+			}
 		}
+
+		render_asset_details_window(app);
 	}
-
-	render_asset_details_window(app);
 }
 
 void AppGui::RenderContentBrowser(App &app) {
