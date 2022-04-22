@@ -11,6 +11,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 	if (!app->state.dropped_image_files.empty() || !app->state.dropped_sound_files.empty() ||
 		!app->state.dropped_general_files.empty() || !app->state.dropped_font_files.empty() ||
 		!app->state.dropped_tiled_files.empty() || !app->state.dropped_ldtk_files.empty()) {
+		ImGui::SetNextWindowFocus();
 		if (ImGui::Begin("Import Assets")) {
 			float window_width = ImGui::GetWindowWidth();
 			float window_height = ImGui::GetWindowHeight() - 200;
@@ -22,11 +23,18 @@ void ImportAssets::RenderImportScreen(App *app) {
 					ImGui::PushID(id);
 					if (ImGui::BeginTabItem("Image")) {
 						if (image_file->width_mult > image_file->height_mult) {
+							float width = window_width - 30;
 							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data,
-										 ImVec2((float)window_width,
-												(float)image_file->height_mult * window_width));
+										 ImVec2(width, (float)image_file->height_mult * width));
+							ImGui::SamePlace(9);
+							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data_overlay,
+										 ImVec2(width, (float)image_file->height_mult * width));
 						} else {
 							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data,
+										 ImVec2((float)image_file->width_mult * window_height,
+												(float)window_height));
+							ImGui::SamePlace(8);
+							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data_overlay,
 										 ImVec2((float)image_file->width_mult * window_height,
 												(float)window_height));
 						}
@@ -38,8 +46,49 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::InputText("Name", image_file->name, 50,
 										 ImGuiInputTextFlags_CharsFileName);
 						bool dfs_valid = input_text_dfs_folder(image_file->dfs_folder, 100);
-						ImGui::InputInt("H Slices", &image_file->h_slices);
-						ImGui::InputInt("V Slices", &image_file->v_slices);
+
+						bool recreate_grid = false;
+						if (ImGui::InputInt("H Slices", &image_file->h_slices)) {
+							recreate_grid = true;
+						}
+						if (ImGui::InputInt("V Slices", &image_file->v_slices)) {
+							recreate_grid = true;
+						}
+						if (recreate_grid) {
+							if (SDL_SetRenderTarget(app->renderer, image_file->image_data_overlay) <
+								0) {
+								console.AddLog("Error setting render target: %s", SDL_GetError());
+							}
+
+							SDL_SetRenderDrawColor(app->renderer, 0, 0, 0, 0);
+							SDL_RenderClear(app->renderer);
+
+							SDL_SetRenderDrawColor(app->renderer, 255, 0, 0, 150);
+
+							int h_slices = image_file->h_slices - 1;
+							if (h_slices > 0) {
+								float steps = (float)image_file->w / (float)image_file->h_slices;
+								for (int h = 1; h <= h_slices; ++h) {
+									SDL_RenderDrawLine(app->renderer, steps * h, 0, steps * h,
+													   image_file->h);
+								}
+							}
+							int v_slices = image_file->v_slices - 1;
+							if (v_slices > 0) {
+								float steps = (float)image_file->h / (float)image_file->v_slices;
+								for (int v = 1; v <= v_slices; ++v) {
+									SDL_RenderDrawLine(app->renderer, 0, steps * v, image_file->w,
+													   steps * v);
+								}
+							}
+
+							SDL_Rect rect = {0, 0, image_file->w, image_file->h};
+							SDL_RenderDrawRect(app->renderer, &rect);
+
+							SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
+
+							SDL_SetRenderTarget(app->renderer, nullptr);
+						}
 
 						ImGui::Separator();
 						ImGui::Spacing();
@@ -91,6 +140,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 										app->renderer);
 
 									SDL_DestroyTexture(image_file->image_data);
+									SDL_DestroyTexture(image_file->image_data_overlay);
 
 									app->state.dropped_image_files.erase(
 										app->state.dropped_image_files.begin() + (int)i);
@@ -106,6 +156,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 						ImGui::SameLine();
 						if (ImGui::Button("Cancel")) {
 							SDL_DestroyTexture(image_file->image_data);
+							SDL_DestroyTexture(image_file->image_data_overlay);
 
 							app->state.dropped_image_files.erase(
 								app->state.dropped_image_files.begin() + (int)i);

@@ -12,6 +12,7 @@ struct DroppedImage {
 	LibdragonImageType type;
 
 	SDL_Texture *image_data;
+	SDL_Texture *image_data_overlay;
 	int w, h;
 	float width_mult, height_mult;
 
@@ -23,6 +24,7 @@ struct DroppedImage {
 		: image_path(image_path),
 		  type(type),
 		  image_data(nullptr),
+		  image_data_overlay(nullptr),
 		  w(0),
 		  h(0),
 		  width_mult(1),

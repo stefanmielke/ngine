@@ -42,7 +42,8 @@ To Do:
         [ ] Add Sprite/Sound editors on Engine Settings
         [ ] Check if editors are found on Engine Settings
 [ ] Scene nodes
-[ ] Add image slices preview on import/edit
+[/] Add image slices preview on import/edit
+    - Add slices preview on editing
 [/] Button to run on real hardware
     - Check dependencies on Windows
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
@@ -87,6 +88,8 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Image slices preview when importing
+[x] Start with console collapsed
 [x] Only allow '/' on dfs_folder
     - Also check if it finishes with '/'.
 [x] Engine stats on menu (debug builds only)

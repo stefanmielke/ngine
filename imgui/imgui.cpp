@@ -8294,6 +8294,26 @@ void ImGui::SameLine(float offset_from_start_x, float spacing_w)
     window->DC.CurrLineTextBaseOffset = window->DC.PrevLineTextBaseOffset;
 }
 
+
+// Gets back to previous line and continue with horizontal layout
+//      offset_from_start_x == 0 : follow right after previous item
+//      offset_from_start_x != 0 : align to specified x position (relative to window/group left)
+//      spacing_w < 0            : use default spacing if pos_x == 0, no spacing if pos_x != 0
+//      spacing_w >= 0           : enforce spacing amount
+void ImGui::SamePlace(float spacing_w)
+{
+	ImGuiWindow* window = GetCurrentWindow();
+	if (window->SkipItems)
+		return;
+
+	ImGuiContext& g = *GImGui;
+		if (spacing_w < 0.0f) spacing_w = 0.0f;
+		window->DC.CursorPos.x = window->Pos.x - window->Scroll.x + spacing_w + window->DC.GroupOffset.x + window->DC.ColumnsOffset.x;
+		window->DC.CursorPos.y = window->DC.CursorPosPrevLine.y;
+	window->DC.CurrLineSize = window->DC.PrevLineSize;
+	window->DC.CurrLineTextBaseOffset = window->DC.PrevLineTextBaseOffset;
+}
+
 ImVec2 ImGui::GetCursorScreenPos()
 {
     ImGuiWindow* window = GetCurrentWindowRead();

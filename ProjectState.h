@@ -69,6 +69,8 @@ class ProjectState {
 		for (auto &image : dropped_image_files) {
 			if (image.image_data)
 				SDL_DestroyTexture(image.image_data);
+			if (image.image_data_overlay)
+				SDL_DestroyTexture(image.image_data_overlay);
 		}
 		for (auto &image : dropped_font_files) {
 			if (image.font_data)

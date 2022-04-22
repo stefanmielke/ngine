@@ -212,6 +212,10 @@ void AppGui::ProcessImportFile(App &app, std::string file_path) {
 		dropped_image.w = w;
 		dropped_image.h = h;
 
+		dropped_image.image_data_overlay = SDL_CreateTexture(app.renderer, SDL_PIXELFORMAT_RGBA32,
+															 SDL_TEXTUREACCESS_TARGET, w, h);
+		SDL_SetTextureBlendMode(dropped_image.image_data_overlay, SDL_BLENDMODE_BLEND);
+
 		app.state.dropped_image_files.push_back(dropped_image);
 
 		ImGui::SetWindowFocus("Import Assets");

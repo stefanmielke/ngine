@@ -14,7 +14,7 @@
 void Sdl::Init(App *app) {
 	int rendererFlags, windowFlags;
 
-	rendererFlags = SDL_RENDERER_ACCELERATED;
+	rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
 #ifndef DEBUG
 	rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
 #endif
