@@ -5,6 +5,7 @@
 #include "AudioMixerSettings.h"
 #include "AudioSettings.h"
 #include "DisplaySettings.h"
+#include "MenuSettings.h"
 #include "ModulesSettings.h"
 
 class App;
@@ -31,6 +32,7 @@ class ProjectSettings {
 	AudioMixerSettings audio_mixer;
 	DisplaySettings display;
 	ModulesSettings modules;
+	MenuSettings menu;
 
 	std::string libdragon_branch;
 

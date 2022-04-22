@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "../Libdragon.h"
+
 const char *setup_gen_c = R"(#include <libdragon.h>
 
 #include "game.gen.h"
@@ -140,7 +142,24 @@ void generate_setup_gen_c(std::string &setup_path, ProjectSettings &settings) {
 	if (settings.modules.menu) {
 		includes << "#include <menu.h>" << std::endl;
 
-		setup_body << "\tmenu_global_init();" << std::endl;
+		unsigned int text_selected_color = Libdragon::GetColor4(
+			&settings.menu.text_selected_color[0], settings.display.bit_depth);
+		unsigned int text_enabled_color = Libdragon::GetColor4(&settings.menu.text_enabled_color[0],
+															   settings.display.bit_depth);
+		unsigned int text_disabled_color = Libdragon::GetColor4(
+			&settings.menu.text_disabled_color[0], settings.display.bit_depth);
+		unsigned int text_background_color = Libdragon::GetColor4(
+			&settings.menu.text_background_color[0], settings.display.bit_depth);
+		unsigned int text_out_of_bounds_color = Libdragon::GetColor4(
+			&settings.menu.text_out_of_bounds_color[0], settings.display.bit_depth);
+		unsigned int menu_background_color = Libdragon::GetColor4(
+			&settings.menu.menu_background_color[0], settings.display.bit_depth);
+
+		setup_body << "\tmenu_global_init();" << std::endl
+				   << "\tmenu_global_set_default_colors(" << text_selected_color << ", "
+				   << text_enabled_color << ", " << text_disabled_color << ", "
+				   << text_background_color << ", " << text_out_of_bounds_color << ", "
+				   << menu_background_color << ");" << std::endl;
 	}
 
 	FILE *filestream = fopen(setup_path.c_str(), "w");

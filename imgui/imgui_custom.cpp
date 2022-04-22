@@ -56,3 +56,16 @@ bool input_text_dfs_folder(char *buf, int buf_size) {
 
 	return !dfs_invalid;
 }
+
+void separator_light() {
+	if (g_app->engine_settings.GetTheme() == THEME_LIGHT) {
+		const ImVec4 sep_color(0.f, 0.f, 0.f, .1f);
+		ImGui::PushStyleColor(ImGuiCol_Separator, sep_color);
+	} else {
+		const ImVec4 sep_color(1.f, 1.f, 1.f, .1f);
+		ImGui::PushStyleColor(ImGuiCol_Separator, sep_color);
+	}
+
+	ImGui::Separator();
+	ImGui::PopStyleColor();
+}

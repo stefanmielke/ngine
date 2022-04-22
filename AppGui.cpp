@@ -1972,10 +1972,7 @@ void AppGui::RenderContentBrowserNew(App &app) {
 		ImGui::TextWrapped("DFS MODULE IS NOT LOADED. CONTENT WILL NOT BE USABLE IN THE GAME.");
 	}
 
-	const ImVec4 sep_color(.1f, .1f, .1f, 1);
-	ImGui::PushStyleColor(ImGuiCol_Separator, sep_color);
-	ImGui::Separator();
-	ImGui::PopStyleColor();
+	separator_light();
 
 	if (app.project.assets) {
 		if (asset_display_type == ADT_LIST) {
@@ -2448,9 +2445,9 @@ void AppGui::RenderSceneWindow(App &app) {
 													 ImGuiInputTextFlags_CharsFileName);
 
 									ImGui::Spacing();
-									ImGui::TextUnformatted("Background Fill Color");
-									ImGui::ColorPicker3("##FillColor",
-														app.state.current_scene->fill_color);
+									ImGui::ColorEdit3("Background Fill Color",
+													  app.state.current_scene->fill_color,
+													  ImGuiColorEditFlags_NoInputs);
 
 									ImGui::Spacing();
 									ImGui::Separator();
@@ -2586,315 +2583,331 @@ void AppGui::RenderSettingsWindow(App &app) {
 				}
 			}
 			if (app.project.project_settings.IsOpen() && ImGui::BeginTabItem("Project")) {
-				if (app.project.project_settings.IsOpen()) {
-					if (ImGui::BeginTabBar("ProjectAllSettings")) {
-						if (ImGui::BeginTabItem("General")) {
-							ImGui::InputText("Name", app.state.project_settings_screen.project_name,
-											 100);
-							ImGui::InputText("Rom", app.state.project_settings_screen.rom_name,
-											 100);
+				if (ImGui::BeginTabBar("ProjectAllSettings")) {
+					if (ImGui::BeginTabItem("General")) {
+						ImGui::InputText("Name", app.state.project_settings_screen.project_name,
+										 100);
+						ImGui::InputText("Rom", app.state.project_settings_screen.rom_name, 100);
 
-							const char *save_type_items[] = {"none",	 "eeprom4k", "eeprom16",
-															 "sram256k", "sram768k", "sram1m",
-															 "flashram"};
-							ImGui::Combo("Save Type", &app.state.project_settings_screen.save_type,
-										 save_type_items, 7);
+						const char *save_type_items[] = {"none",	 "eeprom4k", "eeprom16",
+														 "sram256k", "sram768k", "sram1m",
+														 "flashram"};
+						ImGui::Combo("Save Type", &app.state.project_settings_screen.save_type,
+									 save_type_items, 7);
 
-							ImGui::Checkbox("Region Free",
-											&app.state.project_settings_screen.region_free);
+						ImGui::Checkbox("Region Free",
+										&app.state.project_settings_screen.region_free);
 
-							ImGui::Separator();
-							{
-								ImGui::TextUnformatted("Custom Content Pipeline");
-								if (ImGui::Button("Edit Custom Content Build Script")) {
-									std::string path_to_pipeline(
-										app.project.project_settings.project_directory +
-										"/.ngine/pipeline/");
-									if (!std::filesystem::exists(path_to_pipeline)) {
-										std::filesystem::create_directories(path_to_pipeline);
-									}
-
-									std::string path_to_script(path_to_pipeline +
-															   "content_pipeline_end.term");
-									if (!std::filesystem::exists(path_to_script)) {
-										std::ofstream filestream(path_to_script);
-										filestream.close();
-									}
-
-									if (!CodeEditor::OpenPath(&app, path_to_script)) {
-										console.AddLog("You can edit the file at %s.",
-													   path_to_script.c_str());
-									}
+						ImGui::Separator();
+						{
+							ImGui::TextUnformatted("Custom Content Pipeline");
+							if (ImGui::Button("Edit Custom Content Build Script")) {
+								std::string path_to_pipeline(
+									app.project.project_settings.project_directory +
+									"/.ngine/pipeline/");
+								if (!std::filesystem::exists(path_to_pipeline)) {
+									std::filesystem::create_directories(path_to_pipeline);
 								}
-								if (ImGui::Button("Edit Custom Makefile")) {
-									std::string path_to_makefile(
-										app.project.project_settings.project_directory +
-										"/Makefile_custom.mk");
 
-									if (!CodeEditor::OpenPath(&app, path_to_makefile)) {
-										console.AddLog("You can edit the file at %s.",
-													   path_to_makefile.c_str());
-									}
+								std::string path_to_script(path_to_pipeline +
+														   "content_pipeline_end.term");
+								if (!std::filesystem::exists(path_to_script)) {
+									std::ofstream filestream(path_to_script);
+									filestream.close();
+								}
+
+								if (!CodeEditor::OpenPath(&app, path_to_script)) {
+									console.AddLog("You can edit the file at %s.",
+												   path_to_script.c_str());
 								}
 							}
+							if (ImGui::Button("Edit Custom Makefile")) {
+								std::string path_to_makefile(
+									app.project.project_settings.project_directory +
+									"/Makefile_custom.mk");
 
-							ImGui::Separator();
-							{
-								ImGui::TextUnformatted("Global Script");
-								if (ImGui::BeginCombo(
-										"##GlobalScript",
-										app.project.project_settings.global_script_name.c_str())) {
-									for (auto &script : app.project.script_files) {
-										if (ImGui::Selectable(
-												script->name.c_str(),
-												script->name == app.project.project_settings
-																	.global_script_name)) {
-											app.project.project_settings
-												.global_script_name = script->name;
-										}
-									}
-									ImGui::EndCombo();
+								if (!CodeEditor::OpenPath(&app, path_to_makefile)) {
+									console.AddLog("You can edit the file at %s.",
+												   path_to_makefile.c_str());
 								}
-								ImGui::SameLine();
-								if (ImGui::Button("Remove")) {
-									app.project.project_settings.global_script_name = "";
-								}
-							}
-
-							ImGui::Separator();
-
-							ImGui::BeginDisabled(!app.project.project_settings.modules.memory_pool);
-							ImGui::TextUnformatted("Global Memory Reserve (KB)");
-							ImGui::InputInt("##GlobalMem",
-											&app.project.project_settings.global_mem_alloc_size, 1,
-											1024);
-							ImGui::TextUnformatted("Scene Memory Reserve (KB)");
-							ImGui::InputInt("##LocalMem",
-											&app.project.project_settings.scene_mem_alloc_size, 1,
-											1024);
-							ImGui::EndDisabled();
-
-							ImGui::EndTabItem();
-						}
-
-						if (ImGui::BeginTabItem("Libdragon")) {
-							{
-								ImGui::Spacing();
-								ImGui::BeginDisabled();
-								ImGui::TextUnformatted("Libdragon");
-								ImGui::EndDisabled();
-								ImGui::Separator();
-
-								if (ImGui::Button("Update Libdragon")) {
-									console.AddLog("Running 'libdragon update'...");
-									Libdragon::Update(&app);
-								}
-								ImGui::SameLine();
-								ImGui::BeginDisabled();
-								ImGui::TextUnformatted("- libdragon update");
-								ImGui::EndDisabled();
-
-								if (ImGui::Button("Re-Build Libdragon")) {
-									console.AddLog("Running 'libdragon install'...");
-									Libdragon::Install(&app);
-								}
-								ImGui::SameLine();
-								ImGui::BeginDisabled();
-								ImGui::TextUnformatted("- libdragon install");
-								ImGui::EndDisabled();
-
-								//								ImGui::TextUnformatted("Repository
-								// URL"); 								char repo_buf[255] = "\0";
-								// ImGui::InputText("###Repo", repo_buf, 255);
-								// ImGui::SameLine(); ImGui::Button("Update");
-								//
-								ImGui::Spacing();
-								ImGui::TextUnformatted("Branch");
-								ImGui::SameLine();
-								if (ImGui::Button("Reset")) {
-									strcpy(app.state.project_settings_screen.libdragon_branch,
-										   "trunk\0");
-								}
-
-								ImGui::InputText("###Branch",
-												 app.state.project_settings_screen.libdragon_branch,
-												 50);
-								ImGui::SameLine();
-								if (ImGui::Button("Update")) {
-									Libdragon::GitCheckout(
-										&app, "libdragon",
-										app.state.project_settings_screen.libdragon_branch);
-								}
-							}
-							{
-								//								ImGui::Spacing();
-								//								ImGui::BeginDisabled();
-								//								ImGui::TextUnformatted("Libdragon
-								// Extensions"); ImGui::EndDisabled(); ImGui::Separator();
-
-								//								ImGui::TextUnformatted("Repository
-								// URL"); 								char repo_buf[255] = "\0";
-								// ImGui::InputText("###Repo", repo_buf, 255);
-								// ImGui::SameLine(); ImGui::Button("Update");
-								//
-								//								ImGui::TextUnformatted("Branch");
-								//								char branch_buf[50] = "\0";
-								//								ImGui::InputText("###Branch",
-								// branch_buf, 50); ImGui::SameLine();
-								// ImGui::Button("Update");
-							}
-							ImGui::EndTabItem();
-						}
-
-						if (ImGui::BeginTabItem("Modules")) {
-							ImGui::TextWrapped(
-								"IF YOU CHANGE MODULES, CONSIDER RUNNING THE CLEAN/BUILD TASK.");
-							ImGui::Separator();
-
-							ImGui::BeginDisabled();
-							ImGui::TextWrapped("Libdragon");
-							ImGui::EndDisabled();
-							ImGui::Separator();
-
-							if (ImGui::Checkbox("Audio",
-												&app.project.project_settings.modules.audio)) {
-								if (!app.project.project_settings.modules.audio)
-									app.project.project_settings.modules.audio_mixer = false;
-							}
-							ImGui::BeginDisabled(!app.project.project_settings.modules.audio);
-							ImGui::Checkbox("Audio Mixer",
-											&app.project.project_settings.modules.audio_mixer);
-							ImGui::EndDisabled();
-
-							if (ImGui::Checkbox("Display",
-												&app.project.project_settings.modules.display)) {
-								if (!app.project.project_settings.modules.display)
-									app.project.project_settings.modules.rdp = false;
-							}
-
-							ImGui::BeginDisabled(!app.project.project_settings.modules.display);
-							ImGui::Checkbox("RDP", &app.project.project_settings.modules.rdp);
-							ImGui::EndDisabled();
-
-							ImGui::Checkbox("Console",
-											&app.project.project_settings.modules.console);
-							ImGui::Checkbox("Controller",
-											&app.project.project_settings.modules.controller);
-							ImGui::Checkbox("Debug Is Viewer",
-											&app.project.project_settings.modules.debug_is_viewer);
-							ImGui::Checkbox("Debug USB",
-											&app.project.project_settings.modules.debug_usb);
-							ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
-
-							if (ImGui::Checkbox("Timer",
-												&app.project.project_settings.modules.timer)) {
-								if (!app.project.project_settings.modules.timer)
-									app.project.project_settings.modules.rtc = false;
-							}
-
-							ImGui::BeginDisabled(!app.project.project_settings.modules.timer);
-							ImGui::Checkbox("Real-Time Clock (RTC)",
-											&app.project.project_settings.modules.rtc);
-							ImGui::EndDisabled();
-
-							ImGui::Spacing();
-							ImGui::BeginDisabled();
-							ImGui::TextWrapped("Libdragon Extensions");
-							ImGui::EndDisabled();
-							ImGui::Separator();
-
-							ImGui::Checkbox("Memory Pool",
-											&app.project.project_settings.modules.memory_pool);
-							ImGui::Checkbox("Menu",
-											&app.project.project_settings.modules.menu);
-							ImGui::Checkbox("Scene Manager",
-											&app.project.project_settings.modules.scene_manager);
-
-							ImGui::EndTabItem();
-						}
-
-						if (app.project.project_settings.modules.audio) {
-							if (ImGui::BeginTabItem("Audio")) {
-								ImGui::InputInt("Frequency",
-												&app.project.project_settings.audio.frequency);
-								ImGui::InputInt("Buffers",
-												&app.project.project_settings.audio.buffers);
-
-								ImGui::BeginDisabled(
-									!app.project.project_settings.modules.audio_mixer);
-								ImGui::Separator();
-								ImGui::Spacing();
-								ImGui::TextUnformatted("Mixer Settings:");
-								ImGui::Spacing();
-								ImGui::InputInt("Channels",
-												&app.project.project_settings.audio_mixer.channels);
-								ImGui::EndDisabled();
-
-								ImGui::EndTabItem();
 							}
 						}
 
-						static int antialias_current = app.project.project_settings.display
-														   .antialias;
-						static int bit_depth_current = app.project.project_settings.display
-														   .bit_depth;
-						static int gamma_current = app.project.project_settings.display.gamma;
-						static int resolution_current = app.project.project_settings.display
-															.resolution;
-
-						const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
-														 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
-														 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
-						const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
-						const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT",
-													 "GAMMA_CORRECT_DITHER"};
-						const char *resolution_items[] = {
-							"RESOLUTION_320x240", "RESOLUTION_640x480", "RESOLUTION_256x240",
-							"RESOLUTION_512x480", "RESOLUTION_512x240", "RESOLUTION_640x240"};
-
-						if (app.project.project_settings.modules.display) {
-							if (ImGui::BeginTabItem("Display")) {
-								ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
-								ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
-								ImGui::SliderInt("Buffers",
-												 &app.state.project_settings_screen.display_buffers,
-												 1, 3);
-								ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
-								ImGui::Combo("Resolution", &resolution_current, resolution_items,
-											 6);
-
-								ImGui::EndTabItem();
+						ImGui::Separator();
+						{
+							ImGui::TextUnformatted("Global Script");
+							if (ImGui::BeginCombo(
+									"##GlobalScript",
+									app.project.project_settings.global_script_name.c_str())) {
+								for (auto &script : app.project.script_files) {
+									if (ImGui::Selectable(
+											script->name.c_str(),
+											script->name ==
+												app.project.project_settings.global_script_name)) {
+										app.project.project_settings
+											.global_script_name = script->name;
+									}
+								}
+								ImGui::EndCombo();
+							}
+							ImGui::SameLine();
+							if (ImGui::Button("Remove")) {
+								app.project.project_settings.global_script_name = "";
 							}
 						}
 
 						ImGui::Separator();
 						ImGui::Spacing();
-						if (ImGui::Button("Save")) {
-							strcpy(app.state.project_settings_screen.display_antialias,
-								   antialias_items[antialias_current]);
-							strcpy(app.state.project_settings_screen.display_bit_depth,
-								   bit_depth_items[bit_depth_current]);
-							strcpy(app.state.project_settings_screen.display_gamma,
-								   gamma_items[gamma_current]);
-							strcpy(app.state.project_settings_screen.display_resolution,
-								   resolution_items[resolution_current]);
+						ImGui::TextUnformatted("Memory Pool Module");
+						separator_light();
 
-							app.state.project_settings_screen.ToProjectSettings(
-								app.project.project_settings);
+						ImGui::BeginDisabled(!app.project.project_settings.modules.memory_pool);
+						ImGui::TextUnformatted("Global Memory Reserve (KB)");
+						ImGui::InputInt("##GlobalMem",
+										&app.project.project_settings.global_mem_alloc_size, 1,
+										1024);
+						ImGui::TextUnformatted("Scene Memory Reserve (KB)");
+						ImGui::InputInt("##LocalMem",
+										&app.project.project_settings.scene_mem_alloc_size, 1,
+										1024);
+						ImGui::EndDisabled();
 
-							app.project.project_settings.SaveToDisk();
+						ImGui::Separator();
+						ImGui::Spacing();
+						ImGui::TextUnformatted("Menu Module");
+						separator_light();
 
-							SDL_SetWindowTitle(
-								app.window,
-								("NGine - " + app.project.project_settings.project_name + " - " +
-								 app.project.project_settings.project_directory)
-									.c_str());
+						ImGui::BeginDisabled(!app.project.project_settings.modules.menu);
+						ImGui::ColorEdit4("Selected Color",
+										  app.project.project_settings.menu.text_selected_color,
+										  ImGuiColorEditFlags_NoInputs);
+						ImGui::ColorEdit4("Enabled Color",
+										  app.project.project_settings.menu.text_enabled_color,
+										  ImGuiColorEditFlags_NoInputs);
+						ImGui::ColorEdit4("Disabled Color",
+										  app.project.project_settings.menu.text_disabled_color,
+										  ImGuiColorEditFlags_NoInputs);
+						ImGui::ColorEdit4("Text Background Color",
+										  app.project.project_settings.menu.text_background_color,
+										  ImGuiColorEditFlags_NoInputs);
+						ImGui::ColorEdit4(
+							"Out of Bounds Color",
+							app.project.project_settings.menu.text_out_of_bounds_color,
+							ImGuiColorEditFlags_NoInputs);
+						ImGui::ColorEdit4("Menu Background Color",
+										  app.project.project_settings.menu.menu_background_color,
+										  ImGuiColorEditFlags_NoInputs);
+						ImGui::EndDisabled();
 
-							console.AddLog("Saved Project Settings.");
+						ImGui::EndTabItem();
+					}
+
+					if (ImGui::BeginTabItem("Libdragon")) {
+						{
+							ImGui::Spacing();
+							ImGui::BeginDisabled();
+							ImGui::TextUnformatted("Libdragon");
+							ImGui::EndDisabled();
+							ImGui::Separator();
+
+							if (ImGui::Button("Update Libdragon")) {
+								console.AddLog("Running 'libdragon update'...");
+								Libdragon::Update(&app);
+							}
+							ImGui::SameLine();
+							ImGui::BeginDisabled();
+							ImGui::TextUnformatted("- libdragon update");
+							ImGui::EndDisabled();
+
+							if (ImGui::Button("Re-Build Libdragon")) {
+								console.AddLog("Running 'libdragon install'...");
+								Libdragon::Install(&app);
+							}
+							ImGui::SameLine();
+							ImGui::BeginDisabled();
+							ImGui::TextUnformatted("- libdragon install");
+							ImGui::EndDisabled();
+
+							//								ImGui::TextUnformatted("Repository
+							// URL"); 								char repo_buf[255] = "\0";
+							// ImGui::InputText("###Repo", repo_buf, 255);
+							// ImGui::SameLine(); ImGui::Button("Update");
+							//
+							ImGui::Spacing();
+							ImGui::TextUnformatted("Branch");
+							ImGui::SameLine();
+							if (ImGui::Button("Reset")) {
+								strcpy(app.state.project_settings_screen.libdragon_branch,
+									   "trunk\0");
+							}
+
+							ImGui::InputText("###Branch",
+											 app.state.project_settings_screen.libdragon_branch,
+											 50);
+							ImGui::SameLine();
+							if (ImGui::Button("Update")) {
+								Libdragon::GitCheckout(
+									&app, "libdragon",
+									app.state.project_settings_screen.libdragon_branch);
+							}
+						}
+						{
+							//								ImGui::Spacing();
+							//								ImGui::BeginDisabled();
+							//								ImGui::TextUnformatted("Libdragon
+							// Extensions"); ImGui::EndDisabled(); ImGui::Separator();
+
+							//								ImGui::TextUnformatted("Repository
+							// URL"); 								char repo_buf[255] = "\0";
+							// ImGui::InputText("###Repo", repo_buf, 255);
+							// ImGui::SameLine(); ImGui::Button("Update");
+							//
+							//								ImGui::TextUnformatted("Branch");
+							//								char branch_buf[50] = "\0";
+							//								ImGui::InputText("###Branch",
+							// branch_buf, 50); ImGui::SameLine();
+							// ImGui::Button("Update");
+						}
+						ImGui::EndTabItem();
+					}
+
+					if (ImGui::BeginTabItem("Modules")) {
+						ImGui::TextWrapped(
+							"IF YOU CHANGE MODULES, CONSIDER RUNNING THE CLEAN/BUILD TASK.");
+						ImGui::Separator();
+
+						ImGui::BeginDisabled();
+						ImGui::TextWrapped("Libdragon");
+						ImGui::EndDisabled();
+						ImGui::Separator();
+
+						if (ImGui::Checkbox("Audio", &app.project.project_settings.modules.audio)) {
+							if (!app.project.project_settings.modules.audio)
+								app.project.project_settings.modules.audio_mixer = false;
+						}
+						ImGui::BeginDisabled(!app.project.project_settings.modules.audio);
+						ImGui::Checkbox("Audio Mixer",
+										&app.project.project_settings.modules.audio_mixer);
+						ImGui::EndDisabled();
+
+						if (ImGui::Checkbox("Display",
+											&app.project.project_settings.modules.display)) {
+							if (!app.project.project_settings.modules.display)
+								app.project.project_settings.modules.rdp = false;
+						}
+
+						ImGui::BeginDisabled(!app.project.project_settings.modules.display);
+						ImGui::Checkbox("RDP", &app.project.project_settings.modules.rdp);
+						ImGui::EndDisabled();
+
+						ImGui::Checkbox("Console", &app.project.project_settings.modules.console);
+						ImGui::Checkbox("Controller",
+										&app.project.project_settings.modules.controller);
+						ImGui::Checkbox("Debug Is Viewer",
+										&app.project.project_settings.modules.debug_is_viewer);
+						ImGui::Checkbox("Debug USB",
+										&app.project.project_settings.modules.debug_usb);
+						ImGui::Checkbox("DFS", &app.project.project_settings.modules.dfs);
+
+						if (ImGui::Checkbox("Timer", &app.project.project_settings.modules.timer)) {
+							if (!app.project.project_settings.modules.timer)
+								app.project.project_settings.modules.rtc = false;
+						}
+
+						ImGui::BeginDisabled(!app.project.project_settings.modules.timer);
+						ImGui::Checkbox("Real-Time Clock (RTC)",
+										&app.project.project_settings.modules.rtc);
+						ImGui::EndDisabled();
+
+						ImGui::Spacing();
+						ImGui::BeginDisabled();
+						ImGui::TextWrapped("Libdragon Extensions");
+						ImGui::EndDisabled();
+						ImGui::Separator();
+
+						ImGui::Checkbox("Memory Pool",
+										&app.project.project_settings.modules.memory_pool);
+						ImGui::Checkbox("Menu", &app.project.project_settings.modules.menu);
+						ImGui::Checkbox("Scene Manager",
+										&app.project.project_settings.modules.scene_manager);
+
+						ImGui::EndTabItem();
+					}
+
+					if (app.project.project_settings.modules.audio) {
+						if (ImGui::BeginTabItem("Audio")) {
+							ImGui::InputInt("Frequency",
+											&app.project.project_settings.audio.frequency);
+							ImGui::InputInt("Buffers", &app.project.project_settings.audio.buffers);
+
+							ImGui::BeginDisabled(!app.project.project_settings.modules.audio_mixer);
+							ImGui::Separator();
+							ImGui::Spacing();
+							ImGui::TextUnformatted("Mixer Settings:");
+							ImGui::Spacing();
+							ImGui::InputInt("Channels",
+											&app.project.project_settings.audio_mixer.channels);
+							ImGui::EndDisabled();
+
+							ImGui::EndTabItem();
 						}
 					}
-					ImGui::EndTabBar();
+
+					static int antialias_current = app.project.project_settings.display.antialias;
+					static int bit_depth_current = app.project.project_settings.display.bit_depth;
+					static int gamma_current = app.project.project_settings.display.gamma;
+					static int resolution_current = app.project.project_settings.display.resolution;
+
+					const char *antialias_items[] = {"ANTIALIAS_OFF", "ANTIALIAS_RESAMPLE",
+													 "ANTIALIAS_RESAMPLE_FETCH_NEEDED",
+													 "ANTIALIAS_RESAMPLE_FETCH_ALWAYS"};
+					const char *bit_depth_items[] = {"DEPTH_16_BPP", "DEPTH_32_BPP"};
+					const char *gamma_items[] = {"GAMMA_NONE", "GAMMA_CORRECT",
+												 "GAMMA_CORRECT_DITHER"};
+					const char *resolution_items[] = {"RESOLUTION_320x240", "RESOLUTION_640x480",
+													  "RESOLUTION_256x240", "RESOLUTION_512x480",
+													  "RESOLUTION_512x240", "RESOLUTION_640x240"};
+
+					if (app.project.project_settings.modules.display) {
+						if (ImGui::BeginTabItem("Display")) {
+							ImGui::Combo("Antialias", &antialias_current, antialias_items, 4);
+							ImGui::Combo("Bit Depth", &bit_depth_current, bit_depth_items, 2);
+							ImGui::SliderInt("Buffers",
+											 &app.state.project_settings_screen.display_buffers, 1,
+											 3);
+							ImGui::Combo("Gamma", &gamma_current, gamma_items, 3);
+							ImGui::Combo("Resolution", &resolution_current, resolution_items, 6);
+
+							ImGui::EndTabItem();
+						}
+					}
+
+					ImGui::Separator();
+					ImGui::Spacing();
+					if (ImGui::Button("Save")) {
+						strcpy(app.state.project_settings_screen.display_antialias,
+							   antialias_items[antialias_current]);
+						strcpy(app.state.project_settings_screen.display_bit_depth,
+							   bit_depth_items[bit_depth_current]);
+						strcpy(app.state.project_settings_screen.display_gamma,
+							   gamma_items[gamma_current]);
+						strcpy(app.state.project_settings_screen.display_resolution,
+							   resolution_items[resolution_current]);
+
+						app.state.project_settings_screen.ToProjectSettings(
+							app.project.project_settings);
+
+						app.project.project_settings.SaveToDisk();
+
+						SDL_SetWindowTitle(app.window,
+										   ("NGine - " + app.project.project_settings.project_name +
+											" - " + app.project.project_settings.project_directory)
+											   .c_str());
+
+						console.AddLog("Saved Project Settings.");
+					}
 				}
+				ImGui::EndTabBar();
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Engine")) {

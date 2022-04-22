@@ -81,6 +81,19 @@ bool ProjectSettings::LoadFromFile(App *app, const std::string &folder) {
 	if (!json["modules"]["rtc"].is_null())
 		modules.rtc = json["modules"]["rtc"];
 
+	if (!json["menu"]["text_selected_color"].is_null())
+		json["menu"]["text_selected_color"].get_to(menu.text_selected_color);
+	if (!json["menu"]["text_enabled_color"].is_null())
+		json["menu"]["text_enabled_color"].get_to(menu.text_enabled_color);
+	if (!json["menu"]["text_disabled_color"].is_null())
+		json["menu"]["text_disabled_color"].get_to(menu.text_disabled_color);
+	if (!json["menu"]["text_background_color"].is_null())
+		json["menu"]["text_background_color"].get_to(menu.text_background_color);
+	if (!json["menu"]["text_out_of_bounds_color"].is_null())
+		json["menu"]["text_out_of_bounds_color"].get_to(menu.text_out_of_bounds_color);
+	if (!json["menu"]["menu_background_color"].is_null())
+		json["menu"]["menu_background_color"].get_to(menu.menu_background_color);
+
 	if (!json["project"]["ngine"]["version"]["major"].is_null())
 		ngine_version_major = json["project"]["ngine"]["version"]["major"];
 	if (!json["project"]["ngine"]["version"]["minor"].is_null())
@@ -145,6 +158,13 @@ void ProjectSettings::SaveToDisk() {
 	json["modules"]["timer"] = modules.timer;
 
 	json["libdragon"]["branch"] = libdragon_branch;
+
+	json["menu"]["text_selected_color"] = menu.text_selected_color;
+	json["menu"]["text_enabled_color"] = menu.text_enabled_color;
+	json["menu"]["text_disabled_color"] = menu.text_disabled_color;
+	json["menu"]["text_background_color"] = menu.text_background_color;
+	json["menu"]["text_out_of_bounds_color"] = menu.text_out_of_bounds_color;
+	json["menu"]["menu_background_color"] = menu.menu_background_color;
 
 	std::ofstream project_file(project_directory + "/ngine.project.json");
 	project_file << json.dump(4);

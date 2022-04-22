@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "settings/DisplaySettings.h"
 
 class App;
 
@@ -20,4 +21,7 @@ class Libdragon {
 							const std::string &branch);
 	static bool GitSubmoduleAddSync(const App *app, const std::string &submodule_uri,
 									const std::string &submodule_folder);
+
+	static unsigned int GetColor3(const float color[3], BitDepth bit_depth);
+	static unsigned int GetColor4(const float color[4], BitDepth bit_depth);
 };

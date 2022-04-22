@@ -47,8 +47,6 @@ To Do:
 [/] Button to run on real hardware
     - Check dependencies on Windows
 [ ] Button to add libdragon-extensions submodule if it doesn't exist
-[ ] Add "menu" module to not have to init menu on a global script
-    - Add default colors to choose
 [ ] Update README
 [ ] Update Wiki
 
@@ -89,6 +87,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Added "menu" module and default color options
 [x] Image slices preview when importing
 [x] Start with console collapsed
 [x] Only allow '/' on dfs_folder

@@ -11,3 +11,5 @@ bool link_button(const char *label, const char *url = nullptr);
  * Returns if text is a valid DFS Folder
  */
 bool input_text_dfs_folder(char* buf, int buf_size);
+
+void separator_light();

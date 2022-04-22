@@ -89,3 +89,54 @@ bool Libdragon::GitSubmoduleAddSync(const App *app, const std::string &submodule
 
 	return ThreadCommand::RunCommand(cmd) == EXIT_SUCCESS;
 }
+
+unsigned int Libdragon::GetColor3(const float color[3], BitDepth bit_depth) {
+	unsigned int fill_color;
+	if (bit_depth == DEPTH_16_BPP) {
+		auto sr = (unsigned char)(255 * color[0]);
+		auto sg = (unsigned char)(255 * color[1]);
+		auto sb = (unsigned char)(255 * color[2]);
+
+		int r = sr >> 3;
+		int g = sg >> 3;
+		int b = sb >> 3;
+		int a = 255;
+
+		fill_color = ((r & 0x1F) << 11) | ((g & 0x1F) << 6) | ((b & 0x1F) << 1) | (a >> 7);
+		fill_color = fill_color | (fill_color << 16);
+	} else {
+		auto sr = (unsigned char)(255 * color[0]);
+		auto sg = (unsigned char)(255 * color[1]);
+		auto sb = (unsigned char)(255 * color[2]);
+		fill_color = (sr << 24) | (sg << 16) | (sb << 8) | ((unsigned char)255);
+	}
+
+	return fill_color;
+}
+
+unsigned int Libdragon::GetColor4(const float color[4], BitDepth bit_depth) {
+	unsigned int fill_color;
+	if (bit_depth == DEPTH_16_BPP) {
+		auto sr = (unsigned char)(255 * color[0]);
+		auto sg = (unsigned char)(255 * color[1]);
+		auto sb = (unsigned char)(255 * color[2]);
+		auto sa = (unsigned char)(255 * color[3]);
+
+		int r = sr >> 3;
+		int g = sg >> 3;
+		int b = sb >> 3;
+		int a = sa;
+
+		fill_color = ((r & 0x1F) << 11) | ((g & 0x1F) << 6) | ((b & 0x1F) << 1) | (a >> 7);
+		fill_color = fill_color | (fill_color << 16);
+	} else {
+		auto sr = (unsigned char)(255 * color[0]);
+		auto sg = (unsigned char)(255 * color[1]);
+		auto sb = (unsigned char)(255 * color[2]);
+		auto sa = (unsigned char)(255 * color[3]);
+
+		fill_color = (sr << 24) | (sg << 16) | (sb << 8) | sa;
+	}
+
+	return fill_color;
+}
