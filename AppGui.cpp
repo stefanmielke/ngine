@@ -97,23 +97,41 @@ void AppGui::RenderStarterWindow(App &app) {
 			"theme if you prefer a light one.");
 
 		bool has_libftd_installed = false;
+		std::filesystem::path libftd_location;
 #ifdef __LINUX__
-		has_libftd_installed = !std::filesystem::exists("/usr/local/lib/libftd2xx.so");
+		libftd_location = "/usr/local/lib/libftd2xx.so";
+		has_libftd_installed = std::filesystem::exists(libftd_location);
 #endif
+		bool is_docker_ok = app.engine_settings.GetDockerVersion().starts_with("docker");
+		bool is_libdragon_ok = app.engine_settings.GetLibdragonVersion().starts_with("libdragon");
 
-		bool has_warnings = !app.engine_settings.GetDockerVersion().starts_with("docker") ||
-							!app.engine_settings.GetLibdragonVersion().starts_with("libdragon") ||
-							!has_libftd_installed;
-		if (has_warnings) {
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
+		ImGui::TextWrapped("Checks:");
+		ImGui::PopStyleColor();
+
+		if (is_libdragon_ok) {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.0f, .8f, .0f, 1.f));
+			ImGui::TextWrapped("Libdragon was found and is running. Version: %s",
+							   app.engine_settings.GetLibdragonVersion().c_str());
+			ImGui::PopStyleColor();
+		} else {
 			ImGui::Spacing();
-			ImGui::Separator();
-			ImGui::Spacing();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
-			ImGui::TextWrapped("Warnings:");
+
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 1, 1));
+			ImGui::TextWrapped(
+				" Libdragon-cli seems to be configured incorrectly. Set the correct path on the "
+				"engine settings on the right panel.");
 			ImGui::PopStyleColor();
 		}
-
-		if (!app.engine_settings.GetDockerVersion().starts_with("docker")) {
+		if (is_docker_ok) {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.0f, .8f, .0f, 1.f));
+			ImGui::TextWrapped("Docker was found and is running. Version: %s",
+							   app.engine_settings.GetDockerVersion().c_str());
+			ImGui::PopStyleColor();
+		} else {
 			ImGui::Spacing();
 
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.4f, 0.4f, 1.f));
@@ -135,16 +153,12 @@ void AppGui::RenderStarterWindow(App &app) {
 			}
 			ImGui::PopStyleColor();
 		}
-		if (!app.engine_settings.GetLibdragonVersion().starts_with("libdragon")) {
-			ImGui::Spacing();
-
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 1, 1));
-			ImGui::TextWrapped(
-				" Libdragon-cli seems to be configured incorrectly. Set the correct path on the "
-				"engine settings on the right panel.");
+		if (has_libftd_installed) {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.0f, .8f, .0f, 1.f));
+			ImGui::TextWrapped("UNFLoader drivers were found at '%s'.",
+							   libftd_location.parent_path().string().c_str());
 			ImGui::PopStyleColor();
-		}
-		if (!has_libftd_installed) {
+		} else {
 			ImGui::Spacing();
 
 			if (link_button("To run on console, check out the UNFLoader guide clicking here.")) {

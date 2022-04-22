@@ -91,6 +91,10 @@ Future:
 
 Done:
 - 2.0.0:
+[x] List of checks with OK/NOK on start page
+    - Libdragon CLI
+    - Docker
+    - UNFLoader
 [x] Warning on start page if libdragon-cli or docker are not working as intended
 [x] Add start page
 [x] Check if docker is installed
