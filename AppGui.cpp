@@ -381,21 +381,6 @@ void AppGui::RenderMenuBar(App &app) {
 				Libdragon::Disasm(&app);
 				ThreadCommand::QueueCommand("echo ! Assembly output to 'rom.asm' file.");
 			}
-#ifndef WIN64
-			if (ImGui::MenuItem("Run on Console")) {
-				std::string rom_path(app.project.project_settings.project_directory + "/" +
-									 app.project.project_settings.rom_name + ".z64");
-				std::string unfloader_path(app.GetEngineDirectory() + "/bundle/UNFLoader");
-
-				char cmd[500];
-				snprintf(cmd, 500,
-						 "gnome-terminal -- bash -c \"sudo rmmod usbserial\nsudo rmmod "
-						 "ftdi_sio\nsudo %s -d -r %s\"",
-						 unfloader_path.c_str(), rom_path.c_str());
-
-				ThreadCommand::RunCommandDetached(cmd);
-			}
-#endif
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help")) {
@@ -2317,6 +2302,30 @@ void AppGui::RenderSceneWindow(App &app) {
 					ImGui::SetTooltip("Build and Run [F5]");
 				}
 
+#ifdef __LINUX__
+				ImGui::SameLine();
+				ImGui::PushID(6);
+				app.GetImagePosition("Run_Console.png", button_uv0, button_uv1);
+				if (ImGui::ImageButton((ImTextureID)(intptr_t)app.app_texture, button_size,
+									   button_uv0, button_uv1, -1) ||
+					ImGui::IsKeyPressed(ImGuiKey_F10, false)) {
+					std::string rom_path(app.project.project_settings.project_directory + "/" +
+										 app.project.project_settings.rom_name + ".z64");
+					std::string unfloader_path(app.GetEngineDirectory() + "/bundle/UNFLoader");
+
+					char cmd[500];
+					snprintf(cmd, 500,
+							 "gnome-terminal -- bash -c \"sudo rmmod usbserial\nsudo rmmod "
+							 "ftdi_sio\nsudo %s -d -r %s\"",
+							 unfloader_path.c_str(), rom_path.c_str());
+
+					ThreadCommand::RunCommandDetached(cmd);
+				}
+				ImGui::PopID();
+				if (ImGui::IsItemHovered()) {
+					ImGui::SetTooltip("Run Latest Build on Console [F10]");
+				}
+#endif
 				ImGui::Separator();
 			}
 

@@ -40,18 +40,13 @@ To Do:
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
     [ ] Double click to open editor for asset
         [ ] Add Sprite/Sound editors on Engine Settings
+        [ ] Check if editors are found on Engine Settings
 [ ] Scene nodes
 [ ] Add image slices preview on import/edit
-[ ] Check if editors are found on Engine Settings
-[ ] Only allow '/' on dfs_folder
-    - Also check if it finishes with '/'.
 [/] Button to run on real hardware
-    - Check dependencies
-    - Add links to D2XX drivers -> https://ftdichip.com/drivers/d2xx-drivers/
-    - Add it next to "run" commands
+    - Check dependencies on Windows
 [ ] Button to add libdragon-extensions submodule if it doesn't exists
 [ ] Add "menu" module to not having to init menu on a global script
-[ ] Engine stats on menu (debug builds only)
 [ ] Update README
 [ ] Update Wiki
 
@@ -92,6 +87,9 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Only allow '/' on dfs_folder
+    - Also check if it finishes with '/'.
+[x] Engine stats on menu (debug builds only)
 [x] List of checks with OK/NOK on start page
     - Libdragon CLI
     - Docker

@@ -2,7 +2,7 @@
 
 {
 	"filename": "Build.png",
-	"frame": {"x":1,"y":1,"w":19,"h":20},
+	"frame": {"x":1,"y":12,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -10,7 +10,7 @@
 },
 {
 	"filename": "Build_Run.png",
-	"frame": {"x":1,"y":23,"w":19,"h":20},
+	"frame": {"x":22,"y":15,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -18,7 +18,7 @@
 },
 {
 	"filename": "Clean_Build.png",
-	"frame": {"x":22,"y":1,"w":19,"h":20},
+	"frame": {"x":43,"y":15,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -26,7 +26,7 @@
 },
 {
 	"filename": "Editor.png",
-	"frame": {"x":22,"y":23,"w":19,"h":20},
+	"frame": {"x":1,"y":34,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -34,7 +34,7 @@
 },
 {
 	"filename": "Error_Icon.png",
-	"frame": {"x":43,"y":45,"w":9,"h":9},
+	"frame": {"x":1,"y":1,"w":9,"h":9},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":9},
@@ -42,7 +42,7 @@
 },
 {
 	"filename": "File.png",
-	"frame": {"x":1,"y":45,"w":12,"h":12},
+	"frame": {"x":23,"y":1,"w":12,"h":12},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
@@ -50,7 +50,7 @@
 },
 {
 	"filename": "Map.png",
-	"frame": {"x":15,"y":45,"w":12,"h":12},
+	"frame": {"x":37,"y":1,"w":12,"h":12},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
@@ -58,7 +58,15 @@
 },
 {
 	"filename": "Run.png",
-	"frame": {"x":43,"y":1,"w":19,"h":20},
+	"frame": {"x":22,"y":37,"w":19,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
+	"sourceSize": {"w":19,"h":20}
+},
+{
+	"filename": "Run_Console.png",
+	"frame": {"x":43,"y":37,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -66,7 +74,7 @@
 },
 {
 	"filename": "Save.png",
-	"frame": {"x":43,"y":23,"w":19,"h":20},
+	"frame": {"x":1,"y":56,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -74,7 +82,7 @@
 },
 {
 	"filename": "Song.png",
-	"frame": {"x":29,"y":45,"w":12,"h":12},
+	"frame": {"x":51,"y":1,"w":12,"h":12},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
@@ -82,7 +90,7 @@
 },
 {
 	"filename": "View_Grid.png",
-	"frame": {"x":64,"y":1,"w":19,"h":20},
+	"frame": {"x":22,"y":59,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -90,7 +98,7 @@
 },
 {
 	"filename": "View_List.png",
-	"frame": {"x":64,"y":23,"w":19,"h":20},
+	"frame": {"x":43,"y":59,"w":19,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":20},
@@ -98,7 +106,7 @@
 },
 {
 	"filename": "Warning_Icon.png",
-	"frame": {"x":54,"y":45,"w":9,"h":9},
+	"frame": {"x":12,"y":1,"w":9,"h":9},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":9,"h":9},
@@ -109,8 +117,8 @@
 	"version": "1.0",
 	"image": "sheet.png",
 	"format": "RGBA8888",
-	"size": {"w":84,"h":58},
+	"size": {"w":64,"h":80},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:7ad28f7ddd1963956fb079fe29429836:480ae15db549c099565b7ddae3f3d5e7:9c44ecd7e9a522007eaff2949095bc1d$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b524bbd99f1a77b75aa5bd83f2a3884c:a3e09fd68cec1e09ea3e72cf82fa8a4e:9c44ecd7e9a522007eaff2949095bc1d$"
 }
 }
