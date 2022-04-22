@@ -46,6 +46,7 @@ To Do:
     - Add slices preview on editing
 [/] Button to run on real hardware
     - Check dependencies on Windows
+        - "C:\Windows\System32\drivers\ftdibus.sys" ?
 [ ] Button to add libdragon-extensions submodule if it doesn't exist
 [ ] Update README
 [ ] Update Wiki
