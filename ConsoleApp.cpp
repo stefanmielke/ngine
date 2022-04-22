@@ -48,6 +48,7 @@ void ConsoleApp::Draw(const char *title, SDL_Window *window, bool &is_open) {
 	SDL_GetWindowSize(window, &window_width, &window_height);
 
 	ImGui::SetNextWindowSize(ImVec2((float)window_width, 200.f));
+	ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
 
 	bool title_has_color = false;
 	std::string title_text(title);
