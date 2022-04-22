@@ -475,6 +475,8 @@ void AppGui::RenderMenuBar(App &app) {
 
 void AppGui::RenderNewProjectWindow(App &app) {
 	ImGui::SetNextWindowSize(ImVec2(680, 330), ImGuiCond_Once);
+	if (ImGuiFileDialog::Instance()->IsOpened("NewProjectDlgKey"))
+		ImGui::SetNextWindowFocus();
 	if (ImGuiFileDialog::Instance()->Display("NewProjectDlgKey")) {
 		if (ImGuiFileDialog::Instance()->IsOk()) {
 			ProjectBuilder::Create(&app, ImGuiFileDialog::Instance()->GetCurrentPath());
@@ -486,6 +488,8 @@ void AppGui::RenderNewProjectWindow(App &app) {
 
 void AppGui::RenderOpenProjectWindow(App &app) {
 	ImGui::SetNextWindowSize(ImVec2(680, 330), ImGuiCond_Once);
+	if (ImGuiFileDialog::Instance()->IsOpened("OpenProjectDlgKey"))
+		ImGui::SetNextWindowFocus();
 	if (ImGuiFileDialog::Instance()->Display("OpenProjectDlgKey")) {
 		if (ImGuiFileDialog::Instance()->IsOk()) {
 			app.OpenProject(ImGuiFileDialog::Instance()->GetCurrentPath());
