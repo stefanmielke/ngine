@@ -112,8 +112,6 @@ void create_build_files(App *app) {
 			char command[500];
 			snprintf(command, 500, "%s", line.c_str());
 			ThreadCommand::QueueCommand(line);
-
-			console.AddLog("%s", command);
 		}
 
 		content_end_script.close();

@@ -5,7 +5,7 @@
 
 std::string get_libdragon_exe_location(const App *app) {
 	if (app->engine_settings.GetLibdragonUseBundled())
-		return "\"" + app->GetEngineDirectory() + "/bundle/libdragon\"";
+		return "\"" + app->GetEngineDirectory() + "/bundles/libdragon\"";
 
 	return "\"" + app->engine_settings.GetLibdragonExeLocation() + "\"";
 }

@@ -147,7 +147,7 @@ void EngineSettings::SetLibdragonExeLocation(const App *app, bool use_bundled, s
 }
 
 void EngineSettings::ReloadDockerVersion() {
-	std::string command("docker version --format 'docker {{.Server.Version}}'");
+	std::string command("docker version --format '{{.Server.Version}}'");
 
 	std::string result;
 	if (ThreadCommand::RunCommand(command, result) != EXIT_SUCCESS) {
@@ -161,6 +161,6 @@ void EngineSettings::ReloadDockerVersion() {
 			docker_version = "Error getting docker version";
 		}
 	} else {
-		docker_version = result;
+		docker_version = "docker " + result;
 	}
 }
