@@ -116,7 +116,6 @@ jobs:
         if: ${{ runner.os == 'Windows'}}
         run: |
           cd build
-          mkdir bundles
           cd bundles
           curl -L -s https://github.com/anacierdem/libdragon-docker/releases/download/v10.7.1/libdragon-win-x86_64.zip -O libdragon-win-x86_64.zip
           tar -xzf libdragon-win-x86_64.zip
@@ -125,7 +124,6 @@ jobs:
         if: ${{ runner.os == 'Linux'}}
         run: |
           cd build
-          mkdir bundles
           cd bundles
           wget https://github.com/anacierdem/libdragon-docker/releases/download/v10.7.1/libdragon-linux-x86_64.tar.gz
           tar -xzf libdragon-linux-x86_64.tar.gz
