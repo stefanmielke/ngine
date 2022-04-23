@@ -1986,8 +1986,8 @@ void AppGui::RenderContentBrowserNew(App &app) {
 
 	ImGui::InputTextWithHint("##Name", "Filter Assets", assets_name_filter, 100);
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(50);
-	if (ImGui::BeginCombo("##", "Filters", ImGuiComboFlags_NoArrowButton)) {
+	ImGui::SetNextItemWidth(65);
+	if (ImGui::BeginCombo("##", "Filters")) {
 		ImGui::Checkbox("Sprites", &display_sprites);
 		ImGui::Checkbox("Sounds", &display_sounds);
 		ImGui::Checkbox("Files", &display_files);
