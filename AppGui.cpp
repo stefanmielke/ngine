@@ -2371,7 +2371,6 @@ void AppGui::RenderSceneWindow(App &app) {
 					ImGui::SetTooltip("Build and Run [F5]");
 				}
 
-#ifdef __LINUX__
 				ImGui::SameLine();
 				ImGui::PushID(6);
 				app.GetImagePosition("Run_Console.png", button_uv0, button_uv1);
@@ -2383,10 +2382,15 @@ void AppGui::RenderSceneWindow(App &app) {
 					std::string unfloader_path(app.GetEngineDirectory() + "/bundle/UNFLoader");
 
 					char cmd[500];
-					snprintf(cmd, 500,
-							 "gnome-terminal -- bash -c \"sudo rmmod usbserial\nsudo rmmod "
-							 "ftdi_sio\nsudo %s -d -r %s\"",
-							 unfloader_path.c_str(), rom_path.c_str());
+#ifdef __LINUX__
+					const char *format =
+						"gnome-terminal -- bash -c \"sudo rmmod usbserial\nsudo rmmod "
+						"ftdi_sio\nsudo %s -d -r %s\"";
+#else
+					const char *format = "\"%s\" -d -r \"%s\"";
+#endif
+
+					snprintf(cmd, 500, format, unfloader_path.c_str(), rom_path.c_str());
 
 					ThreadCommand::RunCommandDetached(cmd);
 				}
@@ -2394,7 +2398,6 @@ void AppGui::RenderSceneWindow(App &app) {
 				if (ImGui::IsItemHovered()) {
 					ImGui::SetTooltip("Run Latest Build on Console [F10]");
 				}
-#endif
 				ImGui::Separator();
 			}
 
