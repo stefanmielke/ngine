@@ -100,8 +100,10 @@ void AppGui::RenderStarterWindow(App &app) {
 		std::filesystem::path libftd_location;
 #ifdef __LINUX__
 		libftd_location = "/usr/local/lib/libftd2xx.so";
-		has_libftd_installed = std::filesystem::exists(libftd_location);
+#else
+		libftd_location = "%windir%\\System32\\drivers\\ftdibus.sys";
 #endif
+		has_libftd_installed = std::filesystem::exists(libftd_location);
 		bool is_docker_ok = app.engine_settings.GetDockerVersion().starts_with("docker");
 		bool is_libdragon_ok = app.engine_settings.GetLibdragonVersion().starts_with("libdragon");
 
@@ -2915,11 +2917,10 @@ void AppGui::RenderSettingsWindow(App &app) {
 
 						app.project.project_settings.SaveToDisk();
 
-						SDL_SetWindowTitle(
-							app.window,
-							("NGine - " + app.project.project_settings.project_name + " - " +
-							 app.project.project_settings.project_directory)
-								.c_str());
+						SDL_SetWindowTitle(app.window,
+										   ("NGine - " + app.project.project_settings.project_name +
+											" - " + app.project.project_settings.project_directory)
+											   .c_str());
 
 						console.AddLog("Saved Project Settings.");
 					}
