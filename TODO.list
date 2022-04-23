@@ -88,7 +88,7 @@ Future:
 Done:
 - 2.0.0:
 [x] Add console launch button on Windows
-[x] Recheck docker every 10 seconds when it's down, every 60 seconds when it's up
+[x] Recheck docker every 10 seconds when it's down, every 60 seconds when it's up (removed)
 [x] Single content window that resembles the DFS output (with folders and 'files')
 [x] Show folder on grid view
 [x] Image slices preview when editing

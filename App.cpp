@@ -31,7 +31,7 @@ App::App(std::string engine_directory)
 	  audio_state(SS_STOPPED),
 	  is_running(true),
 	  engine_directory(std::move(engine_directory)) {
-	SDL_AddTimer(docker_check_interval_error, &docker_check_callback, this);
+//	SDL_AddTimer(docker_check_interval_error, &docker_check_callback, this);
 }
 
 bool App::LoadAssets() {
