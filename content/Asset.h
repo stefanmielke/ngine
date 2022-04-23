@@ -38,6 +38,10 @@ class Asset {
 		return parent;
 	}
 
+	std::string GetFolder() const {
+		return GetPath().substr(6, GetPath().find_last_of('/') - 5);
+	}
+
 	std::string GetPath() const {
 		return path;
 	}

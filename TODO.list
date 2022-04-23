@@ -38,8 +38,6 @@ To Do:
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
-    [ ] Folders on left side on grid view
-        - Filter content based on folder selected
 [/] Button to run on real hardware
     - Check dependencies on Windows
         - "%windir%\System32\drivers\ftdibus.sys" ?
@@ -92,6 +90,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Show folder on grid view
 [x] Image slices preview when editing
 [x] Replace '\' to '/' when loading assets
 [x] All module options on single tab

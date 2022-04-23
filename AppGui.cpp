@@ -1045,6 +1045,9 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							}
 						}
 
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.5f, .5f, .5f, 1));
+						ImGui::TextWrapped("%s", asset.GetFolder().c_str());
+						ImGui::PopStyleColor();
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
@@ -1131,6 +1134,9 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							}
 						}
 
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.5f, .5f, .5f, 1));
+						ImGui::TextWrapped("%s", asset.GetFolder().c_str());
+						ImGui::PopStyleColor();
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
@@ -1186,6 +1192,9 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::Checkbox("##", &selected);
 						}
 
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.5f, .5f, .5f, 1));
+						ImGui::TextWrapped("%s", asset.GetFolder().c_str());
+						ImGui::PopStyleColor();
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
@@ -1238,6 +1247,9 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::Checkbox("##", &selected);
 						}
 
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.5f, .5f, .5f, 1));
+						ImGui::TextWrapped("%s", asset.GetFolder().c_str());
+						ImGui::PopStyleColor();
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
@@ -1292,6 +1304,9 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::Checkbox("##", &selected);
 						}
 
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.5f, .5f, .5f, 1));
+						ImGui::TextWrapped("%s", asset.GetFolder().c_str());
+						ImGui::PopStyleColor();
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
@@ -1346,6 +1361,9 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 							ImGui::Checkbox("##", &selected);
 						}
 
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.5f, .5f, .5f, 1));
+						ImGui::TextWrapped("%s", asset.GetFolder().c_str());
+						ImGui::PopStyleColor();
 						ImGui::TextWrapped("%s", name.c_str());
 					}
 				}
