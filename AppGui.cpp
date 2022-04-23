@@ -1444,6 +1444,8 @@ void render_asset_details_window(App &app) {
 			ImGui::End();
 		} break;
 		case IMAGE: {
+			auto image = app.state.asset_editing.Ref().image;
+
 			static char image_edit_name[50];
 			static char image_edit_dfs_folder[100];
 			static int image_edit_h_slices = 0;
@@ -1451,75 +1453,106 @@ void render_asset_details_window(App &app) {
 			if (app.state.reload_asset_edit) {
 				app.state.reload_asset_edit = false;
 
-				strcpy(image_edit_name, (*app.state.asset_editing.Ref().image)->name.c_str());
-				strcpy(image_edit_dfs_folder,
-					   (*app.state.asset_editing.Ref().image)->dfs_folder.c_str());
-				image_edit_h_slices = (*app.state.asset_editing.Ref().image)->h_slices;
-				image_edit_v_slices = (*app.state.asset_editing.Ref().image)->v_slices;
+				strcpy(image_edit_name, (*image)->name.c_str());
+				strcpy(image_edit_dfs_folder, (*image)->dfs_folder.c_str());
+				image_edit_h_slices = (*image)->h_slices;
+				image_edit_v_slices = (*image)->v_slices;
+
+				(*image)->RecreateOverlay(app.renderer, image_edit_h_slices, image_edit_v_slices);
 			}
 			if (ImGui::Begin("Details", nullptr,
 							 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-				ImGui::InputText("Name", image_edit_name, 50, ImGuiInputTextFlags_CharsFileName);
-				bool dfs_valid = input_text_dfs_folder(image_edit_dfs_folder, 100);
-				ImGui::InputInt("H Slices", &image_edit_h_slices);
-				ImGui::InputInt("V Slices", &image_edit_v_slices);
+				if (ImGui::BeginTable("Assets", 2)) {
+					ImGui::TableNextRow();
 
-				ImGui::Separator();
-				ImGui::Spacing();
+					ImGui::TableNextColumn();
+					ImGui::Image((ImTextureID)(intptr_t)((*image)->loaded_image),
+								 ImVec2((*image)->display_width, (*image)->display_height));
+					if (ImGui::IsItemHovered()) {
+						ImGui::BeginTooltip();
+						ImGui::Image((ImTextureID)(intptr_t)((*image)->loaded_image),
+									 ImVec2((*image)->width, (*image)->height));
+						ImGui::SamePlace(8);
+						ImGui::Image((ImTextureID)(intptr_t)(*image)->loaded_image_overlay,
+									 ImVec2((*image)->width, (*image)->height));
+						ImGui::EndTooltip();
+					}
+					ImGui::SamePlace(8);
+					ImGui::Image((ImTextureID)(intptr_t)(*image)->loaded_image_overlay,
+								 ImVec2((*image)->display_width, (*image)->display_height));
 
-				ImGui::BeginDisabled(!dfs_valid);
-				if (ImGui::Button("Save")) {
-					bool will_save = true;
-					if ((*app.state.asset_editing.Ref().image)->name != image_edit_name) {
-						std::string name_string(image_edit_name);
-						auto find_by_name =
-							[&name_string](const std::unique_ptr<LibdragonImage> &i) {
-								return i->name == name_string;
-							};
-						if (std::find_if(app.project.images.begin(), app.project.images.end(),
-										 find_by_name) != std::end(app.project.images)) {
-							console.AddLog(
-								"Image with the name already exists. Please choose a "
-								"different name.");
-							will_save = false;
-						} else {
+					ImGui::TableNextColumn();
+					ImGui::InputText("Name", image_edit_name, 50,
+									 ImGuiInputTextFlags_CharsFileName);
+					bool dfs_valid = input_text_dfs_folder(image_edit_dfs_folder, 100);
+
+					bool recreate_grid = false;
+					if (ImGui::InputInt("H Slices", &image_edit_h_slices)) {
+						recreate_grid = true;
+					}
+					if (ImGui::InputInt("V Slices", &image_edit_v_slices)) {
+						recreate_grid = true;
+					}
+					if (recreate_grid) {
+						(*image)->RecreateOverlay(app.renderer, image_edit_h_slices,
+												  image_edit_v_slices);
+					}
+
+					ImGui::Separator();
+					ImGui::Spacing();
+
+					ImGui::BeginDisabled(!dfs_valid);
+					if (ImGui::Button("Save")) {
+						bool will_save = true;
+						if ((*image)->name != image_edit_name) {
+							std::string name_string(image_edit_name);
+							auto find_by_name =
+								[&name_string](const std::unique_ptr<LibdragonImage> &i) {
+									return i->name == name_string;
+								};
+							if (std::find_if(app.project.images.begin(), app.project.images.end(),
+											 find_by_name) != std::end(app.project.images)) {
+								console.AddLog(
+									"Image with the name already exists. Please choose a "
+									"different name.");
+								will_save = false;
+							} else {
+								std::string extension = get_libdragon_image_type_extension(
+									(*image)->type);
+
+								std::filesystem::copy_file(
+									app.project.project_settings.project_directory + "/" +
+										(*image)->image_path,
+									app.project.project_settings.project_directory +
+										"/assets/sprites/" + image_edit_name + extension);
+								(*image)->DeleteFromDisk(
+									app.project.project_settings.project_directory);
+							}
+						}
+
+						if (will_save) {
 							std::string extension = get_libdragon_image_type_extension(
 								(*app.state.asset_editing.Ref().image)->type);
 
-							std::filesystem::copy_file(
-								app.project.project_settings.project_directory + "/" +
-									(*app.state.asset_editing.Ref().image)->image_path,
-								app.project.project_settings.project_directory +
-									"/assets/sprites/" + image_edit_name + extension);
-							(*app.state.asset_editing.Ref().image)
-								->DeleteFromDisk(app.project.project_settings.project_directory);
+							(*image)->name = image_edit_name;
+							(*image)->dfs_folder = image_edit_dfs_folder;
+							(*image)->h_slices = image_edit_h_slices;
+							(*image)->v_slices = image_edit_v_slices;
+							(*image)->image_path = "assets/sprites/" + (*image)->name + extension;
+
+							(*image)->SaveToDisk(app.project.project_settings.project_directory);
+
+							app.project.ReloadAssets();
 						}
 					}
+					ImGui::EndDisabled();
 
-					if (will_save) {
-						std::string extension = get_libdragon_image_type_extension(
-							(*app.state.asset_editing.Ref().image)->type);
-
-						(*app.state.asset_editing.Ref().image)->name = image_edit_name;
-						(*app.state.asset_editing.Ref().image)->dfs_folder = image_edit_dfs_folder;
-						(*app.state.asset_editing.Ref().image)->h_slices = image_edit_h_slices;
-						(*app.state.asset_editing.Ref().image)->v_slices = image_edit_v_slices;
-						(*app.state.asset_editing.Ref().image)
-							->image_path = "assets/sprites/" +
-										   (*app.state.asset_editing.Ref().image)->name + extension;
-
-						(*app.state.asset_editing.Ref().image)
-							->SaveToDisk(app.project.project_settings.project_directory);
-
-						app.project.ReloadAssets();
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel")) {
+						app.state.asset_editing.Reset();
+						app.state.asset_selected.Reset();
 					}
-				}
-				ImGui::EndDisabled();
-
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel")) {
-					app.state.asset_editing.Reset();
-					app.state.asset_selected.Reset();
+					ImGui::EndTable();
 				}
 			}
 			ImGui::End();

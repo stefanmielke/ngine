@@ -33,11 +33,13 @@ class LibdragonImage {
 	LibdragonImageType type;
 
 	SDL_Texture *loaded_image;
+	SDL_Texture *loaded_image_overlay;
 
 	LibdragonImage();
 	~LibdragonImage();
 
 	void LoadImage(const std::string &project_directory, SDL_Renderer *renderer);
+	void RecreateOverlay(SDL_Renderer *renderer, int overlay_h_slices, int overlay_v_slices);
 
 	void SaveToDisk(const std::string &project_directory);
 	void LoadFromDisk(const std::string &filepath);

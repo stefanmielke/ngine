@@ -38,12 +38,11 @@ To Do:
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
-[/] Add image slices preview on import/edit
-    - Add slices preview on editing
-    - image preview on left side of the editing panel
+    [ ] Folders on left side on grid view
+        - Filter content based on folder selected
 [/] Button to run on real hardware
     - Check dependencies on Windows
-        - "C:\Windows\System32\drivers\ftdibus.sys" ?
+        - "%windir%\System32\drivers\ftdibus.sys" ?
 [ ] Button to add libdragon-extensions submodule if it doesn't exist
 [ ] Recheck docker every X seconds when it's down, every Y seconds when it's up
 [ ] Update README
@@ -93,6 +92,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Image slices preview when editing
 [x] Replace '\' to '/' when loading assets
 [x] All module options on single tab
 [x] Added "menu" module and default color options

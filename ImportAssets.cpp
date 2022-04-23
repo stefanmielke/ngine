@@ -26,7 +26,7 @@ void ImportAssets::RenderImportScreen(App *app) {
 							float width = window_width - 30;
 							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data,
 										 ImVec2(width, (float)image_file->height_mult * width));
-							ImGui::SamePlace(9);
+							ImGui::SamePlace(8);
 							ImGui::Image((ImTextureID)(intptr_t)image_file->image_data_overlay,
 										 ImVec2(width, (float)image_file->height_mult * width));
 						} else {

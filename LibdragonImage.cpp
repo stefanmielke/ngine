@@ -65,6 +65,10 @@ LibdragonImage::~LibdragonImage() {
 		SDL_DestroyTexture(loaded_image);
 		loaded_image = nullptr;
 	}
+	if (loaded_image_overlay) {
+		SDL_DestroyTexture(loaded_image_overlay);
+		loaded_image_overlay = nullptr;
+	}
 }
 
 void LibdragonImage::SaveToDisk(const std::string &project_directory) {
@@ -121,7 +125,11 @@ void LibdragonImage::LoadImage(const std::string &project_directory, SDL_Rendere
 	width = w;
 	height = h;
 
-	const float max_size = 100.f;
+	loaded_image_overlay = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
+											 SDL_TEXTUREACCESS_TARGET, w * 2, h * 2);
+	SDL_SetTextureBlendMode(loaded_image_overlay, SDL_BLENDMODE_BLEND);
+
+	const float max_size = 130.f;
 	if (w > h) {
 		h = (int)(((float)h / (float)w) * max_size);
 		w = (int)max_size;
@@ -132,6 +140,39 @@ void LibdragonImage::LoadImage(const std::string &project_directory, SDL_Rendere
 
 	display_width = w;
 	display_height = h;
+
+	RecreateOverlay(renderer, h_slices, v_slices);
+}
+
+void LibdragonImage::RecreateOverlay(SDL_Renderer *renderer, int overlay_h_slices, int overlay_v_slices) {
+	SDL_SetRenderTarget(renderer, loaded_image_overlay);
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderClear(renderer);
+
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+
+	int total_h_slices = overlay_h_slices - 1;
+	if (total_h_slices > 0) {
+		float steps = ((float)width * 2) / (float)total_h_slices;
+		for (int h = 1; h <= total_h_slices; ++h) {
+			SDL_RenderDrawLine(renderer, steps * h, 0, steps * h, (height * 2));
+		}
+	}
+	int total_v_slices = overlay_v_slices - 1;
+	if (total_v_slices > 0) {
+		float steps = ((float)height * 2) / (float)total_v_slices;
+		for (int v = 1; v <= total_v_slices; ++v) {
+			SDL_RenderDrawLine(renderer, 0, steps * v, (width * 2), steps * v);
+		}
+	}
+
+	SDL_Rect rect = {0, 0, width * 2, height * 2};
+	SDL_RenderDrawRect(renderer, &rect);
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+	SDL_SetRenderTarget(renderer, nullptr);
 }
 
 void LibdragonImage::DrawTooltip() const {
