@@ -34,19 +34,16 @@ To Do:
         - Script use
 
 2.0.0:
-[ ] Single content window that resembles the DFS output (with folders and 'files')
-    - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
-    - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
-    - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
 [/] Button to run on real hardware
     - Check dependencies on Windows
         - "%windir%\System32\drivers\ftdibus.sys" ?
-[ ] Button to add libdragon-extensions submodule if it doesn't exist
-[ ] Recheck docker every X seconds when it's down, every Y seconds when it's up
 [ ] Update README
 [ ] Update Wiki
 
 2.1.0:
+[ ] Button to add libdragon-extensions submodule if it doesn't exist
+    - Add option on project creation
+    - Add button to download or add as submodule
 [ ] Double click to open editor for asset
     [ ] Add Sprite/Sound editors on Engine Settings
     [ ] Check if editors are found on Engine Settings
@@ -90,6 +87,8 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Recheck docker every 10 seconds when it's down, every 60 seconds when it's up
+[x] Single content window that resembles the DFS output (with folders and 'files')
 [x] Show folder on grid view
 [x] Image slices preview when editing
 [x] Replace '\' to '/' when loading assets

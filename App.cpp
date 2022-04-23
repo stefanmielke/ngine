@@ -7,6 +7,20 @@
 #include "json.hpp"
 #include "ThreadCommand.h"
 
+const Uint32 docker_check_interval_ok = 60 * 1000;
+const Uint32 docker_check_interval_error = 10 * 1000;
+
+Uint32 docker_check_callback(Uint32 interval, void *param) {
+	App *app = (App *)param;
+	if (app) {
+		app->engine_settings.ReloadDockerVersion();
+		if (app->engine_settings.GetDockerVersion().starts_with("docker")) {
+			return docker_check_interval_ok;
+		}
+	}
+	return docker_check_interval_error;
+}
+
 App::App(std::string engine_directory)
 	: renderer(nullptr),
 	  window(nullptr),
@@ -17,6 +31,7 @@ App::App(std::string engine_directory)
 	  audio_state(SS_STOPPED),
 	  is_running(true),
 	  engine_directory(std::move(engine_directory)) {
+	SDL_AddTimer(docker_check_interval_error, &docker_check_callback, this);
 }
 
 bool App::LoadAssets() {

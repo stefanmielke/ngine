@@ -42,6 +42,8 @@ class App {
 
 	bool is_running;
 
+	SDL_TimerID docker_check_timer;
+
 	explicit App(std::string engine_directory);
 
 	bool LoadAssets();
