@@ -38,21 +38,21 @@ To Do:
     - https://docs.unrealengine.com/5.0/en-US/unreal-editor-interface/
     - https://docs.unrealengine.com/5.0/en-US/content-browser-in-unreal-engine/
     - https://docs.unrealengine.com/5.0/Images/understanding-the-basics/foundational-knowledge/unreal-editor-interface/content-browser.webp
-    [ ] Double click to open editor for asset
-        [ ] Add Sprite/Sound editors on Engine Settings
-        [ ] Check if editors are found on Engine Settings
-[ ] Scene nodes
 [/] Add image slices preview on import/edit
     - Add slices preview on editing
+    - image preview on left side of the editing panel
 [/] Button to run on real hardware
     - Check dependencies on Windows
 [ ] Button to add libdragon-extensions submodule if it doesn't exist
+[ ] Recheck docker every X seconds when it's down, every Y seconds when it's up
 [ ] Update README
 [ ] Update Wiki
 
 2.1.0:
+[ ] Double click to open editor for asset
+    [ ] Add Sprite/Sound editors on Engine Settings
+    [ ] Check if editors are found on Engine Settings
 [ ] Clean project after changing modules
-[ ] Running ROM through USB
 [ ] Better input module (using names instead of buttons to ease button remapping)
     - Create on 'libdragon-extensions'
 [ ] Generate package with emulator+ROM+shortcut to run the game automatically on PC
@@ -60,14 +60,19 @@ To Do:
 [ ] Update Wiki
 
 3.0.0:
+[ ] Scene nodes
 [ ] Remove opening cmd window for every command on Windows
-[ ] Generate PC port
-    - Possibility to run/debug locally
 [ ] Resize output window
 [ ] Localization files
     - en-us
     - pt-br
     - jp?
+[ ] Update README
+[ ] Update Wiki
+
+4.0.0:
+[ ] Generate PC port
+    - Possibility to run/debug locally
 [ ] Update README
 [ ] Update Wiki
 
@@ -87,6 +92,7 @@ Future:
 
 Done:
 - 2.0.0:
+[x] Replace '\' to '/' when loading assets
 [x] All module options on single tab
 [x] Added "menu" module and default color options
 [x] Image slices preview when importing

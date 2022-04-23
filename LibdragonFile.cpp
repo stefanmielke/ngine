@@ -41,6 +41,8 @@ void LibdragonFile::LoadFromDisk(const std::string &filepath) {
 	file_path = json["file_path"];
 	dfs_folder = json["dfs_folder"];
 	copy_to_filesystem = json["copy_to_filesystem"];
+
+	std::replace(dfs_folder.begin(), dfs_folder.end(), '\\', '/');
 }
 
 void LibdragonFile::DeleteFromDisk(const std::string &project_directory) const {

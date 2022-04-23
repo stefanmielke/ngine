@@ -135,6 +135,8 @@ void LibdragonFont::LoadFromDisk(const std::string &filepath) {
 	font_path = json["font_path"];
 	dfs_folder = json["dfs_folder"];
 	font_size = json["font_size"];
+
+	std::replace(dfs_folder.begin(), dfs_folder.end(), '\\', '/');
 }
 
 void LibdragonFont::DeleteFromDisk(const std::string &project_directory) const {

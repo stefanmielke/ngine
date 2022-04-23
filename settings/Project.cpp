@@ -89,7 +89,7 @@ bool Project::Open(const char *path, App *app) {
 	ReloadTiledMaps();
 	ReloadLDtkMaps();
 
-	assets = Asset::BuildAsset(project_settings.project_directory);
+	ReloadAssets();
 
 	SaveToDisk(project_settings.project_directory);
 	project_settings.SaveToDisk();

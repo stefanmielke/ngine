@@ -48,6 +48,8 @@ void LibdragonSound::LoadFromDisk(const std::string &filepath) {
 	wav_loop = json["wav_loop"];
 	wav_loop_offset = json["wav_loop_offset"];
 	ym_compress = json["ym_compress"];
+
+	std::replace(dfs_folder.begin(), dfs_folder.end(), '\\', '/');
 }
 
 void LibdragonSound::DeleteFromDisk(const std::string &project_directory) const {

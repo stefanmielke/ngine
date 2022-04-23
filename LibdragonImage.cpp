@@ -98,6 +98,8 @@ void LibdragonImage::LoadFromDisk(const std::string &filepath) {
 	v_slices = json["v_slices"];
 	if (!json["type"].is_null())
 		type = json["type"];
+
+	std::replace(dfs_folder.begin(), dfs_folder.end(), '\\', '/');
 }
 
 void LibdragonImage::DeleteFromDisk(const std::string &project_directory) const {

@@ -43,6 +43,8 @@ void LibdragonTiledMap::LoadFromDisk(const std::string &filepath) {
 	file_path = json["file_path"];
 	dfs_folder = json["dfs_folder"];
 
+	std::replace(dfs_folder.begin(), dfs_folder.end(), '\\', '/');
+
 	LoadLayers();
 }
 
