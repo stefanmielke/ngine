@@ -101,7 +101,7 @@ void AppGui::RenderStarterWindow(App &app) {
 #ifdef __LINUX__
 		libftd_location = "/usr/local/lib/libftd2xx.so";
 #else
-		libftd_location = "%windir%\\System32\\drivers\\ftdibus.sys";
+		libftd_location = getenv("WINDIR") + std::string(R"(\System32\drivers\ftdibus.sys)");
 #endif
 		has_libftd_installed = std::filesystem::exists(libftd_location);
 		bool is_docker_ok = app.engine_settings.GetDockerVersion().starts_with("docker");
@@ -2379,7 +2379,7 @@ void AppGui::RenderSceneWindow(App &app) {
 					ImGui::IsKeyPressed(ImGuiKey_F10, false)) {
 					std::string rom_path(app.project.project_settings.project_directory + "/" +
 										 app.project.project_settings.rom_name + ".z64");
-					std::string unfloader_path(app.GetEngineDirectory() + "/bundle/UNFLoader");
+					std::string unfloader_path(app.GetEngineDirectory() + "/bundles/UNFLoader");
 
 					char cmd[500];
 #ifdef __LINUX__
@@ -2387,12 +2387,20 @@ void AppGui::RenderSceneWindow(App &app) {
 						"gnome-terminal -- bash -c \"sudo rmmod usbserial\nsudo rmmod "
 						"ftdi_sio\nsudo %s -d -r %s\"";
 #else
-					const char *format = "\"%s\" -d -r \"%s\"";
+					std::replace(rom_path.begin(), rom_path.end(), '/', '\\');
+					std::replace(unfloader_path.begin(), unfloader_path.end(), '/', '\\');
+					unfloader_path.append(".exe");
+
+					const char *format = R"(""%s" -d -r "%s"")";
 #endif
 
 					snprintf(cmd, 500, format, unfloader_path.c_str(), rom_path.c_str());
 
+#ifdef __LINUX__
 					ThreadCommand::RunCommandDetached(cmd);
+#else
+					system(cmd);
+#endif
 				}
 				ImGui::PopID();
 				if (ImGui::IsItemHovered()) {

@@ -81,13 +81,13 @@ if (WIN32)
             TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_SOURCE_DIR}/deps/unfloader/UNFLoader.exe
-            ${CMAKE_CURRENT_BINARY_DIR}/bundle/UNFLoader.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/bundles/UNFLoader.exe
     )
 else ()
     add_custom_command(
             TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_SOURCE_DIR}/deps/unfloader/UNFLoader
-            ${CMAKE_CURRENT_BINARY_DIR}/bundle/UNFLoader
+            ${CMAKE_CURRENT_BINARY_DIR}/bundles/UNFLoader
     )
 endif ()
