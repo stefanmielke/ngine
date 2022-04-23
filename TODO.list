@@ -43,6 +43,7 @@ To Do:
     - image preview on left side of the editing panel
 [/] Button to run on real hardware
     - Check dependencies on Windows
+        - "C:\Windows\System32\drivers\ftdibus.sys" ?
 [ ] Button to add libdragon-extensions submodule if it doesn't exist
 [ ] Recheck docker every X seconds when it's down, every Y seconds when it's up
 [ ] Update README
