@@ -1221,7 +1221,7 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 								(ImTextureID)(intptr_t)((*asset.GetAssetReference().font)
 															->loaded_image),
 								ImVec2(80, 80))) {
-							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
+							app.state.asset_selected.Ref(FONT, asset.GetAssetReference());
 							app.state.asset_editing = app.state.asset_selected;
 							app.state.reload_asset_edit = true;
 						}
@@ -1235,8 +1235,8 @@ void render_asset_folder_grid(App &app, Asset *folder) {
 						}
 						if (ImGui::IsItemHovered() &&
 							ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-							app.state.asset_selected.Ref(IMAGE, asset.GetAssetReference());
-							ImGui::OpenPopup("PopupSpritesBrowserImage");
+							app.state.asset_selected.Ref(FONT, asset.GetAssetReference());
+							ImGui::OpenPopup("PopupFontsBrowserFont");
 						}
 						if (ImGui::IsItemHovered()) {
 							(*asset.GetAssetReference().font)->DrawTooltip();

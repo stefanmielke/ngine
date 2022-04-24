@@ -34,9 +34,6 @@ To Do:
         - Script use
 
 2.0.0:
-[/] Button to run on real hardware
-    - Check dependencies on Windows
-        - "%windir%\System32\drivers\ftdibus.sys" ?
 [ ] Update README
 [ ] Update Wiki
 
