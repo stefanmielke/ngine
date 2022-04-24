@@ -19,6 +19,7 @@ ProjectSettings::ProjectSettings(App *app)
 	  libdragon_branch("trunk"),
 	  ngine_version_major(app->engine_version.major),
 	  ngine_version_minor(app->engine_version.minor),
+	  ngine_version_fix(app->engine_version.fix),
 	  ngine_version_is_pre_release(app->engine_version.is_pre_release) {
 }
 
@@ -98,6 +99,8 @@ bool ProjectSettings::LoadFromFile(App *app, const std::string &folder) {
 		ngine_version_major = json["project"]["ngine"]["version"]["major"];
 	if (!json["project"]["ngine"]["version"]["minor"].is_null())
 		ngine_version_minor = json["project"]["ngine"]["version"]["minor"];
+	if (!json["project"]["ngine"]["version"]["fix"].is_null())
+		ngine_version_fix = json["project"]["ngine"]["version"]["fix"];
 	if (!json["project"]["ngine"]["version"]["is_pre"].is_null())
 		ngine_version_is_pre_release = json["project"]["ngine"]["version"]["is_pre"];
 
@@ -106,6 +109,7 @@ bool ProjectSettings::LoadFromFile(App *app, const std::string &folder) {
 	// reset version to current
 	ngine_version_major = app->engine_version.major;
 	ngine_version_minor = app->engine_version.minor;
+	ngine_version_fix = app->engine_version.fix;
 	ngine_version_is_pre_release = app->engine_version.is_pre_release;
 
 	is_open = true;
@@ -129,6 +133,7 @@ void ProjectSettings::SaveToDisk() {
 	json["project"]["global_script_name"] = global_script_name;
 	json["project"]["ngine"]["version"]["major"] = ngine_version_major;
 	json["project"]["ngine"]["version"]["minor"] = ngine_version_minor;
+	json["project"]["ngine"]["version"]["fix"] = ngine_version_fix;
 	json["project"]["ngine"]["version"]["is_pre"] = ngine_version_is_pre_release;
 
 	json["audio"]["buffers"] = audio.buffers;

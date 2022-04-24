@@ -38,6 +38,7 @@ class ProjectSettings {
 
 	int ngine_version_major;
 	int ngine_version_minor;
+	int ngine_version_fix;
 	bool ngine_version_is_pre_release;
 
 	explicit ProjectSettings(App *app);

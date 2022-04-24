@@ -13,12 +13,14 @@ enum SoundState { SS_STOPPED, SS_PLAYING, SS_PAUSED };
 struct EngineVersion {
 	int major;
 	int minor;
+	int fix;
 	bool is_pre_release;
 
 	std::string version_string;
 
-	EngineVersion() : major(2), minor(0), is_pre_release(true), version_string("ngine ") {
-		version_string += std::to_string(major) + "." + std::to_string(minor) + ".0";
+	EngineVersion() : major(2), minor(0), fix(1), is_pre_release(true), version_string("ngine ") {
+		version_string += std::to_string(major) + "." + std::to_string(minor) + "." +
+						  std::to_string(fix);
 		if (is_pre_release)
 			version_string.append("-pre");
 	};
