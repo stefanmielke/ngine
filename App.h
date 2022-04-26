@@ -18,7 +18,7 @@ struct EngineVersion {
 
 	std::string version_string;
 
-	EngineVersion() : major(2), minor(0), fix(1), is_pre_release(true), version_string("ngine ") {
+	EngineVersion() : major(2), minor(0), fix(2), is_pre_release(true), version_string("ngine ") {
 		version_string += std::to_string(major) + "." + std::to_string(minor) + "." +
 						  std::to_string(fix);
 		if (is_pre_release)
